@@ -49,20 +49,35 @@ button {
 button:hover {
   border-color: #646cff;
 }
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+/* Preferential focus: hide outlines for mouse/touch focus, keep a single keyboard-visible ring */
+/* Hide non-keyboard focus (mouse/touch) */
+:where(
+    a,
+    button,
+    input,
+    select,
+    textarea,
+    .MuiButtonBase-root,
+    .MuiToggleButton-root,
+    .MuiTab-root
+  ):focus:not(:focus-visible) {
+  outline: none !important;
+  box-shadow: none !important;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+/* Single keyboard focus ring for all interactive elements */
+:where(
+    a,
+    button,
+    input,
+    select,
+    textarea,
+    .MuiButtonBase-root,
+    .MuiToggleButton-root,
+    .MuiTab-root
+  ):focus-visible {
+  /* use box-shadow for a single visible ring instead of outline to avoid duplicates */
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(100, 108, 255, 0.22);
+  border-color: rgba(100, 108, 255, 0.35);
 }
