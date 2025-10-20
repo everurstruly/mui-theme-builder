@@ -1,9 +1,9 @@
-import CanvasPropertiesPanel from "./CanvasPropertiesPanel";
-import CanvasToolbar from "./CanvasToolbar";
-import CanvasBoard from "./CanvasBoard";
-import Canvas from "./Canvas";
-import layoutStyles from "./layout-styles";
-import CanvasActivityPanel from "./CanvasActivitiesPanel";
+import CanvasPropertiesPanel from "../editor/CanvasPropertiesPanel";
+import CanvasToolbar from "../editor/CanvasToolbar";
+import CanvasBoard from "../editor/CanvasBoard";
+import Canvas from "../editor/Canvas";
+import layoutStyles from "../editor/layout-styles";
+import CanvasActivityPanel from "../editor/CanvasActivitiesPanel";
 import { useState } from "react";
 import { ScopedCssBaseline } from "@mui/material";
 

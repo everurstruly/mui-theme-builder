@@ -1,6 +1,6 @@
 import CanvasBoardFrames from "./frames";
 import ScreenSizeToggleGroup from "./ScreenSizeToggleGroup";
-import PropertiesPanelSwitch from "./PropertiesPanelSwitch";
+// import PropertiesPanelSwitch from "./PropertiesPanelSwitch";
 import { Box } from "@mui/material";
 
 // export type CanvasBoardProps = {

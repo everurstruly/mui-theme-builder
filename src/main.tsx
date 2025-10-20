@@ -6,8 +6,8 @@ import "./global.css";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router";
-import HomePage from "./page";
-import EditorPage from "./editor/page";
+import HomePage from "./pages/index";
+import EditorPage from "./pages/editor";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
