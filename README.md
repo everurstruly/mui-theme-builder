@@ -30,10 +30,9 @@ This isn't a ground-up rewrite — I've reused code from existing projects (shou
 
 ---
 
-### Getting Started
+### Thanks To
 
-```bash
-git clone https://github.com/everurstruly/mui-theme-studio.git
-cd mui-theme-studio
-npm install
-npm run dev
+- **jnsahaj/tweakcn** — File structure inspiration  
+- **Zenoo/mui-theme-creator** — Core editor concepts  
+
+This started as a potential PR to existing projects, but my vision differed enough that it made sense to build it separately.
