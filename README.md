@@ -1,4 +1,4 @@
-# MUI Theme Studio
+# MUI Theme Builder 
 
 A visual editor for customizing MUI components with Material and iOS design. 
 
