@@ -15,7 +15,7 @@ export default function CanvasBoard() {
         sx={{
           flexGrow: 1,
           borderRadius: 3,
-          border: 1,
+          // border: 1,
           borderColor: "divider",
           shadow: 1,
           p: 12,
