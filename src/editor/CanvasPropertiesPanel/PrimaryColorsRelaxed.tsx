@@ -8,7 +8,7 @@ export default function PrimaryColorsRelaxed() {
       sx={{
         bgcolor: "background.paper",
         position: "relative",
-        maxHeight: "calc(100vh - 100px)",
+        maxHeight: "calc(100vh - 120px)",
         overflow: "auto",
         "& ul": { padding: 0 },
       }}
