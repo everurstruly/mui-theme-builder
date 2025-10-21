@@ -1,16 +1,15 @@
 import { styled, Switch } from "@mui/material";
 
 const MaterialUISwitch = styled(Switch)(({ theme }) => ({
-  width: 60,
-  height: 40,
-  padding: 7,
+  width: 64,
+  height: 46,
   "& .MuiSwitch-switchBase": {
     padding: 0,
-    top: 11,
+    top: 12.4,
     transform: "translateX(10px)",
     "&.Mui-checked": {
       color: "#fff",
-      transform: "translateX(30px)",
+      transform: "translateX(32px)",
       "& .MuiSwitch-thumb:before": {
         backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="14" width="14" viewBox="0 0 20 20"><path fill="${encodeURIComponent(
           "#fff"
@@ -18,7 +17,7 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
       },
       "& + .MuiSwitch-track": {
         opacity: 1,
-        border: "1px solid #cdcdcd",
+        border: "1px solid #999",
         backgroundColor: "#fff",
         ...theme.applyStyles("dark", {
           backgroundColor: "#fff",
@@ -28,8 +27,8 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
   },
   "& .MuiSwitch-thumb": {
     backgroundColor: "#001e3c",
-    width: 20,
-    height: 20,
+    width: 22,
+    height: 22,
     "&::before": {
       content: "''",
       position: "absolute",
@@ -49,9 +48,9 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
   },
   "& .MuiSwitch-track": {
     opacity: 1,
-    border: "1px solid #cdcdcd",
+    borderRadius: 20 / 2,
+    border: "1px solid #999",
     backgroundColor: "#fff",
-    borderRadius: 10,
     ...theme.applyStyles("dark", {
       backgroundColor: "#fff",
     }),
