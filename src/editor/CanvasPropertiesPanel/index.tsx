@@ -2,6 +2,8 @@ import * as React from "react";
 import { Tab, Tabs, Box } from "@mui/material";
 import CodeWindow from "../CodeWindow";
 import type { Theme } from "@mui/material/styles";
+import PrimaryColorsCompact from "./PrimaryColorsCompact";
+import PrimaryColorsRelaxed from "./PrimaryColorsRelaxed";
 
 type CanvasPropertiesPanelProps = {
   isVisible: boolean;
@@ -103,33 +105,39 @@ export default function CanvasPropertiesPanel({
         value={value}
         onChange={handleChange}
         sx={{
-          marginTop: 2,
           padding: 0,
+          paddingTop: 2,
           minHeight: 40,
           height: 40,
           alignItems: "center",
           borderBottom: 1,
           borderBottomColor: "divider",
+          backgroundColor: "background.paper",
 
           "& .MuiTab-root": {
             minHeight: 40,
             height: 40,
-            flexGrow: 1,
+            // flexGrow: 1,
+            minWidth: 0,
             fontSize: "0.75rem",
+            textTransform: "none",
           },
         }}
       >
         <Tab label="Colors" {...a11yProps(0)} />
-        <Tab label="Text" {...a11yProps(2)} />
-        <Tab label="Other" {...a11yProps(1)} />
+        <Tab label="Typography" {...a11yProps(1)} />
+        <Tab label="Layout" {...a11yProps(2)} />
+        <Tab label="Styles" {...a11yProps(3)} />
       </Tabs>
 
       <CustomTabPanel value={value} index={0}>
-        Item One
+        <PrimaryColorsRelaxed />
       </CustomTabPanel>
+
       <CustomTabPanel value={value} index={1}>
-        Item Two
+        <PrimaryColorsCompact />
       </CustomTabPanel>
+
       <CustomTabPanel value={value} index={2}>
         Item Three
       </CustomTabPanel>
@@ -147,15 +155,15 @@ function CustomTabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
 
   return (
-    <div
+    <Box
       role="tabpanel"
       hidden={value !== index}
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
-      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
-    </div>
+      {value === index && children}
+    </Box>
   );
 }
 
