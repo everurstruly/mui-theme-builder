@@ -1,7 +1,7 @@
 import CanvasBoardFrames from "./frames";
 import ScreenSizeToggleGroup from "./ScreenSizeToggleGroup";
 import { Box } from "@mui/material";
-import { canvasHeightCss } from "../Editor.constants";
+import { canvasHeightCss } from "../constants";
 
 export default function EditorCanvas() {
   return (

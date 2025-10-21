@@ -1,6 +1,6 @@
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { ContentCopyOutlined } from "@mui/icons-material";
 
 export default function PrimaryColorsRelaxed() {

@@ -52,6 +52,7 @@ export default function PrimaryColorsCompact() {
 
   const handleChange =
     (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
+      void event;
       setExpanded(newExpanded ? panel : false);
     };
 

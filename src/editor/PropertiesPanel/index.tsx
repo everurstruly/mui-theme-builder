@@ -7,12 +7,7 @@ import ColorProperty from "./Color";
 import { Tab, Tabs, Box } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useMediaQuery } from "@mui/material";
-
-export const editorPropertiesPanelWidth = {
-  default: "auto",
-  upSm: "360px",
-  upMd: "320px",
-};
+import { editorPropertiesPanelWidth } from "./constants";
 
 export default function EditorPropertiesPanel() {
   const theme = useTheme();

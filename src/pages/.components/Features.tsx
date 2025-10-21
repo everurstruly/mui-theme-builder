@@ -11,42 +11,42 @@ import DevicesRoundedIcon from "@mui/icons-material/DevicesRounded";
 import EdgesensorHighRoundedIcon from "@mui/icons-material/EdgesensorHighRounded";
 import ViewQuiltRoundedIcon from "@mui/icons-material/ViewQuiltRounded";
 
+declare global {
+  interface ImportMetaEnv {
+    readonly VITE_TEMPLATE_IMAGE_URL?: string;
+  }
+  interface ImportMeta {
+    readonly env: ImportMetaEnv;
+  }
+}
+
+const templateImageBase =
+  import.meta.env.VITE_TEMPLATE_IMAGE_URL ?? "https://mui.com";
+
 const items = [
   {
     icon: <ViewQuiltRoundedIcon />,
     title: "Dashboard",
     description:
       "This item could provide a snapshot of the most important metrics or data points related to the product.",
-    imageLight: `url("${
-      import.meta.env.VITE_TEMPLATE_IMAGE_URL || "https://mui.com"
-    }/static/images/templates/templates-images/dash-light.png")`,
-    imageDark: `url("${
-      import.meta.env.VITE_TEMPLATE_IMAGE_URL || "https://mui.com"
-    }/static/images/templates/templates-images/dash-dark.png")`,
+    imageLight: `url("${templateImageBase}/static/images/templates/templates-images/dash-light.png")`,
+    imageDark: `url("${templateImageBase}/static/images/templates/templates-images/dash-dark.png")`,
   },
   {
     icon: <EdgesensorHighRoundedIcon />,
     title: "Mobile integration",
     description:
       "This item could provide information about the mobile app version of the product.",
-    imageLight: `url("${
-      import.meta.env.VITE_TEMPLATE_IMAGE_URL || "https://mui.com"
-    }/static/images/templates/templates-images/mobile-light.png")`,
-    imageDark: `url("${
-      import.meta.env.VITE_TEMPLATE_IMAGE_URL || "https://mui.com"
-    }/static/images/templates/templates-images/mobile-dark.png")`,
+    imageLight: `url("${templateImageBase}/static/images/templates/templates-images/mobile-light.png")`,
+    imageDark: `url("${templateImageBase}/static/images/templates/templates-images/mobile-dark.png")`,
   },
   {
     icon: <DevicesRoundedIcon />,
     title: "Available on all platforms",
     description:
       "This item could let users know the product is available on all platforms, such as web, mobile, and desktop.",
-    imageLight: `url("${
-      import.meta.env.VITE_TEMPLATE_IMAGE_URL || "https://mui.com"
-    }/static/images/templates/templates-images/devices-light.png")`,
-    imageDark: `url("${
-      import.meta.env.VITE_TEMPLATE_IMAGE_URL || "https://mui.com"
-    }/static/images/templates/templates-images/devices-dark.png")`,
+    imageLight: `url("${templateImageBase}/static/images/templates/templates-images/devices-light.png")`,
+    imageDark: `url("${templateImageBase}/static/images/templates/templates-images/devices-dark.png")`,
   },
 ];
 
@@ -123,10 +123,10 @@ export function MobileLayout({
           style={
             items[selectedItemIndex]
               ? ({
-                  "--items-imageLight": items[selectedItemIndex].imageLight,
-                  "--items-imageDark": items[selectedItemIndex].imageDark,
-                } as any)
-              : {}
+                  ["--items-imageLight"]: items[selectedItemIndex].imageLight,
+                  ["--items-imageDark"]: items[selectedItemIndex].imageDark,
+                } as React.CSSProperties)
+              : undefined
           }
         />
         <Box sx={{ px: 2, pb: 2 }}>
@@ -271,10 +271,11 @@ export default function Features() {
               style={
                 items[selectedItemIndex]
                   ? ({
-                      "--items-imageLight": items[selectedItemIndex].imageLight,
-                      "--items-imageDark": items[selectedItemIndex].imageDark,
-                    } as any)
-                  : {}
+                      ["--items-imageLight"]:
+                        items[selectedItemIndex].imageLight,
+                      ["--items-imageDark"]: items[selectedItemIndex].imageDark,
+                    } as React.CSSProperties)
+                  : undefined
               }
             />
           </Card>

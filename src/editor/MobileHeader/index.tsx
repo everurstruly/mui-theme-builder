@@ -7,7 +7,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import ThemeSelect from "../ToolBar/ThemeSelect";
 import { HelpOutlineOutlined, ViewAgendaOutlined } from "@mui/icons-material";
 import { Button, Stack } from "@mui/material";
-import { headerHeightCss } from "../Editor.constants";
+import { headerHeightCss } from "../constants";
 import { styled } from "@mui/material/styles";
 
 export default function EditorMobileHeader() {

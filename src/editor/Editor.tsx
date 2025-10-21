@@ -1,14 +1,13 @@
 import EditorActivitiesPanel from "./ActivitiesPanel";
 import EditorToolBar from "./ToolBar";
 import EditorCanvas from "./Canvas";
-import EditorPropertiesPanel, {
-  editorPropertiesPanelWidth,
-} from "./PropertiesPanel";
+import EditorPropertiesPanel from "./PropertiesPanel";
 import EditorPropertiesDrawerToggle from "./PropertiesPanel/DrawerToggle";
 import EditorMobileHeader from "./MobileHeader";
-import { Stack } from "@mui/material";
-import { headerHeightCss } from "./Editor.constants";
 import useEditorStore from "./Editor.store";
+import { Stack } from "@mui/material";
+import { headerHeightCss } from "./constants";
+import { editorPropertiesPanelWidth } from "./PropertiesPanel/constants";
 
 export default function Editor() {
   const isPropertiesPanelVisible = useEditorStore((state) => {
