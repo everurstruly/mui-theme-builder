@@ -1,25 +1,29 @@
 import * as React from "react";
-import { Tab, Tabs, Box, ToggleButtonGroup, ToggleButton } from "@mui/material";
-import layoutStyles from "../layout-styles";
+import { Tab, Tabs, Box } from "@mui/material";
 import CodeWindow from "../CodeWindow";
+import type { Theme } from "@mui/material/styles";
 
 type CanvasPropertiesPanelProps = {
-  isShowing: boolean;
+  isVisible: boolean;
+  styles?: {
+    root: (theme: Theme) => React.CSSProperties;
+  };
 };
 
 export default function CanvasPropertiesPanel({
-  isShowing,
+  isVisible: isShowing,
+  styles,
 }: CanvasPropertiesPanelProps) {
   const [value, setValue] = React.useState(0);
-  const [design, setDesign] = React.useState(() => ["mui"]);
+  // const [design, setDesign] = React.useState(() => ["mui"]);
 
-  const handleDesign = (
-    event: React.MouseEvent<HTMLElement>,
-    newDesign: string[]
-  ) => {
-    void event;
-    setDesign(newDesign);
-  };
+  // const handleDesign = (
+  //   event: React.MouseEvent<HTMLElement>,
+  //   newDesign: string[]
+  // ) => {
+  //   void event;
+  //   setDesign(newDesign);
+  // };
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     void event;
@@ -32,28 +36,27 @@ export default function CanvasPropertiesPanel({
 
   return (
     <Box
-      sx={{
-        ...layoutStyles.properties,
-        display: "flex",
+      sx={(theme) => ({
+        ...styles?.root(theme),
         flexDirection: "column",
         borderLeft: 1,
         borderColor: "divider",
-      }}
+      })}
     >
-      <ToggleButtonGroup
+      {/* <ToggleButtonGroup
         value={design}
         onChange={handleDesign}
         aria-label="design"
-        color="primary"
         exclusive
+        hidden={true}
       >
         <ToggleButton
           sx={{
             borderRadius: "0",
             paddingInline: "1rem",
             flex: 1,
-            minHeight: 54,
-            height: 54,
+            minHeight: 40,
+            height: 40,
             paddingBlock: 2,
             borderLeft: "none",
           }}
@@ -68,8 +71,8 @@ export default function CanvasPropertiesPanel({
             borderRadius: "0",
             paddingInline: "1rem",
             flex: 1,
-            minHeight: 54,
-            height: 54,
+            minHeight: 40,
+            height: 40,
             paddingBlock: 2,
           }}
           value="ios"
@@ -77,7 +80,22 @@ export default function CanvasPropertiesPanel({
         >
           Ios
         </ToggleButton>
-      </ToggleButtonGroup>
+
+        <ToggleButton
+          sx={{
+            borderRadius: "0",
+            paddingInline: "1rem",
+            flex: 1,
+            minHeight: 40,
+            height: 40,
+            paddingBlock: 2,
+          }}
+          value="ios"
+          aria-label="ios"
+        >
+          Ios
+        </ToggleButton>
+      </ToggleButtonGroup> */}
 
       <CodeWindow />
 

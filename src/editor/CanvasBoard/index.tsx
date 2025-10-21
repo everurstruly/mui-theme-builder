@@ -1,3 +1,4 @@
+import layoutStyles from "../layout-styles";
 import CanvasBoardFrames from "./frames";
 import ScreenSizeToggleGroup from "./ScreenSizeToggleGroup";
 // import PropertiesPanelSwitch from "./PropertiesPanelSwitch";
@@ -10,21 +11,25 @@ import { Box } from "@mui/material";
 
 export default function CanvasBoard() {
   return (
-    <Box sx={{ px: 1.5, py: 1.5, flexGrow: 1, display: "flex" }}>
+    <Box
+      sx={{
+        px: 1.5,
+        pb: 1.5,
+        display: "flex",
+        alignSelf: "stretch",
+      }}
+    >
       <Box
         sx={{
-          flexGrow: 1,
-          borderRadius: 3,
-          // border: 1,
-          borderColor: "divider",
-          shadow: 1,
-          p: 12,
           position: "relative",
+          maxWidth: "calc(100vw - 48px)",
+          ...layoutStyles.board,
         }}
       >
         <CanvasBoardFrames />
-        <ScreenSizeToggleGroup />
       </Box>
+
+      <ScreenSizeToggleGroup />
     </Box>
   );
 }

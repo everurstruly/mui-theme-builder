@@ -3,7 +3,8 @@ import ThemeActionsGroup from "./ThemeActionsGroup";
 import PropertiesPanelSwitch from "./PropertiesPanelSwitch";
 import layoutStyles from "../layout-styles";
 import DarkModeSwitch from "./DarkModeSwitch";
-import { AppBar, Box, Toolbar } from "@mui/material";
+import { AppBar, Box, Stack, Toolbar } from "@mui/material";
+import CopyThemeButton from "./CopyThemeButton";
 
 export type CanvasToolbarProps = {
   isShowingPropertyPanel: boolean;
@@ -15,22 +16,23 @@ export default function CanvasToolbar(props: CanvasToolbarProps) {
     <AppBar
       position="static"
       elevation={0}
-      sx={{
+      sx={(theme) => ({
         backgroundColor: "transparent",
         color: "text.primary",
         borderColor: "divider",
-      }}
+        display: "none",
+        [theme.breakpoints.up("md")]: {
+          display: "block",
+        },
+      })}
     >
       <Toolbar sx={{ px: "0 !important" }}>
-        <Box
-          sx={{
-            ...layoutStyles.render,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            columnGap: 2,
-            px: 1.7,
-          }}
+        <Stack
+          direction="row"
+          columnGap={2}
+          px={1.7}
+          justifyContent="space-between"
+          sx={{ maxWidth: layoutStyles.board.maxWidth }}
         >
           <Box
             sx={{
@@ -41,15 +43,22 @@ export default function CanvasToolbar(props: CanvasToolbarProps) {
           >
             <ThemeSelect />
             <ThemeActionsGroup />
+            <CopyThemeButton />
           </Box>
 
-          <DarkModeSwitch />
-
-          <PropertiesPanelSwitch
-            isShowingPropertyPanel={props.isShowingPropertyPanel}
-            handleShowPropertyPanel={props.handleShowPropertyPanel}
-          />
-        </Box>
+          <Stack
+            direction="row"
+            columnGap={1}
+            alignItems="center"
+            marginInline={"auto"}
+          >
+            <DarkModeSwitch />
+            <PropertiesPanelSwitch
+              isShowingPropertyPanel={props.isShowingPropertyPanel}
+              handleShowPropertyPanel={props.handleShowPropertyPanel}
+            />
+          </Stack>
+        </Stack>
       </Toolbar>
     </AppBar>
   );

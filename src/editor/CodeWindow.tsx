@@ -41,7 +41,7 @@ export default function CodeWindow() {
           },
         }}
       >
-        {codeWindowexpanded ? "Hide Code Window" : "Show Code Window"}
+        {codeWindowexpanded ? "Hide code window" : "Show code window"}
       </Button>
 
       <Collapse in={codeWindowexpanded} timeout="auto" unmountOnExit>

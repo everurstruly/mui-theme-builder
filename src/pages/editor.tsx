@@ -3,7 +3,7 @@ import CanvasToolbar from "../editor/CanvasToolbar";
 import CanvasBoard from "../editor/CanvasBoard";
 import Canvas from "../editor/Canvas";
 import layoutStyles from "../editor/layout-styles";
-import CanvasActivityPanel from "../editor/CanvasActivitiesPanel";
+import CanvasActivitiesPanel from "../editor/CanvasActivitiesPanel";
 import { useState } from "react";
 import { ScopedCssBaseline } from "@mui/material";
 
@@ -19,19 +19,19 @@ export default function EditorPage() {
       <ScopedCssBaseline enableColorScheme />
 
       <Canvas
-        sx={{
-          height: layoutStyles.canvas.height,
-        }}
-        renderActivityPanel={() => <CanvasActivityPanel />}
+        renderBoard={() => <CanvasBoard />}
+        renderActivityPanel={() => <CanvasActivitiesPanel />}
         renderToolbar={() => (
           <CanvasToolbar
             isShowingPropertyPanel={showPropertyPanel}
             handleShowPropertyPanel={handleShowPropertyPanel}
           />
         )}
-        renderBoard={() => <CanvasBoard />}
         renderProperties={() => (
-          <CanvasPropertiesPanel isShowing={showPropertyPanel} />
+          <CanvasPropertiesPanel
+            isVisible={showPropertyPanel}
+            styles={{ root: layoutStyles.properties }}
+          />
         )}
       />
     </>

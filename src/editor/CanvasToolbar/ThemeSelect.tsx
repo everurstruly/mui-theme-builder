@@ -1,36 +1,32 @@
 import * as React from "react";
-import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import type { SelectChangeEvent } from "@mui/material/Select";
 
 export default function ThemeSelect() {
-  const [age, setAge] = React.useState("");
+  const [selectedTheme, setSelectedTheme] = React.useState("google");
 
   const handleChange = (event: SelectChangeEvent) => {
-    setAge(event.target.value);
+    setSelectedTheme(event.target.value);
   };
 
   return (
-    <FormControl sx={{ m: 0, minWidth: 280 }} size="small">
-      <InputLabel id="demo-select-small-label">Age</InputLabel>
+    <FormControl sx={{ m: 0, width: 200 }} size="small">
       <Select
         labelId="demo-select-small-label"
         id="demo-select-small"
-        value={age}
-        label="Age"
+        size="small"
+        value={selectedTheme}
         onChange={handleChange}
         sx={{
           borderRadius: 2,
+          fontSize: ".875rem",
         }}
       >
-        <MenuItem value="">
-          <em>None</em>
-        </MenuItem>
-        <MenuItem value={10}>Ten</MenuItem>
-        <MenuItem value={20}>Twenty</MenuItem>
-        <MenuItem value={30}>Thirty</MenuItem>
+        <MenuItem value="google">Google</MenuItem>
+        <MenuItem value="material">Material Design</MenuItem>
+        <MenuItem value="ios">IOS</MenuItem>
       </Select>
     </FormControl>
   );

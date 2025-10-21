@@ -11,21 +11,30 @@ export default function PropertiesPanelSwitch(
 ) {
   return (
     <Button
-      size="small"
-      // color={props.isShowingPropertyPanel ? "inherit" : "primary"}
       color="inherit"
+      // variant="outlined"
       onClick={() =>
         props.handleShowPropertyPanel(!props.isShowingPropertyPanel)
       }
-      sx={{
-        minWidth: 0,
+      sx={(theme) => ({
         width: "auto",
-        paddingInline: 1,
-        minHeight: 38,
+        minWidth: 0,
+        height: "fit-content",
         boxShadow: "none",
-      }}
+        paddingInline: 1,
+        borderColor: "divider",
+        marginTop: 0.5, // some weird alignment issue without this
+
+        [theme.breakpoints.down("md")]: {
+          display: "none",
+        },
+      })}
     >
-      {props.isShowingPropertyPanel ? <FullscreenRounded /> : <TuneRounded />}
+      {props.isShowingPropertyPanel ? (
+        <FullscreenRounded sx={{ fontSize: 28 }} />
+      ) : (
+        <TuneRounded sx={{ fontSize: 28 }} />
+      )}
     </Button>
   );
 }
