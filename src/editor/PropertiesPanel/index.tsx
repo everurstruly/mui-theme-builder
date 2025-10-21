@@ -50,7 +50,7 @@ export default function EditorPropertiesPanel() {
           height: "82vh",
 
           [theme.breakpoints.up("sm")]: {
-            height: "unset",
+            height: "100%",
             width: editorPropertiesPanelWidth.upSm,
           },
 
