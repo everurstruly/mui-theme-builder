@@ -1,73 +1,38 @@
-# React + TypeScript + Vite
+# MUI Theme Builder 
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A visual editor for customizing MUI components with Material and iOS design. 
 
-Currently, two official plugins are available:
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+### Why
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+The existing MUI theme editors work, but they're not great to look at or use. I wanted something more minimal,visually appealing and accessible, that actually lets you build themes for both light and dark mode properly.
 
-## Expanding the ESLint configuration
+This isn't a ground-up rewrite — I've reused code from existing projects (shout out to the links below), but focused on improving:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **UX:** Cleaner interface, less clutter  
+- **iOS Support:** Added an iOS preset because why not  
+- **Dark Mode:** Actually works properly for both light and dark themes  
+- **Visual Design:** It doesn't look like shit  
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### Features
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- Visual theme editor for MUI components  
+- Material Design and iOS presets  
+- Proper light/dark mode theming  
+- Real-time preview  
+- Theme code export  
+- Built with MUI — it actually uses the components you're theming  
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Thanks To
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- **jnsahaj/tweakcn** — File structure inspiration  
+- **Zenoo/mui-theme-creator** — Core editor concepts  
+
+This started as a potential PR to existing projects, but my vision differed enough that it made sense to build it separately.
