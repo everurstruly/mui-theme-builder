@@ -33,12 +33,20 @@ const styles = {
   properties: (theme: Theme) => {
     return {
       width: "25vw",
-      maxWidth: "325px",
+      maxWidth: "340px",
       height: "100vh",
+      overflow: "auto",
+      WebkitOverflowScrolling: "touch",
       backgroundColor: "transparent",
       display: "none",
       [theme.breakpoints.up("md")]: {
         display: "flex",
+      },
+      // hide scrollbar but keep scrolling
+      msOverflowStyle: "none", // IE and Edge
+      scrollbarWidth: "none", // Firefox
+      "&::-webkit-scrollbar": {
+        display: "none", // WebKit
       },
     };
   },
