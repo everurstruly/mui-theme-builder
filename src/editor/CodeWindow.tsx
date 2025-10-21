@@ -23,6 +23,7 @@ export default function CodeWindow() {
         borderColor: "divider",
         maxHeight: "82vh",
         overflowY: "scroll",
+        flexShrink: 0,
       }}
     >
       <Button
@@ -44,7 +45,12 @@ export default function CodeWindow() {
         {codeWindowexpanded ? "Hide code window" : "Show code window"}
       </Button>
 
-      <Collapse in={codeWindowexpanded} timeout="auto" unmountOnExit>
+      <Collapse
+        in={codeWindowexpanded}
+        timeout="auto"
+        unmountOnExit
+        // sx={{ minHeight: codeWindowexpanded ? "600px" : "auto" }}
+      >
         <Divider />
 
         <Box
