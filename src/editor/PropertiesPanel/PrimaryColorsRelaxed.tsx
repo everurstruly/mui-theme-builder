@@ -1,6 +1,7 @@
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
-import { Box, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
+import { ContentCopyOutlined } from "@mui/icons-material";
 
 export default function PrimaryColorsRelaxed() {
   return (
@@ -8,8 +9,6 @@ export default function PrimaryColorsRelaxed() {
       sx={{
         bgcolor: "background.paper",
         position: "relative",
-        maxHeight: "calc(100vh - 120px)",
-        overflow: "auto",
         "& ul": { padding: 0 },
       }}
       subheader={<li />}
@@ -40,24 +39,36 @@ export default function PrimaryColorsRelaxed() {
                     alignItems: "center",
                     columnGap: 0.75,
                     fontWeight: 400,
-                    fontSize: 14,
+                    fontSize: 12,
                     color: "#555",
                   }}
                 >
                   <Typography
                     color="green"
-                    fontSize={10}
                     sx={{
                       backgroundColor: "#e0f8e0b7",
                       paddingInline: 0.75,
                       paddingBlock: 0.5,
                       borderRadius: 1,
+                      fontSize: 10,
                     }}
                   >
                     Default
                   </Typography>
 
-                  {`Item ${item}`}
+                  {/* <Button
+                    sx={{
+                      fontSize: 10,
+                      paddingInline: 0.5,
+                      paddingBlock: 0.5,
+                      minWidth: "auto",
+                      textTransform: "none",
+                    }}
+                  >
+                    Reset
+                  </Button> */}
+
+                  {`Background ${item}`}
                 </Typography>
 
                 <Box
@@ -65,11 +76,27 @@ export default function PrimaryColorsRelaxed() {
                     marginLeft: "auto",
                     display: "flex",
                     alignItems: "center",
-                    columnGap: 1.5,
+                    columnGap: 2,
+                    paddingInline: 1,
                   }}
                 >
-                  <Typography sx={{ fontSize: 12 }}>#02802e</Typography>
-                  <Box sx={{ width: 16, height: 16, bgcolor: "red" }}></Box>
+                  <Typography sx={{ fontSize: 12, cursor: "pointer" }}>
+                    #02802e
+                    <ContentCopyOutlined
+                      sx={{ marginInlineStart: 0.25, fontSize: 10 }}
+                    />
+                  </Typography>
+
+                  <Box
+                    sx={{
+                      width: 20,
+                      height: 20,
+                      bgcolor: "primary.main",
+                      borderRadius: 100,
+                      cursor: "pointer",
+                      // boxShadow: "0 0 0 1px rgba(0,0,0,0.1)",
+                    }}
+                  ></Box>
                 </Box>
               </ListItem>
             ))}

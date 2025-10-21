@@ -1,15 +1,9 @@
-import layoutStyles from "../layout-styles";
 import CanvasBoardFrames from "./frames";
 import ScreenSizeToggleGroup from "./ScreenSizeToggleGroup";
-// import PropertiesPanelSwitch from "./PropertiesPanelSwitch";
 import { Box } from "@mui/material";
+import { canvasHeightCss } from "../Editor.constants";
 
-// export type CanvasBoardProps = {
-// isShowingPropertyPanel: boolean;
-// handleShowPropertyPanel: (value: boolean) => void;
-// };
-
-export default function CanvasBoard() {
+export default function EditorCanvas() {
   return (
     <Box
       sx={{
@@ -22,8 +16,13 @@ export default function CanvasBoard() {
       <Box
         sx={{
           position: "relative",
+          paddingBottom: 10,
           maxWidth: "calc(100vw - 48px)",
-          ...layoutStyles.board,
+          flexGrow: 1,
+          backgroundColor: "transparent",
+          marginInline: "auto",
+          height: canvasHeightCss,
+          overflow: "auto",
         }}
       >
         <CanvasBoardFrames />

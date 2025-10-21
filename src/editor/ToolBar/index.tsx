@@ -1,17 +1,11 @@
 import ThemeSelect from "./ThemeSelect";
 import ThemeActionsGroup from "./ThemeActionsGroup";
 import PropertiesPanelSwitch from "./PropertiesPanelSwitch";
-import layoutStyles from "../layout-styles";
 import DarkModeSwitch from "./DarkModeSwitch";
-import { AppBar, Box, Stack, Toolbar } from "@mui/material";
 import CopyThemeButton from "./CopyThemeButton";
+import { AppBar, Box, Stack, Toolbar } from "@mui/material";
 
-export type CanvasToolbarProps = {
-  isShowingPropertyPanel: boolean;
-  handleShowPropertyPanel: (value: boolean) => void;
-};
-
-export default function CanvasToolbar(props: CanvasToolbarProps) {
+export default function EditorToolBar() {
   return (
     <AppBar
       position="static"
@@ -29,10 +23,9 @@ export default function CanvasToolbar(props: CanvasToolbarProps) {
       <Toolbar sx={{ px: "0 !important" }}>
         <Stack
           direction="row"
+          justifyContent="space-between"
           columnGap={2}
           px={1.7}
-          justifyContent="space-between"
-          sx={{ maxWidth: layoutStyles.board.maxWidth }}
         >
           <Box
             sx={{
@@ -53,10 +46,7 @@ export default function CanvasToolbar(props: CanvasToolbarProps) {
             marginInline={"auto"}
           >
             <DarkModeSwitch />
-            <PropertiesPanelSwitch
-              isShowingPropertyPanel={props.isShowingPropertyPanel}
-              handleShowPropertyPanel={props.handleShowPropertyPanel}
-            />
+            <PropertiesPanelSwitch />
           </Stack>
         </Stack>
       </Toolbar>

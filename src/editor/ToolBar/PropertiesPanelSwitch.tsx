@@ -1,21 +1,27 @@
+import useEditorStore from "../Editor.store";
 import { FullscreenRounded, TuneRounded } from "@mui/icons-material";
 import { Button } from "@mui/material";
 
-type PropertiesPanelSwitchProps = {
-  isShowingPropertyPanel: boolean;
-  handleShowPropertyPanel: (show: boolean) => void;
-};
+export default function PropertiesPanelSwitch() {
+  const withHidePanel = useEditorStore((state) => state.hidePanel);
+  const withShowPanel = useEditorStore((state) => state.showPanel);
+  const isPanelVisible = useEditorStore(
+    (state) => !state.hiddenPanels.includes("properties")
+  );
 
-export default function PropertiesPanelSwitch(
-  props: PropertiesPanelSwitchProps
-) {
+  const handleDisplayPropertyPanel = () => {
+    if (!isPanelVisible) {
+      withShowPanel("properties");
+    } else {
+      withHidePanel("properties");
+    }
+  };
+
   return (
     <Button
       color="inherit"
       // variant="outlined"
-      onClick={() =>
-        props.handleShowPropertyPanel(!props.isShowingPropertyPanel)
-      }
+      onClick={() => handleDisplayPropertyPanel()}
       sx={(theme) => ({
         width: "auto",
         minWidth: 0,
@@ -30,7 +36,7 @@ export default function PropertiesPanelSwitch(
         },
       })}
     >
-      {props.isShowingPropertyPanel ? (
+      {isPanelVisible ? (
         <FullscreenRounded sx={{ fontSize: 28 }} />
       ) : (
         <TuneRounded sx={{ fontSize: 28 }} />
