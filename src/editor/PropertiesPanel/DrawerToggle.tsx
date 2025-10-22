@@ -26,16 +26,10 @@ export default function EditorPropertiesDrawerToggle() {
         display: isPanelVisible ? "none" : "flex",
         zIndex: (theme) => theme.zIndex.drawer - 1,
         position: "fixed",
-        right: 14,
-        bottom: 10,
+        right: `calc(var(--canvas-brim-padding) + .5rem)`,
+        bottom: `calc(var(--canvas-brim-padding) + .25rem)`,
 
         [theme.breakpoints.up("md")]: {
-          bottom: "revert",
-          top: 14,
-          right: 12,
-        },
-
-        [theme.breakpoints.up("lg")]: {
           display: "none",
         },
       })}

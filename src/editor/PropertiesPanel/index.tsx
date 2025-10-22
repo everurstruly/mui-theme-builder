@@ -7,7 +7,6 @@ import ColorProperty from "./Color";
 import { Tab, Tabs, Box } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useMediaQuery } from "@mui/material";
-import { editorPropertiesPanelWidth } from "./constants";
 
 export default function EditorPropertiesPanel() {
   const theme = useTheme();
@@ -43,14 +42,16 @@ export default function EditorPropertiesPanel() {
 
         "& .MuiDrawer-paper": {
           height: "82vh",
+          width: "var(--properties-panel-width)",
 
           [theme.breakpoints.up("sm")]: {
             height: "100%",
-            width: editorPropertiesPanelWidth.upSm,
           },
 
-          [theme.breakpoints.up("md")]: {
-            width: editorPropertiesPanelWidth.upMd,
+          [theme.breakpoints.up("md")]: {},
+
+          [theme.breakpoints.up("lg")]: {
+            position: "static",
           },
         },
 
