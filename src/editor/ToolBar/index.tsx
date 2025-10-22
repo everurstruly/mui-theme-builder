@@ -1,9 +1,11 @@
 import ThemeSelect from "./ThemeSelect";
-import ThemeActionsGroup from "./ThemeActionsGroup";
+import ThemeActionsGroup from "./ChangesHistoryActions";
 import PropertiesPanelSwitch from "./PropertiesPanelSwitch";
-import DarkModeSwitch from "./DarkModeSwitch";
 import CopyThemeButton from "./CopyThemeButton";
+import SaveThemeButton from "./SaveThemeButton";
 import { AppBar, Box, Stack, Toolbar } from "@mui/material";
+import PreviewsPanelToggle from "./PreviewsPanelToggle";
+import MinimizedPreviewsPanelPopOver from "../PreviewsPanel/FramesPopOver";
 
 export default function EditorToolBar() {
   return (
@@ -11,21 +13,26 @@ export default function EditorToolBar() {
       position="static"
       elevation={0}
       sx={(theme) => ({
-        backgroundColor: "transparent",
         color: "text.primary",
+        backgroundColor: "transparent",
+        borderBottom: 1,
         borderColor: "divider",
         display: "none",
+
         [theme.breakpoints.up("md")]: {
           display: "block",
         },
       })}
     >
-      <Toolbar sx={{ px: "0 !important" }}>
+      <Toolbar
+        variant="dense"
+        sx={{ px: "0 !important", minHeight: 46, height: 46 }}
+      >
         <Stack
+          flexGrow={1}
           direction="row"
           justifyContent="space-between"
-          columnGap={2}
-          px={1.7}
+          px={1}
         >
           <Box
             sx={{
@@ -34,18 +41,15 @@ export default function EditorToolBar() {
               columnGap: 1,
             }}
           >
+            <PreviewsPanelToggle />
+            <MinimizedPreviewsPanelPopOver />
             <ThemeSelect />
-            <ThemeActionsGroup />
             <CopyThemeButton />
+            <ThemeActionsGroup />
+            <SaveThemeButton />
           </Box>
 
-          <Stack
-            direction="row"
-            columnGap={1}
-            alignItems="center"
-            marginInline={"auto"}
-          >
-            <DarkModeSwitch />
+          <Stack direction="row" columnGap={1} alignItems="center">
             <PropertiesPanelSwitch />
           </Stack>
         </Stack>

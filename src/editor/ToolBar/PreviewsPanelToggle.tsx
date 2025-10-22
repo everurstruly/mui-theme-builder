@@ -1,26 +1,26 @@
 import useEditorStore from "../Editor.store";
-import { FullscreenRounded, TuneRounded } from "@mui/icons-material";
+import { MenuOpenOutlined, Grid3x3Outlined } from "@mui/icons-material";
 import { Button } from "@mui/material";
 
-export default function PropertiesPanelSwitch() {
+export default function PreviewsPanelToggle() {
   const withHidePanel = useEditorStore((state) => state.hidePanel);
   const withShowPanel = useEditorStore((state) => state.showPanel);
   const isPanelVisible = useEditorStore(
-    (state) => !state.hiddenPanels.includes("properties")
+    (state) => !state.hiddenPanels.includes("activities")
   );
 
   const handleDisplayPropertyPanel = () => {
     if (!isPanelVisible) {
-      withShowPanel("properties");
+      withShowPanel("activities");
     } else {
-      withHidePanel("properties");
+      withHidePanel("activities");
     }
   };
 
   return (
     <Button
-      size="small"
       color="inherit"
+      variant={isPanelVisible ? "outlined" : "contained"}
       onClick={() => handleDisplayPropertyPanel()}
       sx={(theme) => ({
         width: "auto",
@@ -39,13 +39,11 @@ export default function PropertiesPanelSwitch() {
     >
       {isPanelVisible ? (
         <>
-          <FullscreenRounded sx={{ fontSize: 20, marginRight: 0.5 }} /> Wider
-          Canvas
+          <MenuOpenOutlined sx={{ fontSize: 20 }} />
         </>
       ) : (
         <>
-          <TuneRounded sx={{ fontSize: 20, marginRight: 0.5 }} /> Theming
-          Options
+          <Grid3x3Outlined sx={{ fontSize: 20 }} />
         </>
       )}
     </Button>

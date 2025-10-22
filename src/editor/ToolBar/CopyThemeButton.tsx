@@ -35,19 +35,17 @@ export default function CopyThemeDialog() {
       <Button
         value="copy"
         variant="outlined"
-        color="inherit"
+        color="primary"
+        size="small"
         aria-label="Copy and Implement Selected Theme"
         onClick={() => handleClickOpen()}
         sx={{
           display: "inline-flex",
           alignItems: "center",
           columnGap: 1,
-          lineHeight: "none",
-          fontSize: ".75rem",
-          fontWeight: 700,
-          textAlign: "start",
-          marginLeft: 1,
+          boxShadow: "none",
           textTransform: "none !important",
+          minWidth: "100px",
         }}
       >
         <FileCopyRounded sx={{ fontSize: 16 }} />
