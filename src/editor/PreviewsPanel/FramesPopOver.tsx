@@ -1,14 +1,19 @@
 import * as React from "react";
 import Popover from "@mui/material/Popover";
-import { Grid3x3 } from "@mui/icons-material";
-import { Box, IconButton } from "@mui/material";
+import { ArrowDropDownOutlined } from "@mui/icons-material";
+import { Box, Button } from "@mui/material";
 import ListSubheader from "@mui/material/ListSubheader";
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemButtonWithMenu from "../../../lib/components/ListItemButtonWithMenu";
+import useEditorStore from "../Editor.store";
 
-export default function FramesPopOver() {
+export default function MinimizedPreviewsPanelPopOver() {
+  const isActivityPanelVisible = useEditorStore((state) => {
+    return state.hiddenPanels.includes("activities") === false;
+  });
+
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
 
   const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -21,25 +26,36 @@ export default function FramesPopOver() {
 
   const open = Boolean(anchorEl);
 
+  if (isActivityPanelVisible) {
+    return null;
+  }
+
   return (
-    <Box onMouseEnter={handlePopoverOpen} onMouseLeave={handlePopoverClose}>
-      <IconButton
+    <Box>
+      <Button
         aria-owns={open ? "mouse-over-popover" : undefined}
         aria-haspopup="true"
-        sx={{ cursor: "pointer" }}
+        onClick={handlePopoverOpen}
+        sx={{
+          cursor: "pointer",
+          minWidth: "auto",
+          textTransform: "none",
+          fontSize: 12,
+          alignItems: "center",
+        }}
       >
-        <Grid3x3 />
-      </IconButton>
+        Examples <ArrowDropDownOutlined />
+      </Button>
 
       <Popover
         id="mouse-over-popover"
         disableRestoreFocus
         open={open}
-        anchorEl={anchorEl}
         onClose={handlePopoverClose}
+        anchorEl={anchorEl}
         anchorOrigin={{
-          vertical: "top",
-          horizontal: "right",
+          vertical: "bottom",
+          horizontal: "left",
         }}
         transformOrigin={{
           vertical: "top",
