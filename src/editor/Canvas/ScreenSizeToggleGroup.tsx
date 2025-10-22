@@ -4,10 +4,8 @@ import TvIcon from "@mui/icons-material/Tv";
 import PhoneAndroidIcon from "@mui/icons-material/PhoneAndroid";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
-import { useTheme } from "@mui/material";
 
 export default function ScreenSizeToggleGroup() {
-  const theme = useTheme();
   const [devices, setDevices] = React.useState(() => "phone");
 
   const handleDevice = (
@@ -22,20 +20,19 @@ export default function ScreenSizeToggleGroup() {
     <ToggleButtonGroup
       color="primary"
       value={devices}
+      size="small"
       exclusive
       onChange={handleDevice}
       aria-label="device"
       sx={{
-        backgroundColor: theme.palette.background.paper,
-        position: "fixed",
-        bottom: 0,
-        left: 4,
-
-        [theme.breakpoints.up("md")]: {
-          position: "absolute",
-          bottom: 0,
-          left: 0,
-        },
+        backgroundColor: "rgba(255, 255, 255, 0.4)",
+        backdropFilter: "blur(32px)",
+        position: "absolute",
+        left: "calc(var(--canvas-brim-padding) + 1px)",
+        bottom: "calc(var(--canvas-brim-padding) + 1px)",
+        overflow: "hidden",
+        borderStartEndRadius: 12,
+        borderEndEndRadius: 12,
 
         "& *": {
           fontSize: "1.25rem",
