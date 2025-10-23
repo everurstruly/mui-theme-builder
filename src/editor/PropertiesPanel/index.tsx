@@ -130,10 +130,11 @@ function CustomTabPanel(props: TabPanelProps) {
       hidden={value !== index}
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}
-      sx={{
-        maxHeight: "100%",
-        overflow: "auto",
-      }}
+      sx={(theme) => ({
+        [theme.breakpoints.down("sm")]: {
+          paddingInline: theme.spacing(2),
+        },
+      })}
       {...other}
     >
       {value === index && children}
