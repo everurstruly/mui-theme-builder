@@ -17,7 +17,7 @@ export default function CanvasBodyZoomPan({
     isDragging,
     translatePosition,
     handleWheel,
-    handleDoubleClick,
+    // handleDoubleClick,
     handlePointerDown,
     handlePointerMove,
     handlePointerUp,
@@ -28,7 +28,7 @@ export default function CanvasBodyZoomPan({
       <Box
         ref={containerRef}
         onWheel={handleWheel}
-        onDoubleClick={handleDoubleClick}
+        // onDoubleClick={handleDoubleClick}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
