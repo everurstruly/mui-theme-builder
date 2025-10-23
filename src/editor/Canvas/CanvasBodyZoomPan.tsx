@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { Box } from "@mui/material";
-import useZoomPanStore from "./useZoomPanStore";
+import useZoomPanStore from "./zoomPanStore";
 import ZoomPanControls from "./ZoomPanControls";
 import CanvasViewportControls from "./CanvasViewportControls";
 
