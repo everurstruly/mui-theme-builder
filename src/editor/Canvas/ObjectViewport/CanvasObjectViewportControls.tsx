@@ -3,13 +3,13 @@ import TvIcon from "@mui/icons-material/Tv";
 import PhoneAndroidIcon from "@mui/icons-material/PhoneAndroid";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
-import useCanvasViewport, {
+import useCanvasObjectViewport, {
   type CanvasViewportPreset,
-} from "./useCanvasViewport";
+} from "./useCanvasObjectViewport";
 import { TabletAndroidOutlined } from "@mui/icons-material";
 
-export default function CanvasViewportControls() {
-  const { preset: deviceInView, viewPreset } = useCanvasViewport();
+export default function CanvasObjectViewportControls() {
+  const { preset: deviceInView, viewPreset } = useCanvasObjectViewport();
 
   const handleDevice = (
     event: React.MouseEvent<HTMLElement>,

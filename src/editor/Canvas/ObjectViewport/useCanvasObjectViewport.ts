@@ -3,7 +3,7 @@ import { create } from "zustand";
 import { useCallback, useRef, useLayoutEffect } from "react";
 import { combine } from "zustand/middleware";
 
-export default function useCanvasViewport() {
+export default function useCanvasObjectViewport() {
   const containerRef = useRef<HTMLDivElement>(null);
   const hiddenPanels = useEditorStore((state) => state.hiddenPanels);
   const scale = useCanvasViewportStore((state) => state.scale);

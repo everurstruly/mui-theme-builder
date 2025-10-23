@@ -1,6 +1,6 @@
 import { Box } from "@mui/material";
 import React from "react";
-import CanvasViewportControls from "../Viewport/CanvasViewportControls";
+import CanvasObjectViewportControls from "../ObjectViewport/CanvasObjectViewportControls";
 
 type CanvasBodyContainContentProps = {
   children: React.ReactNode;
@@ -56,7 +56,7 @@ export default function CanvasBodyContainContent({
         {children}
       </Box>
 
-      <CanvasViewportControls />
+      <CanvasObjectViewportControls />
     </>
   );
 }

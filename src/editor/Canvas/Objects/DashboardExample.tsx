@@ -1,8 +1,8 @@
 import { Box, Typography } from "@mui/material";
-import useCanvasViewport from "../Viewport/useCanvasViewport";
+import useCanvasObjectViewport from "../ObjectViewport/useCanvasObjectViewport";
 
 export default function DashboardExample() {
-  const { width, height } = useCanvasViewport();
+  const { width, height } = useCanvasObjectViewport();
 
   return (
     <Box

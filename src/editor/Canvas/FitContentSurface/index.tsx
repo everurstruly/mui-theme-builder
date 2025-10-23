@@ -1,7 +1,7 @@
 import React from "react";
 import { Box } from "@mui/material";
-import ScreenSizeControls from "../Viewport/CanvasViewportControls";
-import useCanvasViewport from "../Viewport/useCanvasViewport";
+import ScreenSizeControls from "../ObjectViewport/CanvasObjectViewportControls";
+import useCanvasObjectViewport from "../ObjectViewport/useCanvasObjectViewport";
 
 type CanvasBodyFitContentProps = {
   children: React.ReactNode;
@@ -10,7 +10,7 @@ type CanvasBodyFitContentProps = {
 export default function CanvasBodyFitContent({
   children,
 }: CanvasBodyFitContentProps) {
-  const { containerRef, scale, width } = useCanvasViewport();
+  const { containerRef, scale, width } = useCanvasObjectViewport();
 
   return (
     <>
