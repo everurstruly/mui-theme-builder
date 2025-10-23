@@ -129,7 +129,7 @@ const useCanvasViewportStore = create(
           }
 
           // Clamp scale to reasonable limits
-          const MIN_SCALE = 0.5; // shrink no smaller than 50%
+          const MIN_SCALE = 0.8; // shrink no smaller than 80%
           const MAX_SCALE = 1; // grow no larger than original size
           scale = Math.min(Math.max(scale, MIN_SCALE), MAX_SCALE);
 
