@@ -5,11 +5,8 @@ import EditorPropertiesDrawerToggle from "./PropertiesPanel/DrawerToggle";
 import EditorHeader from "./Header";
 import EditorPreviewsPanel from "./PreviewsPanel";
 import { Box, Stack } from "@mui/material";
-import useResponsivePanelsPlacements from "./useResponsivePanelsPlacements";
 
 export default function Editor() {
-  useResponsivePanelsPlacements();
-
   return (
     <Box
       sx={{
@@ -26,8 +23,6 @@ export default function Editor() {
 
         "--canvas-brim-padding": {
           xs: "0px",
-          // xs: "6px",
-          // sm: "10px",
         },
 
         "--previews-panel-width": {
@@ -50,7 +45,6 @@ export default function Editor() {
       }}
     >
       <EditorHeader />
-
       <Stack
         direction="row"
         flexGrow={1}
