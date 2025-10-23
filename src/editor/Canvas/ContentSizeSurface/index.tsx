@@ -1,6 +1,6 @@
 import { Box } from "@mui/material";
 import React from "react";
-import CanvasViewportControls from "./Viewport/CanvasViewportControls";
+import CanvasViewportControls from "../Viewport/CanvasViewportControls";
 
 type CanvasBodyContainContentProps = {
   children: React.ReactNode;
