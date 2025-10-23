@@ -10,6 +10,9 @@ export function useCanvasZoomPanSurface(
   const containerRef = externalRef ?? internalRef;
 
   const [isDragging, setIsDragging] = useState(false);
+  // Ref mirror of isDragging to use inside high-frequency handlers and avoid
+  // reading stale state or causing extra renders while dragging.
+  const isDraggingRef = useRef(false);
   const dragStart = useRef<{
     x: number;
     y: number;
@@ -66,6 +69,7 @@ export function useCanvasZoomPanSurface(
     if (!containerRef.current) return;
     // record that we're dragging and capture the pointer
     setIsDragging(true);
+    isDraggingRef.current = true;
 
     // record the currently applied translate (includes alignment + pan)
     const applied = getTranslatePosition();
@@ -79,7 +83,7 @@ export function useCanvasZoomPanSurface(
   };
 
   const handlePointerMove = (e: React.PointerEvent) => {
-    if (!isDragging || !dragStart.current) return;
+    if (!isDraggingRef.current || !dragStart.current) return;
 
     // delta from drag start
     const dx = e.clientX - dragStart.current.x;
@@ -110,6 +114,7 @@ export function useCanvasZoomPanSurface(
     if (!containerRef.current) return;
     containerRef.current.releasePointerCapture(e.pointerId);
     setIsDragging(false);
+    isDraggingRef.current = false;
     dragStart.current = null;
   };
 
