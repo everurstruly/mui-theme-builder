@@ -1,6 +1,56 @@
+import useEditorStore from "../Editor.store";
 import { create } from "zustand";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useRef, useLayoutEffect } from "react";
 import { combine } from "zustand/middleware";
+
+export default function useCanvasViewport() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const hiddenPanels = useEditorStore((state) => state.hiddenPanels);
+  const scale = useCanvasViewportStore((state) => state.scale);
+  const preset = useCanvasViewportStore((state) => state.preset);
+  const width = useCanvasViewportStore((state) => state.width);
+  const height = useCanvasViewportStore((state) => state.height);
+  const viewSize = useCanvasViewportStore((state) => state.viewSize);
+  const viewPreset = useCanvasViewportStore((state) => state.viewPreset);
+  const scaleView = useCanvasViewportStore((state) => state.scaleView);
+
+  const resize = useCallback(() => {
+    if (!containerRef.current) {
+      return;
+    }
+
+    const containerWidth = containerRef.current.offsetWidth;
+    const height = containerRef.current.offsetHeight;
+
+    viewSize({ width, height });
+    scaleView({ containerWidth });
+  }, [viewSize, scaleView, width]);
+
+  useLayoutEffect(() => {
+    resize();
+    window.addEventListener("load", resize);
+    window.addEventListener("resize", resize);
+
+    return () => {
+      window.removeEventListener("load", resize);
+      window.removeEventListener("resize", resize);
+    };
+  }, [resize]);
+
+  useLayoutEffect(() => {
+    resize();
+  }, [hiddenPanels, resize]);
+
+  return {
+    containerRef,
+    scale,
+    width,
+    height,
+    preset,
+    viewPreset,
+    viewSize,
+  };
+}
 
 const canvasViewportPresets = {
   phone: { w: 375, h: 812 },
@@ -61,22 +111,26 @@ const useCanvasViewportStore = create(
         });
       },
 
-      scaleView: ({
-        containerWidth,
-        contentWidth,
-      }: {
-        containerWidth: number;
-        contentWidth: number;
-      }) => {
+      scaleView: ({ containerWidth }: { containerWidth: number }) => {
         set((state) => {
-          if (!contentWidth) return state;
+          const contentWidth = state.width;
+          const contentHeight = state.height;
 
-          // Raw scale to fit container
+          if (!contentWidth || !contentHeight) return state;
+
+          // Base scale on container width
           let scale = containerWidth / contentWidth;
 
-          // Clamp to avoid too small or too big
-          const MIN_SCALE = 0.5; // content won't shrink below 60%
-          const MAX_SCALE = 1.4; // content won't grow above 140%
+          // If height multiplied by scale exceeds container, reduce scale
+          const containerHeight =
+            containerWidth * (contentHeight / contentWidth); // approximate available height
+          if (contentHeight * scale > containerHeight) {
+            scale = containerHeight / contentHeight;
+          }
+
+          // Clamp scale to reasonable limits
+          const MIN_SCALE = 0.5; // shrink no smaller than 50%
+          const MAX_SCALE = 1; // grow no larger than original size
           scale = Math.min(Math.max(scale, MIN_SCALE), MAX_SCALE);
 
           return { ...state, scale };
@@ -99,47 +153,3 @@ const useCanvasViewportStore = create(
     })
   )
 );
-
-export default function useCanvasViewport() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const scale = useCanvasViewportStore((state) => state.scale);
-  const preset = useCanvasViewportStore((state) => state.preset);
-  const width = useCanvasViewportStore((state) => state.width);
-  const height = useCanvasViewportStore((state) => state.height);
-  const viewSize = useCanvasViewportStore((state) => state.viewSize);
-  const viewPreset = useCanvasViewportStore((state) => state.viewPreset);
-  const scaleView = useCanvasViewportStore((state) => state.scaleView);
-
-  const resize = useCallback(() => {
-    if (!containerRef.current) {
-      return;
-    }
-
-    const containerWidth = containerRef.current.offsetWidth;
-    const height = containerRef.current.offsetHeight;
-
-    viewSize({ width, height });
-    scaleView({ containerWidth, contentWidth: width });
-  }, [viewSize, scaleView, width]);
-
-  useEffect(() => {
-    resize();
-    window.addEventListener("load", resize);
-    window.addEventListener("resize", resize);
-
-    return () => {
-      window.removeEventListener("load", resize);
-      window.removeEventListener("resize", resize);
-    };
-  }, [resize]);
-
-  return {
-    containerRef,
-    scale,
-    width,
-    height,
-    preset,
-    viewPreset,
-    viewSize,
-  };
-}
