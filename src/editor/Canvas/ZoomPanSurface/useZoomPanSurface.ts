@@ -13,6 +13,7 @@ export function useCanvasZoomPanSurface(
   const dragStart = useRef<{
     x: number;
     y: number;
+    // ox/oy store the applied translate origin (alignment + pan) at drag start
     ox: number;
     oy: number;
   } | null>(null);
@@ -32,20 +33,13 @@ export function useCanvasZoomPanSurface(
   const getTranslatePosition = useCallback(() => {
     const containerWidth = containerRef.current?.clientWidth || 0;
     const contentWidth = width || 0;
-    let x = pan.x;
-
-    switch (alignedPosition) {
-      case "start":
-        x = 0;
-        break;
-      case "center":
-        x = (containerWidth - contentWidth * scale) / 2;
-        break;
-      default:
-        break;
-    }
-
-    return { x, y: pan.y };
+    return computeTranslate(
+      containerWidth,
+      contentWidth,
+      scale,
+      pan,
+      alignedPosition
+    );
   }, [alignedPosition, pan, scale, width, containerRef]);
 
   const [translatePosition, setTranslatePosition] =
@@ -70,16 +64,46 @@ export function useCanvasZoomPanSurface(
   /** Handle panning */
   const handlePointerDown = (e: React.PointerEvent) => {
     if (!containerRef.current) return;
+    // record that we're dragging and capture the pointer
     setIsDragging(true);
-    dragStart.current = { x: e.clientX, y: e.clientY, ox: pan.x, oy: pan.y };
+
+    // record the currently applied translate (includes alignment + pan)
+    const applied = getTranslatePosition();
+    dragStart.current = {
+      x: e.clientX,
+      y: e.clientY,
+      ox: applied.x,
+      oy: applied.y,
+    };
     containerRef.current.setPointerCapture(e.pointerId);
   };
 
   const handlePointerMove = (e: React.PointerEvent) => {
     if (!isDragging || !dragStart.current) return;
+
+    // delta from drag start
     const dx = e.clientX - dragStart.current.x;
     const dy = e.clientY - dragStart.current.y;
-    setPan(dragStart.current.ox + dx, dragStart.current.oy + dy);
+
+    // new applied translate (what the UI should show) = originApplied + delta
+    const newAppliedX = dragStart.current.ox + dx;
+    const newAppliedY = dragStart.current.oy + dy;
+
+    // compute alignment offset (what alignment contributes when pan === 0)
+    const containerWidth = containerRef.current?.clientWidth || 0;
+    const contentWidth = width || 0;
+    const alignOffset = computeAlignmentOffset(
+      containerWidth,
+      contentWidth,
+      scale,
+      alignedPosition
+    );
+
+    // convert applied translate back to the pan value expected by the store
+    const newPanX = newAppliedX - alignOffset.x;
+    const newPanY = newAppliedY; // vertical alignment not currently modified
+
+    setPan(newPanX, newPanY);
   };
 
   const handlePointerUp = (e: React.PointerEvent) => {
@@ -134,4 +158,49 @@ export function useCanvasZoomPanSurface(
     handlePointerMove,
     handlePointerUp,
   };
+}
+
+/**
+ * Compute the translate position (applied transform) given inputs.
+ * This is a pure helper so it can be tested independently.
+ */
+function computeTranslate(
+  containerWidth: number,
+  contentWidth: number,
+  scale: number,
+  pan: { x: number; y: number },
+  alignment: string
+) {
+  let x = pan.x;
+
+  switch (alignment) {
+    case "start":
+      x = 0;
+      break;
+    case "center":
+      x = (containerWidth - contentWidth * scale) / 2;
+      break;
+    default:
+      break;
+  }
+
+  return { x, y: pan.y };
+}
+
+/**
+ * Compute alignment offset (applied translate when pan === {x:0,y:0}).
+ */
+function computeAlignmentOffset(
+  containerWidth: number,
+  contentWidth: number,
+  scale: number,
+  alignment: string
+) {
+  return computeTranslate(
+    containerWidth,
+    contentWidth,
+    scale,
+    { x: 0, y: 0 },
+    alignment
+  );
 }
