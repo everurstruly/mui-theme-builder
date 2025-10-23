@@ -27,21 +27,23 @@ export default function CanvasViewportControls() {
       exclusive
       onChange={handleDevice}
       aria-label="device"
-      sx={{
-        backgroundColor: "rgba(255, 255, 255, 0.4)",
-        backdropFilter: "blur(32px)",
+      sx={(theme) => ({
         position: "absolute",
-        left: "calc(var(--canvas-brim-padding) + 6px)",
-        bottom: "calc(var(--canvas-brim-padding) + 2px)",
-        overflow: "hidden",
-        borderRadius: 2,
-        // borderStartEndRadius: 12,
-        // borderEndEndRadius: 12,
+        // left: "calc(var(--canvas-brim-padding) + .25rem)",
+        left: "50%",
+        transform: "translateX(-50%)",
+        bottom: "calc(var(--canvas-brim-padding) + .25rem)",
+        backgroundColor: "rgba(255, 255, 255, 0.5)",
+        backdropFilter: "blur(20px)",
 
-        "& *": {
-          fontSize: "1.25rem",
+        [theme.breakpoints.up("md")]: {
+          bottom: "calc(var(--canvas-brim-padding-md, 0px) + .5rem)",
         },
-      }}
+
+        "*": {
+          fontSize: 20,
+        },
+      })}
     >
       <PresetViewportToggleButton value="phone">
         <PhoneAndroidIcon />
@@ -66,7 +68,7 @@ function PresetViewportToggleButton({
   children: React.ReactNode;
 }) {
   return (
-    <ToggleButton value={value} aria-label={value} sx={{ border: "none" }}>
+    <ToggleButton value={value} aria-label={value}>
       {children}
     </ToggleButton>
   );
