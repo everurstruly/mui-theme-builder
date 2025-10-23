@@ -49,7 +49,7 @@ export default function Editor() {
         direction="row"
         flexGrow={1}
         minWidth={0}
-        height={`calc(100vh - var(--header-height) - 2px)`} // FIXME: 2px is a magic number that prevents overflow due to scrollbar/border I suspect
+        height={`calc(100dvh - var(--header-height) - 2px)`} // FIXME: 2px is a magic number that prevents overflow due to scrollbar/border I suspect
         overflow={"hidden"}
       >
         <EditorPreviewsPanel />
