@@ -29,14 +29,15 @@ export default function CanvasViewportControls() {
       aria-label="device"
       sx={(theme) => ({
         position: "absolute",
-        // left: "calc(var(--canvas-brim-padding) + .25rem)",
-        left: "50%",
-        transform: "translateX(-50%)",
+        left: "calc(var(--canvas-brim-padding) + .25rem)",
         bottom: "calc(var(--canvas-brim-padding) + .25rem)",
         backgroundColor: "rgba(255, 255, 255, 0.5)",
         backdropFilter: "blur(20px)",
 
         [theme.breakpoints.up("md")]: {
+          // left: "50%",
+          // transform: "translateX(-50%)",
+          left: "calc(var(--canvas-brim-padding) + .5rem)",
           bottom: "calc(var(--canvas-brim-padding-md, 0px) + .5rem)",
         },
 

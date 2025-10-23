@@ -1,4 +1,4 @@
-import useEditorStore from "../Editor.store";
+import useEditorStore from "../../Editor.store";
 import { create } from "zustand";
 import { useCallback, useRef, useLayoutEffect } from "react";
 import { combine } from "zustand/middleware";
