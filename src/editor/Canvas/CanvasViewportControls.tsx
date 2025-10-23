@@ -1,26 +1,29 @@
 import * as React from "react";
-import LaptopIcon from "@mui/icons-material/Laptop";
 import TvIcon from "@mui/icons-material/Tv";
 import PhoneAndroidIcon from "@mui/icons-material/PhoneAndroid";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
+import useCanvasViewport, {
+  type CanvasViewportPreset,
+} from "./useCanvasViewport";
+import { TabletAndroidOutlined } from "@mui/icons-material";
 
-export default function ScreenSizeControls() {
-  const [devices, setDevices] = React.useState(() => "phone");
+export default function CanvasViewportControls() {
+  const { preset: deviceInView, viewPreset } = useCanvasViewport();
 
   const handleDevice = (
     event: React.MouseEvent<HTMLElement>,
-    device: string
+    device: typeof deviceInView
   ) => {
     void event;
-    setDevices(device);
+    viewPreset(device);
   };
 
   return (
     <ToggleButtonGroup
       color="primary"
-      value={devices}
       size="small"
+      value={deviceInView}
       exclusive
       onChange={handleDevice}
       aria-label="device"
@@ -40,17 +43,31 @@ export default function ScreenSizeControls() {
         },
       }}
     >
-      <ToggleButton value="laptop" aria-label="laptop">
-        <LaptopIcon />
-      </ToggleButton>
-
-      <ToggleButton value="tv" aria-label="tv">
-        <TvIcon />
-      </ToggleButton>
-
-      <ToggleButton value="phone" aria-label="phone">
+      <PresetViewportToggleButton value="phone">
         <PhoneAndroidIcon />
-      </ToggleButton>
+      </PresetViewportToggleButton>
+
+      <PresetViewportToggleButton value="tablet">
+        <TabletAndroidOutlined />
+      </PresetViewportToggleButton>
+
+      <PresetViewportToggleButton value="laptop">
+        <TvIcon />
+      </PresetViewportToggleButton>
     </ToggleButtonGroup>
+  );
+}
+
+function PresetViewportToggleButton({
+  value,
+  children,
+}: {
+  value: CanvasViewportPreset;
+  children: React.ReactNode;
+}) {
+  return (
+    <ToggleButton value={value} aria-label={value} sx={{ border: "none" }}>
+      {children}
+    </ToggleButton>
   );
 }
