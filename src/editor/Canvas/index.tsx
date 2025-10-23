@@ -1,13 +1,13 @@
 import CanvasLayout from "./CanvasLayout";
 import DashboardExample from "./frames/DashboardExample";
-import CanvasBodyFitContent from "./CanvasBodyFitContent";
+import CanvasBodyZoomPan from "./CanvasBodyZoomPan";
 
 export default function EditorCanvas() {
   return (
     <CanvasLayout>
-      <CanvasBodyFitContent>
+      <CanvasBodyZoomPan>
         <DashboardExample />
-      </CanvasBodyFitContent>
+      </CanvasBodyZoomPan>
     </CanvasLayout>
   );
 }
