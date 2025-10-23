@@ -25,7 +25,7 @@ export default function CanvasBodyFitContent({
           justifyContent: "center",
           alignItems: "flex-start",
           position: "relative",
-          paddingTop: "4rem", // give more alignment freedom
+          paddingBlock: "5rem", // give more canvas panning freedom
         }}
       >
         <Box
