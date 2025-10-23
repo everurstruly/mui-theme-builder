@@ -16,7 +16,10 @@ export default function CanvasBodyFitContent({
 
   useLayoutEffect(() => {
     const resize = () => {
-      if (!containerRef.current) return;
+      if (!containerRef.current) {
+        return;
+      }
+
       const containerWidth = containerRef.current.offsetWidth;
       const newScale = Math.min(containerWidth / frameWidth, 1);
       setScale(newScale);
@@ -25,7 +28,7 @@ export default function CanvasBodyFitContent({
     resize();
     window.addEventListener("resize", resize);
     return () => window.removeEventListener("resize", resize);
-  }, []);
+  });
 
   return (
     <>
@@ -38,7 +41,7 @@ export default function CanvasBodyFitContent({
           overflowX: "hidden",
           display: "flex",
           justifyContent: "center",
-          alignItems: "flex-start", // ensures top alignment
+          alignItems: "flex-start",
           position: "relative",
         }}
       >
