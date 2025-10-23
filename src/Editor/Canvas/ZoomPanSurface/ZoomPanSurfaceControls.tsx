@@ -8,7 +8,7 @@ import {
   AlignHorizontalCenterOutlined,
   AlignHorizontalLeftOutlined,
 } from "@mui/icons-material";
-import React from "react";
+import { useMemo, useCallback } from "react";
 
 const viewAlignments: Record<
   ViewAlignmentAdjustment,
@@ -29,28 +29,21 @@ export default function CanvasZoomPanSurfaceControls() {
   const zoomIn = useZoomPanStore((state) => state.zoomIn);
   const zoomOut = useZoomPanStore((state) => state.zoomOut);
   const cycleZoomPreset = useZoomPanStore((state) => state.cycleZoomPreset);
-  const alignedPosition = useZoomPanStore((state) => state.alignment);
+  const alignment = useZoomPanStore((state) => state.alignment);
   const alignTo = useZoomPanStore((state) => state.alignTo);
+  const nextPosition = useMemo<ViewAlignmentAdjustment>(() => {
+    const candidates = Object.keys(viewAlignments) as ViewAlignmentAdjustment[];
+    const pick = candidates.find((c) => c !== alignment) ?? candidates[0];
+    return pick;
+  }, [alignment]);
 
-  const handleZoomIn = () => zoomIn();
-  const handleZoomOut = () => zoomOut();
-  const handleToggle = () => cycleZoomPreset();
+  const nextLabel = viewAlignments[nextPosition].label;
+  const IconComponent = viewAlignments[nextPosition].icon;
 
-  const getNextAlignmentPosition = () => {
-    const positions = Object.keys(viewAlignments);
-    const currentIndex = positions.indexOf(alignedPosition);
-    const nextIndex = (currentIndex + 1) % positions.length;
-    const nextPosition = positions[nextIndex] as ViewAlignmentAdjustment;
-
-    return {
-      position: nextPosition,
-      icon: viewAlignments[nextPosition].icon,
-      label: viewAlignments[nextPosition].label,
-      onClick: () => alignTo(nextPosition),
-    };
-  };
-
-  const alignmentButton = getNextAlignmentPosition();
+  const handleAlignmentClick = useCallback(
+    () => alignTo(nextPosition),
+    [alignTo, nextPosition]
+  );
 
   return (
     <Box
@@ -68,10 +61,11 @@ export default function CanvasZoomPanSurfaceControls() {
         },
       })}
     >
-      <Tooltip title={alignmentButton.label} arrow>
+      <Tooltip title={nextLabel} arrow>
         <IconButton
           size="medium"
-          onClick={alignmentButton.onClick}
+          onClick={handleAlignmentClick}
+          aria-label={nextLabel}
           sx={{
             alignSelf: "stretch",
             borderRadius: 1,
@@ -81,9 +75,7 @@ export default function CanvasZoomPanSurfaceControls() {
             backdropFilter: "blur(40px)",
           }}
         >
-          {React.createElement(viewAlignments[alignmentButton.position].icon, {
-            fontSize: "small",
-          })}
+          <IconComponent fontSize="small" />
         </IconButton>
       </Tooltip>
 
@@ -96,7 +88,7 @@ export default function CanvasZoomPanSurfaceControls() {
         }}
       >
         <Button
-          onClick={handleZoomOut}
+          onClick={zoomOut}
           sx={{
             borderColor: "rgba(0,0,0,0.1)",
             paddingInline: 1,
@@ -106,7 +98,7 @@ export default function CanvasZoomPanSurfaceControls() {
         </Button>
 
         <Button
-          onClick={handleToggle}
+          onClick={cycleZoomPreset}
           aria-label={`Zoom level ${zoom} percent`}
           sx={{
             textTransform: "none",
@@ -118,7 +110,7 @@ export default function CanvasZoomPanSurfaceControls() {
         </Button>
 
         <Button
-          onClick={handleZoomIn}
+          onClick={zoomIn}
           sx={{
             borderColor: "rgba(0,0,0,0.1)",
             paddingInline: 1,
