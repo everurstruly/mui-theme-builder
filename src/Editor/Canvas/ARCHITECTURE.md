@@ -2,137 +2,81 @@
 
 ## Overview
 
-The zoom and pan functionality follows a three-layer architecture pattern that separates concerns while maintaining flexibility and reusability:
+This project uses a pragmatic three-layer architecture for the Zoom & Pan feature:
 
-```
-Store (zoomPanStore) → Hook (useZoomPan) → Components
-```
+Store (zoomPanSurfaceStore) → Pure Logic (zoomPanLogic) → Hook (useCanvasZoomPanSurface) → Components
 
-This document explains the reasoning behind this architecture and the responsibilities of each layer.
+The goal is clear separation of concerns: state is centralized and simple, complex math lives in pure functions, the hook coordinates DOM interactions and side effects, and components handle rendering.
 
 ## Architecture Layers
 
-### 1. State Layer: `zoomPanStore.ts`
+### 1. State Layer: `zoomPanSurfaceStore.ts`
 
-**Purpose**: Global state management and persistence.
+Purpose: global state and simple actions.
 
-**Responsibilities**:
+Responsibilities:
 
-- Store zoom level, pan position, and alignment preferences
-- Provide actions to modify state (setZoom, setPan, zoomIn, zoomOut, alignTo)
-- Ensure state consistency across the application
-- Make state available to any component that needs it
+- Hold canonical application state: `zoom`, `position` (absolute visual position), and `alignment` mode (`"pan" | "center" | "start"`).
+- Provide small, predictable actions: `setZoom`, `zoomIn`, `zoomOut`, `zoomBy`, `setPosition`, `positionBy`, `alignTo` (mode), `toggleAlignment`, `resetPosition`, `resetView`.
 
-**Justification**:
+Design notes:
 
-- Zoom and pan state often needs to be shared between multiple components (canvas, controls, toolbars)
-- State persistence between component remounts prevents jarring UX
-- Centralizing state logic reduces duplication and potential for inconsistency
+- The store is intentionally a thin data container. Actions in the store are mostly simple convenience helpers (clamping zoom, incrementing/decrementing). Heavy behavior that depends on DOM measurements or lifecycle is kept out of the store.
+- The store is public: UI controls and other components may read from or call simple store actions directly. This keeps small components simple and avoids unnecessary boilerplate.
 
-### 2. Behavior Layer: `useZoomPan.ts`
+### 2. Pure Logic: `zoomPanLogic.ts`
 
-**Purpose**: DOM interaction and behavior coordination.
+Purpose: pure, testable math and helpers.
 
-**Responsibilities**:
+Responsibilities:
 
-- Connect to global state via the store
-- Handle DOM events (wheel, pointer, resize)
-- Manage UI-specific state (dragging status)
-- Calculate derived values (translatePosition, scale)
-- Coordinate with ResizeObserver and other browser APIs
-- Provide refs and event handlers for components
+- Perform deterministic calculations with no side-effects: `computeAlignedPosition`, `computeTranslatePosition`, `computeDragPosition`, `clampZoom`, `getNextZoomPreset`, `getNextAlignment`.
+- Be fully unit-testable without React or DOM.
 
-**Justification**:
+Design notes:
 
-- Decouples UI interaction logic from both state management and rendering
-- Creates a reusable behavior that can be applied to any container component
-- Allows testing of zoom/pan logic independently from specific components
-- Centralizes complex event handling and browser API interactions
+- Extracting math to this module makes the behavior easy to verify and reuse (hook or store can call these helpers).
 
-### 3. Component Layer: (e.g., `CanvasBodyZoomPan.tsx`)
+### 3. Behavior Layer: `useCanvasZoomPanSurface.ts`
 
-**Purpose**: Rendering and user interface.
+Purpose: DOM interactions, lifecycle, and orchestration.
 
-**Responsibilities**:
+Responsibilities:
 
-- Consume the hook to get handlers and state
-- Render appropriate DOM elements with proper event bindings
-- Apply the calculated transforms to content
-- Handle component-specific UI concerns
+- Connect to the store and to `zoomPanLogic` helpers.
+- Handle browser events and APIs: pointer events for dragging, wheel for zoom, `ResizeObserver` for container changes.
+- Manage UI-only transient state such as `isDragging` and `dragStart` (captured via refs).
+- Compute derived rendering values (`translatePosition`, `scale`) and apply aligned positions when `alignment` changes or container resizes.
+- Expose refs and event handlers for components to bind.
 
-**Justification**:
+Design notes:
 
-- Components stay focused on rendering and presentation
-- Multiple components can reuse the same zoom/pan behavior
-- Components remain relatively simple and easier to test
+- The hook orchestrates logic that requires DOM measurements; it does not duplicate store behavior. It uses pure functions for calculations and updates the store via simple setters when appropriate.
 
-## Benefits of This Architecture
+### 4. Component Layer (e.g., `CanvasBodyZoomPan.tsx`, `ZoomPanSurfaceControls.tsx`)
 
-1. **Separation of Concerns**:
+Purpose: rendering and presentation.
 
-   - State management is isolated from UI behavior
-   - DOM interaction is isolated from rendering
-   - Each layer has a clear, focused responsibility
+Responsibilities:
 
-2. **Reusability**:
+- `CanvasBodyZoomPan` consumes the hook, binds event handlers and applies the computed CSS transform to the content.
+- `ZoomPanSurfaceControls` (and similar UI elements) read simple state and call store actions directly for small interactions (zoom buttons, alignment toggles).
 
-   - The hook can be used by any component needing zoom/pan
-   - Multiple canvases can share the same state if needed
-   - Components using the hook don't need to know state implementation details
+Design notes:
 
-3. **Testability**:
+- Controls are intentionally allowed to access the store directly for simple actions. Complex DOM-dependent behaviors remain inside the hook.
 
-   - Each layer can be tested independently
-   - Store logic can be tested without DOM
-   - Hook behavior can be tested with a mock store
-   - Components can be tested with a mock hook
+## Why this split?
 
-4. **Maintainability**:
-   - Changes to state logic don't affect UI components
-   - Browser API interactions are centralized in the hook
-   - Components stay lean and focused
+- Single source of truth: `position` in the store is the canonical visual state, simplifying reasoning and avoiding cyclic conversions between `pan` + `alignment`.
+- Testability: pure math functions are easy to unit test. The hook can be tested with a mock store. Store logic is small and verifiable.
+- Predictability: behavior that depends on DOM measurements lives in the hook (React lifecycle), while the store remains synchronous and simple.
 
-## Alternative Approaches Considered
+## Usage Examples
 
-### Alternative 1: Combined Hook + State
-
-Combining state and behavior in a single custom hook:
-
-```typescript
-function useZoomPan() {
-  const [zoom, setZoom] = useState(100);
-  const [pan, setPan] = useState({ x: 0, y: 0 });
-  // Event handlers and other logic here
-}
-```
-
-**Rejected because**:
-
-- State wouldn't persist between component unmounts
-- Multiple components would have independent states (couldn't synchronize)
-- Would require prop-drilling or context to share state
-
-### Alternative 2: Component with Internal Logic
-
-Putting all zoom/pan logic directly in a component:
-
-```typescript
-function ZoomPanCanvas() {
-  // All state, handlers, and rendering in one place
-}
-```
-
-**Rejected because**:
-
-- Not reusable across different components
-- Tightly couples rendering with behavior
-- Harder to test individual aspects
-- Component becomes overly complex
-
-## Usage Example
+Canvas (uses hook):
 
 ```tsx
-// In a component:
 function CanvasWithZoomPan() {
   const {
     ref,
@@ -141,7 +85,8 @@ function CanvasWithZoomPan() {
     handlePointerDown,
     handlePointerMove,
     handlePointerUp,
-  } = useZoomPan();
+    scale,
+  } = useCanvasZoomPanSurface();
 
   return (
     <div
@@ -151,7 +96,7 @@ function CanvasWithZoomPan() {
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
       style={{
-        transform: `translate(${translatePosition.x}px, ${translatePosition.y}px)`,
+        transform: `translate(${translatePosition.x}px, ${translatePosition.y}px) scale(${scale})`,
       }}
     >
       {/* Canvas content */}
@@ -160,25 +105,32 @@ function CanvasWithZoomPan() {
 }
 ```
 
-## Refinement Opportunities
+Controls (use store directly for simple actions):
 
-1. **Pure Utility Functions**:
+```tsx
+function ZoomControls() {
+  const zoom = useZoomPanSurfaceStore((s) => s.zoom);
+  const zoomIn = useZoomPanSurfaceStore((s) => s.zoomIn);
+  const zoomOut = useZoomPanSurfaceStore((s) => s.zoomOut);
 
-   - Extract pure calculations into a separate utils file
-   - Improves testability of math operations
-   - Example: `calcScale`, `clampZoom`, `computeTranslate`
+  return (
+    <div>
+      <button onClick={zoomOut}>-</button>
+      <span>{zoom}%</span>
+      <button onClick={zoomIn}>+</button>
+    </div>
+  );
+}
+```
 
-2. **Component Abstraction**:
+## Refinement Opportunities / Next Steps
 
-   - Create a dedicated `<ZoomPanContainer>` component that internally uses the hook
-   - Simplifies usage in simple cases
-   - Example: `<ZoomPanContainer>{children}</ZoomPanContainer>`
-
-3. **Performance Optimization**:
-   - Memoize handlers with useCallback
-   - Use refs for values needed in handlers to avoid re-renders
-   - Consider throttling rapid updates (e.g., during dragging)
+1. Unit tests for `zoomPanLogic.ts` (high priority).
+2. Integration tests for `useCanvasZoomPanSurface` (mock store + DOM events).
+3. Small naming cleanup: consider `setAlignment` vs `alignTo` consistency.
+4. Performance: consider throttling or requestAnimationFrame for very high-frequency updates during drag.
+5. Add a lightweight `<ZoomPanContainer>` wrapper that wires the hook and reduces repetitive boilerplate in consumers.
 
 ## Conclusion
 
-The three-layer architecture (Store → Hook → Component) provides a clean separation of concerns while maintaining flexibility and reusability. This approach scales well as application complexity grows and supports a wide range of zoom/pan use cases.
+This structure keeps the store as a simple, shared state container while centralizing DOM-dependent behavior in a reusable hook and extracting math into pure, testable functions. It balances simplicity for small components with robustness for complex interactions.
