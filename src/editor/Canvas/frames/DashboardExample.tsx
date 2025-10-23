@@ -1,5 +1,5 @@
 import { Box, Typography } from "@mui/material";
-import useCanvasViewport from "../useCanvasViewport";
+import useCanvasViewport from "../Viewport/useCanvasViewport";
 
 export default function DashboardExample() {
   const { width, height } = useCanvasViewport();
@@ -8,7 +8,7 @@ export default function DashboardExample() {
     <Box
       sx={{
         p: 6,
-        maxWidth: width,
+        minWidth: width,
         minHeight: height,
         color: "white",
         backgroundColor: "dodgerblue",
