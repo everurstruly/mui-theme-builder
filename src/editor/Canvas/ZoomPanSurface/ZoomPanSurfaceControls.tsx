@@ -70,27 +70,19 @@ export default function CanvasZoomPanSurfaceControls() {
         [theme.breakpoints.up("md")]: {
           bottom: "calc(var(--canvas-brim-padding-md, 0px) + .5rem)",
         },
-
-        "*": {
-          fontSize: 20,
-        },
-
-        "> *": {
-          border: "1px solid rgba(0,0,0,0.1)",
-          backgroundColor: "rgba(255, 255, 255, 0.5)",
-          backdropFilter: "blur(20px)",
-          borderRadius: 1,
-        },
       })}
     >
       <Tooltip title={alignmentButton.label} arrow>
         <IconButton
+          sx={{
+            fontSize: 20,
+            borderRadius: 1,
+            backdropFilter: "blur(20px)",
+            border: "1px solid rgba(0,0,0,0.1)",
+            backgroundColor: "rgba(255, 255, 255, 0.5)",
+          }}
           size="small"
           onClick={alignmentButton.onClick}
-          sx={{
-            borderLeft: "1px solid rgba(0,0,0,0.1)",
-            borderRadius: 0,
-          }}
         >
           {React.createElement(viewAlignments[alignmentButton.position].icon, {
             fontSize: "small",
@@ -99,12 +91,15 @@ export default function CanvasZoomPanSurfaceControls() {
       </Tooltip>
 
       <IconButton
+        sx={{
+          fontSize: 20,
+          borderRadius: 1,
+          backdropFilter: "blur(20px)",
+          border: "1px solid rgba(0,0,0,0.1)",
+          backgroundColor: "rgba(255, 255, 255, 0.5)",
+        }}
         size="small"
         onClick={handleZoomOut}
-        sx={{
-          borderRight: "1px solid rgba(0,0,0,0.1)",
-          borderRadius: 0,
-        }}
       >
         <RemoveIcon fontSize="small" />
       </IconButton>
@@ -115,6 +110,7 @@ export default function CanvasZoomPanSurfaceControls() {
         variant="text"
         disableRipple
         size="small"
+        aria-label={`Zoom level ${zoom} percent`}
         sx={{
           paddingInline: 2,
           minWidth: "fit-content",
@@ -124,37 +120,46 @@ export default function CanvasZoomPanSurfaceControls() {
           textTransform: "none",
           fontSize: "0.75rem !important",
           lineHeight: 1.75,
+          borderRadius: 1,
+          backdropFilter: "blur(20px)",
+          border: "1px solid rgba(0,0,0,0.1)",
+          backgroundColor: "rgba(255, 255, 255, 0.5)",
           "&:focus-visible": {
             outline: "2px solid",
             outlineColor: "primary.main",
             outlineOffset: "2px",
           },
         }}
-        aria-label={`Zoom level ${zoom} percent`}
       >
         {zoom}%
       </Button>
 
       {/* Zoom In */}
       <IconButton
+        sx={{
+          fontSize: 20,
+          borderRadius: 1,
+          backdropFilter: "blur(20px)",
+          border: "1px solid rgba(0,0,0,0.1)",
+          backgroundColor: "rgba(255, 255, 255, 0.5)",
+        }}
         size="small"
         onClick={handleZoomIn}
-        sx={{
-          borderLeft: "1px solid rgba(0,0,0,0.1)",
-          borderRadius: 0,
-        }}
       >
         <AddIcon fontSize="small" />
       </IconButton>
 
       <Tooltip title="Reset View" arrow>
         <IconButton
+          sx={{
+            fontSize: 20,
+            borderRadius: 1,
+            backdropFilter: "blur(20px)",
+            border: "1px solid rgba(0,0,0,0.1)",
+            backgroundColor: "rgba(255, 255, 255, 0.5)",
+          }}
           size="small"
           onClick={handleReset}
-          sx={{
-            borderLeft: "1px solid rgba(0,0,0,0.1)",
-            borderRadius: 0,
-          }}
         >
           <RestartAltIcon fontSize="small" />
         </IconButton>
