@@ -1,17 +1,20 @@
-import { Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
+import useCanvasViewport from "../useCanvasViewport";
 
 export default function DashboardExample() {
+  const { width, height } = useCanvasViewport();
+
   return (
-    <Typography
-      variant="h4"
+    <Box
       sx={{
         p: 6,
-        width: 1400,
-        height: 2000,
-        backgroundColor: "limegreen",
+        maxWidth: width,
+        minHeight: height,
+        color: "white",
+        backgroundColor: "dodgerblue",
       }}
     >
-      I am a Dashboard (allegedly)
-    </Typography>
+      <Typography>I am a Dashboard (allegedly)</Typography>
+    </Box>
   );
 }

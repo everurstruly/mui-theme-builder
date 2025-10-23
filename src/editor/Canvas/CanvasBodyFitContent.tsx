@@ -1,34 +1,16 @@
-import React, { useRef, useLayoutEffect, useState } from "react";
+import React from "react";
 import { Box } from "@mui/material";
-import ScreenSizeControls from "./ScreenSizeControls";
+import ScreenSizeControls from "./CanvasViewportControls";
+import useCanvasViewport from "./useCanvasViewport";
 
 type CanvasBodyFitContentProps = {
   children: React.ReactNode;
 };
 
-const frameWidth = 1440;
-
 export default function CanvasBodyFitContent({
   children,
 }: CanvasBodyFitContentProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [scale, setScale] = useState(1);
-
-  useLayoutEffect(() => {
-    const resize = () => {
-      if (!containerRef.current) {
-        return;
-      }
-
-      const containerWidth = containerRef.current.offsetWidth;
-      const newScale = Math.min(containerWidth / frameWidth, 1);
-      setScale(newScale);
-    };
-
-    resize();
-    window.addEventListener("resize", resize);
-    return () => window.removeEventListener("resize", resize);
-  });
+  const { containerRef, scale, width } = useCanvasViewport();
 
   return (
     <>
@@ -43,13 +25,14 @@ export default function CanvasBodyFitContent({
           justifyContent: "center",
           alignItems: "flex-start",
           position: "relative",
+          paddingTop: "4rem", // give more alignment freedom
         }}
       >
         <Box
           sx={{
             transform: `scale(${scale})`,
             transformOrigin: "top center",
-            width: frameWidth,
+            width: width,
             height: "auto",
             pointerEvents: "auto",
           }}
