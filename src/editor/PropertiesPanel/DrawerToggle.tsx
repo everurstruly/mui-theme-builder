@@ -27,7 +27,7 @@ export default function EditorPropertiesDrawerToggle() {
         zIndex: (theme) => theme.zIndex.drawer - 1,
         position: "fixed",
         right: `calc(var(--canvas-brim-padding) + .5rem)`,
-        bottom: `calc(var(--canvas-brim-padding) + .25rem)`,
+        bottom: `calc(var(--canvas-brim-padding) + 3rem)`,
 
         [theme.breakpoints.up("md")]: {
           display: "none",
