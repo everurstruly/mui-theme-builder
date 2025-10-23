@@ -5,7 +5,7 @@ import PhoneAndroidIcon from "@mui/icons-material/PhoneAndroid";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 
-export default function ScreenSizeToggleGroup() {
+export default function ScreenSizeControls() {
   const [devices, setDevices] = React.useState(() => "phone");
 
   const handleDevice = (
@@ -28,8 +28,8 @@ export default function ScreenSizeToggleGroup() {
         backgroundColor: "rgba(255, 255, 255, 0.4)",
         backdropFilter: "blur(32px)",
         position: "absolute",
-        left: "calc(var(--canvas-brim-padding) + 1px)",
-        bottom: "calc(var(--canvas-brim-padding) + 1px)",
+        left: "calc(var(--canvas-brim-padding) + 4px)",
+        bottom: "calc(var(--canvas-brim-padding) + 4px)",
         overflow: "hidden",
         borderStartEndRadius: 12,
         borderEndEndRadius: 12,
