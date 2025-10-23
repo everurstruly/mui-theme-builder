@@ -1,7 +1,6 @@
-import { Box, Button, IconButton, Tooltip } from "@mui/material";
+import { Box, Button, ButtonGroup, IconButton, Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
-import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import useZoomPanStore, {
   type ViewAlignmentAdjustment,
 } from "./zoomPanSurfaceStore";
@@ -30,14 +29,12 @@ export default function CanvasZoomPanSurfaceControls() {
   const zoomIn = useZoomPanStore((state) => state.zoomIn);
   const zoomOut = useZoomPanStore((state) => state.zoomOut);
   const cycleZoomPreset = useZoomPanStore((state) => state.cycleZoomPreset);
-  const resetView = useZoomPanStore((state) => state.resetView);
   const alignedPosition = useZoomPanStore((state) => state.alignment);
   const alignTo = useZoomPanStore((state) => state.alignTo);
 
   const handleZoomIn = () => zoomIn();
   const handleZoomOut = () => zoomOut();
   const handleToggle = () => cycleZoomPreset();
-  const handleReset = () => resetView();
 
   const getNextAlignmentPosition = () => {
     const positions = Object.keys(viewAlignments);
@@ -63,9 +60,8 @@ export default function CanvasZoomPanSurfaceControls() {
         bottom: "calc(var(--canvas-brim-padding, 0px) + .25rem)",
         display: "flex",
         alignItems: "center",
-        columnGap: 0.5,
         overflow: "hidden",
-        height: 36,
+        columnGap: 0.5,
 
         [theme.breakpoints.up("md")]: {
           bottom: "calc(var(--canvas-brim-padding-md, 0px) + .5rem)",
@@ -74,15 +70,16 @@ export default function CanvasZoomPanSurfaceControls() {
     >
       <Tooltip title={alignmentButton.label} arrow>
         <IconButton
-          sx={{
-            fontSize: 20,
-            borderRadius: 1,
-            backdropFilter: "blur(20px)",
-            border: "1px solid rgba(0,0,0,0.1)",
-            backgroundColor: "rgba(255, 255, 255, 0.5)",
-          }}
-          size="small"
+          size="medium"
           onClick={alignmentButton.onClick}
+          sx={{
+            alignSelf: "stretch",
+            borderRadius: 1,
+            border: 1,
+            borderColor: "rgba(0,0,0,0.1)",
+            backgroundColor: "rgba(255, 255, 255, 0.5)",
+            backdropFilter: "blur(40px)",
+          }}
         >
           {React.createElement(viewAlignments[alignmentButton.position].icon, {
             fontSize: "small",
@@ -90,80 +87,46 @@ export default function CanvasZoomPanSurfaceControls() {
         </IconButton>
       </Tooltip>
 
-      <IconButton
+      <ButtonGroup
+        size="large" // equivalent of size="medium" of ToggleButtonGroup
         sx={{
-          fontSize: 20,
           borderRadius: 1,
-          backdropFilter: "blur(20px)",
-          border: "1px solid rgba(0,0,0,0.1)",
           backgroundColor: "rgba(255, 255, 255, 0.5)",
-        }}
-        size="small"
-        onClick={handleZoomOut}
-      >
-        <RemoveIcon fontSize="small" />
-      </IconButton>
-
-      {/* Zoom Level Toggle */}
-      <Button
-        onClick={handleToggle}
-        variant="text"
-        disableRipple
-        size="small"
-        aria-label={`Zoom level ${zoom} percent`}
-        sx={{
-          paddingInline: 2,
-          minWidth: "fit-content",
-          fontWeight: 500,
-          textAlign: "center",
-          color: "text.primary",
-          textTransform: "none",
-          fontSize: "0.75rem !important",
-          lineHeight: 1.75,
-          borderRadius: 1,
-          backdropFilter: "blur(20px)",
-          border: "1px solid rgba(0,0,0,0.1)",
-          backgroundColor: "rgba(255, 255, 255, 0.5)",
-          "&:focus-visible": {
-            outline: "2px solid",
-            outlineColor: "primary.main",
-            outlineOffset: "2px",
-          },
+          backdropFilter: "blur(40px)",
         }}
       >
-        {zoom}%
-      </Button>
-
-      {/* Zoom In */}
-      <IconButton
-        sx={{
-          fontSize: 20,
-          borderRadius: 1,
-          backdropFilter: "blur(20px)",
-          border: "1px solid rgba(0,0,0,0.1)",
-          backgroundColor: "rgba(255, 255, 255, 0.5)",
-        }}
-        size="small"
-        onClick={handleZoomIn}
-      >
-        <AddIcon fontSize="small" />
-      </IconButton>
-
-      <Tooltip title="Reset View" arrow>
-        <IconButton
+        <Button
+          onClick={handleZoomOut}
           sx={{
-            fontSize: 20,
-            borderRadius: 1,
-            backdropFilter: "blur(20px)",
-            border: "1px solid rgba(0,0,0,0.1)",
-            backgroundColor: "rgba(255, 255, 255, 0.5)",
+            borderColor: "rgba(0,0,0,0.1)",
+            paddingInline: 1,
           }}
-          size="small"
-          onClick={handleReset}
         >
-          <RestartAltIcon fontSize="small" />
-        </IconButton>
-      </Tooltip>
+          <RemoveIcon />
+        </Button>
+
+        <Button
+          onClick={handleToggle}
+          aria-label={`Zoom level ${zoom} percent`}
+          sx={{
+            textTransform: "none",
+            borderColor: "rgba(0,0,0,0.1)",
+            paddingInline: 2,
+          }}
+        >
+          {zoom}%
+        </Button>
+
+        <Button
+          onClick={handleZoomIn}
+          sx={{
+            borderColor: "rgba(0,0,0,0.1)",
+            paddingInline: 1,
+          }}
+        >
+          <AddIcon />
+        </Button>
+      </ButtonGroup>
     </Box>
   );
 }

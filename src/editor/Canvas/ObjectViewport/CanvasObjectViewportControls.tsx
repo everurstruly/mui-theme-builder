@@ -22,14 +22,14 @@ export default function CanvasObjectViewportControls() {
   return (
     <ToggleButtonGroup
       color="primary"
-      size="small"
+      size="medium"
       value={deviceInView}
       exclusive
       onChange={handleDevice}
       aria-label="device"
       sx={(theme) => ({
         position: "absolute",
-        left: "calc(var(--canvas-brim-padding) + .25rem)",
+        left: "calc(var(--canvas-brim-padding) + .5rem)",
         bottom: "calc(var(--canvas-brim-padding) + .25rem)",
         backgroundColor: "rgba(255, 255, 255, 0.5)",
         backdropFilter: "blur(20px)",
@@ -40,22 +40,18 @@ export default function CanvasObjectViewportControls() {
           left: "calc(var(--canvas-brim-padding) + .5rem)",
           bottom: "calc(var(--canvas-brim-padding-md, 0px) + .5rem)",
         },
-
-        "*": {
-          fontSize: 20,
-        },
       })}
     >
       <PresetViewportToggleButton value="phone">
-        <PhoneAndroidIcon />
+        <PhoneAndroidIcon fontSize="small" />
       </PresetViewportToggleButton>
 
       <PresetViewportToggleButton value="tablet">
-        <TabletAndroidOutlined />
+        <TabletAndroidOutlined fontSize="small" />
       </PresetViewportToggleButton>
 
       <PresetViewportToggleButton value="laptop">
-        <TvIcon />
+        <TvIcon fontSize="small" />
       </PresetViewportToggleButton>
     </ToggleButtonGroup>
   );

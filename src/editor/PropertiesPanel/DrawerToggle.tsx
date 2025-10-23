@@ -18,8 +18,8 @@ export default function EditorPropertiesDrawerToggle() {
   return (
     <Fab
       color="primary"
-      variant="circular"
-      size={isLargeScreen ? "small" : "medium"}
+      variant="extended"
+      size={isLargeScreen ? "small" : "large"}
       aria-label="edit"
       onClick={() => showPanel()}
       sx={(theme) => ({
@@ -27,7 +27,7 @@ export default function EditorPropertiesDrawerToggle() {
         zIndex: (theme) => theme.zIndex.drawer - 1,
         position: "fixed",
         right: `calc(var(--canvas-brim-padding) + .5rem)`,
-        bottom: `calc(var(--canvas-brim-padding) + 3rem)`,
+        bottom: `calc(var(--canvas-brim-padding) + 4rem)`,
 
         [theme.breakpoints.up("md")]: {
           display: "none",
