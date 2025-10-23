@@ -1,6 +1,6 @@
 import * as React from "react";
 import Drawer from "@mui/material/Drawer";
-import useEditorStore from "../Editor.store";
+import useEditorStore from "../editorStore";
 import CodeWindow from "../CodeWindow";
 import PrimaryColorsCompact from "./PrimaryColorsCompact";
 import ColorProperty from "./Color";

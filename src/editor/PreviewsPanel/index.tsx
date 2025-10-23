@@ -1,5 +1,5 @@
 import Drawer from "@mui/material/Drawer";
-import useEditorStore from "../Editor.store";
+import useEditorStore from "../editorStore";
 import { useTheme } from "@mui/material/styles";
 import { List, ListItem, ListItemText, useMediaQuery } from "@mui/material";
 import type { CSSObject, Theme } from "@mui/material/styles";

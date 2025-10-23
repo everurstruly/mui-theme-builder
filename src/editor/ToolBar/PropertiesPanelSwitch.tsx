@@ -1,4 +1,4 @@
-import useEditorStore from "../Editor.store";
+import useEditorStore from "../editorStore";
 import { FullscreenRounded, TuneRounded } from "@mui/icons-material";
 import { Button } from "@mui/material";
 

@@ -1,5 +1,5 @@
 import useMediaQuery from "@mui/material/useMediaQuery";
-import useEditorStore from "../Editor.store";
+import useEditorStore from "../editorStore";
 import { Fab } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { TuneOutlined } from "@mui/icons-material";

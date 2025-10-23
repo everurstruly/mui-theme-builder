@@ -1,6 +1,6 @@
 import { Button, ButtonGroup } from "@mui/material";
 import { RedoRounded, UndoRounded } from "@mui/icons-material";
-import useEditorStore from "../Editor.store";
+import useEditorStore from "../editorStore";
 
 export default function ChangesHistoryActions() {
   const changeHistory = useEditorStore((state) => state.markUnsavedChanges);

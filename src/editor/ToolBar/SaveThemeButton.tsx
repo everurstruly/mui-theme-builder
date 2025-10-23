@@ -1,6 +1,6 @@
 import { SaveRounded } from "@mui/icons-material";
 import { Button } from "@mui/material";
-import useEditorStore from "../Editor.store";
+import useEditorStore from "../editorStore";
 
 export default function SaveThemeButton() {
   const isSaved = useEditorStore((state) => state.hasSavedChanges);

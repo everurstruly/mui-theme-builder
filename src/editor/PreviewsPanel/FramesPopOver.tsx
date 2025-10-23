@@ -7,7 +7,7 @@ import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemButtonWithMenu from "../../../lib/components/ListItemButtonWithMenu";
-import useEditorStore from "../Editor.store";
+import useEditorStore from "../editorStore";
 
 export default function MinimizedPreviewsPanelPopOver() {
   const isActivityPanelVisible = useEditorStore((state) => {

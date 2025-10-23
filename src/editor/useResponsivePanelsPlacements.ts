@@ -1,7 +1,7 @@
 import { useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useEffect } from "react";
-import useEditorStore from "./Editor.store";
+import useEditorStore from "./editorStore";
 
 export default function useResponsivePanelsPlacements() {
   const theme = useTheme();
