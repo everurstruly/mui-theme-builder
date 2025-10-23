@@ -29,7 +29,7 @@ export default function CodeWindow() {
       <Button
         color="inherit"
         onClick={handleExpandCodeWindow}
-        aria-codeWindowexpanded={codeWindowexpanded}
+        aria-expanded={codeWindowexpanded}
         aria-label="show code window"
         startIcon={<DataObjectRounded sx={{ mr: 0 }} />}
         endIcon={codeWindowexpanded ? "▲" : "▼"}
