@@ -74,7 +74,7 @@ export default function EditorPreviewsPanel() {
 
 const openedMixin = (theme: Theme): CSSObject => ({
   ...theme.mixins.toolbar,
-  height: "82vh",
+  height: "75dvh",
   overflowX: "hidden",
   width: "var(--previews-panel-width)",
 });

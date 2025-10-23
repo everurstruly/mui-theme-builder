@@ -55,7 +55,7 @@ export default function EditorPropertiesPanel() {
         },
 
         "& .MuiDrawer-paper": {
-          height: "82vh",
+          height: "75dvh",
           width: "var(--properties-panel-width)",
 
           [theme.breakpoints.up("sm")]: {
