@@ -20,7 +20,7 @@ export default function PreviewsPanelToggle() {
   return (
     <Button
       color="inherit"
-      variant={isPanelVisible ? "outlined" : "contained"}
+      variant={"outlined"}
       onClick={() => handleDisplayPropertyPanel()}
       sx={(theme) => ({
         width: "auto",

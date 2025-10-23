@@ -41,8 +41,8 @@ export default function EditorToolBar() {
               columnGap: 1,
             }}
           >
-            <PreviewsPanelToggle />
             <MinimizedPreviewsPanelPopOver />
+            <PreviewsPanelToggle />
             <ThemeSelect />
             <CopyThemeButton />
             <ThemeActionsGroup />
