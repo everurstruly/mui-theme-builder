@@ -39,6 +39,20 @@ export default function EditorPropertiesPanel() {
         flexShrink: 0,
         borderLeft: 1,
         borderColor: "divider",
+        overflow: "hidden",
+        WebkitOverflowScrolling: "touch",
+        backgroundColor: "transparent",
+
+        [theme.breakpoints.up("md")]: {
+          display: isVisible ? "block" : "none",
+        },
+
+        // hide scrollbar but keep scrolling
+        msOverflowStyle: "none", // IE and Edge
+        scrollbarWidth: "none", // Firefox
+        "&::-webkit-scrollbar": {
+          display: "none", // WebKit
+        },
 
         "& .MuiDrawer-paper": {
           height: "82vh",
@@ -53,20 +67,6 @@ export default function EditorPropertiesPanel() {
           [theme.breakpoints.up("lg")]: {
             position: "static",
           },
-        },
-
-        WebkitOverflowScrolling: "touch",
-        backgroundColor: "transparent",
-
-        [theme.breakpoints.up("md")]: {
-          display: isVisible ? "block" : "none",
-        },
-
-        // hide scrollbar but keep scrolling
-        msOverflowStyle: "none", // IE and Edge
-        scrollbarWidth: "none", // Firefox
-        "&::-webkit-scrollbar": {
-          display: "none", // WebKit
         },
       })}
     >
@@ -131,6 +131,28 @@ function CustomTabPanel(props: TabPanelProps) {
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}
       sx={(theme) => ({
+        height: "100%",
+        overflowY: "auto",
+
+        // show a very thin scrollbar as a visual affordance (still scrollable)
+        msOverflowStyle: "auto", // IE and Edge
+        scrollbarWidth: "thin", // Firefox
+
+        "&::-webkit-scrollbar": {
+          width: 4,
+          height: 4,
+        },
+        "&::-webkit-scrollbar-track": {
+          background: "transparent",
+        },
+        "&::-webkit-scrollbar-thumb": {
+          backgroundColor:
+            theme.palette.mode === "dark"
+              ? "rgba(255,255,255,0.18)"
+              : "rgba(0,0,0,0.24)",
+          borderRadius: 4,
+        },
+
         [theme.breakpoints.down("sm")]: {
           paddingInline: theme.spacing(2),
         },
