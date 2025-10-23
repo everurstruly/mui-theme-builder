@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { combine } from "zustand/middleware";
 
-export const presetZoomLevels = [30, 50, 70, 100, 120] as const;
+export const presetZoomLevels = [25, 75, 100, 150] as const;
 
 export type PresetZoomLevels = (typeof presetZoomLevels)[number];
 export type ViewAlignment = "center" | "start" | "pan";
