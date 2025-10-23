@@ -28,11 +28,12 @@ export default function ScreenSizeControls() {
         backgroundColor: "rgba(255, 255, 255, 0.4)",
         backdropFilter: "blur(32px)",
         position: "absolute",
-        left: "calc(var(--canvas-brim-padding) + 4px)",
-        bottom: "calc(var(--canvas-brim-padding) + 4px)",
+        left: "calc(var(--canvas-brim-padding) + 6px)",
+        bottom: "calc(var(--canvas-brim-padding) + 2px)",
         overflow: "hidden",
-        borderStartEndRadius: 12,
-        borderEndEndRadius: 12,
+        borderRadius: 2,
+        // borderStartEndRadius: 12,
+        // borderEndEndRadius: 12,
 
         "& *": {
           fontSize: "1.25rem",
