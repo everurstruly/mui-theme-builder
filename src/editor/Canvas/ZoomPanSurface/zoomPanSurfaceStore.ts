@@ -1,47 +1,47 @@
 import { create } from "zustand";
 import { combine } from "zustand/middleware";
 
-const presetZoomLevels = [30, 50, 70, 100, 120] as const;
+export const presetZoomLevels = [30, 50, 70, 100, 120] as const;
+
 export type PresetZoomLevels = (typeof presetZoomLevels)[number];
 export type ViewAlignment = "center" | "start" | "pan";
-export type AlignmentPositionsAdjustment = Exclude<ViewAlignment, "pan">;
+export type ViewAlignmentAdjustment = Exclude<ViewAlignment, "pan">;
 
-const MIN_ZOOM = 20;
-const MAX_ZOOM = 300;
-const DEFAULT_ZOOM = 50;
-const zoomDifference = 5;
+export const minZoomLevel = 20;
+export const maxZoomLevel = 300;
+export const defaultZoomValue = 50;
+export const zoomCountDifference = 10;
 
-const useZoomPanStore = create(
+const useCanvasZoomPanSurfaceStore = create(
   combine(
     {
-      zoom: DEFAULT_ZOOM,
+      zoom: defaultZoomValue,
       pan: { x: 0, y: 0 },
       alignment: "pan" as ViewAlignment,
     },
 
     (set, get) => ({
-      /** Zoom in by +10% (up to MAX_ZOOM) */
       zoomIn: () => {
         set((state) => ({
-          zoom: Math.min(state.zoom + zoomDifference, MAX_ZOOM),
+          zoom: Math.min(state.zoom + zoomCountDifference, maxZoomLevel),
         }));
       },
 
-      /** Zoom out by -10% (down to MIN_ZOOM) */
       zoomOut: () => {
         set((state) => ({
-          zoom: Math.max(state.zoom - zoomDifference, MIN_ZOOM),
+          zoom: Math.max(state.zoom - zoomCountDifference, minZoomLevel),
         }));
       },
 
-      /** Zoom by arbitrary percentage delta (for wheel or keyboard) */
       zoomBy: (amount: number) => {
         set((state) => ({
-          zoom: Math.min(Math.max(state.zoom + amount, MIN_ZOOM), MAX_ZOOM),
+          zoom: Math.min(
+            Math.max(state.zoom + amount, minZoomLevel),
+            maxZoomLevel
+          ),
         }));
       },
 
-      /** Cycle through preset zoom levels (50%, 100%, 150%, 200%) */
       cycleZoomPreset: () => {
         const current = get().zoom;
         const index = presetZoomLevels.findIndex((lvl) => lvl === current);
@@ -52,7 +52,7 @@ const useZoomPanStore = create(
 
       /** Manually set zoom value (clamped) */
       setZoom: (value: number) => {
-        set({ zoom: Math.min(Math.max(value, MIN_ZOOM), MAX_ZOOM) });
+        set({ zoom: Math.min(Math.max(value, minZoomLevel), maxZoomLevel) });
       },
 
       /** Absolute pan position */
@@ -80,15 +80,13 @@ const useZoomPanStore = create(
       /** Reset both zoom and pan to defaults */
       resetView: () => {
         set({
-          zoom: DEFAULT_ZOOM,
+          zoom: defaultZoomValue,
           pan: { x: 0, y: 0 },
           alignment: "start",
         });
       },
 
-      alignTo: (mode: ViewAlignment) => {
-        if (mode === "pan") return set({ alignment: "pan" });
-        // reset pan to 0 when aligning start/center
+      alignTo: (mode: ViewAlignmentAdjustment) => {
         set({ alignment: mode, pan: { x: 0, y: 0 } });
       },
 
@@ -108,4 +106,4 @@ const useZoomPanStore = create(
   )
 );
 
-export default useZoomPanStore;
+export default useCanvasZoomPanSurfaceStore;

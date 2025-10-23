@@ -1,6 +1,6 @@
 import CanvasLayout from "./CanvasLayout";
 import DashboardExample from "./frames/DashboardExample";
-import CanvasBodyZoomPan from "./CanvasBodyZoomPan";
+import CanvasBodyZoomPan from "./ZoomPanSurface";
 
 export default function EditorCanvas() {
   return (

@@ -1,8 +1,8 @@
 import React, { useRef } from "react";
 import { Box } from "@mui/material";
-import ZoomPanControls from "./ZoomPanControls";
-import CanvasViewportControls from "./Viewport/CanvasViewportControls";
-import { useZoomPan } from "./useZoomPan";
+import CanvasZoomPanSurfaceControls from "./ZoomPanSurfaceControls";
+import CanvasViewportControls from "../Viewport/CanvasViewportControls";
+import { useCanvasZoomPanSurface } from "./useZoomPanSurface";
 
 type CanvasBodyZoomPanProps = {
   children: React.ReactNode;
@@ -21,7 +21,7 @@ export default function CanvasBodyZoomPan({
     handlePointerDown,
     handlePointerMove,
     handlePointerUp,
-  } = useZoomPan(containerRef);
+  } = useCanvasZoomPanSurface(containerRef);
 
   return (
     <>
@@ -56,7 +56,7 @@ export default function CanvasBodyZoomPan({
       </Box>
 
       <CanvasViewportControls />
-      <ZoomPanControls />
+      <CanvasZoomPanSurfaceControls />
     </>
   );
 }

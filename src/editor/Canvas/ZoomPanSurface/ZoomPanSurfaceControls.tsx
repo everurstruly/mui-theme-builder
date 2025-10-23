@@ -3,8 +3,8 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import useZoomPanStore, {
-  type AlignmentPositionsAdjustment,
-} from "./zoomPanStore";
+  type ViewAlignmentAdjustment,
+} from "./zoomPanSurfaceStore";
 import {
   AlignHorizontalCenterOutlined,
   AlignHorizontalLeftOutlined,
@@ -12,20 +12,20 @@ import {
 import React from "react";
 
 const viewAlignments: Record<
-  AlignmentPositionsAdjustment,
+  ViewAlignmentAdjustment,
   { icon: typeof AlignHorizontalCenterOutlined; label: string }
 > = {
-  start: {
-    icon: AlignHorizontalLeftOutlined,
-    label: "Align to Left",
-  },
   center: {
     icon: AlignHorizontalCenterOutlined,
     label: "Align to Center",
   },
+  start: {
+    icon: AlignHorizontalLeftOutlined,
+    label: "Align to Left",
+  },
 } as const;
 
-export default function ZoomPanControls() {
+export default function CanvasZoomPanSurfaceControls() {
   const zoom = useZoomPanStore((state) => state.zoom);
   const zoomIn = useZoomPanStore((state) => state.zoomIn);
   const zoomOut = useZoomPanStore((state) => state.zoomOut);
@@ -43,7 +43,7 @@ export default function ZoomPanControls() {
     const positions = Object.keys(viewAlignments);
     const currentIndex = positions.indexOf(alignedPosition);
     const nextIndex = (currentIndex + 1) % positions.length;
-    const nextPosition = positions[nextIndex] as AlignmentPositionsAdjustment;
+    const nextPosition = positions[nextIndex] as ViewAlignmentAdjustment;
 
     return {
       position: nextPosition,
