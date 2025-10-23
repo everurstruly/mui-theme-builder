@@ -69,11 +69,17 @@ const useCanvasViewportStore = create(
         contentWidth: number;
       }) => {
         set((state) => {
-          const scale = Math.min(containerWidth / contentWidth, 1);
-          return {
-            ...state,
-            scale,
-          };
+          if (!contentWidth) return state;
+
+          // Raw scale to fit container
+          let scale = containerWidth / contentWidth;
+
+          // Clamp to avoid too small or too big
+          const MIN_SCALE = 0.5; // content won't shrink below 60%
+          const MAX_SCALE = 1.4; // content won't grow above 140%
+          scale = Math.min(Math.max(scale, MIN_SCALE), MAX_SCALE);
+
+          return { ...state, scale };
         });
       },
 
