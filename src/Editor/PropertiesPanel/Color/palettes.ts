@@ -22,6 +22,51 @@ const palettes = [
     ],
   },
   {
+    title: "Actions",
+    colors: [
+      {
+        name: "active",
+        initValue: colors.blue[500],
+        modifiedValue: colors.blue[500],
+      },
+      {
+        name: "hover",
+        initValue: colors.blue[500],
+        modifiedValue: colors.blue[500],
+      },
+      {
+        name: "selected",
+        initValue: colors.blue[500],
+        modifiedValue: colors.blue[500],
+      },
+      {
+        name: "disabled",
+        initValue: colors.blue[500],
+        modifiedValue: colors.blue[500],
+      },
+      {
+        name: "disabledBackground",
+        initValue: colors.blue[500],
+        modifiedValue: colors.blue[500],
+      },
+    ],
+  },
+  {
+    title: "Background",
+    colors: [
+      {
+        name: "default",
+        initValue: colors.blue[500],
+        modifiedValue: colors.blue[500],
+      },
+      {
+        name: "paper",
+        initValue: colors.blue[500],
+        modifiedValue: colors.blue[500],
+      },
+    ],
+  },
+  {
     title: "Primary",
     colors: [
       {
@@ -168,6 +213,16 @@ const palettes = [
         name: "contrastText",
         initValue: colors.common.white,
         modifiedValue: colors.common.white,
+      },
+    ],
+  },
+  {
+    title: "Divider",
+    colors: [
+      {
+        name: "divider",
+        initValue: colors.blue[500],
+        modifiedValue: colors.blue[500],
       },
     ],
   },
