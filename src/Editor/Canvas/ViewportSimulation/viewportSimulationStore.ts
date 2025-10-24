@@ -17,6 +17,7 @@ const useViewportSimulationStore = create(
       width: viewportSimulationPresets.phone.w as number,
       height: viewportSimulationPresets.phone.h as number,
       scale: 1,
+      selectedComponent: "DashboardExample", // Currently selected component to render
     },
     (set, get) => ({
       setPreset: (preset: ViewportSimulaitonPreset) => {
@@ -56,6 +57,10 @@ const useViewportSimulationStore = create(
         const scale = Math.min(scaleX, scaleY, 1); // Don't scale up beyond 100%
 
         set({ scale });
+      },
+
+      setSelectedComponent: (componentId: string) => {
+        set({ selectedComponent: componentId });
       },
 
       resetViewport: () => {

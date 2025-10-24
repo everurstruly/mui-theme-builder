@@ -14,6 +14,7 @@ import {
 } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import type { Theme, ThemeOptions } from "@mui/material/styles";
+import { samplesRegistry } from "../../../Samples/registry";
 
 // Extend window for root storage
 declare global {
@@ -22,21 +23,17 @@ declare global {
   }
 }
 
-// Component registry - add your components here
-import DashboardExample from "../../../Samples/DashboardExample";
-
-const COMPONENT_REGISTRY: Record<
-  string,
-  React.ComponentType<Record<string, unknown>>
-> = {
-  DashboardExample,
-};
-
 type MessageData = {
   type: string;
   mountId?: number;
   theme?: ThemeOptions;
-  component?: string;
+  componentId?: string;
+  componentLabel?: string;
+  registryData?: Record<
+    string,
+    { id: string; label: string; description: string }
+  >;
+  registryComponentIds?: string[];
   props?: Record<string, unknown>;
 };
 
@@ -84,21 +81,36 @@ class ErrorBoundary extends Component<
 function IframeApp() {
   const [config, setConfig] = useState<{
     theme: Theme;
-    component: string | null;
+    componentId: string | null;
+    componentLabel: string | null;
+    registryData: Record<
+      string,
+      { id: string; label: string; description: string }
+    > | null;
     props: Record<string, unknown>;
   }>({
     theme: createTheme(),
-    component: null,
+    componentId: null,
+    componentLabel: null,
+    registryData: null,
     props: {},
   });
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent<MessageData>) => {
       if (event.data?.type === "MOUNT_COMPONENT") {
-        const { theme: themeOpts, component, props = {} } = event.data;
+        const {
+          theme: themeOpts,
+          componentId,
+          componentLabel,
+          registryData,
+          props = {},
+        } = event.data;
 
         console.log("[iframe] Received MOUNT_COMPONENT:", {
-          component,
+          componentId,
+          componentLabel,
+          registryData,
           props,
           themeOpts,
         });
@@ -107,8 +119,18 @@ function IframeApp() {
           try {
             let theme = createTheme(themeOpts as ThemeOptions);
             theme = responsiveFontSizes(theme);
-            setConfig({ theme, component: component || null, props });
-            console.log("[iframe] Component mounted successfully:", component);
+            setConfig({
+              theme,
+              componentId: componentId || null,
+              componentLabel: componentLabel || null,
+              registryData: registryData || null,
+              props,
+            });
+            console.log(
+              "[iframe] Component config updated:",
+              componentId,
+              componentLabel
+            );
           } catch (error) {
             console.error("[iframe] Error creating theme:", error);
           }
@@ -125,9 +147,9 @@ function IframeApp() {
     return () => window.removeEventListener("message", handleMessage);
   }, []);
 
-  const { theme, component, props } = config;
+  const { theme, componentId, componentLabel, registryData, props } = config;
 
-  if (!component) {
+  if (!componentId) {
     return (
       <div
         style={{
@@ -144,22 +166,55 @@ function IframeApp() {
     );
   }
 
-  const Component = COMPONENT_REGISTRY[component];
+  // Validate component exists in registry data sent from parent
+  if (!registryData || !registryData[componentId]) {
+    return (
+      <StrictMode>
+        <ErrorBoundary>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                height: "100vh",
+                fontFamily: "system-ui, sans-serif",
+                color: "#d32f2f",
+              }}
+            >
+              Component "{componentLabel || componentId}" not in registry
+            </div>
+          </ThemeProvider>
+        </ErrorBoundary>
+      </StrictMode>
+    );
+  }
+
+  // Look up component from local registry (iframe has its own copy)
+  const Component = samplesRegistry[componentId]?.component;
 
   if (!Component) {
     return (
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          height: "100vh",
-          fontFamily: "system-ui, sans-serif",
-          color: "#d32f2f",
-        }}
-      >
-        Component "{component}" not found in registry
-      </div>
+      <StrictMode>
+        <ErrorBoundary>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                height: "100vh",
+                fontFamily: "system-ui, sans-serif",
+                color: "#d32f2f",
+              }}
+            >
+              Component "{componentLabel || componentId}" could not be loaded
+            </div>
+          </ThemeProvider>
+        </ErrorBoundary>
+      </StrictMode>
     );
   }
 

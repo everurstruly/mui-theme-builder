@@ -6,6 +6,9 @@ import useViewportSimulationStore from "./ViewportSimulation/viewportSimulationS
 export default function EditorCanvas() {
   const width = useViewportSimulationStore((s) => s.width);
   const height = useViewportSimulationStore((s) => s.height);
+  const selectedComponent = useViewportSimulationStore(
+    (s) => s.selectedComponent
+  );
 
   return (
     <CanvasLayout>
@@ -13,7 +16,7 @@ export default function EditorCanvas() {
         <ViewportSimulationFrame
           width={width}
           height={height}
-          component="DashboardExample"
+          component={selectedComponent}
         />
       </CanvasBodyZoomPan>
     </CanvasLayout>
