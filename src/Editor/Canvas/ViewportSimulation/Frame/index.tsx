@@ -130,7 +130,8 @@ export default function ViewportSimulationFrame({
     console.log("[ViewportSimulationFrame] Sending MOUNT_COMPONENT:", message);
 
     // Send theme, component ID, registry info, and viewport dimensions to iframe
-    win.postMessage(message, "*");
+    // Use specific origin instead of wildcard for security
+    win.postMessage(message, window.location.origin);
   }, [
     ready,
     theme,
@@ -151,6 +152,11 @@ export default function ViewportSimulationFrame({
 
     // Wait for iframe to signal it's ready
     const handleMessage = (event: MessageEvent) => {
+      // Validate origin to prevent spoofed IFRAME_READY messages
+      if (event.origin !== window.location.origin) {
+        return;
+      }
+
       if (event.data?.type === "IFRAME_READY") {
         console.log("[ViewportSimulationFrame] Received IFRAME_READY");
         setReady(true);

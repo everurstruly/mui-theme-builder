@@ -98,6 +98,15 @@ function IframeApp() {
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent<MessageData>) => {
+      // Validate origin to prevent unauthorized postMessages
+      if (event.origin !== window.location.origin) {
+        console.warn(
+          "[iframe] Ignoring message from untrusted origin:",
+          event.origin
+        );
+        return;
+      }
+
       if (event.data?.type === "MOUNT_COMPONENT") {
         const {
           theme: themeOpts,
