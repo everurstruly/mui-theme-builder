@@ -68,7 +68,7 @@ export default function CanvasBodyZoomPan({
         sx={{
           width: "100%",
           height: "100%",
-          overflow: "hidden",
+          overflow: "clip", // Use clip instead of hidden for sharper edges
           position: "relative",
           cursor: dragLock ? (isDragging ? "grabbing" : "grab") : "default",
           userSelect: "none",
@@ -83,6 +83,12 @@ export default function CanvasBodyZoomPan({
             width: "fit-content",
             height: "fit-content",
             pointerEvents: dragLock ? "none" : "auto", // When locked (pan mode), disable pointer events on content
+            // Prevent rendering artifacts during transforms
+            backfaceVisibility: "hidden",
+            WebkitBackfaceVisibility: "hidden",
+            willChange: "transform",
+            transformStyle: "preserve-3d",
+            WebkitTransformStyle: "preserve-3d",
             "& > *": {
               pointerEvents: dragLock ? "none" : "auto", // Apply to children (iframe) as well
             },

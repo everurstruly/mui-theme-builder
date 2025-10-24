@@ -204,6 +204,9 @@ export default function ViewportSimulationFrame({
             height: "100%",
             border: "none",
             display: "block",
+            // Prevent rendering artifacts
+            backfaceVisibility: "hidden",
+            WebkitBackfaceVisibility: "hidden",
           }}
           title="Viewport Simulation"
         />
