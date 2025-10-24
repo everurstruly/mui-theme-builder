@@ -52,7 +52,7 @@ export default function useCanvasObjectViewport() {
   };
 }
 
-const canvasViewportPresets = {
+export const canvasViewportPresets = {
   phone: { w: 375, h: 812 },
   tablet: { w: 768, h: 1024 },
   laptop: { w: 1366, h: 768 },
