@@ -1,8 +1,9 @@
 import Drawer from "@mui/material/Drawer";
 import useEditorStore from "../editorStore";
 import { useTheme } from "@mui/material/styles";
-import { List, ListItem, ListItemText, useMediaQuery } from "@mui/material";
+import { Box, Typography, useMediaQuery } from "@mui/material";
 import type { CSSObject, Theme } from "@mui/material/styles";
+import ObjectsPanelTree from "./CanvasObjectsTree";
 
 export default function EditorPreviewsPanel() {
   const theme = useTheme();
@@ -57,17 +58,12 @@ export default function EditorPreviewsPanel() {
         },
       }}
     >
-      <List dense>
-        <ListItem>
-          <ListItemText primary="Single-line item" />
-        </ListItem>
-        <ListItem>
-          <ListItemText primary="Second-line item" />
-        </ListItem>
-        <ListItem>
-          <ListItemText primary="Third-line item" />
-        </ListItem>
-      </List>
+      <Box sx={{ height: 46, padding: 2 }}>
+        <Typography variant="body1" component="h2">
+          Previews
+        </Typography>
+      </Box>
+      <ObjectsPanelTree />
     </Drawer>
   );
 }
