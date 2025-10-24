@@ -39,8 +39,6 @@ export default function EditorPropertiesPanel() {
         variant={isUpLaptopScreen ? "permanent" : "temporary"}
         sx={(theme) => ({
           flexShrink: 0,
-          borderLeft: 1,
-          borderColor: "divider",
           overflow: "hidden",
           WebkitOverflowScrolling: "touch",
           backgroundColor: "transparent",
