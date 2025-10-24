@@ -5,6 +5,7 @@ import CodeWindow from "../CodeWindow";
 import PrimaryColorsCompact from "./PrimaryColorsCompact";
 import ColorProperty from "./Color";
 import EditorPropertiesDrawerToggle from "./DrawerToggle";
+import TypographyProperty from "./Typography/Typography";
 import { Tab, Tabs, Box } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useMediaQuery } from "@mui/material";
@@ -102,7 +103,7 @@ export default function EditorPropertiesPanel() {
         </CustomTabPanel>
 
         <CustomTabPanel value={activePropertiesGroupTab} index={1}>
-          <PrimaryColorsCompact />
+          <TypographyProperty />
         </CustomTabPanel>
 
         <CustomTabPanel value={activePropertiesGroupTab} index={2}>
