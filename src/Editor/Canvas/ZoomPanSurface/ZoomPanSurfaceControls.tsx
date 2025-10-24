@@ -1,4 +1,12 @@
-import { Box, Button, ButtonGroup, IconButton, Tooltip } from "@mui/material";
+import {
+  Box,
+  Button,
+  ButtonGroup,
+  IconButton,
+  Tooltip,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import useZoomPanStore, {
@@ -9,6 +17,8 @@ import {
   AlignHorizontalLeftOutlined,
 } from "@mui/icons-material";
 import { useMemo, useCallback } from "react";
+import DragLockButton from "./DragLockButton";
+import ZoomControlsMenu from "./ZoomControlsMenu";
 
 const viewAlignments: Record<
   ViewAlignmentAdjustment,
@@ -25,12 +35,17 @@ const viewAlignments: Record<
 } as const;
 
 export default function CanvasZoomPanSurfaceControls() {
+  const theme = useTheme();
+  const isLargeScreen = useMediaQuery(theme.breakpoints.up("md"));
   const zoom = useZoomPanStore((state) => state.zoom);
   const zoomIn = useZoomPanStore((state) => state.zoomIn);
   const zoomOut = useZoomPanStore((state) => state.zoomOut);
   const cycleZoomPreset = useZoomPanStore((state) => state.cycleZoomPreset);
   const alignment = useZoomPanStore((state) => state.alignment);
   const alignTo = useZoomPanStore((state) => state.alignTo);
+  const dragLock = useZoomPanStore((state) => state.dragLock);
+  const toggleDragLock = useZoomPanStore((state) => state.toggleDragLock);
+
   const nextPosition = useMemo<ViewAlignmentAdjustment>(() => {
     const candidates = Object.keys(viewAlignments) as ViewAlignmentAdjustment[];
     const pick = candidates.find((c) => c !== alignment) ?? candidates[0];
@@ -61,6 +76,8 @@ export default function CanvasZoomPanSurfaceControls() {
         },
       })}
     >
+      <DragLockButton locked={dragLock} onToggle={toggleDragLock} />
+
       <Tooltip title={nextLabel} arrow>
         <IconButton
           size="medium"
@@ -79,46 +96,50 @@ export default function CanvasZoomPanSurfaceControls() {
         </IconButton>
       </Tooltip>
 
-      <ButtonGroup
-        size="large" // equivalent of size="medium" of ToggleButtonGroup
-        sx={{
-          borderRadius: 1,
-          backgroundColor: "rgba(255, 255, 255, 0.5)",
-          backdropFilter: "blur(40px)",
-        }}
-      >
-        <Button
-          onClick={zoomOut}
+      {isLargeScreen ? (
+        <ButtonGroup
+          size="large" // equivalent of size="medium" of ToggleButtonGroup
           sx={{
-            borderColor: "rgba(0,0,0,0.1)",
-            paddingInline: 1,
+            borderRadius: 1,
+            backgroundColor: "rgba(255, 255, 255, 0.5)",
+            backdropFilter: "blur(40px)",
           }}
         >
-          <RemoveIcon />
-        </Button>
+          <Button
+            onClick={zoomOut}
+            sx={{
+              borderColor: "rgba(0,0,0,0.1)",
+              paddingInline: 1,
+            }}
+          >
+            <RemoveIcon />
+          </Button>
 
-        <Button
-          onClick={cycleZoomPreset}
-          aria-label={`Zoom level ${zoom} percent`}
-          sx={{
-            textTransform: "none",
-            borderColor: "rgba(0,0,0,0.1)",
-            paddingInline: 2,
-          }}
-        >
-          {zoom}%
-        </Button>
+          <Button
+            onClick={cycleZoomPreset}
+            aria-label={`Zoom level ${zoom} percent`}
+            sx={{
+              textTransform: "none",
+              borderColor: "rgba(0,0,0,0.1)",
+              paddingInline: 2,
+            }}
+          >
+            {zoom}%
+          </Button>
 
-        <Button
-          onClick={zoomIn}
-          sx={{
-            borderColor: "rgba(0,0,0,0.1)",
-            paddingInline: 1,
-          }}
-        >
-          <AddIcon />
-        </Button>
-      </ButtonGroup>
+          <Button
+            onClick={zoomIn}
+            sx={{
+              borderColor: "rgba(0,0,0,0.1)",
+              paddingInline: 1,
+            }}
+          >
+            <AddIcon />
+          </Button>
+        </ButtonGroup>
+      ) : (
+        <ZoomControlsMenu />
+      )}
     </Box>
   );
 }

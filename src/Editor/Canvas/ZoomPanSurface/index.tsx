@@ -3,6 +3,7 @@ import ViewportSimulationControls from "../ViewportSimulation/ViewportSimulation
 import React, { useRef } from "react";
 import { Box } from "@mui/material";
 import { useCanvasZoomPanSurface } from "./useZoomPanSurface";
+import useZoomPanStore from "./zoomPanSurfaceStore";
 
 type CanvasBodyZoomPanProps = {
   children: React.ReactNode;
@@ -12,6 +13,7 @@ export default function CanvasBodyZoomPan({
   children,
 }: CanvasBodyZoomPanProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const dragLock = useZoomPanStore((state) => state.dragLock);
   const {
     scale,
     isDragging,
@@ -27,17 +29,17 @@ export default function CanvasBodyZoomPan({
     <>
       <Box
         ref={containerRef}
-        onWheel={handleWheel}
+        onWheel={dragLock ? handleWheel : undefined}
         // onDoubleClick={handleDoubleClick}
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
+        onPointerDown={dragLock ? handlePointerDown : undefined}
+        onPointerMove={dragLock ? handlePointerMove : undefined}
+        onPointerUp={dragLock ? handlePointerUp : undefined}
         sx={{
           width: "100%",
           height: "100%",
           overflow: "hidden",
           position: "relative",
-          cursor: isDragging ? "grabbing" : "grab",
+          cursor: dragLock ? (isDragging ? "grabbing" : "grab") : "default",
           userSelect: "none",
           touchAction: "none",
         }}
@@ -49,6 +51,10 @@ export default function CanvasBodyZoomPan({
             transition: isDragging ? "none" : "transform 0.1s ease-out",
             width: "fit-content",
             height: "fit-content",
+            pointerEvents: dragLock ? "none" : "auto", // When locked (pan mode), disable pointer events on content
+            "& > *": {
+              pointerEvents: dragLock ? "none" : "auto", // Apply to children (iframe) as well
+            },
           }}
         >
           {children}

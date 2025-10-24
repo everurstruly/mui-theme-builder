@@ -19,6 +19,7 @@ const useCanvasZoomPanSurfaceStore = create(
       zoom: defaultZoomValue,
       position: { x: 0, y: 0 }, // visual absolute position
       alignment: "pan" as ViewAlignment,
+      dragLock: true, // when true, panning is enabled (pointer events disabled on content)
     },
 
     (set, get) => ({
@@ -100,6 +101,11 @@ const useCanvasZoomPanSurfaceStore = create(
           // Keep position when switching to pan, reset otherwise
           position: next === "pan" ? position : { x: 0, y: 0 },
         });
+      },
+
+      /** Toggle drag lock (pan mode vs interact mode) */
+      toggleDragLock: () => {
+        set({ dragLock: !get().dragLock });
       },
 
       /** Reset position to origin with start alignment */
