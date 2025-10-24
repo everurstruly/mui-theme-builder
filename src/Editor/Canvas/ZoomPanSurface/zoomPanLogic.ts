@@ -1,20 +1,28 @@
 /**
  * Compute the visual position for a given alignment mode.
- * For "center": centers content in container
+ * For "center": centers content horizontally, positions vertically in upper-middle with breathing room
  * For "start": aligns content to left (x=0)
  */
 export function computeAlignedPosition(
   containerWidth: number,
   contentWidth: number,
+  containerHeight: number,
+  contentHeight: number,
   scale: number,
   alignment: "center" | "start"
 ): { x: number; y: number } {
   switch (alignment) {
-    case "center":
-      return {
-        x: (containerWidth - contentWidth * scale) / 2,
-        y: 0,
-      };
+    case "center": {
+      // Horizontal: true center
+      const x = (containerWidth - contentWidth * scale) / 2;
+
+      // Vertical: upper-middle position (1/3 from top gives breathing room)
+      const scaledContentHeight = contentHeight * scale;
+      const availableVerticalSpace = containerHeight - scaledContentHeight;
+      const y = availableVerticalSpace * 0.33; // Position at 1/3 down (upper-middle)
+
+      return { x, y };
+    }
     case "start":
       return { x: 0, y: 0 };
   }
@@ -28,6 +36,8 @@ export function computeAlignedPosition(
 export function computeTranslatePosition(
   containerWidth: number,
   contentWidth: number,
+  containerHeight: number,
+  contentHeight: number,
   scale: number,
   position: { x: number; y: number },
   alignment: string
@@ -40,6 +50,8 @@ export function computeTranslatePosition(
   return computeAlignedPosition(
     containerWidth,
     contentWidth,
+    containerHeight,
+    contentHeight,
     scale,
     alignment as "center" | "start"
   );

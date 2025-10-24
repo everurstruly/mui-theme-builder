@@ -35,20 +35,25 @@ export function useCanvasZoomPanSurface(
   );
   const alignment = useCanvasZoomPanSurfaceStore((s) => s.alignment);
   const width = useViewportSimulationStore((s) => s.width);
+  const height = useViewportSimulationStore((s) => s.height);
 
   const scale = zoom / 100;
 
   const getTranslatePosition = useCallback(() => {
     const containerWidth = containerRef.current?.clientWidth || 0;
+    const containerHeight = containerRef.current?.clientHeight || 0;
     const contentWidth = width || 0;
+    const contentHeight = height || 0;
     return computeTranslatePosition(
       containerWidth,
       contentWidth,
+      containerHeight,
+      contentHeight,
       scale,
       position,
       alignment
     );
-  }, [alignment, position, scale, width, containerRef]);
+  }, [alignment, position, scale, width, height, containerRef]);
 
   const [translatePosition, setTranslatePosition] =
     useState(getTranslatePosition);
@@ -113,16 +118,20 @@ export function useCanvasZoomPanSurface(
     }
 
     const containerWidth = containerRef.current?.clientWidth || 0;
+    const containerHeight = containerRef.current?.clientHeight || 0;
     const contentWidth = width || 0;
+    const contentHeight = height || 0;
     const aligned = computeAlignedPosition(
       containerWidth,
       contentWidth,
+      containerHeight,
+      contentHeight,
       scale,
       alignment as ViewAlignmentAdjustment
     );
     // Apply the aligned position without switching the alignment mode back to 'pan'.
     setPositionPreserve(aligned.x, aligned.y);
-  }, [alignment, containerRef, scale, setPositionPreserve, width]);
+  }, [alignment, containerRef, scale, setPositionPreserve, width, height]);
 
   /**
    * Update translatePosition for rendering whenever container size or content changes.
