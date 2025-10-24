@@ -77,18 +77,16 @@ export default function EditorPropertiesPanel() {
         value={activePropertiesGroupTab}
         onChange={gotoPropertiesGroupTab}
         sx={{
-          padding: 0,
-          paddingTop: 2,
-          minHeight: 40,
-          height: 40,
+          minHeight: "var(--toolbar-height, 50px)",
+          height: "var(--toolbar-height, 50px)",
           alignItems: "center",
           borderBottom: 1,
           borderBottomColor: "divider",
           backgroundColor: "background.paper",
 
           "& .MuiTab-root": {
-            minHeight: 40,
-            height: 40,
+            minHeight: "var(--toolbar-height, 50px)",
+            height: "var(--toolbar-height, 50px)",
             minWidth: 0,
             fontSize: "0.75rem",
             textTransform: "none",
@@ -97,8 +95,7 @@ export default function EditorPropertiesPanel() {
       >
         <Tab label="Colors" {...a11yProps(0)} />
         <Tab label="Typography" {...a11yProps(1)} />
-        <Tab label="Layout" {...a11yProps(2)} />
-        <Tab label="Styles" {...a11yProps(3)} />
+        <Tab label="Others" {...a11yProps(2)} />
       </Tabs>
 
       <CustomTabPanel value={activePropertiesGroupTab} index={0}>
@@ -110,7 +107,7 @@ export default function EditorPropertiesPanel() {
       </CustomTabPanel>
 
       <CustomTabPanel value={activePropertiesGroupTab} index={2}>
-        Item Three
+        <PrimaryColorsCompact />
       </CustomTabPanel>
     </Drawer>
   );
