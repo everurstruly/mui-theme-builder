@@ -1,9 +1,8 @@
-import EditorToolBar from "./ToolBar";
-import EditorCanvas from "./Canvas";
-import EditorPropertiesPanel from "./PropertiesPanel";
-import EditorPropertiesDrawerToggle from "./PropertiesPanel/DrawerToggle";
 import EditorHeader from "./Header";
-import EditorPreviewsPanel from "./PreviewsPanel";
+import EditorCanvas from "./Canvas";
+import EditorToolBar from "./ToolBar";
+import EditorPropertiesPanel from "./PropertiesPanel";
+import EditorActivitiesPanel from "./ActivitiesPanel";
 import { Box, Stack } from "@mui/material";
 
 export default function Editor() {
@@ -53,7 +52,7 @@ export default function Editor() {
         height={`calc(100dvh - var(--header-height) - 1px)`} // FIXME: 1px is a magic number that prevents overflow due to scrollbar/border I suspect
         overflow={"hidden"}
       >
-        <EditorPreviewsPanel />
+        <EditorActivitiesPanel />
         <Stack
           component="main"
           height={"100%"}
@@ -65,7 +64,6 @@ export default function Editor() {
           <EditorCanvas />
         </Stack>
         <EditorPropertiesPanel />
-        <EditorPropertiesDrawerToggle />
       </Stack>
     </Box>
   );

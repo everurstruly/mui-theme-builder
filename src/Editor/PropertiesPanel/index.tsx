@@ -4,6 +4,7 @@ import useEditorStore from "../editorStore";
 import CodeWindow from "../CodeWindow";
 import PrimaryColorsCompact from "./PrimaryColorsCompact";
 import ColorProperty from "./Color";
+import EditorPropertiesDrawerToggle from "./DrawerToggle";
 import { Tab, Tabs, Box } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useMediaQuery } from "@mui/material";
@@ -125,42 +126,45 @@ function CustomTabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
 
   return (
-    <Box
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      sx={(theme) => ({
-        height: "100%",
-        overflowY: "auto",
+    <>
+      <Box
+        role="tabpanel"
+        hidden={value !== index}
+        id={`simple-tabpanel-${index}`}
+        aria-labelledby={`simple-tab-${index}`}
+        sx={(theme) => ({
+          height: "100%",
+          overflowY: "auto",
 
-        // show a very thin scrollbar as a visual affordance (still scrollable)
-        msOverflowStyle: "auto", // IE and Edge
-        scrollbarWidth: "thin", // Firefox
+          // show a very thin scrollbar as a visual affordance (still scrollable)
+          msOverflowStyle: "auto", // IE and Edge
+          scrollbarWidth: "thin", // Firefox
 
-        "&::-webkit-scrollbar": {
-          width: 4,
-          height: 4,
-        },
-        "&::-webkit-scrollbar-track": {
-          background: "transparent",
-        },
-        "&::-webkit-scrollbar-thumb": {
-          backgroundColor:
-            theme.palette.mode === "dark"
-              ? "rgba(255,255,255,0.18)"
-              : "rgba(0,0,0,0.24)",
-          borderRadius: 4,
-        },
+          "&::-webkit-scrollbar": {
+            width: 4,
+            height: 4,
+          },
+          "&::-webkit-scrollbar-track": {
+            background: "transparent",
+          },
+          "&::-webkit-scrollbar-thumb": {
+            backgroundColor:
+              theme.palette.mode === "dark"
+                ? "rgba(255,255,255,0.18)"
+                : "rgba(0,0,0,0.24)",
+            borderRadius: 4,
+          },
 
-        [theme.breakpoints.down("sm")]: {
-          paddingInline: theme.spacing(2),
-        },
-      })}
-      {...other}
-    >
-      {value === index && children}
-    </Box>
+          [theme.breakpoints.down("sm")]: {
+            paddingInline: theme.spacing(2),
+          },
+        })}
+        {...other}
+      >
+        {value === index && children}
+      </Box>
+      <EditorPropertiesDrawerToggle />
+    </>
   );
 }
 
