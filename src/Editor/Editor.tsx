@@ -1,8 +1,8 @@
-import EditorHeader from "./Header";
-import EditorCanvas from "./Canvas";
-import EditorToolBar from "./ToolBar";
-import EditorPropertiesPanel from "./PropertiesPanel";
-import EditorActivitiesPanel from "./ActivitiesPanel";
+import EditorHeader from "./Header/Header";
+import EditorCanvas from "./Canvas/Canvas";
+import EditorToolBar from "./ToolBar/ToolBar";
+import EditorPropertiesPanel from "./PropertiesPanel/PropertiesPanel";
+import EditorActivitiesPanel from "./ActivitiesPanel/ActivitiesPanel";
 import { Box, Stack } from "@mui/material";
 
 export default function Editor() {

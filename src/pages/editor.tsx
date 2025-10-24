@@ -1,4 +1,4 @@
-import Editor from "../Editor";
+import Editor from "../Editor/Editor";
 import { ScopedCssBaseline } from "@mui/material";
 
 export default function EditorPage() {

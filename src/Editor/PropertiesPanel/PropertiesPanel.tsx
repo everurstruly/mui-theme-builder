@@ -1,9 +1,9 @@
 import * as React from "react";
 import Drawer from "@mui/material/Drawer";
 import useEditorStore from "../editorStore";
-import CodeWindow from "../CodeWindow";
+import CodeWindow from "../CodeWindow/CodeWindow";
 import PrimaryColorsCompact from "./PrimaryColorsCompact";
-import ColorProperty from "./Color";
+import ColorProperty from "./Color/Color";
 import EditorPropertiesDrawerToggle from "./DrawerToggle";
 import TypographyProperty from "./Typography/Typography";
 import { Tab, Tabs, Box } from "@mui/material";
