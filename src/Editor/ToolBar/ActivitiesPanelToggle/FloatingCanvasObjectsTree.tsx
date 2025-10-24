@@ -66,7 +66,6 @@ export default function FloatingCanvasObjectsTree() {
           paper: {
             sx: {
               border: 2,
-              padding: 1,
               borderColor: "divider",
               borderRadius: 0,
               minWidth: "var(--activities-panel-width, 300px)",

@@ -3,7 +3,7 @@ import useEditorStore from "../editorStore";
 import { useTheme } from "@mui/material/styles";
 import { Box, Typography, useMediaQuery } from "@mui/material";
 import type { CSSObject, Theme } from "@mui/material/styles";
-import ObjectsPanelTree from "./CanvasObjectsTree";
+import CanvasObjectsTree from "./CanvasObjectsTree";
 
 export default function EditorPreviewsPanel() {
   const theme = useTheme();
@@ -58,12 +58,9 @@ export default function EditorPreviewsPanel() {
         },
       }}
     >
-      <Box sx={{ height: 46, padding: 2 }}>
-        <Typography variant="body1" component="h2">
-          Previews
-        </Typography>
-      </Box>
-      <ObjectsPanelTree />
+      <Activity title="Samples">
+        <CanvasObjectsTree />
+      </Activity>
     </Drawer>
   );
 }
@@ -78,3 +75,21 @@ const openedMixin = (theme: Theme): CSSObject => ({
 const closedMixin = (): CSSObject => ({
   display: "none",
 });
+
+type ActivityProps = {
+  title: string;
+  children?: React.ReactNode;
+};
+
+function Activity({ title, children }: ActivityProps) {
+  return (
+    <>
+      <Box sx={{ height: 46, padding: 2 }}>
+        <Typography variant="body2" component="h2">
+          {title}
+        </Typography>
+      </Box>
+      {children}
+    </>
+  );
+}

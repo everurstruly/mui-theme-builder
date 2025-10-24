@@ -42,7 +42,7 @@ export default function CanvasObjectsTree() {
   };
 
   return (
-    <Box sx={{ minHeight: 352, paddingBlock: 1 }}>
+    <Box sx={{ minHeight: 352, padding: 1 }}>
       <SimpleTreeView
         selectedItems={selectedComponent}
         onSelectedItemsChange={(_, itemId) => {
