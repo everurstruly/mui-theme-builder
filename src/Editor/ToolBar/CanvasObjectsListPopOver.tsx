@@ -1,20 +1,21 @@
 import * as React from "react";
 import Popover from "@mui/material/Popover";
-import { ArrowDropDownOutlined } from "@mui/icons-material";
-import { Box, Button } from "@mui/material";
 import ListSubheader from "@mui/material/ListSubheader";
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemButtonWithMenu from "../../../lib/components/ListItemButtonWithMenu";
 import useEditorStore from "../editorStore";
+import { ArrowDropDownOutlined } from "@mui/icons-material";
+import { Box, Button, useMediaQuery, useTheme } from "@mui/material";
 
-export default function MinimizedPreviewsPanelPopOver() {
-  const isActivityPanelVisible = useEditorStore((state) => {
+export default function CanvasObjectsListPopOver() {
+  const theme = useTheme();
+  const isDesktopScreen = useMediaQuery(theme.breakpoints.up("md"));
+  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
+  const isVisible = useEditorStore((state) => {
     return state.hiddenPanels.includes("activities") === false;
   });
-
-  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
 
   const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -24,11 +25,11 @@ export default function MinimizedPreviewsPanelPopOver() {
     setAnchorEl(null);
   };
 
-  const open = Boolean(anchorEl);
-
-  if (isActivityPanelVisible) {
+  if (!isDesktopScreen || isVisible) {
     return null;
   }
+
+  const open = Boolean(anchorEl);
 
   return (
     <Box>

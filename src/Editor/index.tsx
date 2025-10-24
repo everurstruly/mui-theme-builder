@@ -18,7 +18,8 @@ export default function Editor() {
         },
 
         "--toolbar-height": {
-          xs: "50px",
+          xs: "46px",
+          sm: "50px",
         },
 
         "--canvas-brim-padding": {
@@ -40,7 +41,7 @@ export default function Editor() {
         },
 
         "--canvas-max-width": {
-          md: "calc(100vw - (var(--canvas-brim-padding)*2) - var(--previews-panel-width) - var(--properties-panel-width))",
+          md: "calc(100vw - (var(--canvas-brim-padding) * 2) - var(--previews-panel-width) - var(--properties-panel-width))",
         },
       }}
     >
@@ -49,7 +50,7 @@ export default function Editor() {
         direction="row"
         flexGrow={1}
         minWidth={0}
-        height={`calc(100dvh - var(--header-height) - 2px)`} // FIXME: 2px is a magic number that prevents overflow due to scrollbar/border I suspect
+        height={`calc(100dvh - var(--header-height) - 1px)`} // FIXME: 1px is a magic number that prevents overflow due to scrollbar/border I suspect
         overflow={"hidden"}
       >
         <EditorPreviewsPanel />

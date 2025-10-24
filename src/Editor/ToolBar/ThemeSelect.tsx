@@ -12,7 +12,7 @@ export default function ThemeSelect() {
   };
 
   return (
-    <FormControl sx={{ m: 0, width: 200 }} size="small">
+    <FormControl sx={{ m: 0, width: "100%", maxWidth: "26ch" }} size="small">
       <Select
         labelId="demo-select-small-label"
         id="demo-select-small"

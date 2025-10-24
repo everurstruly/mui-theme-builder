@@ -1,32 +1,28 @@
 import ThemeSelect from "./ThemeSelect";
-import ThemeActionsGroup from "./ChangesHistoryActions";
 import PropertiesPanelSwitch from "./PropertiesPanelSwitch";
-import CopyThemeButton from "./CopyThemeButton";
-import SaveThemeButton from "./SaveThemeButton";
+import CanvasObjectsPanelToggle from "./CanvasObjectsPanelToggle";
+import PrimaryActionGroup from "./PirmaryActionGroup";
 import { AppBar, Box, Stack, Toolbar } from "@mui/material";
-import PreviewsPanelToggle from "./PreviewsPanelToggle";
-import MinimizedPreviewsPanelPopOver from "../PreviewsPanel/FramesPopOver";
 
 export default function EditorToolBar() {
   return (
     <AppBar
       position="static"
       elevation={0}
-      sx={(theme) => ({
+      sx={{
         color: "text.primary",
         backgroundColor: "transparent",
         borderBottom: 1,
         borderColor: "divider",
-        display: "none",
-
-        [theme.breakpoints.up("md")]: {
-          display: "block",
-        },
-      })}
+      }}
     >
       <Toolbar
         variant="dense"
-        sx={{ px: "0 !important", minHeight: 46, height: 46 }}
+        sx={{
+          px: "0 !important",
+          minHeight: "var(--toolbar-height)",
+          height: "var(--toolbar-height)",
+        }}
       >
         <Stack
           flexGrow={1}
@@ -39,17 +35,24 @@ export default function EditorToolBar() {
               display: "flex",
               alignItems: "center",
               columnGap: 1,
+              flexGrow: 1,
             }}
           >
-            <MinimizedPreviewsPanelPopOver />
-            <PreviewsPanelToggle />
+            <CanvasObjectsPanelToggle />
             <ThemeSelect />
-            <CopyThemeButton />
-            <ThemeActionsGroup />
-            <SaveThemeButton />
+            <PrimaryActionGroup />
           </Box>
 
-          <Stack direction="row" columnGap={1} alignItems="center">
+          <Stack
+            direction="row"
+            columnGap={1}
+            alignItems="center"
+            sx={(theme) => ({
+              [theme.breakpoints.down("sm")]: {
+                display: "none",
+              },
+            })}
+          >
             <PropertiesPanelSwitch />
           </Stack>
         </Stack>
