@@ -32,7 +32,7 @@ export default function SaveThemeButton() {
       }}
     >
       <SaveRounded sx={{ fontSize: 16 }} />
-      {isSaved ? "Saved" : "Click to Save changes"}
+      {isSaved ? "Saved" : "Save changes"}
     </Button>
   );
 }

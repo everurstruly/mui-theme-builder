@@ -7,7 +7,7 @@ export default function ChangesHistoryActions() {
 
   return (
     <>
-      <ButtonGroup color="inherit" sx={{ marginInline: 1 }}>
+      <ButtonGroup color="inherit">
         <Button
           value="undo"
           aria-label="undo"

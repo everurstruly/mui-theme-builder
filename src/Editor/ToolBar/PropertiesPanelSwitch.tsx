@@ -39,8 +39,7 @@ export default function PropertiesPanelSwitch() {
     >
       {isPanelVisible ? (
         <>
-          <FullscreenRounded sx={{ fontSize: 20, marginRight: 0.5 }} /> Wider
-          Canvas
+          <FullscreenRounded sx={{ fontSize: 20, marginRight: 0.5 }} />
         </>
       ) : (
         <>

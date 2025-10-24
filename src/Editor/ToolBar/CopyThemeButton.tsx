@@ -45,7 +45,6 @@ export default function CopyThemeDialog() {
           columnGap: 1,
           boxShadow: "none",
           textTransform: "none !important",
-          minWidth: "100px",
         }}
       >
         <FileCopyRounded sx={{ fontSize: 16 }} />
