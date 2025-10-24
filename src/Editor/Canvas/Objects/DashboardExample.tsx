@@ -9,7 +9,7 @@ export default function DashboardExample() {
     <Box
       sx={{
         p: 6,
-        minWidth: width,
+        width: width,
         minHeight: height,
         backgroundColor: "white",
         border: "2px solid #444",
