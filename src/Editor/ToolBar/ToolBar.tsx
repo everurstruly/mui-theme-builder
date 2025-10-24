@@ -1,5 +1,5 @@
 import ThemeSelect from "./ThemeSelect";
-import PropertiesPanelSwitch from "./PropertiesPanelSwitch";
+import PropertiesPanelToggle from "./PropertiesPanelToggle";
 import ActivitiesPanelToggle from "./ActivitiesPanelToggle/ActivitiesPanelToggle";
 import PrimaryActionGroup from "./PirmaryActionGroup";
 import { AppBar, Box, Stack, Toolbar } from "@mui/material";
@@ -53,7 +53,7 @@ export default function EditorToolBar() {
               },
             })}
           >
-            <PropertiesPanelSwitch />
+            <PropertiesPanelToggle />
           </Stack>
         </Stack>
       </Toolbar>

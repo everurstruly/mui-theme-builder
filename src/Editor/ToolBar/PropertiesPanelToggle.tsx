@@ -2,7 +2,7 @@ import useEditorStore from "../editorStore";
 import { FullscreenRounded, TuneRounded } from "@mui/icons-material";
 import { Button } from "@mui/material";
 
-export default function PropertiesPanelSwitch() {
+export default function PropertiesPanelToggle() {
   const withHidePanel = useEditorStore((state) => state.hidePanel);
   const withShowPanel = useEditorStore((state) => state.showPanel);
   const isPanelVisible = useEditorStore(

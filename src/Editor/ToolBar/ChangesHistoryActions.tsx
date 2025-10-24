@@ -14,7 +14,7 @@ export default function ChangesHistoryActions() {
           sx={{ px: 0, borderColor: "divider" }}
           onClick={() => changeHistory()}
         >
-          <UndoRounded sx={{ fontSize: 20 }} />
+          <UndoRounded sx={{ fontSize: 20, color: "#333" }} />
         </Button>
 
         <Button
@@ -23,7 +23,7 @@ export default function ChangesHistoryActions() {
           sx={{ px: 0, borderColor: "divider" }}
           onClick={() => changeHistory()}
         >
-          <RedoRounded sx={{ fontSize: 20 }} />
+          <RedoRounded sx={{ fontSize: 20, color: "#333" }} />
         </Button>
       </ButtonGroup>
     </>
