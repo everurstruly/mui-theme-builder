@@ -1,6 +1,6 @@
 import ThemeSelect from "./ThemeSelect";
 import PropertiesPanelSwitch from "./PropertiesPanelSwitch";
-import CanvasObjectsPanelToggle from "./CanvasObjectsPanelToggle";
+import ActivitiesPanelToggle from "./ActivitiesPanelToggle/ActivitiesPanelToggle";
 import PrimaryActionGroup from "./PirmaryActionGroup";
 import { AppBar, Box, Stack, Toolbar } from "@mui/material";
 
@@ -38,7 +38,7 @@ export default function EditorToolBar() {
               flexGrow: 1,
             }}
           >
-            <CanvasObjectsPanelToggle />
+            <ActivitiesPanelToggle />
             <ThemeSelect />
             <PrimaryActionGroup />
           </Box>

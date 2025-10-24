@@ -1,9 +1,9 @@
-import useEditorStore from "../editorStore";
-import { MenuOpenOutlined, Grid3x3Outlined } from "@mui/icons-material";
+import useEditorStore from "../../editorStore";
+import FloatingCanvasObjectsTree from "./FloatingCanvasObjectsTree";
+import { ListOutlined, PhotoSizeSelectSmallRounded } from "@mui/icons-material";
 import { Button } from "@mui/material";
-import CanvasObjectsListPopOver from "./CanvasObjectsListPopOver";
 
-export default function CanvasObjectsPanelToggle() {
+export default function ActivitiesPanelToggle() {
   const withHidePanel = useEditorStore((state) => state.hidePanel);
   const withShowPanel = useEditorStore((state) => state.showPanel);
   const isPanelVisible = useEditorStore(
@@ -18,9 +18,8 @@ export default function CanvasObjectsPanelToggle() {
     }
   };
 
-  return (
-    <>
-      <CanvasObjectsListPopOver />
+  if (isPanelVisible) {
+    return (
       <Button
         color="inherit"
         variant={"outlined"}
@@ -36,15 +35,30 @@ export default function CanvasObjectsPanelToggle() {
           fontSize: ".75rem",
         }}
       >
-        {isPanelVisible ? (
-          <>
-            <MenuOpenOutlined sx={{ fontSize: 20 }} />
-          </>
-        ) : (
-          <>
-            <Grid3x3Outlined sx={{ fontSize: 20 }} />
-          </>
-        )}
+        <PhotoSizeSelectSmallRounded sx={{ fontSize: 20 }} />
+      </Button>
+    );
+  }
+
+  return (
+    <>
+      <FloatingCanvasObjectsTree />
+      <Button
+        color="inherit"
+        variant={"outlined"}
+        onClick={() => handleDisplayPropertyPanel()}
+        sx={{
+          width: "auto",
+          minWidth: 0,
+          height: "fit-content",
+          boxShadow: "none",
+          paddingInline: 1,
+          borderColor: "divider",
+          textTransform: "none",
+          fontSize: ".75rem",
+        }}
+      >
+        <ListOutlined sx={{ fontSize: 20 }} />
       </Button>
     </>
   );

@@ -1,8 +1,8 @@
 import Box from "@mui/material/Box";
+import useViewportSimulationStore from "../Canvas/ViewportSimulation/viewportSimulationStore";
 import { SimpleTreeView } from "@mui/x-tree-view/SimpleTreeView";
 import { TreeItem } from "@mui/x-tree-view/TreeItem";
 import { buildSamplesTree, type TreeNode } from "../Samples/registry";
-import useViewportSimulationStore from "../Canvas/ViewportSimulation/viewportSimulationStore";
 
 export default function CanvasObjectsTree() {
   const samplesTree = buildSamplesTree();
