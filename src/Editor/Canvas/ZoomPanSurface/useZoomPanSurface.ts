@@ -1,6 +1,6 @@
 import { useRef, useState, useLayoutEffect, useCallback } from "react";
 import useCanvasZoomPanSurfaceStore from "./zoomPanSurfaceStore";
-import useCanvasObjectViewport from "../ObjectViewport/useCanvasObjectViewport";
+import useViewportSimulationStore from "../ViewportSimulation/viewportSimulationStore";
 import {
   computeTranslatePosition,
   computeAlignedPosition,
@@ -30,9 +30,11 @@ export function useCanvasZoomPanSurface(
   const zoomOut = useCanvasZoomPanSurfaceStore((s) => s.zoomOut);
   const position = useCanvasZoomPanSurfaceStore((s) => s.position);
   const setPosition = useCanvasZoomPanSurfaceStore((s) => s.setPosition);
-  const setPositionPreserve = useCanvasZoomPanSurfaceStore((s) => s.setPositionPreserve);
+  const setPositionPreserve = useCanvasZoomPanSurfaceStore(
+    (s) => s.setPositionPreserve
+  );
   const alignment = useCanvasZoomPanSurfaceStore((s) => s.alignment);
-  const { width } = useCanvasObjectViewport();
+  const width = useViewportSimulationStore((s) => s.width);
 
   const scale = zoom / 100;
 

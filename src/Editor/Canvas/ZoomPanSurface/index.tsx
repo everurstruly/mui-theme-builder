@@ -1,5 +1,5 @@
 import CanvasZoomPanSurfaceControls from "./ZoomPanSurfaceControls";
-import CanvasObjectViewportControls from "../ObjectViewport/CanvasObjectViewportControls";
+import ViewportSimulationControls from "../ViewportSimulation/ViewportSimulationControls";
 import React, { useRef } from "react";
 import { Box } from "@mui/material";
 import { useCanvasZoomPanSurface } from "./useZoomPanSurface";
@@ -55,7 +55,7 @@ export default function CanvasBodyZoomPan({
         </Box>
       </Box>
 
-      <CanvasObjectViewportControls />
+      <ViewportSimulationControls />
       <CanvasZoomPanSurfaceControls />
     </>
   );

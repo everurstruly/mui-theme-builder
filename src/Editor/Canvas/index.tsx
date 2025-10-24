@@ -1,12 +1,20 @@
 import CanvasLayout from "./CanvasLayout";
-import DashboardExample from "./Objects/DashboardExample";
 import CanvasBodyZoomPan from "./ZoomPanSurface";
+import ViewportSimulationFrame from "./ViewportSimulation/Frame";
+import useViewportSimulationStore from "./ViewportSimulation/viewportSimulationStore";
 
 export default function EditorCanvas() {
+  const width = useViewportSimulationStore((s) => s.width);
+  const height = useViewportSimulationStore((s) => s.height);
+
   return (
     <CanvasLayout>
       <CanvasBodyZoomPan>
-        <DashboardExample />
+        <ViewportSimulationFrame
+          width={width}
+          height={height}
+          component="DashboardExample"
+        />
       </CanvasBodyZoomPan>
     </CanvasLayout>
   );
