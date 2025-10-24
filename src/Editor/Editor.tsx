@@ -25,7 +25,7 @@ export default function Editor() {
           xs: "0px",
         },
 
-        "--previews-panel-width": {
+        "--activities-panel-width": {
           xs: "180px",
           sm: "200px",
           md: "225px",
@@ -40,7 +40,7 @@ export default function Editor() {
         },
 
         "--canvas-max-width": {
-          md: "calc(100vw - (var(--canvas-brim-padding) * 2) - var(--previews-panel-width) - var(--properties-panel-width))",
+          md: "calc(100vw - (var(--canvas-brim-padding) * 2) - var(--activities-panel-width) - var(--properties-panel-width))",
         },
       }}
     >

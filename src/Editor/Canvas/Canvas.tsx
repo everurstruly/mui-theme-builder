@@ -1,6 +1,6 @@
 import CanvasLayout from "./CanvasLayout";
-import CanvasBodyZoomPan from "./ZoomPanSurface";
-import ViewportSimulationFrame from "./ViewportSimulation/Frame";
+import CanvasBodyZoomPanSurface from "./ZoomPanSurface/ZoomPanSurface";
+import ViewportSimulationFrame from "./ViewportSimulation/Frame/Frame";
 import useViewportSimulationStore from "./ViewportSimulation/viewportSimulationStore";
 
 export default function EditorCanvas() {
@@ -12,14 +12,14 @@ export default function EditorCanvas() {
 
   return (
     <CanvasLayout>
-      <CanvasBodyZoomPan>
+      <CanvasBodyZoomPanSurface>
         <ViewportSimulationFrame
           bordered
           width={width}
           height={height}
           component={selectedComponent}
         />
-      </CanvasBodyZoomPan>
+      </CanvasBodyZoomPanSurface>
     </CanvasLayout>
   );
 }

@@ -72,7 +72,7 @@ const openedMixin = (theme: Theme): CSSObject => ({
   ...theme.mixins.toolbar,
   height: "75dvh",
   overflowX: "hidden",
-  width: "var(--previews-panel-width)",
+  width: "var(--activities-panel-width)",
 });
 
 const closedMixin = (): CSSObject => ({
