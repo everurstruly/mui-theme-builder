@@ -14,6 +14,7 @@ export default function EditorCanvas() {
     <CanvasLayout>
       <CanvasBodyZoomPan>
         <ViewportSimulationFrame
+          bordered
           width={width}
           height={height}
           component={selectedComponent}

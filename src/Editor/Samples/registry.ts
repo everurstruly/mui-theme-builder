@@ -1,5 +1,7 @@
 import type { ComponentType } from "react";
 import DashboardExample from "./DashboardExample";
+import ContactForm from "./ContactForm";
+import ProductCardGrid from "./ProductCardGrid";
 
 export type SampleMetadata = {
   id: string;
@@ -26,6 +28,20 @@ export const samplesRegistry: Record<string, SampleMetadata> = {
     description: "A sample dashboard layout with responsive behavior",
     path: "examples/dashboards",
     component: DashboardExample,
+  },
+  ContactForm: {
+    id: "ContactForm",
+    label: "Contact Form",
+    description: "A contact form with validation and loading states",
+    path: "examples/forms",
+    component: ContactForm,
+  },
+  ProductCardGrid: {
+    id: "ProductCardGrid",
+    label: "Product Card Grid",
+    description: "A responsive product grid with ratings and favorites",
+    path: "examples/ecommerce",
+    component: ProductCardGrid,
   },
   // Add more samples here as you create them:
   // LoginForm: {

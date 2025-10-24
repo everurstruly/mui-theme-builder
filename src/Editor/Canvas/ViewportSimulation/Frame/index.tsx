@@ -26,6 +26,7 @@ type ViewportSimulationFrameProps = {
   >;
   className?: string;
   style?: React.CSSProperties;
+  bordered?: boolean;
 };
 
 /**
@@ -68,6 +69,7 @@ export default function ViewportSimulationFrame({
   registry = samplesRegistry,
   className,
   style,
+  bordered = false,
 }: ViewportSimulationFrameProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const theme = useTheme();
@@ -176,6 +178,7 @@ export default function ViewportSimulationFrame({
         overflow: "hidden",
         border: "none",
         display: "block",
+        ...(bordered && { border: "2px solid #444" }),
       }}
     >
       {!resolvedComponent && (
