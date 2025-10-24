@@ -18,23 +18,48 @@ export default function CodeWindow() {
 
   return (
     <Stack
-      sx={{
+      sx={(theme) => ({
         borderBottom: 1,
         borderColor: "divider",
-        maxHeight: "82vh",
+        maxHeight: "80vh",
         overflowY: "scroll",
         flexShrink: 0,
-      }}
+        marginBottom: 1,
+
+        // show a very thin scrollbar as a visual affordance (still scrollable)
+        msOverflowStyle: "auto", // IE and Edge
+        scrollbarWidth: "thin", // Firefox
+        "&::-webkit-scrollbar": {
+          width: 4,
+          height: 4,
+        },
+        "&::-webkit-scrollbar-track": {
+          background: "transparent",
+        },
+        "&::-webkit-scrollbar-thumb": {
+          backgroundColor:
+            theme.palette.mode === "dark"
+              ? "rgba(255,255,255,0.18)"
+              : "rgba(0,0,0,0.24)",
+          borderRadius: 4,
+        },
+      })}
     >
       <Button
         color="inherit"
+        variant="contained"
         onClick={handleExpandCodeWindow}
         aria-expanded={codeWindowexpanded}
         aria-label="show code window"
         startIcon={<DataObjectRounded sx={{ mr: 0 }} />}
         endIcon={codeWindowexpanded ? "▲" : "▼"}
         sx={{
-          minHeight: 44,
+          backgroundColor: "background.paper",
+          borderRadius: 0,
+          position: "sticky",
+          top: 0,
+          minHeight: "var(--toolbar-height, 48px)",
+          height: "var(--toolbar-height, 48px)",
           textTransform: "none",
           paddingInline: 2,
           "& .MuiButton-endIcon": {
