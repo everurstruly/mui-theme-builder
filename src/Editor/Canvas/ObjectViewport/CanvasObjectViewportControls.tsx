@@ -4,9 +4,11 @@ import PhoneAndroidIcon from "@mui/icons-material/PhoneAndroid";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import useCanvasObjectViewport, {
+  canvasViewportPresets,
   type CanvasViewportPreset,
 } from "./useCanvasObjectViewport";
 import { TabletAndroidOutlined } from "@mui/icons-material";
+import { Tooltip } from "@mui/material";
 
 export default function CanvasObjectViewportControls() {
   const { preset: deviceInView, viewPreset } = useCanvasObjectViewport();
@@ -64,9 +66,18 @@ function PresetViewportToggleButton({
   value: CanvasViewportPreset;
   children: React.ReactNode;
 }) {
+  const composeTitle = () => {
+    const dimensions = canvasViewportPresets[value];
+    return `${value.charAt(0).toUpperCase() + value.slice(1)} (${
+      dimensions.w
+    }x${dimensions.h})`;
+  };
+
   return (
-    <ToggleButton value={value} aria-label={value}>
-      {children}
-    </ToggleButton>
+    <Tooltip title={composeTitle()} arrow>
+      <ToggleButton value={value} aria-label={value}>
+        {children}
+      </ToggleButton>
+    </Tooltip>
   );
 }
