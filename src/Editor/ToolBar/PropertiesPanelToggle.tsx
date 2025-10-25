@@ -1,5 +1,5 @@
 import useEditorStore from "../editorStore";
-import { FullscreenRounded, TuneRounded } from "@mui/icons-material";
+import { TuneRounded, VerticalSplitOutlined } from "@mui/icons-material";
 import { Button } from "@mui/material";
 
 export default function PropertiesPanelToggle() {
@@ -39,7 +39,7 @@ export default function PropertiesPanelToggle() {
     >
       {isPanelVisible ? (
         <>
-          <FullscreenRounded sx={{ fontSize: 20, marginRight: 0.5 }} />
+          <VerticalSplitOutlined sx={{ fontSize: 20, marginRight: 0.5 }} />
         </>
       ) : (
         <>
