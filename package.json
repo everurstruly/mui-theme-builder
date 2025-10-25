@@ -19,6 +19,7 @@
     "@mui/x-tree-view": "^8.15.0",
     "@vitejs/plugin-react": "4.5.0",
     "framer-motion": "^12.23.24",
+    "recharts": "^2.7.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-router": "^7.9.4",

@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { DeleteOutline } from "@mui/icons-material";
 
-export default function DashboardExample() {
+export default function DoodleExample() {
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const isMedium = useMediaQuery(theme.breakpoints.between("sm", "md"));

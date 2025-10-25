@@ -2,6 +2,8 @@ import type { ComponentType } from "react";
 import DashboardExample from "./DashboardExample";
 import ContactForm from "./ContactForm";
 import ProductCardGrid from "./ProductCardGrid";
+import BlogExample from "./BlogExample";
+import CheckoutExample from "./CheckoutExample";
 
 export type SampleMetadata = {
   id: string;
@@ -42,6 +44,20 @@ export const samplesRegistry: Record<string, SampleMetadata> = {
     description: "A responsive product grid with ratings and favorites",
     path: "ecommerce",
     component: ProductCardGrid,
+  },
+  BlogExample: {
+    id: "BlogExample",
+    label: "Blog Example",
+    description: "A blog layout with sidebar, featured posts and footer",
+    path: "blogs",
+    component: BlogExample,
+  },
+  CheckoutExample: {
+    id: "CheckoutExample",
+    label: "Checkout Example",
+    description: "A checkout flow with address, payment and review steps",
+    path: "ecommerce/checkout",
+    component: CheckoutExample,
   },
   // Add more samples here as you create them:
   // LoginForm: {
