@@ -7,58 +7,65 @@ import DragLockControl from "../Canvas/ZoomPanSurface/Controls/DragLockControl";
 
 export default function EditorToolBar() {
   return (
-    <AppBar
-      position="static"
-      elevation={0}
-      sx={{
-        color: "text.primary",
-        backgroundColor: "transparent",
-        borderBottom: 1,
-        borderColor: "divider",
-      }}
-    >
-      <Toolbar
-        variant="dense"
+    <>
+      <AppBar
+        position="static"
+        elevation={0}
         sx={{
-          px: "0 !important",
-          minHeight: "var(--toolbar-height)",
-          height: "var(--toolbar-height)",
+          color: "text.primary",
+          borderBottom: 1,
+          borderColor: "divider",
+
+          backgroundColor: "rgba(255, 255, 255, 0.5)",
+          backgroundImage:
+            "linear-gradient(to bottom, rgba(255,255,255,0.25) 10%, rgba(255,255,255,0.12) 70%, rgba(0,0,0,0.04) 100%)",
+          backgroundRepeat: "no-repeat",
+          backdropFilter: "blur(20px)",
         }}
       >
-        <Stack
-          flexGrow={1}
-          direction="row"
-          justifyContent="space-between"
-          px={1}
+        <Toolbar
+          variant="dense"
+          sx={{
+            px: "0 !important",
+            minHeight: "var(--toolbar-height)",
+            height: "var(--toolbar-height)",
+          }}
         >
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              columnGap: 1,
-              flexGrow: 1,
-            }}
-          >
-            <ActivitiesPanelToggle />
-            <ThemeSelect />
-            <PrimaryActionGroup />
-            <DragLockControl />
-          </Box>
-
           <Stack
+            flexGrow={1}
             direction="row"
-            columnGap={1}
-            alignItems="center"
-            sx={(theme) => ({
-              [theme.breakpoints.down("sm")]: {
-                display: "none",
-              },
-            })}
+            justifyContent="space-between"
+            px={1}
           >
-            <PropertiesPanelToggle />
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                columnGap: 1,
+                flexGrow: 1,
+              }}
+            >
+              <ActivitiesPanelToggle />
+              <ThemeSelect />
+              <PrimaryActionGroup />
+              <DragLockControl />
+            </Box>
+
+            <Stack
+              direction="row"
+              columnGap={1}
+              alignItems="center"
+              sx={(theme) => ({
+                [theme.breakpoints.down("sm")]: {
+                  display: "none",
+                },
+              })}
+            >
+              <PropertiesPanelToggle />
+            </Stack>
           </Stack>
-        </Stack>
-      </Toolbar>
-    </AppBar>
+        </Toolbar>
+      </AppBar>
+    </>
   );
 }

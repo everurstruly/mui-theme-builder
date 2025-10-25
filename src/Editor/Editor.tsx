@@ -11,14 +11,12 @@ export default function Editor() {
       sx={{
         "--header-height": {
           xs: "48px",
-          sm: "44px",
-          md: "44px",
-          lg: "44px",
         },
 
         "--toolbar-height": {
-          xs: "46px",
+          xs: "48px",
           sm: "50px",
+          lg: "52px",
         },
 
         "--activities-panel-width": {
@@ -36,6 +34,9 @@ export default function Editor() {
         "--canvas-max-width": {
           md: "calc(100vw - var(--activities-panel-width) - var(--properties-panel-width))",
         },
+
+        height: "100vh",
+        overflow: "hidden",
       }}
     >
       <EditorHeader />
@@ -53,6 +54,7 @@ export default function Editor() {
           flexGrow={1}
           minWidth={0}
           overflow={"hidden"}
+          position={"relative"}
         >
           <EditorToolBar />
           <EditorCanvas />

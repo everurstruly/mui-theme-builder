@@ -22,7 +22,6 @@ export default function ActivitiesPanelToggle() {
     return (
       <Button
         color="inherit"
-        variant={"outlined"}
         onClick={() => handleDisplayPropertyPanel()}
         sx={{
           width: "auto",
@@ -30,7 +29,6 @@ export default function ActivitiesPanelToggle() {
           height: "fit-content",
           boxShadow: "none",
           paddingInline: 1,
-          borderColor: "divider",
           textTransform: "none",
           fontSize: ".75rem",
         }}
