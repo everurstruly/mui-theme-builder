@@ -26,16 +26,23 @@ export type TreeNode = {
 export const samplesRegistry: Record<string, SampleMetadata> = {
   DashboardExample: {
     id: "DashboardExample",
-    label: "Dashboard Example",
+    label: "Dashboard",
     description: "A sample dashboard layout with responsive behavior",
-    path: "apps",
+    path: "root",
     component: DashboardExample,
+  },
+  BlogExample: {
+    id: "BlogExample",
+    label: "Blog",
+    description: "A blog layout with sidebar, featured posts and footer",
+    path: "root",
+    component: BlogExample,
   },
   ContactForm: {
     id: "ContactForm",
     label: "Contact Form",
     description: "A contact form with validation and loading states",
-    path: "forms",
+    path: "ecommerce",
     component: ContactForm,
   },
   ProductCardGrid: {
@@ -44,13 +51,6 @@ export const samplesRegistry: Record<string, SampleMetadata> = {
     description: "A responsive product grid with ratings and favorites",
     path: "ecommerce",
     component: ProductCardGrid,
-  },
-  BlogExample: {
-    id: "BlogExample",
-    label: "Blog Example",
-    description: "A blog layout with sidebar, featured posts and footer",
-    path: "apps",
-    component: BlogExample,
   },
   CheckoutExample: {
     id: "CheckoutExample",
@@ -80,7 +80,19 @@ export const buildSamplesTree = (): Record<string, TreeNode> => {
   const tree: Record<string, TreeNode> = {};
 
   Object.entries(samplesRegistry).forEach(([id, sample]) => {
-    const pathParts = sample.path.split("/");
+    // Normalize and split the path
+    const pathParts = sample.path ? sample.path.split("/").filter(Boolean) : [];
+
+    // If path starts with 'root' we place the component at the top-level (no nesting)
+    if (pathParts.length > 0 && pathParts[0].toLowerCase() === "root") {
+      tree[id] = {
+        type: "component",
+        children: {},
+        ...sample,
+      };
+      return;
+    }
+
     let current = tree;
 
     // Build nested structure from path
@@ -94,7 +106,7 @@ export const buildSamplesTree = (): Record<string, TreeNode> => {
       }
 
       if (index === pathParts.length - 1) {
-        // Leaf node - add the component
+        // Leaf node - add the component under the folder's children
         current[part].children[id] = {
           type: "component",
           children: {},
