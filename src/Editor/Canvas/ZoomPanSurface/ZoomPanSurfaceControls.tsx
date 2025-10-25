@@ -11,8 +11,8 @@ export default function ZoomPanSurfaceControls() {
       <Box
         style={{
           position: "absolute",
-          left: "calc(var(--canvas-brim-padding) + .5rem)",
-          bottom: "calc(var(--canvas-brim-padding) + .25rem)",
+          left: ".5rem",
+          bottom: ".25rem",
           display: "flex",
           gap: "0.5rem",
           alignItems: "end",
@@ -25,15 +25,15 @@ export default function ZoomPanSurfaceControls() {
       <Box
         sx={(theme) => ({
           position: "absolute",
-          right: "calc(var(--canvas-brim-padding, 0px) + .5rem)",
-          bottom: "calc(var(--canvas-brim-padding, 0px) + .25rem)",
+          right: ".5rem",
+          bottom: ".25rem",
           display: "flex",
           alignItems: "center",
           overflow: "hidden",
           columnGap: 0.5,
 
           [theme.breakpoints.up("md")]: {
-            bottom: "calc(var(--canvas-brim-padding-md, 0px) + .5rem)",
+            bottom: ".5rem",
           },
         })}
       >

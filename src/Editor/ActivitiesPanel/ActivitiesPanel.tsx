@@ -8,6 +8,7 @@ import CanvasObjectsTree from "./CanvasObjectsTree";
 export default function EditorActivitiesPanel() {
   const theme = useTheme();
   const isUpSmallScreen = useMediaQuery(theme.breakpoints.up("sm"));
+  const isUpLaptopScreen = useMediaQuery(theme.breakpoints.up("lg"));
   const withHidePanel = useEditorStore((state) => state.hidePanel);
 
   const isVisible = useEditorStore((state) => {
@@ -22,15 +23,17 @@ export default function EditorActivitiesPanel() {
       open={isVisible}
       onClose={() => hidePanel()}
       anchor={isUpSmallScreen ? "left" : "bottom"}
-      variant={isUpSmallScreen ? "permanent" : "temporary"}
+      variant={isUpLaptopScreen ? "permanent" : "temporary"}
       disablePortal
       sx={() => ({
         flexShrink: 0,
-        borderLeft: 1,
-        borderColor: "divider",
-
+        overflow: "hidden",
         WebkitOverflowScrolling: "touch",
         backgroundColor: "transparent",
+
+        [theme.breakpoints.up("md")]: {
+          display: isVisible ? "block" : "none",
+        },
 
         // hide scrollbar but keep scrolling
         msOverflowStyle: "none", // IE and Edge

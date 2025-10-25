@@ -21,26 +21,20 @@ export default function Editor() {
           sm: "50px",
         },
 
-        "--canvas-brim-padding": {
-          xs: "0px",
-        },
-
         "--activities-panel-width": {
-          xs: "180px",
-          sm: "200px",
-          md: "225px",
+          xs: "auto",
+          sm: "300px",
           lg: "20vw",
         },
 
         "--properties-panel-width": {
           xs: "auto",
           sm: "360px",
-          md: "360px",
-          lg: "22vw",
+          lg: "24vw",
         },
 
         "--canvas-max-width": {
-          md: "calc(100vw - (var(--canvas-brim-padding) * 2) - var(--activities-panel-width) - var(--properties-panel-width))",
+          md: "calc(100vw - var(--activities-panel-width) - var(--properties-panel-width))",
         },
       }}
     >
