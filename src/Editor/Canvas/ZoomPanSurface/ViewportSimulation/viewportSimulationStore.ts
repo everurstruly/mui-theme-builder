@@ -1,27 +1,28 @@
 import { create } from "zustand";
 import { combine } from "zustand/middleware";
 
-export const viewportSimulationPresets = {
+export const viewportSimulationDevicePresets = {
   phone: { w: 375, h: 667 },
   tablet: { w: 768, h: 1024 },
   laptop: { w: 1440, h: 900 },
   desktop: { w: 1920, h: 1080 },
 } as const;
 
-export type ViewportSimulaitonPreset = keyof typeof viewportSimulationPresets;
+export type ViewportSimulaitonDevicePreset =
+  keyof typeof viewportSimulationDevicePresets;
 
 const useViewportSimulationStore = create(
   combine(
     {
-      preset: "phone" as ViewportSimulaitonPreset | undefined,
-      width: viewportSimulationPresets.phone.w as number,
-      height: viewportSimulationPresets.phone.h as number,
       scale: 1,
+      preset: "phone" as ViewportSimulaitonDevicePreset | undefined,
+      width: viewportSimulationDevicePresets.phone.w as number,
+      height: viewportSimulationDevicePresets.phone.h as number,
       selectedComponent: "DashboardExample", // Currently selected component to render
     },
     (set, get) => ({
-      setPreset: (preset: ViewportSimulaitonPreset) => {
-        const { w, h } = viewportSimulationPresets[preset];
+      setPreset: (preset: ViewportSimulaitonDevicePreset) => {
+        const { w, h } = viewportSimulationDevicePresets[preset];
         set({ preset, width: w, height: h });
       },
 
@@ -64,7 +65,7 @@ const useViewportSimulationStore = create(
       },
 
       resetViewport: () => {
-        const { w, h } = viewportSimulationPresets.phone;
+        const { w, h } = viewportSimulationDevicePresets.phone;
         set({ preset: "phone", width: w, height: h, scale: 1 });
       },
     })

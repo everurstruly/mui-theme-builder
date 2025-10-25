@@ -1,6 +1,29 @@
 /**
- * This module runs inside the iframe and handles mounting React components
- * with the theme passed from the parent window.
+ * ViewportFrameContent.tsx
+ *
+ * Runs INSIDE the iframe (content context).
+ *
+ * RESPONSIBILITIES:
+ * - Mounts a React app that listens for MOUNT_COMPONENT messages from parent
+ * - Creates a ThemeProvider and renders the requested component
+ * - Validates all incoming messages (check origin, message type)
+ * - Provides error boundaries and fallback UI
+ *
+ * RELATED FILES (follow the flow):
+ * 1. ViewportSimulation.tsx ← entry point (the component you import)
+ * 2. ViewportFrameHost.tsx ← runs in parent (manages iframe + posts messages to THIS file)
+ * 3. public/iframe-viewport.html ← loads THIS FILE inside the iframe
+ * 4. ViewportFrameContent.tsx ← THIS FILE (runs inside the iframe)
+ * 5. protocol.ts ← shared message types (used by ViewportFrameHost.tsx and THIS file)
+ *
+ * HANDSHAKE:
+ * [This file mounts] → validates it can access its own registry → posts IFRAME_READY to parent
+ *   ↓
+ * [Parent receives IFRAME_READY] → parent becomes ready
+ *   ↓
+ * [Parent posts MOUNT_COMPONENT] → with { componentId, theme, registry metadata, props }
+ *   ↓
+ * [This file receives MOUNT_COMPONENT] → validates origin + message type → renders component
  */
 
 import { StrictMode, useEffect, useState, Component } from "react";
@@ -15,6 +38,12 @@ import {
 import CssBaseline from "@mui/material/CssBaseline";
 import type { Theme, ThemeOptions } from "@mui/material/styles";
 import { samplesRegistry } from "../../../Samples/registry";
+import {
+  MESSAGE_IFRAME_READY,
+  MESSAGE_MOUNT_COMPONENT,
+  type MountComponentMessage,
+  type PreviewMessage,
+} from "./protocol";
 
 // Extend window for root storage
 declare global {
@@ -23,19 +52,7 @@ declare global {
   }
 }
 
-type MessageData = {
-  type: string;
-  mountId?: number;
-  theme?: ThemeOptions;
-  componentId?: string;
-  componentLabel?: string;
-  registryData?: Record<
-    string,
-    { id: string; label: string; description: string }
-  >;
-  registryComponentIds?: string[];
-  props?: Record<string, unknown>;
-};
+// Message payload types are defined in `protocol.ts` and imported above.
 
 // Error Boundary
 class ErrorBoundary extends Component<
@@ -97,7 +114,7 @@ function IframeApp() {
   });
 
   useEffect(() => {
-    const handleMessage = (event: MessageEvent<MessageData>) => {
+    const handleMessage = (event: MessageEvent<PreviewMessage>) => {
       // Validate origin to prevent unauthorized postMessages
       if (event.origin !== window.location.origin) {
         console.warn(
@@ -107,14 +124,9 @@ function IframeApp() {
         return;
       }
 
-      if (event.data?.type === "MOUNT_COMPONENT") {
-        const {
-          theme: themeOpts,
-          componentId,
-          componentLabel,
-          registryData,
-          props = {},
-        } = event.data;
+      if (event.data?.type === MESSAGE_MOUNT_COMPONENT) {
+        const data = event.data as MountComponentMessage;
+        const { theme: themeOpts, componentId, componentLabel, registryData, props = {} } = data;
 
         console.log("[iframe] Received MOUNT_COMPONENT:", {
           componentId,
@@ -150,8 +162,9 @@ function IframeApp() {
     window.addEventListener("message", handleMessage);
 
     // Signal to parent that iframe is ready
+    // Use explicit origin for symmetry and better security; parent validates origin.
     console.log("[iframe] Sending IFRAME_READY to parent");
-    window.parent.postMessage({ type: "IFRAME_READY" }, "*");
+    window.parent.postMessage({ type: MESSAGE_IFRAME_READY }, window.location.origin);
 
     return () => window.removeEventListener("message", handleMessage);
   }, []);

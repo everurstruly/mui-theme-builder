@@ -1,18 +1,32 @@
-import CanvasZoomPanSurfaceControls from "./ZoomPanSurfaceControls";
-import ViewportSimulationControls from "../ViewportSimulation/ViewportSimulationControls";
-import React, { useRef, useEffect } from "react";
-import { Box } from "@mui/material";
-import { useCanvasZoomPanSurface } from "./useZoomPanSurface";
 import useZoomPanStore from "./zoomPanSurfaceStore";
-import useViewportStore from "../ViewportSimulation/viewportSimulationStore";
+import useViewportStore from "./ViewportSimulation/viewportSimulationStore";
+import ZoomPanSurfaceControls from "./ZoomPanSurfaceControls";
+import useViewportSimulationStore from "./ViewportSimulation/viewportSimulationStore";
+import ViewportSimulationIFrame from "./ViewportSimulation/ViewportFrameHost";
+import useCanvasZoomPanSurface from "./useZoomPanSurface";
+import { Box } from "@mui/material";
+import React, { useRef, useEffect } from "react";
+import type { Theme } from "@emotion/react";
 
-type CanvasBodyZoomPanProps = {
-  children: React.ReactNode;
+type ZoomPanSurfaceProps = {
+  /** Component ID to render (must exist in registry) */
+  component: string;
+  /** Optional theme to apply. If not provided, uses MUI default theme */
+  theme?: Theme;
+  /** Custom registry. If not provided, uses samplesRegistry */
+  registry?: Record<
+    string,
+    {
+      id: string;
+      label: string;
+      component: React.ComponentType<Record<string, unknown>>;
+    }
+  >;
 };
 
-export default function CanvasBodyZoomPan({
-  children,
-}: CanvasBodyZoomPanProps) {
+export default function ZoomPanSurface({ component }: ZoomPanSurfaceProps) {
+  const width = useViewportSimulationStore((s) => s.width);
+  const height = useViewportSimulationStore((s) => s.height);
   const containerRef = useRef<HTMLDivElement>(null);
   const dragLock = useZoomPanStore((state) => state.dragLock);
   const setZoom = useZoomPanStore((state) => state.setZoom);
@@ -94,12 +108,16 @@ export default function CanvasBodyZoomPan({
             },
           }}
         >
-          {children}
+          <ViewportSimulationIFrame
+            bordered
+            width={width}
+            height={height}
+            component={component}
+          />
         </Box>
       </Box>
 
-      <ViewportSimulationControls />
-      <CanvasZoomPanSurfaceControls />
+      <ZoomPanSurfaceControls />
     </>
   );
 }

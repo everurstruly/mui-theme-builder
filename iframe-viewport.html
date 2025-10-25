@@ -24,6 +24,13 @@
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/Editor/Canvas/ViewportSimulation/Frame/iframe-app.tsx"></script>
+    <!-- 
+      Bootstrap script for iframe preview.
+      This loads ViewportFrameContent.tsx which mounts the React app that listens for messages.
+    -->
+    <script type="module">
+      import ViewportFrameContent from "/src/Editor/Canvas/ZoomPanSurface/ViewportSimulation/ViewportFrameContent.tsx";
+      // ViewportFrameContent exports a default component that mounts itself
+    </script>
   </body>
 </html>

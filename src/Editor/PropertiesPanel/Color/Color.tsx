@@ -13,8 +13,8 @@ export default function ColorProperty() {
       }}
     >
       {palettes.map((palette) => (
-        <li>
-          <ColorGroupList key={palette.title} title={palette.title}>
+        <li key={palette.title} >
+          <ColorGroupList title={palette.title}>
             {palette.colors.map((color) => {
               return (
                 <ColorGroupListOption

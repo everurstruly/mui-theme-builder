@@ -1,5 +1,5 @@
 import Box from "@mui/material/Box";
-import useViewportSimulationStore from "../Canvas/ViewportSimulation/viewportSimulationStore";
+import useViewportSimulationStore from "../Canvas/ZoomPanSurface/ViewportSimulation/viewportSimulationStore";
 import { SimpleTreeView } from "@mui/x-tree-view/SimpleTreeView";
 import { TreeItem } from "@mui/x-tree-view/TreeItem";
 import { buildSamplesTree, type TreeNode } from "../Samples/registry";

@@ -6,7 +6,7 @@ import {
   responsiveFontSizes,
 } from "@mui/material/styles";
 import type { Theme, ThemeOptions } from "@mui/material/styles";
-import ViewportSimulationFrame from ".//Frame/Frame";
+import ViewportSimulation from "./ViewportSimulation";
 
 type PreviewPageProps = {
   samplesRegistry: Record<string, unknown>;
@@ -113,7 +113,7 @@ export default function CanvasViewportSimulationPreviewPage(
           boxSizing: "border-box",
         }}
       >
-        <ViewportSimulationFrame
+        <ViewportSimulation
           width={width}
           height={height}
           component={componentId}

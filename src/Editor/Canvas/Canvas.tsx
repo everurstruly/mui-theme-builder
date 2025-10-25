@@ -1,34 +1,29 @@
-import CanvasLayout from "./CanvasLayout";
+import useViewportSimulationStore from "./ZoomPanSurface/ViewportSimulation/viewportSimulationStore";
 import CanvasBodyZoomPanSurface from "./ZoomPanSurface/ZoomPanSurface";
-import ViewportSimulationFrame from "./ViewportSimulation/Frame/Frame";
-import useViewportSimulationStore from "./ViewportSimulation/viewportSimulationStore";
-// import BoardSurface from "./BoardSurface";
-// import { useTheme } from "@mui/material/styles";
+import { useTheme } from "@mui/material/styles";
+import { Box } from "@mui/material";
 
 export default function EditorCanvas() {
-  const width = useViewportSimulationStore((s) => s.width);
-  const height = useViewportSimulationStore((s) => s.height);
+  const theme = useTheme();
   const selectedComponent = useViewportSimulationStore(
     (s) => s.selectedComponent
   );
 
-  // const theme = useTheme();
-  // return (
-  //   <CanvasLayout>
-  //     <BoardSurface component={selectedComponent} theme={theme} />
-  //   </CanvasLayout>
-  // )
-
   return (
-    <CanvasLayout>
-      <CanvasBodyZoomPanSurface>
-        <ViewportSimulationFrame
-          bordered
-          width={width}
-          height={height}
-          component={selectedComponent}
-        />
-      </CanvasBodyZoomPanSurface>
-    </CanvasLayout>
+    <Box
+      sx={(theme) => ({
+        position: "relative", // acts as the board/wrapper for surfaces
+        flexGrow: 1,
+        minWidth: 0, // <-- ensure this flex child can shrink
+        overflow: "hidden", // <-- contain expansion, create clip/scroll context
+        height: `calc(100% - var(--header-height))`,
+        backgroundColor: "transparent",
+        [theme.breakpoints.up("sm")]: {
+          height: `calc(100% - var(--toolbar-height))`,
+        },
+      })}
+    >
+      <CanvasBodyZoomPanSurface component={selectedComponent} theme={theme} />
+    </Box>
   );
 }

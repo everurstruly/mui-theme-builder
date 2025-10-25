@@ -1,21 +1,15 @@
 import { IconButton, Tooltip } from "@mui/material";
-import { PanTool, AdsClickOutlined } from "@mui/icons-material";
-import type { SxProps, Theme } from "@mui/material/styles";
+import { LockOpenOutlined, LockOutlined } from "@mui/icons-material";
+import useCanvasZoomPanSurfaceStore from "../zoomPanSurfaceStore";
 
-type DragLockButtonProps = {
-  locked: boolean;
-  onToggle: () => void;
-  sx?: SxProps<Theme>;
-};
+export default function DragLockControl() {
+  const locked = useCanvasZoomPanSurfaceStore((state) => state.dragLock);
+  const onToggle = useCanvasZoomPanSurfaceStore(
+    (state) => state.toggleDragLock
+  );
 
-export default function DragLockButton({
-  locked,
-  onToggle,
-  sx,
-}: DragLockButtonProps) {
-  const label = locked ? "Interact with content" : "Pan mode (drag to pan)";
-
-  const Icon = locked ? AdsClickOutlined : PanTool;
+  const label = locked ? "Interact with content (Stop Dragging)" : "Lock Content (Drag Canvas)";
+  const Icon = locked ? LockOutlined : LockOpenOutlined;
 
   return (
     <Tooltip title={label} arrow>
@@ -30,7 +24,6 @@ export default function DragLockButton({
           borderColor: "rgba(0,0,0,0.1)",
           backgroundColor: "rgba(255, 255, 255, 0.5)",
           backdropFilter: "blur(40px)",
-          ...sx,
         }}
       >
         <Icon fontSize="small" />

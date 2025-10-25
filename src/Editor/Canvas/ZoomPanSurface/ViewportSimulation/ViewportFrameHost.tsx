@@ -1,11 +1,48 @@
+/**
+ * ViewportFrameHost.tsx
+ *
+ * Runs in the PARENT window (the editor/main app).
+ *
+ * RESPONSIBILITIES:
+ * - Creates an <iframe> element and loads public/iframe-viewport.html into it
+ * - Waits for IFRAME_READY message from the content
+ * - Sends MOUNT_COMPONENT message to render a component inside the iframe
+ * - Serializes the theme and registry metadata for safe cross-frame communication
+ * - Validates origin to prevent unauthorized messages
+ *
+ * RELATED FILES (follow the flow):
+ * 1. ViewportSimulation.tsx ← entry point (the component you import)
+ * 2. ViewportFrameHost.tsx ← THIS FILE (manages the iframe)
+ * 3. public/iframe-viewport.html ← loads ViewportFrameContent.tsx inside iframe
+ * 4. ViewportFrameContent.tsx ← runs inside the iframe (receives messages from THIS file)
+ * 5. protocol.ts ← shared message types (used by both THIS file and ViewportFrameContent.tsx)
+ *
+ * HANDSHAKE:
+ * [Parent: create iframe] → loads public/iframe-viewport.html
+ *   ↓
+ * [Content: mount + listen] → posts IFRAME_READY
+ *   ↓
+ * [Parent: receive IFRAME_READY] → setReady(true)
+ *   ↓
+ * [Parent: sendUpdate] → posts MOUNT_COMPONENT with { componentId, theme, registry metadata, props }
+ *   ↓
+ * [Content: receive MOUNT_COMPONENT] → validates origin → renders component
+ */
+
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import React from "react";
 import { Box } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import type { Theme } from "@mui/material/styles";
 import { samplesRegistry } from "../../../Samples/registry";
+import {
+  MESSAGE_IFRAME_READY,
+  MESSAGE_MOUNT_COMPONENT,
+  type MountComponentMessage,
+  type PreviewMessage,
+} from "./protocol";
 
-type ViewportSimulationFrameProps = {
+type ViewportSimulationIFrameProps = {
   width: number;
   height: number;
   /**
@@ -61,7 +98,7 @@ type ViewportSimulationFrameProps = {
  * 5. Each React instance (parent & iframe) has independent component trees
  * 6. Hooks work correctly because each instance manages its own ThemeProvider
  */
-export default function ViewportSimulationFrame({
+export default function ViewportSimulationIFrame({
   width,
   height,
   component,
@@ -70,7 +107,7 @@ export default function ViewportSimulationFrame({
   className,
   style,
   bordered = false,
-}: ViewportSimulationFrameProps) {
+}: ViewportSimulationIFrameProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const theme = useTheme();
   const [ready, setReady] = useState(false);
@@ -111,8 +148,8 @@ export default function ViewportSimulationFrame({
       {} as Record<string, { id: string; label: string; description: string }>
     );
 
-    const message = {
-      type: "MOUNT_COMPONENT",
+    const message: MountComponentMessage = {
+      type: MESSAGE_MOUNT_COMPONENT,
       mountId: mountIdRef.current,
       theme: serializeTheme(theme),
       componentId: component, // Send ID for iframe to look up
@@ -146,24 +183,55 @@ export default function ViewportSimulationFrame({
   useEffect(() => {
     const iframe = iframeRef.current;
     if (!iframe) return;
+    // Defensive ordering: attach listener BEFORE setting iframe.src
+    // so we don't miss a quick IFRAME_READY post from the content.
+    const handleMessage = (event: MessageEvent<PreviewMessage>) => {
+      // Helpful debug info to diagnose missing-handshake issues
+      // (inspect both event.origin and whether event.source is our iframe)
+      try {
+        // Note: iframeRef.current may change, so read a local reference
+        const currentIframe = iframeRef.current;
+        console.debug(
+          "[ViewportSimulationFrame] message received",
+          { origin: event.origin, data: event.data }
+        );
 
-    // Set iframe src to the standalone HTML page
-    iframe.src = "/iframe-viewport.html";
+        const expectedOrigin = window.location.origin;
+        const isSameOrigin = event.origin === expectedOrigin;
+        const isFromIframe = !!currentIframe && event.source === currentIframe.contentWindow;
 
-    // Wait for iframe to signal it's ready
-    const handleMessage = (event: MessageEvent) => {
-      // Validate origin to prevent spoofed IFRAME_READY messages
-      if (event.origin !== window.location.origin) {
-        return;
-      }
+        if (!isSameOrigin) {
+          console.warn(
+            "[ViewportSimulationFrame] Ignoring message from origin",
+            event.origin,
+            "expected",
+            expectedOrigin
+          );
+          return;
+        }
 
-      if (event.data?.type === "IFRAME_READY") {
-        console.log("[ViewportSimulationFrame] Received IFRAME_READY");
-        setReady(true);
+        if (!isFromIframe) {
+          console.warn(
+            "[ViewportSimulationFrame] Ignoring message - not from our iframe",
+            event.source
+          );
+          return;
+        }
+
+        if (event.data?.type === MESSAGE_IFRAME_READY) {
+          console.log("[ViewportSimulationFrame] Received IFRAME_READY");
+          setReady(true);
+        }
+      } catch (err) {
+        console.error("[ViewportSimulationFrame] Error handling message:", err);
       }
     };
 
     window.addEventListener("message", handleMessage);
+
+    // Now set the iframe src (after listener attached)
+    iframe.src = "/iframe-viewport.html";
+
     return () => window.removeEventListener("message", handleMessage);
   }, []); // Only run once on mount
 
@@ -202,9 +270,11 @@ export default function ViewportSimulationFrame({
           Component "{component}" not found
         </Box>
       )}
+
       {resolvedComponent && (
         <iframe
           ref={iframeRef}
+          title="Viewport Simulation"
           style={{
             width: "100%",
             height: "100%",
@@ -214,7 +284,6 @@ export default function ViewportSimulationFrame({
             backfaceVisibility: "hidden",
             WebkitBackfaceVisibility: "hidden",
           }}
-          title="Viewport Simulation"
         />
       )}
     </Box>

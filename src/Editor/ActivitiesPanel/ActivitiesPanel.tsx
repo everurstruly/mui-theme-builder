@@ -5,7 +5,7 @@ import { Box, Typography, useMediaQuery } from "@mui/material";
 import type { CSSObject, Theme } from "@mui/material/styles";
 import CanvasObjectsTree from "./CanvasObjectsTree";
 
-export default function EditorPreviewsPanel() {
+export default function EditorActivitiesPanel() {
   const theme = useTheme();
   const isUpSmallScreen = useMediaQuery(theme.breakpoints.up("sm"));
   const withHidePanel = useEditorStore((state) => state.hidePanel);

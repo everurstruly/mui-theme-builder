@@ -1,6 +1,6 @@
 import { useRef, useState, useLayoutEffect, useCallback } from "react";
 import useCanvasZoomPanSurfaceStore from "./zoomPanSurfaceStore";
-import useViewportSimulationStore from "../ViewportSimulation/viewportSimulationStore";
+import useViewportSimulationStore from "./ViewportSimulation/viewportSimulationStore";
 import {
   computeTranslatePosition,
   computeAlignedPosition,
@@ -9,7 +9,7 @@ import {
 } from "./zoomPanLogic";
 import type { ViewAlignmentAdjustment } from "./zoomPanSurfaceStore";
 
-export function useCanvasZoomPanSurface(
+export default function useCanvasZoomPanSurface(
   externalRef?: React.RefObject<HTMLDivElement | null>
 ) {
   // Provide an internal fallback ref if none is given
