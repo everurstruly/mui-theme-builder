@@ -1,7 +1,7 @@
 import * as React from "react";
 import Popover from "@mui/material/Popover";
 import useEditorStore from "../../editorStore";
-import CanvasObjectsTree from "../../ActivitiesPanel/CanvasObjectsTree";
+import SampleCanvasObjectsTree from "../../ActivitiesPanel/SampleCanvasObjectsTree";
 import {
   ArrowDropDownOutlined,
   ArrowDropUpOutlined,
@@ -73,7 +73,7 @@ export default function FloatingCanvasObjectsTree() {
           },
         }}
       >
-        <CanvasObjectsTree />
+        <SampleCanvasObjectsTree />
       </Popover>
     </Box>
   );

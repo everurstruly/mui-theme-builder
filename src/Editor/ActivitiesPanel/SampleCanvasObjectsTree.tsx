@@ -4,7 +4,7 @@ import { SimpleTreeView } from "@mui/x-tree-view/SimpleTreeView";
 import { TreeItem } from "@mui/x-tree-view/TreeItem";
 import { buildSamplesTree, type TreeNode } from "../Samples/registry";
 
-export default function CanvasObjectsTree() {
+export default function SampleCanvasObjectsTree() {
   const samplesTree = buildSamplesTree();
   const selectedComponent = useViewportSimulationStore(
     (state) => state.selectedComponent

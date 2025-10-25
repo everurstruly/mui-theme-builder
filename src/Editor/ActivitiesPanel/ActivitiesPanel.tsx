@@ -3,7 +3,7 @@ import useEditorStore from "../editorStore";
 import { useTheme } from "@mui/material/styles";
 import { Box, Typography, useMediaQuery } from "@mui/material";
 import type { CSSObject, Theme } from "@mui/material/styles";
-import CanvasObjectsTree from "./CanvasObjectsTree";
+import SampleCanvasObjectsTree from "./SampleCanvasObjectsTree";
 
 export default function EditorActivitiesPanel() {
   const theme = useTheme();
@@ -63,7 +63,7 @@ export default function EditorActivitiesPanel() {
       }}
     >
       <Activity title="Samples">
-        <CanvasObjectsTree />
+        <SampleCanvasObjectsTree />
       </Activity>
     </Drawer>
   );
