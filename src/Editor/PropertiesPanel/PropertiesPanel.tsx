@@ -37,6 +37,7 @@ export default function EditorPropertiesPanel() {
         onClose={() => hidePanel()}
         anchor={isUpSmallScreen ? "right" : "bottom"}
         variant={isUpLaptopScreen ? "permanent" : "temporary"}
+        disablePortal
         sx={(theme) => ({
           flexShrink: 0,
           overflow: "hidden",
@@ -56,6 +57,7 @@ export default function EditorPropertiesPanel() {
 
           "& .MuiDrawer-paper": {
             height: "75dvh",
+            overflow: "hidden",
             width: "var(--properties-panel-width)",
 
             [theme.breakpoints.up("sm")]: {

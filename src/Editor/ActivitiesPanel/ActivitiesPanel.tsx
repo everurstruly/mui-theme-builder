@@ -23,6 +23,7 @@ export default function EditorActivitiesPanel() {
       onClose={() => hidePanel()}
       anchor={isUpSmallScreen ? "left" : "bottom"}
       variant={isUpSmallScreen ? "permanent" : "temporary"}
+      disablePortal
       sx={() => ({
         flexShrink: 0,
         borderLeft: 1,
