@@ -1,24 +1,33 @@
-import { ContentCopyOutlined } from "@mui/icons-material";
-import { Button, ListItem, Typography, Box } from "@mui/material";
+import { Button, ListItem, Typography } from "@mui/material";
+import FontFamilySelectInput from "./FontFamilySelectInput";
 
-export type FontListItemProps = {
+export type FontFamilySelectOptionProps = {
   name: string;
-  initValue: string;
-  modifiedValue: string;
+  initValue: {
+    key: string;
+    title: string;
+  };
+  modifiedValue: {
+    key: string;
+    title: string;
+  };
 };
 
-export default function FontListItem(props: FontListItemProps) {
-  const canResetValue = props.initValue !== props.modifiedValue;
+export default function FontFamilySelectOption(
+  props: FontFamilySelectOptionProps
+) {
+  const canResetValue = props.initValue.key !== props.modifiedValue.key;
 
   return (
     <ListItem
       sx={{
         width: "auto",
         paddingInline: 1,
+        justifyContent: "space-between",
       }}
     >
       <Typography
-        component={"div"}
+        component="div"
         sx={{
           display: "flex",
           alignItems: "center",
@@ -61,22 +70,10 @@ export default function FontListItem(props: FontListItemProps) {
         {props.name}
       </Typography>
 
-      <Box
-        sx={{
-          marginLeft: "auto",
-          display: "flex",
-          alignItems: "center",
-          columnGap: 2,
-          paddingInline: 1,
-        }}
-      >
-        <Typography sx={{ fontSize: 12, cursor: "pointer" }}>
-          {props.initValue}
-          <ContentCopyOutlined
-            sx={{ marginInlineStart: 0.25, fontSize: 10, color: "#888" }}
-          />
-        </Typography>
-      </Box>
+      <FontFamilySelectInput
+        id={`font-family-select-${props.name}`}
+        value={props.modifiedValue}
+      />
     </ListItem>
   );
 }
