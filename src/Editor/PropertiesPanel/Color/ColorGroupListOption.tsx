@@ -1,13 +1,15 @@
 import { ContentCopyOutlined } from "@mui/icons-material";
 import { Button, ListItem, Typography, Box } from "@mui/material";
 
-type ColorGroupItemProps = {
+type ColorGroupListtOptionProps = {
   name: string;
   initValue: string;
   modifiedValue: string;
 };
 
-export default function ColorGroupItem(props: ColorGroupItemProps) {
+export default function ColorGroupListOption(
+  props: ColorGroupListtOptionProps
+) {
   const canResetValue = props.initValue !== props.modifiedValue;
 
   return (
