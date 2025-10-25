@@ -18,9 +18,9 @@ export default function FontStyleSelectOption(
         width: "auto",
         paddingInline: 1,
         justifyContent: "space-between",
-
         display: "flex",
         flexWrap: "nowrap",
+        alignItems: "end",
       }}
     >
       <Typography
@@ -28,7 +28,7 @@ export default function FontStyleSelectOption(
         sx={{
           display: "flex",
           alignItems: "center",
-          columnGap: 0.75,
+          columnGap: 0.5,
           fontStyle: 400,
           fontSize: 12,
           color: "#555",
@@ -40,9 +40,8 @@ export default function FontStyleSelectOption(
             color="green"
             sx={{
               backgroundColor: "#e0f8e0b7",
-              paddingInline: 0.625,
-              paddingBlock: 0.5,
-              borderRadius: 1,
+              paddingInline: 0.5,
+              paddingBlock: 0.35,
               fontSize: 10,
             }}
           >

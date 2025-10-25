@@ -70,7 +70,7 @@ export default function FontWeightSelectInput(
           size="small"
           step={100}
           sx={{
-            fontSize: 14,
+            fontSize: 12,
 
             "& .MuiOutlinedInput-notchedOutline": {
               borderTop: "none",

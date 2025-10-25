@@ -4,7 +4,7 @@ import useEditorStore from "../editorStore";
 import CodeWindow from "../CodeWindow/CodeWindow";
 import ColorProperty from "./Color/Color";
 import TypographyProperty from "./Typography/Typography";
-import PropertiesPanelDrawerToggle from "../PropertiesPanelDrawer/DrawerToggle";
+import PropertiesPanelDrawerToggle from "../PropertiesPanelMobile/DrawerToggle";
 import { Tab, Tabs, Box } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useMediaQuery } from "@mui/material";
@@ -134,7 +134,8 @@ function CustomTabPanel(props: TabPanelProps) {
       sx={(theme) => ({
         height: "100%",
         overflowY: "auto",
-        paddingInline: theme.spacing(0.25),
+        paddingInlineStart: theme.spacing(0.5),
+        paddingInlineEnd: theme.spacing(2),
         paddingBottom: theme.spacing(12),
 
         // show a very thin scrollbar as a visual affordance (still scrollable)

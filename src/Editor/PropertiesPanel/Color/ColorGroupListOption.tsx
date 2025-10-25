@@ -24,7 +24,7 @@ export default function ColorGroupListOption(
         sx={{
           display: "flex",
           alignItems: "center",
-          columnGap: 0.75,
+          columnGap: 0.5,
           fontWeight: 400,
           fontSize: 12,
           color: "#555",
@@ -36,9 +36,8 @@ export default function ColorGroupListOption(
             color="green"
             sx={{
               backgroundColor: "#e0f8e0b7",
-              paddingInline: 0.75,
-              paddingBlock: 0.5,
-              borderRadius: 1,
+              paddingInline: 0.5,
+              paddingBlock: 0.35,
               fontSize: 10,
             }}
           >
@@ -69,10 +68,15 @@ export default function ColorGroupListOption(
           display: "flex",
           alignItems: "center",
           columnGap: 2,
-          paddingInline: 1,
         }}
       >
-        <Typography sx={{ fontSize: 12, cursor: "pointer" }}>
+        <Typography
+          sx={{
+            fontSize: 12,
+            cursor: "pointer",
+            color: "#666",
+          }}
+        >
           {props.initValue}
           <ContentCopyOutlined
             sx={{ marginInlineStart: 0.25, fontSize: 10, color: "#888" }}
