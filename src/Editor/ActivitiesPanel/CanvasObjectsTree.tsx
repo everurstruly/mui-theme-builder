@@ -54,6 +54,11 @@ export default function CanvasObjectsTree() {
             handleSelectSample(itemId);
           }
         }}
+        sx={{
+          "*": {
+            fontSize: 15,
+          },
+        }}
       >
         {Object.entries(samplesTree).map(([key, node]) =>
           renderTree(node, key)
