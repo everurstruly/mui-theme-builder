@@ -55,7 +55,7 @@ export default function SampleCanvasObjectsTree() {
           }
         }}
         sx={{
-          "*": {
+          ".MuiTreeItem-label": {
             fontSize: 15,
           },
         }}
