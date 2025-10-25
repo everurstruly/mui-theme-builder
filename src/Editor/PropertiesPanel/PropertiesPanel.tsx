@@ -2,10 +2,9 @@ import * as React from "react";
 import Drawer from "@mui/material/Drawer";
 import useEditorStore from "../editorStore";
 import CodeWindow from "../CodeWindow/CodeWindow";
-import PrimaryColorsCompact from "./PrimaryColorsCompact";
 import ColorProperty from "./Color/Color";
-import EditorPropertiesDrawerToggle from "./DrawerToggle";
 import TypographyProperty from "./Typography/Typography";
+import PropertiesPanelDrawerToggle from "../PropertiesPanelDrawer/DrawerToggle";
 import { Tab, Tabs, Box } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useMediaQuery } from "@mui/material";
@@ -107,10 +106,10 @@ export default function EditorPropertiesPanel() {
         </CustomTabPanel>
 
         <CustomTabPanel value={activePropertiesGroupTab} index={2}>
-          <PrimaryColorsCompact />
+          Hello There! ^_^
         </CustomTabPanel>
       </Drawer>
-      <EditorPropertiesDrawerToggle />
+      <PropertiesPanelDrawerToggle />
     </>
   );
 }
@@ -133,6 +132,8 @@ function CustomTabPanel(props: TabPanelProps) {
       sx={(theme) => ({
         height: "100%",
         overflowY: "auto",
+        paddingInline: theme.spacing(0.25),
+        paddingBottom: theme.spacing(12),
 
         // show a very thin scrollbar as a visual affordance (still scrollable)
         msOverflowStyle: "auto", // IE and Edge
