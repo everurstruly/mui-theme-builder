@@ -247,7 +247,7 @@ export const useNumberInput = (options: UseNumberInputOptions = {}) => {
   } = useNumberBoundary(options);
 
   useEffect(() => {
-    if (process.env.NODE_ENV !== "production") {
+    if ((globalThis as any).process?.env?.NODE_ENV !== "production") {
       if (focusInputOnChange && !inputRef.current) {
         console.warn(`Cannot find inputRef, make sure to pass it to <input /> like this 👇
 

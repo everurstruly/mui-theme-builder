@@ -99,7 +99,7 @@ export function useSpinner<T>(
   // To increment the value the first time you mousedown, we call that `runOnce`
   const [runOnce, setRunOnce] = useState(true);
 
-  const paramsRef = useRef<T | undefined>();
+  const paramsRef = useRef<T | undefined>(undefined);
 
   // Store the timeout instance id in a ref, so we can clear the timeout later
   const timeoutRef = useRef<any>(null);

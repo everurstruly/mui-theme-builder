@@ -5,7 +5,6 @@ import Paper from "@mui/material/Paper";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import { type Post } from "./Blog";
-import React from "react";
 
 interface Props {
   post: Post;

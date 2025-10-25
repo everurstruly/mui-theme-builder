@@ -2,7 +2,6 @@ import { Box, Link, Tooltip } from "@mui/material";
 import Divider from "@mui/material/Divider";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import React from "react";
 
 interface Props {
   title: string;

@@ -1,10 +1,12 @@
-import Grid from "@mui/material/Grid";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
-import Tooltip from "@mui/material/Tooltip";
-import Typography from "@mui/material/Typography";
-import React from "react";
+import {
+  Grid,
+  List,
+  ListItem,
+  ListItemText,
+  Tooltip,
+  Typography,
+} from "@mui/material";
+import { Fragment } from "react/jsx-runtime";
 
 const products = [
   { name: "Product 1", desc: "A nice thing", price: "$9.99" },
@@ -29,7 +31,7 @@ const payments = [
 
 export default function Review() {
   return (
-    <React.Fragment>
+    <>
       <Tooltip
         title={`<Typography color="textPrimary" variant="h6">`}
         placement="left"
@@ -95,7 +97,7 @@ export default function Review() {
             <Typography gutterBottom>{addresses.join(", ")}</Typography>
           </Tooltip>
         </Grid>
-        <Grid item container direction="column" xs={12} sm={6}>
+        <Grid container direction="column" size={{ xs: 12, sm: 6 }}>
           <Tooltip
             title={`<Typography color="textPrimary" variant="h6">`}
             placement="left"
@@ -107,8 +109,8 @@ export default function Review() {
           </Tooltip>
           <Grid container>
             {payments.map((payment) => (
-              <React.Fragment key={payment.name}>
-                <Grid item xs={6}>
+              <Fragment key={payment.name}>
+                <Grid size={{ xs: 6 }}>
                   <Tooltip
                     title={`<Typography color="textPrimary" variant="body1">`}
                     placement="left"
@@ -117,7 +119,7 @@ export default function Review() {
                     <Typography gutterBottom>{payment.name}</Typography>
                   </Tooltip>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid size={{ xs: 6 }}>
                   <Tooltip
                     title={`<Typography color="textPrimary" variant="body1">`}
                     placement="left"
@@ -126,11 +128,11 @@ export default function Review() {
                     <Typography gutterBottom>{payment.detail}</Typography>
                   </Tooltip>
                 </Grid>
-              </React.Fragment>
+              </Fragment>
             ))}
           </Grid>
         </Grid>
       </Grid>
-    </React.Fragment>
+    </>
   );
 }

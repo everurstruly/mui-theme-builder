@@ -3,7 +3,6 @@ import Container from "@mui/material/Container";
 import Link from "@mui/material/Link";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
-import React from "react";
 
 function Copyright() {
   return (

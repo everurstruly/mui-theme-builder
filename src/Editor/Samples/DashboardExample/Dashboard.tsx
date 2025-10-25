@@ -21,29 +21,30 @@ const paperStyle = {
 
 export default function Dashboard() {
   return (
-    <Box sx={{ display: "flex" }}>
-      <Box sx={{ display: { xs: "none", md: "block" } }}>
-        <Drawer
-          variant="permanent"
-          open
-          sx={{
-            "& .MuiDrawer-paper": {
-              position: "static",
-              whiteSpace: "nowrap",
-              width: drawerWidth,
-              transition: (theme) =>
-                theme.transitions.create("width", {
-                  easing: theme.transitions.easing.sharp,
-                  duration: theme.transitions.duration.enteringScreen,
-                }),
-            },
-          }}
-        >
-          <List>{mainListItems}</List>
-          <Divider />
-          <List>{secondaryListItems}</List>
-        </Drawer>
-      </Box>
+    <Box sx={{ display: "flex", minHeight: "100vh" }}>
+      <Drawer
+        variant="permanent"
+        open
+        sx={{
+          display: { xs: "none", md: "block" },
+          
+          "& .MuiDrawer-paper": {
+            position: "static",
+            whiteSpace: "nowrap",
+            width: drawerWidth,
+            transition: (theme) =>
+              theme.transitions.create("width", {
+                easing: theme.transitions.easing.sharp,
+                duration: theme.transitions.duration.enteringScreen,
+              }),
+          },
+        }}
+      >
+        <List>{mainListItems}</List>
+        <Divider />
+        <List>{secondaryListItems}</List>
+      </Drawer>
+
       <Box
         sx={{
           flexGrow: 1,
