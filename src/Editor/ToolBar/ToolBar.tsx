@@ -3,6 +3,7 @@ import PropertiesPanelToggle from "./PropertiesPanelToggle";
 import ActivitiesPanelToggle from "./ActivitiesPanelToggle/ActivitiesPanelToggle";
 import PrimaryActionGroup from "./PirmaryActionGroup";
 import { AppBar, Box, Stack, Toolbar } from "@mui/material";
+import DragLockControl from "../Canvas/ZoomPanSurface/Controls/DragLockControl";
 
 export default function EditorToolBar() {
   return (
@@ -41,6 +42,7 @@ export default function EditorToolBar() {
             <ActivitiesPanelToggle />
             <ThemeSelect />
             <PrimaryActionGroup />
+            <DragLockControl />
           </Box>
 
           <Stack

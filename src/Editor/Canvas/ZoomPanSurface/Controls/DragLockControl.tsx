@@ -8,23 +8,24 @@ export default function DragLockControl() {
     (state) => state.toggleDragLock
   );
 
-  const label = locked ? "Interact with content (Stop Dragging)" : "Lock Content (Drag Canvas)";
-  const Icon = locked ? LockOutlined : LockOpenOutlined;
+  const label = locked
+    ? "Start Interacting (Disables Dragging)"
+    : "Stop Interacting (Enables Dragging)";
+  const Icon = locked ? LockOpenOutlined : LockOutlined;
 
   return (
     <Tooltip title={label} arrow>
       <IconButton
-        size="medium"
+        size="small"
         onClick={onToggle}
         aria-label={label}
-        color="error"
+        color="primary"
         sx={{
-          alignSelf: "stretch",
           borderRadius: 1,
           border: 1,
           borderColor: "rgba(0,0,0,0.1)",
           backgroundColor: "rgba(255, 255, 255, 0.5)",
-          backdropFilter: "blur(40px)",
+          backdropFilter: "blur(20px)",
         }}
       >
         <Icon fontSize="small" />

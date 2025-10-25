@@ -1,9 +1,8 @@
 import DeviceToggleGroupControl from "./Controls/DeviceToggleGroupControl";
 import OpenInNewTabControl from "./Controls/OpenInNewTabControl";
 import CameraControls from "./Controls/CameraControls";
-import DragLockControl from "./Controls/DragLockControl";
-import { Box } from "@mui/material";
 import AlignmentControl from "./Controls/AlignmentControl";
+import { Box } from "@mui/material";
 
 export default function ZoomPanSurfaceControls() {
   return (
@@ -35,9 +34,12 @@ export default function ZoomPanSurfaceControls() {
           [theme.breakpoints.up("md")]: {
             bottom: ".5rem",
           },
+
+          "& .MuiButtonBase-root": {
+            alignSelf: "stretch",
+          },
         })}
       >
-        <DragLockControl />
         <CameraControls />
         <AlignmentControl />
       </Box>
