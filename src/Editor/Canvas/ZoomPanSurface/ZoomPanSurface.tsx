@@ -3,7 +3,7 @@ import useViewportStore from "./ViewportSimulation/viewportSimulationStore";
 import ZoomPanSurfaceControls from "./ZoomPanSurfaceControls";
 import useViewportSimulationStore from "./ViewportSimulation/viewportSimulationStore";
 import ViewportSimulationIFrame from "./ViewportSimulation/ViewportFrameHost";
-import useCanvasZoomPanSurface from "./useZoomPanSurface";
+import useCanvasZoomPanCamera from "./useZoomPanCamera";
 import { Box } from "@mui/material";
 import React, { useRef, useEffect } from "react";
 import type { Theme } from "@emotion/react";
@@ -43,7 +43,7 @@ export default function ZoomPanSurface({ component }: ZoomPanSurfaceProps) {
     handlePointerDown,
     handlePointerMove,
     handlePointerUp,
-  } = useCanvasZoomPanSurface(containerRef);
+  } = useCanvasZoomPanCamera(containerRef);
 
   // Auto-fit zoom when viewport size changes
   useEffect(() => {
