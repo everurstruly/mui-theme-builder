@@ -8,12 +8,14 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router";
 import HomePage from "./pages/index";
 import EditorPage from "./pages/editor";
+import ViewportPage from "./pages/editor.viewport";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
       <Routes>
         <Route index element={<HomePage />} />
+        <Route path="/editor/viewport" element={<ViewportPage />} />
         <Route path="/editor" element={<EditorPage />} />
       </Routes>
     </BrowserRouter>
