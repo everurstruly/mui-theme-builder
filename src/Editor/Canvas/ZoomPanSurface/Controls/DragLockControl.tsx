@@ -17,6 +17,7 @@ export default function DragLockControl() {
         size="medium"
         onClick={onToggle}
         aria-label={label}
+        color="error"
         sx={{
           alignSelf: "stretch",
           borderRadius: 1,

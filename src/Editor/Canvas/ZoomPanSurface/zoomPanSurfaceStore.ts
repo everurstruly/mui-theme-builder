@@ -8,10 +8,10 @@ export type PresetZoomLevels = (typeof presetZoomLevels)[number];
 export type ViewAlignment = "center" | "start" | "pan";
 export type ViewAlignmentAdjustment = Exclude<ViewAlignment, "pan">;
 
-export const minZoomLevel = 15;
+export const minZoomLevel = 20;
 export const maxZoomLevel = 300;
 export const defaultZoomValue = 50;
-export const zoomCountDifference = 15;
+export const zoomCountDifference = 10;
 
 const useCanvasZoomPanSurfaceStore = create(
   combine(

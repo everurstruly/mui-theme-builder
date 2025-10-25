@@ -3,6 +3,7 @@ import OpenInNewTabControl from "./Controls/OpenInNewTabControl";
 import CameraControls from "./Controls/CameraControls";
 import DragLockControl from "./Controls/DragLockControl";
 import { Box } from "@mui/material";
+import AlignmentControl from "./Controls/AlignmentControl";
 
 export default function ZoomPanSurfaceControls() {
   return (
@@ -14,7 +15,7 @@ export default function ZoomPanSurfaceControls() {
           bottom: "calc(var(--canvas-brim-padding) + .25rem)",
           display: "flex",
           gap: "0.5rem",
-          alignItems: "center",
+          alignItems: "end",
         }}
       >
         <DeviceToggleGroupControl />
@@ -38,6 +39,7 @@ export default function ZoomPanSurfaceControls() {
       >
         <DragLockControl />
         <CameraControls />
+        <AlignmentControl />
       </Box>
     </>
   );

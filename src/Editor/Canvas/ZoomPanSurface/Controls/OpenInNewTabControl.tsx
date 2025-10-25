@@ -22,7 +22,6 @@ export default function OpenInNewTabControl() {
         onClick={handleOpenInNewTab}
         size="small"
         sx={{
-          alignSelf: "stretch",
           backgroundColor: "rgba(255, 255, 255, 0.5)",
           borderRadius: 1,
           border: "1px solid rgba(0, 0, 0, 0.1)",
