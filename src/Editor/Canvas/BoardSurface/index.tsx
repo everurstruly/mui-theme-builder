@@ -122,107 +122,100 @@ const BoardSurface = forwardRef<HTMLDivElement, BoardSurfaceProps>(
 
     const Component = resolvedComponent;
 
-    // If no theme provided, render without ThemeProvider (uses MUI default)
     if (!theme) {
       return (
-        <div
+        <Box
           ref={ref || containerRef}
           className={className}
           style={style}
           role="presentation"
+          sx={{
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            flexDirection: "column",
+            position: "relative",
+          }}
         >
-          <Box
-            sx={{
-              width: "100%",
-              height: "100%",
-              display: "flex",
-              flexDirection: "column",
-              position: "relative",
-            }}
+          {/* Fullscreen button */}
+          <Tooltip
+            title={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
           >
-            {/* Fullscreen button */}
-            <Tooltip
-              title={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+            <IconButton
+              onClick={handleFullscreen}
+              size="small"
+              sx={{
+                position: "absolute",
+                top: "1rem",
+                right: "1rem",
+                zIndex: 10,
+                backgroundColor: "rgba(255, 255, 255, 0.7)",
+                backdropFilter: "blur(10px)",
+                "&:hover": {
+                  backgroundColor: "rgba(255, 255, 255, 0.9)",
+                },
+              }}
             >
-              <IconButton
-                onClick={handleFullscreen}
-                size="small"
-                sx={{
-                  position: "absolute",
-                  top: "1rem",
-                  right: "1rem",
-                  zIndex: 10,
-                  backgroundColor: "rgba(255, 255, 255, 0.7)",
-                  backdropFilter: "blur(10px)",
-                  "&:hover": {
-                    backgroundColor: "rgba(255, 255, 255, 0.9)",
-                  },
-                }}
-              >
-                {isFullscreen ? (
-                  <FullscreenExitIcon fontSize="small" />
-                ) : (
-                  <FullscreenIcon fontSize="small" />
-                )}
-              </IconButton>
-            </Tooltip>
+              {isFullscreen ? (
+                <FullscreenExitIcon fontSize="small" />
+              ) : (
+                <FullscreenIcon fontSize="small" />
+              )}
+            </IconButton>
+          </Tooltip>
 
-            <CssBaseline />
-            <Component {...componentProps} />
-          </Box>
-        </div>
+          <CssBaseline />
+          <Component {...componentProps} />
+        </Box>
       );
     }
 
-    // Render with provided theme
     return (
       <ThemeProvider theme={theme}>
-        <div
+        <Box
           ref={ref || containerRef}
           className={className}
           style={style}
           role="presentation"
+          sx={{
+            width: "100%",
+            height: "100%",
+            overflow: "auto",
+            display: "flex",
+            flexDirection: "column",
+            position: "relative",
+          }}
         >
-          <Box
-            sx={{
-              width: "100%",
-              height: "100%",
-              display: "flex",
-              flexDirection: "column",
-              position: "relative",
-            }}
+          {/* Fullscreen button */}
+          <Tooltip
+            title={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
           >
-            {/* Fullscreen button */}
-            <Tooltip
-              title={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+            <IconButton
+              onClick={handleFullscreen}
+              size="small"
+              sx={{
+                position: "absolute",
+                top: "1rem",
+                right: "1rem",
+                zIndex: 10,
+                backgroundColor: "rgba(255, 255, 255, 0.7)",
+                backdropFilter: "blur(10px)",
+                "&:hover": {
+                  backgroundColor: "rgba(255, 255, 255, 0.9)",
+                },
+              }}
             >
-              <IconButton
-                onClick={handleFullscreen}
-                size="small"
-                sx={{
-                  position: "absolute",
-                  top: "1rem",
-                  right: "1rem",
-                  zIndex: 10,
-                  backgroundColor: "rgba(255, 255, 255, 0.7)",
-                  backdropFilter: "blur(10px)",
-                  "&:hover": {
-                    backgroundColor: "rgba(255, 255, 255, 0.9)",
-                  },
-                }}
-              >
-                {isFullscreen ? (
-                  <FullscreenExitIcon fontSize="small" />
-                ) : (
-                  <FullscreenIcon fontSize="small" />
-                )}
-              </IconButton>
-            </Tooltip>
+              {isFullscreen ? (
+                <FullscreenExitIcon fontSize="small" />
+              ) : (
+                <FullscreenIcon fontSize="small" />
+              )}
+            </IconButton>
+          </Tooltip>
 
-            <CssBaseline />
-            <Component {...componentProps} />
-          </Box>
-        </div>
+          <CssBaseline />
+          <Component {...componentProps} />
+        </Box>
       </ThemeProvider>
     );
   }
