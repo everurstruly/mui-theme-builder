@@ -28,7 +28,7 @@ export const samplesRegistry: Record<string, SampleMetadata> = {
     id: "DashboardExample",
     label: "Dashboard Example",
     description: "A sample dashboard layout with responsive behavior",
-    path: "dashboards",
+    path: "apps",
     component: DashboardExample,
   },
   ContactForm: {
@@ -49,14 +49,14 @@ export const samplesRegistry: Record<string, SampleMetadata> = {
     id: "BlogExample",
     label: "Blog Example",
     description: "A blog layout with sidebar, featured posts and footer",
-    path: "blogs",
+    path: "apps",
     component: BlogExample,
   },
   CheckoutExample: {
     id: "CheckoutExample",
     label: "Checkout Example",
     description: "A checkout flow with address, payment and review steps",
-    path: "ecommerce/checkout",
+    path: "ecommerce",
     component: CheckoutExample,
   },
   // Add more samples here as you create them:

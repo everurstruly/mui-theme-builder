@@ -12,6 +12,7 @@ import BlogSidebar from "./BlogSidebar";
 import FeaturedPost from "./FeaturedPost";
 import Main from "./Main";
 import MainFeaturedPost from "./MainFeaturedPost";
+import PrimarySearchAppBar from "./Header";
 
 export type Section = {
   title: string;
@@ -112,6 +113,7 @@ const sidebar: SideBar = {
 export default function Blog() {
   return (
     <React.Fragment>
+      <PrimarySearchAppBar />
       <Container maxWidth="lg">
         <BlogHeader title="Blog" sections={sections} />
         <div>
