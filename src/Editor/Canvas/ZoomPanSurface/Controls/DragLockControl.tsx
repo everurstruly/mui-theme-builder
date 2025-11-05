@@ -1,25 +1,22 @@
 import { IconButton, Tooltip } from "@mui/material";
 import { LockOpenOutlined, LockOutlined } from "@mui/icons-material";
-import useCanvasZoomPanSurfaceStore from "../zoomPanSurfaceStore";
+import useCanvasViewStore from "../../canvasViewStore";
 
 export default function DragLockControl() {
-  const locked = useCanvasZoomPanSurfaceStore((state) => state.dragLock);
-  const onToggle = useCanvasZoomPanSurfaceStore(
-    (state) => state.toggleDragLock
-  );
+  const locked = useCanvasViewStore((s) => s.camera.dragLock);
+  const toggleDragLock = useCanvasViewStore((s) => s.toggleDragLock);
 
   const label = locked
     ? "Start Interacting (Disables Dragging)"
     : "Stop Interacting (Enables Dragging)";
-  const Icon = locked ? LockOpenOutlined : LockOutlined;
+  const Icon = locked ? LockOutlined : LockOpenOutlined;
 
   return (
     <Tooltip title={label} arrow>
       <IconButton
         size="small"
-        onClick={onToggle}
+        onClick={toggleDragLock}
         aria-label={label}
-        color="primary"
         sx={{
           borderRadius: 1,
           border: 1,
@@ -28,7 +25,7 @@ export default function DragLockControl() {
           backdropFilter: "blur(20px)",
         }}
       >
-        <Icon fontSize="small" />
+        <Icon fontSize="small" color={locked ? "action" : "secondary"} />
       </IconButton>
     </Tooltip>
   );

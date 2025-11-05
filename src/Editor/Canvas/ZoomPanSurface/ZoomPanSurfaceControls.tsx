@@ -3,10 +3,22 @@ import OpenInNewTabControl from "./Controls/OpenInNewTabControl";
 import CameraControls from "./Controls/CameraControls";
 import AlignmentControl from "./Controls/AlignmentControl";
 import { Box } from "@mui/material";
+import { memo } from "react";
 
-export default function ZoomPanSurfaceControls() {
+export interface ZoomPanSurfaceControlsProps {
+  /** Custom content to render in the left slot. Replaces default device/tab controls */
+  leftSlot?: React.ReactNode;
+  /** Custom content to render in the right slot. Replaces default camera/alignment controls */
+  rightSlot?: React.ReactNode;
+}
+
+const ZoomPanSurfaceControls = memo(function ZoomPanSurfaceControls({
+  leftSlot,
+  rightSlot,
+}: ZoomPanSurfaceControlsProps) {
   return (
     <>
+      {/* Left controls */}
       <Box
         style={{
           position: "absolute",
@@ -17,10 +29,15 @@ export default function ZoomPanSurfaceControls() {
           alignItems: "end",
         }}
       >
-        <DeviceToggleGroupControl />
-        <OpenInNewTabControl />
+        {leftSlot || (
+          <>
+            <DeviceToggleGroupControl />
+            <OpenInNewTabControl />
+          </>
+        )}
       </Box>
 
+      {/* Right controls */}
       <Box
         sx={(theme) => ({
           position: "absolute",
@@ -40,9 +57,15 @@ export default function ZoomPanSurfaceControls() {
           },
         })}
       >
-        <CameraControls />
-        <AlignmentControl />
+        {rightSlot || (
+          <>
+            <CameraControls />
+            <AlignmentControl />
+          </>
+        )}
       </Box>
     </>
   );
-}
+});
+
+export default ZoomPanSurfaceControls;

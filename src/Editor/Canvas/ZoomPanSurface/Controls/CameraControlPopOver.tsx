@@ -14,17 +14,15 @@ import {
   RemoveOutlined,
   FitScreenOutlined,
 } from "@mui/icons-material";
-import useCanvasZoomPanSurfaceStore from "../zoomPanSurfaceStore";
+import useCanvasViewStore from "../../canvasViewStore";
 
 export default function CameraControlPopOver() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
-  const zoom = useCanvasZoomPanSurfaceStore((state) => state.zoom);
-  const zoomIn = useCanvasZoomPanSurfaceStore((state) => state.zoomIn);
-  const zoomOut = useCanvasZoomPanSurfaceStore((state) => state.zoomOut);
-  const cycleZoomPreset = useCanvasZoomPanSurfaceStore(
-    (state) => state.cycleZoomPreset
-  );
+  const zoom = useCanvasViewStore((s) => s.camera.zoom);
+  const zoomIn = useCanvasViewStore((s) => s.zoomIn);
+  const zoomOut = useCanvasViewStore((s) => s.zoomOut);
+  const cycleZoomPreset = useCanvasViewStore((s) => s.cycleZoomPreset);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);

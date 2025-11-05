@@ -1,19 +1,17 @@
 import { IconButton, Tooltip } from "@mui/material";
 import { useCallback, useMemo } from "react";
-import useCanvasZoomPanSurfaceStore, {
-  type ViewAlignmentAdjustment,
-} from "../zoomPanSurfaceStore";
+import useCanvasViewStore from "../../canvasViewStore";
 import {
   AlignHorizontalCenterOutlined,
   AlignHorizontalLeftOutlined,
 } from "@mui/icons-material";
 
 export default function AlignmentControl() {
-  const alignment = useCanvasZoomPanSurfaceStore((state) => state.alignment);
-  const alignTo = useCanvasZoomPanSurfaceStore((state) => state.alignTo);
+  const alignment = useCanvasViewStore((s) => s.camera.alignment);
+  const setCameraAlignment = useCanvasViewStore((s) => s.setCameraAlignment);
 
-  const nextPosition = useMemo<ViewAlignmentAdjustment>(() => {
-    const candidates = Object.keys(viewAlignments) as ViewAlignmentAdjustment[];
+  const nextPosition = useMemo<"center" | "start">(() => {
+    const candidates: ("center" | "start")[] = ["center", "start"];
     const pick = candidates.find((c) => c !== alignment) ?? candidates[0];
     return pick;
   }, [alignment]);
@@ -22,8 +20,8 @@ export default function AlignmentControl() {
   const IconComponent = viewAlignments[nextPosition].icon;
 
   const handleAlignmentClick = useCallback(
-    () => alignTo(nextPosition),
-    [alignTo, nextPosition]
+    () => setCameraAlignment(nextPosition),
+    [setCameraAlignment, nextPosition]
   );
 
   return (
@@ -48,7 +46,7 @@ export default function AlignmentControl() {
 }
 
 const viewAlignments: Record<
-  ViewAlignmentAdjustment,
+  "center" | "start",
   { icon: typeof AlignHorizontalCenterOutlined; label: string }
 > = {
   center: {

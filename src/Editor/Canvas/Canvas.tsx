@@ -1,29 +1,36 @@
-import useViewportSimulationStore from "./ZoomPanSurface/ViewportSimulation/viewportSimulationStore";
-import CanvasBodyZoomPanSurface from "./ZoomPanSurface/ZoomPanSurface";
-import { useTheme } from "@mui/material/styles";
 import { Box } from "@mui/material";
+import useWorkfileHydratedTheme from "../Workfile/useWorkfileHydratedTheme";
+import useWorkfileStore from "../Workfile/useWorkfileStore";
+import ZoomPanSurface from "./ZoomPanSurface/ZoomPanSurface";
 
 export default function EditorCanvas() {
-  const theme = useTheme();
-  const selectedComponent = useViewportSimulationStore(
-    (s) => s.selectedComponent
-  );
+  const { activePreviewId } = useWorkfileStore();
+  const theme = useWorkfileHydratedTheme();
 
   return (
     <Box
-      sx={(theme) => ({
+      sx={(t) => ({
         position: "relative", // acts as the board/wrapper for surfaces
         flexGrow: 1,
         minWidth: 0, // <-- ensure this flex child can shrink
         overflow: "hidden", // <-- contain expansion, create clip/scroll context
-        height: `calc(100% - var(--header-height))`,
-        backgroundColor: "transparent",
-        [theme.breakpoints.up("sm")]: {
-          height: `calc(100% - var(--toolbar-height))`,
-        },
+        height: "100%",
+        maxWidth: "var(--canvas-max-width)",
+        border: "1px solid",
+        borderColor: t.palette.divider,
+        backgroundColor: "beige",
+        backgroundImage: `
+            radial-gradient(circle at center, ${
+              t.palette.mode === "dark"
+                ? "rgba(255,255,255,0.06)"
+                : "rgba(0,0,0,0.06)"
+            } 1px, transparent 1px)
+          `,
+        backgroundSize: "12px 12px",
+        backgroundPosition: "0 0",
       })}
     >
-      <CanvasBodyZoomPanSurface component={selectedComponent} theme={theme} />
+      <ZoomPanSurface previewId={activePreviewId} theme={theme} />
     </Box>
   );
 }

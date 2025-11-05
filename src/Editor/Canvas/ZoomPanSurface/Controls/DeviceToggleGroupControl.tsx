@@ -5,21 +5,27 @@ import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import { TabletAndroidOutlined } from "@mui/icons-material";
 import { Tooltip } from "@mui/material";
-import useViewportSimulationStore, {
-  viewportSimulationDevicePresets,
-  type ViewportSimulaitonDevicePreset,
-} from "../ViewportSimulation/viewportSimulationStore";
+import useCanvasViewStore, { type DevicePreset } from "../../canvasViewStore";
+
+// Re-export for use in this component
+const DEVICE_PRESETS = {
+  phone: { w: 375, h: 667 },
+  tablet: { w: 768, h: 1024 },
+  laptop: { w: 1440, h: 900 },
+  desktop: { w: 1920, h: 1080 },
+} as const;
+
 
 export default function DeviceToggleGroupControl() {
-  const preset = useViewportSimulationStore((state) => state.preset);
-  const setPreset = useViewportSimulationStore((state) => state.setPreset);
+  const preset = useCanvasViewStore((s) => s.viewport.preset);
+  const setViewportPreset = useCanvasViewStore((s) => s.setViewportPreset);
 
   const handlePresetChange = (
     _event: React.MouseEvent<HTMLElement>,
-    newPreset: ViewportSimulaitonDevicePreset | null
+    newPreset: DevicePreset | null
   ) => {
     if (newPreset) {
-      setPreset(newPreset);
+      setViewportPreset(newPreset);
     }
   };
 
@@ -45,11 +51,11 @@ export default function DeviceToggleGroupControl() {
 
 type DeviceToggleButtonProps = {
   Icon: React.ElementType;
-  value: ViewportSimulaitonDevicePreset;
+  value: DevicePreset;
 };
 
 function DeviceToggleButton({ value, Icon }: DeviceToggleButtonProps) {
-  const dimensions = viewportSimulationDevicePresets[value];
+  const dimensions = DEVICE_PRESETS[value];
   const label = `${value.charAt(0).toUpperCase() + value.slice(1)} (${
     dimensions.w
   }x${dimensions.h})`;

@@ -1,19 +1,25 @@
-import { Tooltip, IconButton, type Theme, useTheme } from "@mui/material";
+import { Tooltip, IconButton } from "@mui/material";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
-import useViewportSimulationStore from "../ViewportSimulation/viewportSimulationStore";
+import useWorkfileStore from "../../../Workfile/useWorkfileStore";
 
 export default function OpenInNewTabControl() {
-  const theme = useTheme();
-  const selectedComponent = useViewportSimulationStore(
-    (state) => state.selectedComponent
-  );
+  const { themeModifications, activePreviewId } = useWorkfileStore();
 
   const handleOpenInNewTab = () => {
-    const encodedTheme = btoa(JSON.stringify(serializeTheme(theme)));
-    const url = `/editor/viewport?component=${encodeURIComponent(
-      selectedComponent
-    )}&theme=${encodeURIComponent(encodedTheme)}`;
-    window.open(url, "_blank");
+    if (!activePreviewId) {
+      console.warn("[OpenInNewTabControl] No active preview ID");
+      return;
+    }
+
+    try {
+      const encodedTheme = btoa(JSON.stringify(themeModifications || {}));
+      const url = `/editor/viewport?component=${encodeURIComponent(
+        activePreviewId
+      )}&theme=${encodeURIComponent(encodedTheme)}`;
+      window.open(url, "_blank");
+    } catch (error) {
+      console.error("[OpenInNewTabControl] Failed to open in new tab:", error);
+    }
   };
 
   return (
@@ -36,30 +42,4 @@ export default function OpenInNewTabControl() {
       </IconButton>
     </Tooltip>
   );
-}
-
-function serializeTheme(theme: Theme): Record<string, unknown> {
-  try {
-    return {
-      palette: JSON.parse(JSON.stringify(theme.palette)),
-      typography: {
-        fontFamily: theme.typography.fontFamily,
-        fontSize: theme.typography.fontSize,
-        fontWeightLight: theme.typography.fontWeightLight,
-        fontWeightRegular: theme.typography.fontWeightRegular,
-        fontWeightMedium: theme.typography.fontWeightMedium,
-        fontWeightBold: theme.typography.fontWeightBold,
-      },
-      spacing: theme.spacing(1),
-      breakpoints: {
-        values: theme.breakpoints.values,
-      },
-      shape: theme.shape,
-      shadows: theme.shadows,
-      direction: theme.direction,
-    };
-  } catch (error) {
-    console.error("Error serializing theme:", error);
-    return {};
-  }
 }

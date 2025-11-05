@@ -1,18 +1,18 @@
-import useZoomPanStore from "./zoomPanSurfaceStore";
-import useViewportStore from "./ViewportSimulation/viewportSimulationStore";
+import useCanvasViewStore from "../canvasViewStore";
 import ZoomPanSurfaceControls from "./ZoomPanSurfaceControls";
-import useViewportSimulationStore from "./ViewportSimulation/viewportSimulationStore";
-import ViewportSimulationIFrame from "./ViewportSimulation/ViewportFrameHost";
+import CanvasViewport from "./ZoomPanSurfaceViewport";
 import useCanvasZoomPanCamera from "./useZoomPanCamera";
+import useCanvasGestures from "./useCanvasGestures";
+import useCanvasKeyboardShortcuts from "./useCanvasKeyboardShortcuts";
 import { Box } from "@mui/material";
-import React, { useRef, useEffect } from "react";
-import type { Theme } from "@emotion/react";
+import React, { useRef, useEffect, useCallback, useMemo } from "react";
+import type { ThemeOptions } from "@mui/material/styles";
 
 type ZoomPanSurfaceProps = {
-  /** Component ID to render (must exist in registry) */
-  component: string;
-  /** Optional theme to apply. If not provided, uses MUI default theme */
-  theme?: Theme;
+  /** Preview (ui component) ID to render (must exist in registry) */
+  previewId: string;
+  /** Workfile theme options to apply to the preview */
+  theme: ThemeOptions;
   /** Custom registry. If not provided, uses samplesRegistry */
   registry?: Record<
     string,
@@ -22,102 +22,126 @@ type ZoomPanSurfaceProps = {
       component: React.ComponentType<Record<string, unknown>>;
     }
   >;
+  /** Custom controls to render at the bottom-left. If not provided, uses default ZoomPanSurfaceControls */
+  leftControls?: React.ReactNode;
+  /** Custom controls to render at the bottom-right. If not provided, uses default zoom/alignment controls */
+  rightControls?: React.ReactNode;
+  /** Custom controls to render at the top. If not provided, no top controls are rendered */
+  topControls?: React.ReactNode;
+  /** Whether to render default controls. Set to false to use only custom slots */
+  showDefaultControls?: boolean;
 };
 
-export default function ZoomPanSurface({ component }: ZoomPanSurfaceProps) {
+export default function ZoomPanSurface({
+  previewId: component,
+  theme: workfileTheme,
+  leftControls,
+  rightControls,
+  topControls,
+  showDefaultControls = true,
+}: ZoomPanSurfaceProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const width = useViewportSimulationStore((s) => s.width);
-  const height = useViewportSimulationStore((s) => s.height);
-  const dragLock = useZoomPanStore((state) => state.dragLock);
-  const setZoom = useZoomPanStore((state) => state.setZoom);
-  const alignTo = useZoomPanStore((state) => state.alignTo);
-  const viewportWidth = useViewportStore((state) => state.width);
-  const viewportHeight = useViewportStore((state) => state.height);
 
+  // New unified store selectors
+  const width = useCanvasViewStore((s) => s.viewport.width);
+  const height = useCanvasViewStore((s) => s.viewport.height);
+  const dragLock = useCanvasViewStore((s) => s.camera.dragLock);
+  const setCameraAlignment = useCanvasViewStore((s) => s.setCameraAlignment);
+  const zoomToFit = useCanvasViewStore((s) => s.zoomToFit);
+
+  // Camera calculations (positions, scale)
+  const { scale, isDragging, translatePosition } =
+    useCanvasZoomPanCamera(containerRef);
+
+  // Gesture handlers (wheel, pointer events)
   const {
-    scale,
-    isDragging,
-    translatePosition,
     handleWheel,
     // handleDoubleClick,
     handlePointerDown,
     handlePointerMove,
     handlePointerUp,
-  } = useCanvasZoomPanCamera(containerRef);
+  } = useCanvasGestures(containerRef);
+
+  // Enable keyboard shortcuts
+  useCanvasKeyboardShortcuts();
+
+  // Memoized cursor style based on drag state
+  const cursorStyle = useMemo(() => {
+    if (!dragLock) return "default";
+    return isDragging ? "grabbing" : "grab";
+  }, [dragLock, isDragging]);
 
   // Auto-fit zoom when viewport size changes
-  useEffect(() => {
+  const handleAutoFit = useCallback(() => {
     const container = containerRef.current;
-    if (!container || !viewportWidth || !viewportHeight) return;
+    if (!container || !width || !height) return;
 
     const containerWidth = container.clientWidth;
     const containerHeight = container.clientHeight;
 
-    // Add some padding (10% on each side)
-    const paddingFactor = 0.9;
-    const availableWidth = containerWidth * paddingFactor;
-    const availableHeight = containerHeight * paddingFactor;
+    // Use the store's zoomToFit method
+    zoomToFit(containerWidth, containerHeight);
+    setCameraAlignment("center"); // Center align when fitting
+  }, [width, height, zoomToFit, setCameraAlignment]);
 
-    // Calculate zoom to fit
-    const scaleX = (availableWidth / viewportWidth) * 100;
-    const scaleY = (availableHeight / viewportHeight) * 100;
-    const fitZoom = Math.min(scaleX, scaleY, 100); // Don't zoom beyond 100%
-
-    // Round to nearest 5 for cleaner values (e.g., 45, 50, 55 instead of 47.3)
-    const roundedZoom = Math.round(fitZoom / 5) * 5;
-
-    setZoom(roundedZoom);
-    alignTo("center"); // Center align when fitting
-  }, [viewportWidth, viewportHeight, setZoom, alignTo]);
+  // Only auto-fit on initial mount, not on every dimension change
+  useEffect(() => {
+    handleAutoFit();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Empty deps - only run once on mount
 
   return (
-    <>
-      <Box
-        ref={containerRef}
-        onWheel={dragLock ? handleWheel : undefined}
-        // onDoubleClick={handleDoubleClick}
-        onPointerDown={dragLock ? handlePointerDown : undefined}
-        onPointerMove={dragLock ? handlePointerMove : undefined}
-        onPointerUp={dragLock ? handlePointerUp : undefined}
-        sx={{
-          width: "100%",
-          height: "100%",
-          overflow: "clip", // Use clip instead of hidden for sharper edges
-          position: "relative",
-          cursor: dragLock ? (isDragging ? "grabbing" : "grab") : "default",
-          userSelect: "none",
-          touchAction: "none",
-        }}
-      >
+    <Box
+      ref={containerRef}
+      onWheel={dragLock ? handleWheel : undefined}
+      // onDoubleClick={handleDoubleClick}
+      onPointerDown={dragLock ? handlePointerDown : undefined}
+      onPointerMove={dragLock ? handlePointerMove : undefined}
+      onPointerUp={dragLock ? handlePointerUp : undefined}
+      sx={{
+        width: "100%",
+        height: "100%",
+        overflow: "clip", // Use clip instead of hidden for sharper edges
+        position: "relative",
+        cursor: cursorStyle,
+        userSelect: dragLock ? "none" : "auto", // Only prevent selection when pan mode is active
+        touchAction: dragLock ? "none" : "auto", // Only prevent touch when pan mode is active
+      }}
+    >
+      <CanvasViewport
+        previewId={component}
+        workfileTheme={workfileTheme}
+        width={width}
+        height={height}
+        scale={scale}
+        translatePosition={translatePosition}
+        isDragging={isDragging}
+        dragLock={dragLock}
+      />
+
+      {/* Top controls slot */}
+      {topControls && (
         <Box
           sx={{
-            transform: `translate(${translatePosition.x}px, ${translatePosition.y}px) scale(${scale})`,
-            transformOrigin: "top left",
-            transition: isDragging ? "none" : "transform 0.1s ease-out",
-            width: "fit-content",
-            height: "fit-content",
-            pointerEvents: dragLock ? "none" : "auto", // When locked (pan mode), disable pointer events on content
-            // Prevent rendering artifacts during transforms
-            backfaceVisibility: "hidden",
-            WebkitBackfaceVisibility: "hidden",
-            willChange: "transform",
-            transformStyle: "preserve-3d",
-            WebkitTransformStyle: "preserve-3d",
-            "& > *": {
-              pointerEvents: dragLock ? "none" : "auto", // Apply to children (iframe) as well
-            },
+            position: "absolute",
+            top: ".5rem",
+            left: "50%",
+            transform: "translateX(-50%)",
           }}
         >
-          <ViewportSimulationIFrame
-            bordered
-            width={width}
-            height={height}
-            component={component}
-          />
+          {topControls}
         </Box>
-      </Box>
+      )}
 
-      <ZoomPanSurfaceControls />
-    </>
+      {/* Default or custom controls */}
+      {showDefaultControls ? (
+        <ZoomPanSurfaceControls leftSlot={leftControls} rightSlot={rightControls} />
+      ) : (
+        <>
+          {leftControls}
+          {rightControls}
+        </>
+      )}
+    </Box>
   );
 }
