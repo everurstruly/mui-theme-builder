@@ -33,13 +33,13 @@ export default function ExportThemeDialog() {
   return (
     <>
       <Button
-        size="small"
+        // size="small"
         variant="outlined"
         aria-label="Copy and Implement Selected Theme"
         onClick={() => handleClickOpen()}
-        startIcon={<FileCopyRounded />}
+        // startIcon={<FileCopyRounded />}
       >
-        Export
+        Export Theme
       </Button>
 
       <BootstrapDialog

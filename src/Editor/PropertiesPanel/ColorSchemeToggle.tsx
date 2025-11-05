@@ -5,6 +5,19 @@ import { DarkModeOutlined, LightModeOutlined } from "@mui/icons-material";
 
 const defaultColorMode = "light";
 
+const options = [
+  {
+    value: "light",
+    label: "Light Mode",
+    icon: <LightModeOutlined sx={{ fontSize: 18 }} />,
+  },
+  {
+    value: "dark",
+    label: "Dark Mode",
+    icon: <DarkModeOutlined sx={{ fontSize: 18 }} />,
+  },
+];
+
 export default function ColorSchemeToggle() {
   const workfileTheme = useWorkfileStore((s) => s.themeModifications);
   const updateTheme = useWorkfileStore((s) => s.setThemeModifications);
@@ -31,45 +44,30 @@ export default function ColorSchemeToggle() {
       value={mode}
       onChange={handleChange}
       aria-label="Workfile theme color mode toggle"
-      color="primary"
     >
-      <ToggleButton
-        value="dark"
-        aria-label="Dark Mode"
-        sx={{
-          paddingBlock: 0.875,
-          color: "common.black",
+      {options.map((option) => {
+        return (
+          <ToggleButton
+            key={option.value}
+            value={option.value}
+            aria-label={option.label}
+            sx={{
+              paddingBlock: 0.875,
+              color: "common.black",
 
-          "&.Mui-selected": {
-            backgroundColor: "common.black",
-            color: "white",
-            "&:hover": {
-              backgroundColor: "common.black",
-            },
-          },
-        }}
-      >
-        <DarkModeOutlined sx={{ fontSize: 16 }} />
-      </ToggleButton>
+              "&:hover": {
+                color: "primary.light",
+              },
 
-      <ToggleButton
-        value="light"
-        aria-label="Light Mode"
-        sx={{
-          paddingBlock: 0.875,
-          color: "common.black",
-
-          "&.Mui-selected": {
-            backgroundColor: "common.black",
-            color: "white",
-            "&:hover": {
-              backgroundColor: "common.black",
-            },
-          },
-        }}
-      >
-        <LightModeOutlined sx={{ fontSize: 16 }} />
-      </ToggleButton>
+              "&.Mui-selected": {
+                color: "primary.dark",
+              },
+            }}
+          >
+            {option.icon}
+          </ToggleButton>
+        );
+      })}
     </ToggleButtonGroup>
   );
 }

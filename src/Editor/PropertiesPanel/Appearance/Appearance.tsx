@@ -5,7 +5,7 @@ function AppearanceProperty() {
   return (
     <>
       <StylesAppearance title="Styles" />
-      <MinimalismAppearance title="Minimalistic UI" />
+      <MinimalismAppearance title="Minimalism (UI)" />
     </>
   );
 }

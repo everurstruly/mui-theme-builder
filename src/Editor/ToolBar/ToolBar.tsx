@@ -70,7 +70,13 @@ export default function EditorToolBar() {
           alignItems={"center"}
           justifyContent="space-between"
           borderLeft={1}
-          divider={<Divider orientation="vertical" flexItem />}
+          divider={
+            <Divider
+              orientation="vertical"
+              flexItem
+              sx={{ height: "var(--toolbar-height)" }}
+            />
+          }
           borderColor={"divider"}
           display={{ xs: "none", md: "flex" }}
         >
@@ -115,8 +121,8 @@ export default function EditorToolBar() {
             paddingInline={{ lg: 1.5 }}
             columnGap={1}
           >
-            <ThemeSelect />
             <ImportThemeButton />
+            <ThemeSelect />
             <ExportThemeButton />
 
             <Stack

@@ -26,6 +26,7 @@ export default function Editor() {
 
           [theme.breakpoints.up("lg")]: {
             ":root": {
+              "--toolbar-height": "56px",
               "--explorer-panel-width": "20vw",
               "--properties-panel-width": "24vw",
             },

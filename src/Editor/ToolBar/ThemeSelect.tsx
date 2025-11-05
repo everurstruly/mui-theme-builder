@@ -26,18 +26,25 @@ export default function ThemeSelect() {
         labelId="demo-select-small-label"
         id="demo-select-small"
         value={selectedTheme}
-        startAdornment={
-          <FolderOutlined sx={{ marginRight: 1.5 }} color="action" />
-        }
+        startAdornment={<FolderOutlined sx={{ marginRight: 1.5 }} color="action" />}
         onChange={handleChange}
         sx={{
           borderRadius: 2,
-          fontSize: ".875rem",
+          fontSize: "small",
+        }}
+        slotProps={{
+          notchedOutline: {
+            sx: {
+              borderColor: "divider",
+            },
+          },
         }}
       >
-        <MenuItem value="google">Google</MenuItem>
-        <MenuItem value="material">Material Design</MenuItem>
-        <MenuItem value="ios">IOS</MenuItem>
+        <MenuItem value="mui">Material UI</MenuItem>
+        <MenuItem value="google">Google Material Design</MenuItem>
+        <MenuItem value="ios">Apple iOS</MenuItem>
+        <MenuItem value="mantine">Mantine</MenuItem>
+        <MenuItem value="antd">Ant Design</MenuItem>
       </Select>
     </FormControl>
   );

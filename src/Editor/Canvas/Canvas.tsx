@@ -18,7 +18,6 @@ export default function EditorCanvas() {
         maxWidth: "var(--canvas-max-width)",
         border: "1px solid",
         borderColor: t.palette.divider,
-        backgroundColor: "beige",
         backgroundImage: `
             radial-gradient(circle at center, ${
               t.palette.mode === "dark"

@@ -4,7 +4,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import MenuIcon from "@mui/icons-material/Menu";
 import { HelpOutlineOutlined } from "@mui/icons-material";
-import { Button, Stack } from "@mui/material";
+import { Button, colors, Stack } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
 const StyledToolbar = styled(Toolbar)(({}) => ({
@@ -25,6 +25,7 @@ export default function EditorPage() {
           overflow: "hidden",
           borderBottom: 1,
           borderBottomColor: "divider",
+          backgroundColor: colors.common.black,
         }}
       >
         <StyledToolbar sx={{ px: { lg: 1.5 } }}>

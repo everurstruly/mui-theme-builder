@@ -1,7 +1,7 @@
 import ColorProperty from "./Color/Color";
 import TypographyProperty from "./Typography/Typography";
 import AppearanceProperty from "./Appearance/Appearance";
-import { Tabs, Tab, Box } from "@mui/material";
+import { Tabs, Tab, Box, Typography } from "@mui/material";
 import { useState } from "react";
 
 const properties = [
@@ -10,23 +10,46 @@ const properties = [
   { label: "Appearance", value: "appearance" },
 ];
 
+const thinScrollbar = {
+  "&::-webkit-scrollbar": {
+    width: 4,
+    height: 4,
+  },
+  "&::-webkit-scrollbar-thumb": {
+    backgroundColor: "rgba(0,0,0,0.2)",
+    borderRadius: 4,
+  },
+  "&::-webkit-scrollbar-thumb:hover": {
+    backgroundColor: "rgba(0,0,0,0.4)",
+  },
+  "&::-webkit-scrollbar-track": {
+    backgroundColor: "transparent",
+  },
+  scrollbarWidth: "thin",
+  scrollbarColor: "rgba(0,0,0,0.5) transparent",
+};
+
 export default function PrimitiesPropertiesPanelBody() {
   const [selectedPropTab, setSelectedPropTab] = useState("palette");
 
   return (
-    <>
+    <Box height={"100%"} overflow={"auto"} sx={thinScrollbar}>
       <Tabs
+        aria-label="Property Tabs"
+        variant="fullWidth"
         value={selectedPropTab}
         onChange={(event, newValue) => {
           void event;
           setSelectedPropTab(newValue);
         }}
-        aria-label="Property Tabs"
         sx={{
-          mt: 4,
+          position: "sticky",
+          top: 0,
+          zIndex: 1,
           borderBottom: 1,
           borderColor: "divider",
-          backdropFilter: "blur(30px)",
+          backgroundColor: "rgba(255, 255, 255, .8)",
+          backdropFilter: "blur(8px)",
         }}
       >
         {properties.map((prop) => (
@@ -37,41 +60,27 @@ export default function PrimitiesPropertiesPanelBody() {
             sx={{
               minWidth: 0,
               textTransform: "none",
-              paddingBottom: 3,
+              py: 2.5,
             }}
           />
         ))}
       </Tabs>
 
-      <Box
-        paddingInline={1.5}
-        paddingBottom={16}
-        paddingInlineEnd={3}
-        height={"100%"}
-        overflow={"auto"}
-        sx={{
-          "&::-webkit-scrollbar": {
-            width: 4,
-            height: 4,
-          },
-          "&::-webkit-scrollbar-thumb": {
-            backgroundColor: "rgba(0,0,0,0.2)",
-            borderRadius: 4,
-          },
-          "&::-webkit-scrollbar-thumb:hover": {
-            backgroundColor: "rgba(0,0,0,0.4)",
-          },
-          "&::-webkit-scrollbar-track": {
-            backgroundColor: "transparent",
-          },
-          scrollbarWidth: "thin",
-          scrollbarColor: "rgba(0,0,0,0.5) transparent",
-        }}
-      >
+      <Box paddingInline={1.5} paddingBottom={16} paddingInlineEnd={3}>
         {selectedPropTab === "palette" && <ColorProperty />}
         {selectedPropTab === "typography" && <TypographyProperty />}
         {selectedPropTab === "appearance" && <AppearanceProperty />}
       </Box>
+
+      <Typography
+        variant="caption"
+        component={"small"}
+        textAlign={"center"}
+        py={2}
+        display="block"
+      >
+        -- You've reached the end --
+      </Typography>
 
       {/* <Typography
         variant="caption"
@@ -94,6 +103,6 @@ export default function PrimitiesPropertiesPanelBody() {
       >
         Colors: primary, secondary, success, warning, error, info, gray.
       </Typography> */}
-    </>
+    </Box>
   );
 }

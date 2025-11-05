@@ -34,7 +34,7 @@ export default function ImportThemeAction() {
   return (
     <>
       <Tooltip title="Import Theme">
-        <Button
+        {/* <Button
           size="small"
           color="inherit"
           variant="outlined"
@@ -42,7 +42,14 @@ export default function ImportThemeAction() {
           startIcon={<ContentPasteGoOutlined color="action" />}
         >
           Upload
-        </Button>
+        </Button> */}
+
+        <IconButton
+          sx={{ borderRadius: 2, border: 1, borderColor: "divider" }}
+          onClick={() => handleClickOpen()}
+        >
+          <ContentPasteGoOutlined fontSize="small" />
+        </IconButton>
       </Tooltip>
 
       <BootstrapDialog

@@ -38,7 +38,7 @@ export default function PresetsToggleGroup() {
             key={preset.value ?? preset.label}
             onClick={handleToggle(preset.value)}
             sx={{
-              pl: isChecked(preset.value) ? 3 : 0.5, // 0.5 (magic number) aligns icons with title
+              pl: isChecked(preset.value) ? 3 : 1, // 1 (magic number) aligns icons with title
               backgroundColor: isChecked(preset.value)
                 ? "action.selected"
                 : "inherit",
