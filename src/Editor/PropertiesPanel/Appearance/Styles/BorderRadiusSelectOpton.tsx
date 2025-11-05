@@ -1,14 +1,16 @@
-import { Button, Typography, TextField, ListItem } from "@mui/material";
-import RangeSlider from "../RangeSlider";
+import { Button, Typography, ListItem } from "@mui/material";
+import BorderRadiusSelect from "./BorderRadiusSelect";
 
-export type FontStyleSelectOptionProps = {
+export type BorderRadiusSelectOptionProps = {
   name: string;
   initValue: string;
   modifiedValue: string;
   orientation?: "horizontal" | "vertical";
 };
 
-export default function FontStyleSelectOption(props: FontStyleSelectOptionProps) {
+export default function BorderRadiusSelectOption(
+  props: BorderRadiusSelectOptionProps
+) {
   const canResetValue = props.initValue !== props.modifiedValue;
 
   return (
@@ -33,69 +35,41 @@ export default function FontStyleSelectOption(props: FontStyleSelectOptionProps)
           display: "flex",
           alignItems: "center",
           columnGap: 0.5,
-          fontStyle: 400,
           fontSize: 12,
           textWrap: "nowrap",
-          // color: canResetValue ? "warning.main" : "text.primary",
+          color: canResetValue ? "warning.main" : "text.primary",
         }}
       >
-        {!canResetValue && (
+        {/* {!canResetValue && (
           <Typography
             color="green"
             sx={{
-              p: 0.5,
-              fontSize: 10,
-              lineHeight: 1,
               backgroundColor: "#e0f8e089",
+              fontSize: 10,
+              paddingInline: 0.75,
+              paddingBlock: 0.75,
+              lineHeight: 1,
             }}
           >
             Default
           </Typography>
-        )}
+        )} */}
+
+        {props.name}
 
         {canResetValue && (
           <Button
-            color="warning"
             sx={{
               lineHeight: 1,
-              fontSize: 10,
-              padding: 0.5,
-              fontWeight: 400,
               minWidth: "auto",
             }}
           >
             Reset
           </Button>
         )}
-
-        {props.name}
       </Typography>
 
-      <RangeSlider
-        defaultValue={parseFloat(props.modifiedValue) * 20}
-        arialLabel={props.name}
-      />
-
-      <TextField
-        size="small"
-        variant="filled"
-        value={`${props.modifiedValue}`}
-        sx={{
-          flexBasis: props.orientation === "vertical" ? "100%" : "auto",
-
-          minHeight: 0,
-          height: "fit-content",
-          paddingBlock: 0,
-
-          "& .MuiInputBase-input": {
-            minWidth: "6ch",
-            fontSize: 12,
-            textAlign: "center",
-            paddingInline: 0,
-            paddingBlock: 0.75,
-          },
-        }}
-      />
+      <BorderRadiusSelect />
     </ListItem>
   );
 }

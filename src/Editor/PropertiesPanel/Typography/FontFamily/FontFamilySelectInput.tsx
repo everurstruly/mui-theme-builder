@@ -10,12 +10,11 @@ import type { FontFamilySelectOptionProps } from "./FontFamilySelectOption";
 
 type FontFamilySelectInputProps = {
   id: string;
+  disabled?: boolean;
   value: FontFamilySelectOptionProps["initValue" | "modifiedValue"];
 };
 
-export default function FontFamilySelectInput(
-  props: FontFamilySelectInputProps
-) {
+export default function FontFamilySelectInput(props: FontFamilySelectInputProps) {
   const [fontType, setFontType] = React.useState(props.value.key);
 
   const handleChange = (event: SelectChangeEvent) => {
@@ -23,7 +22,7 @@ export default function FontFamilySelectInput(
   };
 
   return (
-    <FormControl variant="standard">
+    <FormControl variant="standard" disabled={props.disabled}>
       <Select
         autoWidth
         id={props.id}
@@ -32,6 +31,10 @@ export default function FontFamilySelectInput(
         sx={{
           fontSize: 12,
           paddingLeft: 2,
+
+          "& .MuiSelect-select": {
+            padding: 1,
+          },
         }}
       >
         <MenuItem value={props.value.key}>

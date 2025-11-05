@@ -8,27 +8,12 @@ type FontStyleProps = {
 export default function FontStyle(props: FontStyleProps) {
   return (
     <div>
-      <Typography
-        fontSize={12}
-        fontWeight={500}
-        paddingInline={1.5}
-        marginTop={4}
-        paddingBlock={2}
-      >
+      <Typography fontSize={14} fontWeight={600} marginTop={5} paddingBlock={1.5}>
         {props.title}
       </Typography>
 
-      <FontStyleSelectOption
-        name="lineHeight"
-        initValue="1.1"
-        modifiedValue="1.1"
-      />
-
-      <FontStyleSelectOption
-        name="letterSpacing"
-        initValue="0"
-        modifiedValue="0"
-      />
+      <FontStyleSelectOption name="lineHeight" initValue="1.1" modifiedValue="1.1" />
+      <FontStyleSelectOption name="letterSpacing" initValue="0" modifiedValue="0" />
     </div>
   );
 }

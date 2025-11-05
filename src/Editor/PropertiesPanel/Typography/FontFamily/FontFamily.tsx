@@ -9,13 +9,7 @@ type FontFamilyProps = {
 export default function FontFamily(props: FontFamilyProps) {
   return (
     <div>
-      <Typography
-        fontSize={12}
-        fontWeight={500}
-        paddingInline={1.5}
-        marginTop={4}
-        paddingBlock={2}
-      >
+      <Typography fontSize={14} fontWeight={600} marginTop={5} paddingBlock={1.5}>
         {props.title}
       </Typography>
 

@@ -1,5 +1,5 @@
-import { ContentCopyOutlined } from "@mui/icons-material";
-import { Button, ListItem, Typography, Box } from "@mui/material";
+import { Button, ListItem, Typography, Box, Stack } from "@mui/material";
+import { useState } from "react";
 
 type ColorGroupListtOptionProps = {
   name: string;
@@ -7,27 +7,36 @@ type ColorGroupListtOptionProps = {
   modifiedValue: string;
 };
 
-export default function ColorGroupListOption(
-  props: ColorGroupListtOptionProps
-) {
-  const canResetValue = props.initValue !== props.modifiedValue;
+export default function ColorGroupListOption(props: ColorGroupListtOptionProps) {
+  const [colorBeingPicked, setColorBeingPicked] = useState(props.modifiedValue);
+
+  function handleColorPicked(event: React.ChangeEvent<HTMLInputElement>) {
+    console.log("New color selected:", event.target.value);
+  }
+
+  function handleColorBeingPicked(event: React.ChangeEvent<HTMLInputElement>) {
+    setColorBeingPicked(event.target.value);
+  }
+
+  const canResetValue = props.initValue !== colorBeingPicked;
+  const inputId = `color-${crypto.randomUUID()}`;
 
   return (
     <ListItem
       sx={{
         width: "auto",
-        paddingInline: 1,
+        paddingInline: 0,
       }}
     >
       <Typography
-        component={"div"}
+        variant="caption"
         sx={{
           display: "flex",
           alignItems: "center",
-          columnGap: 0.5,
+          columnGap: 0.75,
+          // color: canResetValue ? "warning.main" : "text.primary",
+          cursor: "pointer",
           fontWeight: 400,
-          fontSize: 12,
-          color: "#555",
           textTransform: "capitalize",
         }}
       >
@@ -35,10 +44,10 @@ export default function ColorGroupListOption(
           <Typography
             color="green"
             sx={{
-              backgroundColor: "#e0f8e0b7",
-              paddingInline: 0.5,
-              paddingBlock: 0.35,
+              p: 0.5,
               fontSize: 10,
+              lineHeight: 1,
+              backgroundColor: "#e0f8e089",
             }}
           >
             Default
@@ -46,54 +55,73 @@ export default function ColorGroupListOption(
         )}
 
         {canResetValue && (
-          <Button
+          <Button 
+          color="warning"
+            onClick={() => setColorBeingPicked(props.initValue)}
             sx={{
+              lineHeight: 1,
               fontSize: 10,
-              paddingInline: 0.5,
-              paddingBlock: 0.5,
+              padding: 0.5,
+              fontWeight: 400,
               minWidth: "auto",
-              textTransform: "none",
             }}
           >
             Reset
           </Button>
         )}
+        {/* <IconButton sx={{ p: 0, fontSize: "caption.fontSize" }}>
+          <ContentCopyOutlined
+            sx={{
+              fontSize: "inherit",
+            }}
+          />
+        </IconButton> */}
 
         {props.name}
       </Typography>
 
-      <Box
-        sx={{
-          marginLeft: "auto",
-          display: "flex",
-          alignItems: "center",
-          columnGap: 2,
-        }}
+      <Stack
+        direction="row"
+        marginInlineStart="auto"
+        alignItems="center"
+        spacing={1}
       >
-        <Typography
+        {/* <IconButton
+          size="small"
           sx={{
-            fontSize: 12,
-            cursor: "pointer",
-            color: "#666",
+            borderRadius: 1,
+            paddingBlock: 0.25,
+            paddingInline: 1,
           }}
         >
-          {props.initValue}
-          <ContentCopyOutlined
-            sx={{ marginInlineStart: 0.25, fontSize: 10, color: "#888" }}
-          />
-        </Typography>
+          <PaletteOutlined sx={{ fontSize: 20, color: "#888", strokeWidth: 1 }} />
+        </IconButton> */}
 
         <Box
+          component="label"
+          htmlFor={inputId}
           sx={{
-            width: 20,
+            width: 32,
             height: 20,
-            bgcolor: props.modifiedValue,
-            borderRadius: 100,
+            bgcolor: colorBeingPicked,
+            borderRadius: 1,
+            border: 2,
+            borderColor: "divider",
             cursor: "pointer",
-            boxShadow: "0 0 0 1px rgba(0,0,0,0.1)",
+            display: "inline-block",
           }}
-        />
-      </Box>
+        >
+          <input
+            id={inputId}
+            type="color"
+            name={inputId}
+            defaultValue={props.modifiedValue}
+            style={{ visibility: "hidden" }}
+            onChange={handleColorPicked}
+            onInput={handleColorBeingPicked}
+          />
+        </Box>
+      </Stack>
     </ListItem>
   );
 }

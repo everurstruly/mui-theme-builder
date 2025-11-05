@@ -1,13 +1,18 @@
-import FontFamily from "./FontFamily/FontFamily";
-import FontStyle from "./FontStyle/FontStyle";
-import FontWeight from "./FontWeight/FontWeight";
+import ButtonTypography from "./Variants/Button";
+import FontFamilyBaselineTypography from "./FontFamilyBaseline";
+import HeadlineTypography from "./Variants/Headline";
 
 export default function TypographyProperty() {
   return (
     <>
-      <FontFamily title="Font Family" />
-      <FontStyle title="Font Style" />
-      <FontWeight title="Font Weight" />
+      <FontFamilyBaselineTypography />
+      <HeadlineTypography title="H1" />
+      <HeadlineTypography title="H2" />
+      <HeadlineTypography title="H3" />
+      <HeadlineTypography title="H4" />
+      <HeadlineTypography title="H5" />
+      <HeadlineTypography title="H6" />
+      <ButtonTypography />
     </>
   );
 }

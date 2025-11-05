@@ -1,6 +1,6 @@
 import { Typography } from "@mui/material";
 import fontWeights from "./weights";
-import FontWeightSelectItem from "./FontWeightSelectOption";
+import FontWeightSelectOption from "./FontWeightSelectOption";
 
 type FontWeightProps = {
   title: string;
@@ -9,19 +9,13 @@ type FontWeightProps = {
 export default function FontWeight(props: FontWeightProps) {
   return (
     <div>
-      <Typography
-        fontSize={12}
-        fontWeight={500}
-        paddingInline={1.5}
-        marginTop={4}
-        paddingBlock={2}
-      >
+      <Typography fontSize={14} fontWeight={600} marginTop={5} paddingBlock={1.5}>
         {props.title}
       </Typography>
 
       {fontWeights.map((font) => {
         return (
-          <FontWeightSelectItem
+          <FontWeightSelectOption
             key={font.name}
             name={font.name}
             initValue={font.initValue}

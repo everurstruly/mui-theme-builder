@@ -11,19 +11,31 @@ export type FontFamilySelectOptionProps = {
     key: string;
     title: string;
   };
+  disabled?: boolean;
 };
 
-export default function FontFamilySelectOption(
-  props: FontFamilySelectOptionProps
-) {
+export default function FontFamilySelectOption(props: FontFamilySelectOptionProps) {
   const canResetValue = props.initValue.key !== props.modifiedValue.key;
+
+  function getColor() {
+    if (props.disabled) {
+      return "text.disabled";
+    }
+
+    if (canResetValue) {
+      return "warning.main";
+    }
+
+    return "text.primary";
+  }
 
   return (
     <ListItem
       sx={{
         width: "auto",
-        paddingInline: 1,
         justifyContent: "space-between",
+        paddingInline: 0,
+        paddingBlock: 0.75,
       }}
     >
       <Typography
@@ -34,18 +46,17 @@ export default function FontFamilySelectOption(
           columnGap: 0.5,
           fontWeight: 400,
           fontSize: 12,
-          color: "#555",
-          textTransform: "capitalize",
+          color: getColor(),
         }}
       >
         {!canResetValue && (
           <Typography
             color="green"
             sx={{
-              backgroundColor: "#e0f8e0b7",
-              paddingInline: 0.5,
-              paddingBlock: 0.35,
+              p: 0.5,
               fontSize: 10,
+              lineHeight: 1,
+              backgroundColor: "#e0f8e089",
             }}
           >
             Default
@@ -54,12 +65,13 @@ export default function FontFamilySelectOption(
 
         {canResetValue && (
           <Button
+            color="warning"
             sx={{
+              lineHeight: 1,
               fontSize: 10,
-              paddingInline: 0.5,
-              paddingBlock: 0.5,
+              padding: 0.5,
+              fontWeight: 400,
               minWidth: "auto",
-              textTransform: "none",
             }}
           >
             Reset
@@ -67,11 +79,29 @@ export default function FontFamilySelectOption(
         )}
 
         {props.name}
+        {/* 
+        {canResetValue && (
+          <Button
+            sx={{
+              marginLeft: 1,
+              backgroundColor: "rgba(137, 194, 244, 0.2)",
+              fontSize: 10,
+              lineHeight: 1,
+              paddingInline: 0.75,
+              paddingBlock: 0.5,
+              minWidth: "auto",
+              textTransform: "none",
+            }}
+          >
+            Reset
+          </Button>
+        )} */}
       </Typography>
 
       <FontFamilySelectInput
         id={`font-family-select-${props.name}`}
         value={props.modifiedValue}
+        disabled={props.disabled}
       />
     </ListItem>
   );

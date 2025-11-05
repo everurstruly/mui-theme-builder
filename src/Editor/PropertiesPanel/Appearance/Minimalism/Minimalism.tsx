@@ -1,18 +1,18 @@
 import { Typography } from "@mui/material";
+import PresetsToggleGroup from "./PresetsToggleGroup";
 
-type ColorGroupListProps = {
-  title: string;
-  children: React.ReactNode;
+type MinimalismAppearanceProps = {
+  title?: string;
 };
 
-export default function ColorGroupList(props: ColorGroupListProps) {
+export default function MinimalismAppearance(props: MinimalismAppearanceProps) {
   return (
-    <ul>
+    <div>
       <Typography
         variant="subtitle2"
         component={"h6"}
-        marginTop={7}
-        paddingBottom={1.8}
+        marginTop={5}
+        paddingBlock={1}
         fontWeight={500}
         color="common.black"
         paddingInlineStart={0.35} // aesthetics alignment with list items badge
@@ -27,8 +27,7 @@ export default function ColorGroupList(props: ColorGroupListProps) {
           Component
         </Typography> */}
       </Typography>
-
-      {props.children}
-    </ul>
+      <PresetsToggleGroup />
+    </div>
   );
 }

@@ -1,32 +1,30 @@
-import { Button, ListItem, Typography } from "@mui/material";
-import FontWeightSelectInput from "./FontWeightSelectInput";
+import { Button, Typography, TextField, ListItem } from "@mui/material";
+import RangeSlider, { type RangeSliderProps } from "./RangeSlider";
 
-export type FontWeightSelectOptionProps = {
-  disabled?: boolean;
+export type StylesSelectOptionProps = Pick<RangeSliderProps, "marks" | "range"> & {
   name: string;
+  initValue: string;
+  modifiedValue: string;
   orientation?: "horizontal" | "vertical";
-  initValue: {
-    value: string;
-  };
-  modifiedValue: {
-    value: string;
-  };
 };
 
-export default function FontWeightSelectOption(props: FontWeightSelectOptionProps) {
-  const canResetValue = props.initValue.value !== props.modifiedValue.value;
+export default function StylesSelectOption(props: StylesSelectOptionProps) {
+  const canResetValue = props.initValue !== props.modifiedValue;
 
   return (
     <ListItem
+      component="div"
       sx={{
         width: "auto",
         paddingInline: 0,
         justifyContent: "space-between",
-        alignItems: props.orientation === "vertical" ? "start" : "center",
         display: "flex",
+        flexWrap: "nowrap",
+        alignItems: "center",
         flexDirection: props.orientation === "vertical" ? "column" : "row",
-        gap: props.orientation === "vertical" ? 1 : 2,
+        gap: props.orientation === "vertical" ? 1 : 0,
         paddingBlock: 0.75,
+        columnGap: 2.5,
       }}
     >
       <Typography
@@ -36,6 +34,7 @@ export default function FontWeightSelectOption(props: FontWeightSelectOptionProp
           alignItems: "center",
           columnGap: 0.5,
           fontSize: 12,
+          textWrap: "nowrap",
           // color: canResetValue ? "warning.main" : "text.primary",
         }}
       >
@@ -71,11 +70,32 @@ export default function FontWeightSelectOption(props: FontWeightSelectOptionProp
         {props.name}
       </Typography>
 
-      <FontWeightSelectInput
-        title={props.name}
-        input={props.initValue}
-        id={props.initValue.value}
-        disabled={props.disabled}
+      <RangeSlider
+        defaultValue={parseFloat(props.modifiedValue) * 10}
+        arialLabel={props.name}
+        marks={props.marks}
+        range={props.range}
+      />
+
+      <TextField
+        size="small"
+        variant="filled"
+        value={`${props.modifiedValue}`}
+        sx={{
+          flexBasis: props.orientation === "vertical" ? "100%" : "auto",
+
+          minHeight: 0,
+          height: "fit-content",
+          paddingBlock: 0,
+
+          "& .MuiInputBase-input": {
+            width: "16ch",
+            fontSize: 12,
+            textAlign: "center",
+            paddingInline: 0,
+            paddingBlock: 0.75,
+          },
+        }}
       />
     </ListItem>
   );
