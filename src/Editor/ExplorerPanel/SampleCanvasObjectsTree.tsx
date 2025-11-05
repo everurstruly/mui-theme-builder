@@ -1,0 +1,66 @@
+import Box from "@mui/material/Box";
+import { SimpleTreeView } from "@mui/x-tree-view/SimpleTreeView";
+import { TreeItem } from "@mui/x-tree-view/TreeItem";
+import { buildSamplesTree, type TreeNode } from "../Previews/registry";
+import useWorkfileStore from "../Workfile/useWorkfileStore";
+import * as React from "react";
+
+export default function SampleCanvasObjectsTree() {
+  // Build once; tree is static for session
+  const samplesTree = React.useMemo(() => buildSamplesTree(), []);
+  const { activePreviewId, selectPreview } = useWorkfileStore();
+
+  const handleSelectSample = (sampleId: string) => {
+    selectPreview(sampleId);
+  };
+
+  const renderTree = (node: TreeNode, key: string): React.ReactNode => {
+    if (node.type === "component") {
+      return (
+        <TreeItem
+          key={node.id || key}
+          itemId={node.id || key}
+          label={node.label}
+        />
+      );
+    }
+
+    if (node.type === "folder") {
+      return (
+        <TreeItem key={key} itemId={`folder-${key}`} label={node.label}>
+          {Object.entries(node.children || {}).map(([childKey, childNode]) =>
+            renderTree(childNode, childKey)
+          )}
+        </TreeItem>
+      );
+    }
+
+    return null;
+  };
+
+  return (
+    <Box sx={{ minHeight: 352, padding: 1 }}>
+      <SimpleTreeView
+        selectedItems={activePreviewId}
+        onSelectedItemsChange={(_, itemId) => {
+          if (
+            itemId &&
+            typeof itemId === "string" &&
+            !itemId.startsWith("folder-")
+          ) {
+            handleSelectSample(itemId);
+          }
+        }}
+        sx={{
+          ".MuiTreeItem-label": {
+            fontSize: 15,
+          },
+        }}
+      >
+        {Object.entries(samplesTree).map(([key, node]) =>
+          renderTree(node, key)
+        )}
+      </SimpleTreeView>
+    </Box>
+  );
+}
