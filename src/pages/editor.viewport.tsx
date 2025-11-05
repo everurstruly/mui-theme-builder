@@ -1,12 +1,12 @@
 import { useSearchParams } from "react-router";
-import { samplesRegistry } from "../Editor/Samples/registry";
-import CanvasViewportSimulationPreviewPage from "../Editor/Canvas/ZoomPanSurface/ViewportSimulation/PreviewPage";
+import { samplesRegistry } from "../Editor/Previews/registry";
+import CanvasViewportSimulationPreviewPage from "../Editor/ViewportSimulation/PreviewPage";
 
 /**
  * Usage:
  * /viewport?component=DashboardExample&theme=<base64-encoded-theme>
  */
-export default function ViewportPage() {
+export default function EditorViewportPage() {
   const [searchParams] = useSearchParams();
   return (
     <CanvasViewportSimulationPreviewPage
