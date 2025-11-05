@@ -1,15 +1,15 @@
 import { useEffect, useState, type StyleHTMLAttributes } from "react";
 import { Box, CircularProgress } from "@mui/material";
-import {
-  ThemeProvider,
-  createTheme,
-  responsiveFontSizes,
-} from "@mui/material/styles";
+import { ThemeProvider, createTheme, responsiveFontSizes } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
 import type { Theme, ThemeOptions } from "@mui/material/styles";
-import ViewportSimulation from "./ViewportSimulation";
 
 type PreviewPageProps = {
-  samplesRegistry: Record<string, unknown>;
+  samplesRegistry: Record<string, {
+    id: string;
+    label: string;
+    component: React.ComponentType<Record<string, unknown>>;
+  }>;
   componentId?: string;
   encodedTheme?: string; // base64-encoded theme
 
@@ -33,9 +33,7 @@ type PreviewPageProps = {
   renderThemeLoadingPageContent?: () => React.ReactNode;
 };
 
-export default function CanvasViewportSimulationPreviewPage(
-  props: PreviewPageProps
-) {
+export default function CanvasViewportSimulationPreviewPage(props: PreviewPageProps) {
   const [theme, setTheme] = useState<Theme | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -68,9 +66,7 @@ export default function CanvasViewportSimulationPreviewPage(
       setTheme(themeObj);
     } catch (err) {
       setError(
-        `Failed to initialize theme: ${
-          err instanceof Error ? err.message : String(err)
-        }`
+        `Failed to initialize theme: ${err instanceof Error ? err.message : String(err)}`
       );
     }
   }, [encodedTheme]);
@@ -88,42 +84,32 @@ export default function CanvasViewportSimulationPreviewPage(
 
   if (!theme) {
     const renderView =
-      props.renderThemeLoadingPageContent ||
-      defaultRenderThemeLoadingPageContent;
+      props.renderThemeLoadingPageContent || defaultRenderThemeLoadingPageContent;
     return renderView();
   }
 
-  const width =
-    window.innerWidth - (props?.slotsStyles?.viewportOuterPaddingPx || 20);
+  // Render component directly - no iframe needed for standalone preview
+  const componentMetadata = props.samplesRegistry[componentId];
+  const Component = componentMetadata?.component;
 
-  const height =
-    window.innerHeight - (props?.slotsStyles?.viewportOuterPaddingPx || 20);
+  if (!Component) {
+    const renderView =
+      props.renderNotFoundPageContent || defaultRenderNotFoundPageContent;
+    return renderView({ componentId });
+  }
 
   return (
     <ThemeProvider theme={theme}>
+      <CssBaseline />
       <Box
         sx={{
           width: "100vw",
           height: "100vh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: "#f5f5f5",
-          padding: "20px",
-          boxSizing: "border-box",
+          overflow: "auto",
+          ...props?.slotsStyles?.viewportWrapperElement,
         }}
       >
-        <ViewportSimulation
-          width={width}
-          height={height}
-          component={componentId}
-          bordered
-          style={{
-            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-            borderRadius: "8px",
-            ...props?.slotsStyles?.viewportWrapperElement,
-          }}
-        />
+        <Component />
       </Box>
     </ThemeProvider>
   );
@@ -149,9 +135,9 @@ const defaultRenderNotFoundPageContent: NonNullable<
   );
 };
 
-const defaultRenderPageContent: NonNullable<
-  PreviewPageProps["renderPageContent"]
-> = ({ errorObjectAsString }) => {
+const defaultRenderPageContent: NonNullable<PreviewPageProps["renderPageContent"]> = ({
+  errorObjectAsString,
+}) => {
   return (
     <Box
       sx={{
