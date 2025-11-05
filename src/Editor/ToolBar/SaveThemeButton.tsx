@@ -1,10 +1,10 @@
 import { SaveRounded } from "@mui/icons-material";
 import { Button } from "@mui/material";
-import useEditorStore from "../editorStore";
+import useEditorUiStore from "../editorUiStore";
 
 export default function SaveThemeButton() {
-  const isSaved = useEditorStore((state) => state.hasSavedChanges);
-  const saveChanges = useEditorStore((state) => state.saveChanges);
+  const isSaved = useEditorUiStore((state) => state.hasSavedChanges);
+  const saveChanges = useEditorUiStore((state) => state.saveChanges);
 
   const handleSaveChanges = () => {
     saveChanges();
@@ -13,7 +13,6 @@ export default function SaveThemeButton() {
   return (
     <Button
       value="save"
-      size="small"
       aria-label="Save changes"
       variant="outlined"
       color="inherit"
@@ -32,7 +31,7 @@ export default function SaveThemeButton() {
       }}
     >
       <SaveRounded sx={{ fontSize: 16 }} />
-      {isSaved ? "Saved" : "Save changes"}
+      {isSaved ? "Saved" : "Save"}
     </Button>
   );
 }

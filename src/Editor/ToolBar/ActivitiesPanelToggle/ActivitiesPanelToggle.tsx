@@ -1,20 +1,20 @@
-import useEditorStore from "../../editorStore";
+import useEditorUiStore from "../../editorUiStore";
 import FloatingCanvasObjectsTree from "./FloatingCanvasObjectsTree";
 import { ListOutlined, PhotoSizeSelectSmallRounded } from "@mui/icons-material";
 import { Button } from "@mui/material";
 
 export default function ActivitiesPanelToggle() {
-  const withHidePanel = useEditorStore((state) => state.hidePanel);
-  const withShowPanel = useEditorStore((state) => state.showPanel);
-  const isPanelVisible = useEditorStore(
-    (state) => !state.hiddenPanels.includes("activities")
+  const withHidePanel = useEditorUiStore((state) => state.hidePanel);
+  const withShowPanel = useEditorUiStore((state) => state.showPanel);
+  const isPanelVisible = useEditorUiStore(
+    (state) => !state.hiddenPanels.includes("explorer")
   );
 
   const handleDisplayPropertyPanel = () => {
     if (!isPanelVisible) {
-      withShowPanel("activities");
+      withShowPanel("explorer");
     } else {
-      withHidePanel("activities");
+      withHidePanel("explorer");
     }
   };
 

@@ -1,66 +1,59 @@
-import EditorHeader from "./Header/Header";
 import EditorCanvas from "./Canvas/Canvas";
 import EditorToolBar from "./ToolBar/ToolBar";
 import EditorPropertiesPanel from "./PropertiesPanel/PropertiesPanel";
-import EditorActivitiesPanel from "./ActivitiesPanel/ActivitiesPanel";
-import { Box, Stack } from "@mui/material";
+import EditorExplorerPanel from "./ExplorerPanel/ExplorerPanel";
+import { GlobalStyles, Paper, Stack } from "@mui/material";
 
 export default function Editor() {
   return (
-    <Box
-      sx={{
-        "--header-height": {
-          xs: "48px",
-        },
+    <>
+      <GlobalStyles
+        styles={(theme) => ({
+          ":root": {
+            "--header-height": "44px",
+            "--toolbar-height": "52px",
+            "--explorer-panel-width": "auto",
+            "--properties-panel-width": "auto",
+            "--canvas-max-width": "auto",
+          },
 
-        "--toolbar-height": {
-          xs: "48px",
-          sm: "50px",
-          lg: "52px",
-        },
+          [theme.breakpoints.up("sm")]: {
+            ":root": {
+              "--explorer-panel-width": "300px",
+              "--properties-panel-width": "360px",
+            },
+          },
 
-        "--activities-panel-width": {
-          xs: "auto",
-          sm: "300px",
-          lg: "20vw",
-        },
+          [theme.breakpoints.up("lg")]: {
+            ":root": {
+              "--explorer-panel-width": "20vw",
+              "--properties-panel-width": "24vw",
+            },
+          },
+        })}
+      />
 
-        "--properties-panel-width": {
-          xs: "auto",
-          sm: "360px",
-          lg: "24vw",
-        },
-
-        "--canvas-max-width": {
-          md: "calc(100vw - var(--activities-panel-width) - var(--properties-panel-width))",
-        },
-
-        height: "100vh",
-        overflow: "hidden",
-      }}
-    >
-      <EditorHeader />
       <Stack
-        direction="row"
-        flexGrow={1}
         minWidth={0}
-        height={`calc(100dvh - var(--header-height) - 1px)`} // FIXME: 1px is a magic number that prevents overflow due to scrollbar/border I suspect
+        direction={"row"}
+        height={`calc(100dvh - var(--header-height) - 1px)`} // 1px is a magic number that prevents vertical scrollbar from appearing
         overflow={"hidden"}
       >
-        <EditorActivitiesPanel />
-        <Stack
-          component="main"
-          height={"100%"}
-          flexGrow={1}
-          minWidth={0}
-          overflow={"hidden"}
-          position={"relative"}
-        >
+        <Paper component="main" sx={{ flexGrow: 1, minWidth: 0 }}>
           <EditorToolBar />
-          <EditorCanvas />
-        </Stack>
-        <EditorPropertiesPanel />
+          <Stack
+            minWidth={0}
+            flexGrow={1}
+            direction="row"
+            height={`calc(100% - var(--toolbar-height))`}
+            overflow={"hidden"}
+          >
+            <EditorExplorerPanel />
+            <EditorCanvas />
+            <EditorPropertiesPanel />
+          </Stack>
+        </Paper>
       </Stack>
-    </Box>
+    </>
   );
 }

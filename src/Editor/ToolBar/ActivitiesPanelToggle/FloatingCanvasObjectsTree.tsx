@@ -1,7 +1,7 @@
 import * as React from "react";
 import Popover from "@mui/material/Popover";
-import useEditorStore from "../../editorStore";
-import SampleCanvasObjectsTree from "../../ActivitiesPanel/SampleCanvasObjectsTree";
+import useEditorUiStore from "../../editorUiStore";
+import SampleCanvasObjectsTree from "../../ExplorerPanel/SampleCanvasObjectsTree";
 import {
   ArrowDropDownOutlined,
   ArrowDropUpOutlined,
@@ -12,8 +12,8 @@ export default function FloatingCanvasObjectsTree() {
   const theme = useTheme();
   const isDesktopScreen = useMediaQuery(theme.breakpoints.up("md"));
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
-  const isVisible = useEditorStore((state) => {
-    return state.hiddenPanels.includes("activities") === false;
+  const isVisible = useEditorUiStore((state) => {
+    return state.hiddenPanels.includes("explorer") === false;
   });
 
   const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -68,7 +68,7 @@ export default function FloatingCanvasObjectsTree() {
               border: 2,
               borderColor: "divider",
               borderRadius: 0,
-              minWidth: "var(--activities-panel-width, 300px)",
+              minWidth: "var(--explorer-panel-width, 300px)",
             },
           },
         }}
