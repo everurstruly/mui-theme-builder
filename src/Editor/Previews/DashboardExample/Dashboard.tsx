@@ -22,7 +22,7 @@ const paperStyle = {
 
 export default function Dashboard() {
   return (
-    <>
+    <Paper>
       <PrimarySearchAppBar />
       <Box sx={{ display: "flex", minHeight: "100vh" }}>
         <Drawer
@@ -88,6 +88,6 @@ export default function Dashboard() {
           </Container>
         </Box>
       </Box>
-    </>
+    </Paper>
   );
 }

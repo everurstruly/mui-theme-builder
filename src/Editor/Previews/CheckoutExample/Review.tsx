@@ -6,7 +6,6 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { Fragment } from "react/jsx-runtime";
 
 const products = [
   { name: "Product 1", desc: "A nice thing", price: "$9.99" },
@@ -109,8 +108,8 @@ export default function Review() {
           </Tooltip>
           <Grid container>
             {payments.map((payment) => (
-              <Fragment key={payment.name}>
-                <Grid size={{ xs: 6 }}>
+              <>
+                <Grid key={payment.name} size={{ xs: 6 }}>
                   <Tooltip
                     title={`<Typography color="textPrimary" variant="body1">`}
                     placement="left"
@@ -128,7 +127,7 @@ export default function Review() {
                     <Typography gutterBottom>{payment.detail}</Typography>
                   </Tooltip>
                 </Grid>
-              </Fragment>
+              </>
             ))}
           </Grid>
         </Grid>

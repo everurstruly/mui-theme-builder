@@ -4,6 +4,8 @@ import ContactForm from "./ContactForm";
 import ProductCardGrid from "./ProductCardGrid";
 import BlogExample from "./BlogExample";
 import CheckoutExample from "./CheckoutExample";
+import { getMuiComponentsRegistry } from "./MuiComponents/muiComponentsRegistry";
+import MuiComponentPreview from "./MuiComponents/MuiComponentPreview";
 
 export type SampleMetadata = {
   id: string;
@@ -11,6 +13,8 @@ export type SampleMetadata = {
   description?: string;
   path: string; // Path-based organization (e.g., "examples/dashboards" or "components/forms")
   component: ComponentType<Record<string, unknown>>;
+  isMuiComponent?: boolean; // Flag to identify MUI components
+  muiComponentName?: string; // Original MUI component name for preview
 };
 
 export type TreeNode = {
@@ -23,7 +27,7 @@ export type TreeNode = {
  * Registry of all available components that can be rendered in the canvas.
  * Add new samples here to make them available in the ActivitiesPanel.
  */
-export const samplesRegistry: Record<string, SampleMetadata> = {
+const samplesRegistry: Record<string, SampleMetadata> = {
   DashboardExample: {
     id: "DashboardExample",
     label: "Dashboard",
@@ -69,9 +73,41 @@ export const samplesRegistry: Record<string, SampleMetadata> = {
 };
 
 /**
- * Get list of all sample IDs
+ * Create wrapper entries for MUI components
  */
-export const getSampleIds = () => Object.keys(samplesRegistry);
+function getMuiComponentSamples(): Record<string, SampleMetadata> {
+  const muiRegistry = getMuiComponentsRegistry();
+  const muiSamples: Record<string, SampleMetadata> = {};
+
+  Object.entries(muiRegistry).forEach(([id, compMetadata]) => {
+    muiSamples[`mui-${id}`] = {
+      id: `mui-${id}`,
+      label: compMetadata.label,
+      description: `MUI ${compMetadata.name} component preview`,
+      // Force flat placement for all MUI components in the Previews tree
+      // Ignore any category-derived paths and place at the root level
+      path: "root",
+      component: () => MuiComponentPreview({ componentName: compMetadata.name }),
+      isMuiComponent: true,
+      muiComponentName: compMetadata.name,
+    };
+  });
+
+  return muiSamples;
+}
+
+/**
+ * Combined registry: custom samples + auto-generated MUI components
+ */
+const allSamples = {
+  ...samplesRegistry,
+  // ...getMuiComponentSamples(),
+};
+
+/**
+ * Get list of all sample IDs (including MUI components)
+ */
+export const getSampleIds = () => Object.keys(allSamples);
 
 /**
  * Build a tree structure from flat path-based registry
@@ -79,7 +115,7 @@ export const getSampleIds = () => Object.keys(samplesRegistry);
 export const buildSamplesTree = (): Record<string, TreeNode> => {
   const tree: Record<string, TreeNode> = {};
 
-  Object.entries(samplesRegistry).forEach(([id, sample]) => {
+  Object.entries(allSamples).forEach(([id, sample]) => {
     // Normalize and split the path
     const pathParts = sample.path ? sample.path.split("/").filter(Boolean) : [];
 
@@ -121,4 +157,21 @@ export const buildSamplesTree = (): Record<string, TreeNode> => {
   return tree;
 };
 
-export default samplesRegistry;
+/**
+ * Export the combined registry as default and named export
+ * This includes both custom examples and auto-generated MUI components
+ */
+export default allSamples;
+
+/**
+ * Also export as samplesRegistry for backwards compatibility
+ */
+export { allSamples as samplesRegistry };
+
+export function isSampleIdValid(id: string): boolean {
+  return id in allSamples;
+}
+
+export function getValidSampleId(id: string, fallback = "DashboardExample"): string {
+  return isSampleIdValid(id) ? id : fallback;
+}

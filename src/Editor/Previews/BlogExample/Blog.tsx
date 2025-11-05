@@ -1,7 +1,7 @@
 import FacebookIcon from "@mui/icons-material/Facebook";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import TwitterIcon from "@mui/icons-material/Twitter";
-import type { SvgIconTypeMap } from "@mui/material";
+import { Paper, type SvgIconTypeMap } from "@mui/material";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import type { OverridableComponent } from "@mui/material/OverridableComponent";
@@ -112,7 +112,7 @@ const sidebar: SideBar = {
 
 export default function Blog() {
   return (
-    <React.Fragment>
+    <Paper>
       <PrimarySearchAppBar />
       <Container maxWidth="lg">
         <BlogHeader title="Blog" sections={sections} />
@@ -138,6 +138,6 @@ export default function Blog() {
         title="Footer"
         description="Something here to give the footer a purpose!"
       />
-    </React.Fragment>
+    </Paper>
   )
 }
