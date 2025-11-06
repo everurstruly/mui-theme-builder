@@ -33,6 +33,15 @@ createRoot(document.getElementById("root")!).render(
                 boxShadow: "none",
                 variants: [
                   {
+                    props: { variant: "outlined" },
+                    style: {
+                      // FIXME: OVERRIDE NOT APPLIED
+                      "& .MuiSvgIcon-root": {
+                        fontSize: 18,
+                      },
+                    },
+                  },
+                  {
                     props: { variant: "outlined", color: "inherit" },
                     style: {
                       borderColor: "#ccc",

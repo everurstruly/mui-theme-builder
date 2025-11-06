@@ -9,12 +9,12 @@ const options = [
   {
     value: "light",
     label: "Light Mode",
-    icon: <LightModeOutlined sx={{ fontSize: 18 }} />,
+    icon: <LightModeOutlined sx={{ fontSize: 16 }} />,
   },
   {
     value: "dark",
     label: "Dark Mode",
-    icon: <DarkModeOutlined sx={{ fontSize: 18 }} />,
+    icon: <DarkModeOutlined sx={{ fontSize: 16 }} />,
   },
 ];
 
@@ -41,6 +41,7 @@ export default function ColorSchemeToggle() {
   return (
     <ToggleButtonGroup
       exclusive
+      size="small"
       value={mode}
       onChange={handleChange}
       aria-label="Workfile theme color mode toggle"
@@ -52,7 +53,7 @@ export default function ColorSchemeToggle() {
             value={option.value}
             aria-label={option.label}
             sx={{
-              paddingBlock: 0.875,
+              borderRadius: 2,
               color: "common.black",
 
               "&:hover": {

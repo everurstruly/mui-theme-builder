@@ -48,8 +48,9 @@ export default function PrimitiesPropertiesPanelBody() {
           zIndex: 1,
           borderBottom: 1,
           borderColor: "divider",
-          backgroundColor: "rgba(255, 255, 255, .8)",
-          backdropFilter: "blur(8px)",
+          height: "var(--toolbar-height)",
+          backgroundColor: "rgba(255, 255, 255, .3)",
+          backdropFilter: "blur(13px)",
         }}
       >
         {properties.map((prop) => (
@@ -59,8 +60,8 @@ export default function PrimitiesPropertiesPanelBody() {
             value={prop.value}
             sx={{
               minWidth: 0,
+              fontWeight: "semibold",
               textTransform: "none",
-              py: 2.5,
             }}
           />
         ))}

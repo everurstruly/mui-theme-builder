@@ -45,7 +45,9 @@ export default function ImportThemeAction() {
         </Button> */}
 
         <IconButton
-          sx={{ borderRadius: 2, border: 1, borderColor: "divider" }}
+          size="small"
+          // FIXME: py style matches theme selectbox height
+          sx={{ py: 0.75, borderRadius: 2, border: 1, borderColor: "divider" }}
           onClick={() => handleClickOpen()}
         >
           <ContentPasteGoOutlined fontSize="small" />

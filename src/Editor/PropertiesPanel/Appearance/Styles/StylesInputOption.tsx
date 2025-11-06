@@ -70,7 +70,7 @@ export default function StylesInputOption(props: StylesInputOptionProps) {
 
       <TextField
         size="small"
-        variant="standard"
+        variant="filled"
         value={`${props.modifiedValue}`}
         sx={{
           flexBasis: props.orientation === "vertical" ? "100%" : "auto",
@@ -80,7 +80,7 @@ export default function StylesInputOption(props: StylesInputOptionProps) {
           paddingBlock: 0,
 
           "& .MuiInputBase-input": {
-            width: "7ch",
+            width: "5ch", // FIXME: magic number
             fontSize: 12,
             textAlign: "center",
             paddingInline: 0,
