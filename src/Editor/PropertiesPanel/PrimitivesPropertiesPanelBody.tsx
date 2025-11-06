@@ -29,13 +29,15 @@ const thinScrollbar = {
   scrollbarColor: "rgba(0,0,0,0.5) transparent",
 };
 
+const panelPaddingInline = 1.5;
+
 export default function PrimitiesPropertiesPanelBody() {
   const [selectedPropTab, setSelectedPropTab] = useState("palette");
 
   return (
     <Box height={"100%"} overflow={"auto"} sx={thinScrollbar}>
       <Tabs
-        aria-label="Property Tabs"
+        aria-label="Editor Theme Design File Properties Panel Tabs"
         variant="fullWidth"
         value={selectedPropTab}
         onChange={(event, newValue) => {
@@ -44,13 +46,19 @@ export default function PrimitiesPropertiesPanelBody() {
         }}
         sx={{
           position: "sticky",
+          pt: 2,
           top: 0,
           zIndex: 1,
           borderBottom: 1,
           borderColor: "divider",
-          height: "var(--toolbar-height)",
           backgroundColor: "rgba(255, 255, 255, .3)",
           backdropFilter: "blur(13px)",
+
+          "& .MuiTabs-indicator": {
+            backgroundColor: "text.primary",
+            // borderInline: "12px solid",
+            // borderColor: "white",
+          },
         }}
       >
         {properties.map((prop) => (
@@ -58,16 +66,26 @@ export default function PrimitiesPropertiesPanelBody() {
             key={prop.value}
             label={prop.label}
             value={prop.value}
+            disableRipple
             sx={{
               minWidth: 0,
               fontWeight: "semibold",
               textTransform: "none",
+              height: "var(--header-height)",
+
+              "&.Mui-selected": {
+                color: "text.primary",
+              },
             }}
           />
         ))}
       </Tabs>
 
-      <Box paddingInline={1.5} paddingBottom={16} paddingInlineEnd={3}>
+      <Box
+        paddingInline={panelPaddingInline}
+        paddingBottom={10}
+        paddingInlineEnd={3}
+      >
         {selectedPropTab === "palette" && <ColorProperty />}
         {selectedPropTab === "typography" && <TypographyProperty />}
         {selectedPropTab === "appearance" && <AppearanceProperty />}
@@ -77,7 +95,7 @@ export default function PrimitiesPropertiesPanelBody() {
         variant="caption"
         component={"small"}
         textAlign={"center"}
-        py={2}
+        py={2} // NB(nice to have): unintentionally center-aligns with the canvas bottom controls
         display="block"
       >
         -- You've reached the end --

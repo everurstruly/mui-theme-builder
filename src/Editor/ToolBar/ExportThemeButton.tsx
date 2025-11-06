@@ -37,7 +37,7 @@ export default function ExportThemeDialog() {
         variant="outlined"
         aria-label="Copy and Implement Selected Theme"
         onClick={() => handleClickOpen()}
-        startIcon={<FileCopyRounded />}
+        // startIcon={<FileCopyRounded />}
         sx={{
           borderRadius: 2,
 
@@ -46,7 +46,7 @@ export default function ExportThemeDialog() {
           },
         }}
       >
-        Export
+        Export Theme
       </Button>
 
       <BootstrapDialog

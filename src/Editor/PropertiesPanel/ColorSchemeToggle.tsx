@@ -54,14 +54,14 @@ export default function ColorSchemeToggle() {
             aria-label={option.label}
             sx={{
               borderRadius: 2,
-              color: "common.black",
+              // color: "common.black",
 
               "&:hover": {
                 color: "primary.light",
               },
 
               "&.Mui-selected": {
-                color: "primary.dark",
+                color: "common.black",
               },
             }}
           >

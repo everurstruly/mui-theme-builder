@@ -6,17 +6,18 @@ export default function ChangesHistoryActions() {
   const changeHistory = useEditorUiStore((state) => state.markUnsavedChanges);
 
   return (
-    <ButtonGroup size="small" sx={{ borderRadius: 2 }}>
+    <ButtonGroup size="large">
       <Button
         color="inherit"
         value="undo"
         aria-label="undo"
         sx={{
           borderRadius: 2,
+          px: 1,
         }}
         onClick={() => changeHistory()}
       >
-        <UndoRounded sx={{ fontSize: 18 }} />
+        <UndoRounded sx={{ fontSize: 18, color: "text.primary" }} />
         {/* Undo */}
       </Button>
 
@@ -26,10 +27,11 @@ export default function ChangesHistoryActions() {
         aria-label="redo"
         sx={{
           borderRadius: 2,
+          px: 1,
         }}
         onClick={() => changeHistory()}
       >
-        <RedoRounded sx={{ fontSize: 18 }} />
+        <RedoRounded sx={{ fontSize: 18, color: "text.primary" }} />
         {/* Redo */}
       </Button>
     </ButtonGroup>
