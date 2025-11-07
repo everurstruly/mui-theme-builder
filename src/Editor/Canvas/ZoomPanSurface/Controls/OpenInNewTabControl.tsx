@@ -1,9 +1,9 @@
 import { Tooltip, IconButton } from "@mui/material";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
-import useWorkfileStore from "../../../Workfile/useWorkfileStore";
+import { useThemeWorkspaceStore, resolveThemeOptionsForExport } from "../../../ThemeWorkspace";
 
 export default function OpenInNewTabControl() {
-  const { themeModifications, activePreviewId } = useWorkfileStore();
+  const activePreviewId = useThemeWorkspaceStore((state) => state.activePreviewId);
 
   const handleOpenInNewTab = () => {
     if (!activePreviewId) {
@@ -12,7 +12,9 @@ export default function OpenInNewTabControl() {
     }
 
     try {
-      const encodedTheme = btoa(JSON.stringify(themeModifications || {}));
+      // Get the current theme options for export
+      const themeOptions = resolveThemeOptionsForExport();
+      const encodedTheme = btoa(JSON.stringify(themeOptions));
       const url = `/editor/viewport?component=${encodeURIComponent(
         activePreviewId
       )}&theme=${encodeURIComponent(encodedTheme)}`;
