@@ -4,28 +4,37 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import type { SelectChangeEvent } from "@mui/material/Select";
 import { FolderOutlined } from "@mui/icons-material";
+import { useThemeWorkspaceStore, listBaseThemeIds } from "../ThemeWorkspace";
 
-// const label = "Theme";
+// Map of theme IDs to display names
+const THEME_LABELS: Record<string, string> = {
+  default: "Material UI",
+  dark: "Material UI Dark",
+  ios: "Apple iOS",
+  material3: "Material Design 3",
+};
 
 export default function ThemeSelect() {
-  const [selectedTheme, setSelectedTheme] = React.useState("google");
+  const activeBaseTheme = useThemeWorkspaceStore((state) => state.activeBaseThemeOption);
+  const setActiveBaseTheme = useThemeWorkspaceStore((state) => state.setActiveBaseTheme);
+  
+  const availableThemes = listBaseThemeIds();
 
   const handleChange = (event: SelectChangeEvent) => {
-    setSelectedTheme(event.target.value);
+    const themeId = event.target.value;
+    setActiveBaseTheme({ type: 'static', ref: themeId });
   };
 
   return (
     <FormControl
-      sx={{ m: 0, width: "100%", maxWidth: { lg: "24ch" } }}
+      sx={{ m: 0, width: "100%", maxWidth: { lg: "20ch" } }}
       size="small"
       variant="outlined"
     >
-      {/* <InputLabel id="demo-select-small-label">{label}</InputLabel> */}
       <Select
-        // label={label}
-        labelId="demo-select-small-label"
-        id="demo-select-small"
-        value={selectedTheme}
+        labelId="theme-select-label"
+        id="theme-select"
+        value={activeBaseTheme.ref}
         startAdornment={<FolderOutlined sx={{ marginRight: 1.5 }} color="action" />}
         onChange={handleChange}
         sx={{
@@ -40,11 +49,11 @@ export default function ThemeSelect() {
           },
         }}
       >
-        <MenuItem value="mui">Material UI</MenuItem>
-        <MenuItem value="google">Google Material Design</MenuItem>
-        <MenuItem value="ios">Apple iOS</MenuItem>
-        <MenuItem value="mantine">Mantine</MenuItem>
-        <MenuItem value="antd">Ant Design</MenuItem>
+        {availableThemes.map((themeId) => (
+          <MenuItem key={themeId} value={themeId}>
+            {THEME_LABELS[themeId] || themeId}
+          </MenuItem>
+        ))}
       </Select>
     </FormControl>
   );
