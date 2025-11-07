@@ -11,8 +11,8 @@ import type { ThemeOptions } from "@mui/material/styles";
 type ZoomPanSurfaceProps = {
   /** Preview (ui component) ID to render (must exist in registry) */
   previewId: string;
-  /** Workfile theme options to apply to the preview */
-  theme: ThemeOptions;
+  /** MUI ThemeOptions to apply to the preview */
+  themeOptions: ThemeOptions;
   /** Custom registry. If not provided, uses samplesRegistry */
   registry?: Record<
     string,
@@ -34,7 +34,7 @@ type ZoomPanSurfaceProps = {
 
 export default function ZoomPanSurface({
   previewId: component,
-  theme: workfileTheme,
+  themeOptions,
   leftControls,
   rightControls,
   topControls,
@@ -110,7 +110,7 @@ export default function ZoomPanSurface({
     >
       <CanvasViewport
         previewId={component}
-        workfileTheme={workfileTheme}
+        workfileTheme={themeOptions}
         width={width}
         height={height}
         scale={scale}
