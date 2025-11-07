@@ -6,6 +6,7 @@ import BlogExample from "./BlogExample";
 import CheckoutExample from "./CheckoutExample";
 import { getMuiComponentsRegistry } from "./MuiComponents/muiComponentsRegistry";
 import MuiComponentPreview from "./MuiComponents/MuiComponentPreview";
+import DevSandbox from "./DevSandbox";
 
 export type SampleMetadata = {
   id: string;
@@ -62,6 +63,13 @@ const samplesRegistry: Record<string, SampleMetadata> = {
     description: "A checkout flow with address, payment and review steps",
     path: "ecommerce",
     component: CheckoutExample,
+  },
+  DevSandbox: {
+    id: "DevSandbox",
+    label: "Dev Sandbox",
+    description: "A set of hand-picked components for testing and prototyping",
+    path: "root",
+    component: DevSandbox,
   },
   // Add more samples here as you create them:
   // LoginForm: {
