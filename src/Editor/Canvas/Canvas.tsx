@@ -1,10 +1,14 @@
+import BoardSurface from "./BoardSurface/BoardSurface";
 import { Box } from "@mui/material";
-import useWorkfileHydratedTheme from "../Workfile/useWorkfileHydratedTheme";
-import useWorkfileStore from "../Workfile/useWorkfileStore";
-import ZoomPanSurface from "./ZoomPanSurface/ZoomPanSurface";
+import {
+  useThemeWorkspaceStore,
+  resolveThemeOptionsForPreview,
+} from "../ThemeWorkspace";
+import { useMemo } from "react";
+import useEditorUiStore from "../editorUiStore";
 
 export default function EditorCanvas() {
-  const { activePreviewId);
+  const activePreviewId = useThemeWorkspaceStore((state) => state.activePreviewId);
 
   const setMouseOverCanvas = useEditorUiStore((state) => state.setMouseOverCanvas);
   const mouseOverPropertiesPanel = useEditorUiStore(
@@ -18,7 +22,17 @@ export default function EditorCanvas() {
   const composables = useThemeWorkspaceStore(
     (state) => state.appearanceComposablesState
   );
-  const theme = useWorkfileHydratedTheme();
+  const resolved = useThemeWorkspaceStore(
+    (state) => state.resolvedThemeOptionsModifications
+  );
+  const raw = useThemeWorkspaceStore((state) => state.rawThemeOptionsModifications);
+  const colorScheme = useThemeWorkspaceStore((state) => state.colorScheme);
+
+  // Resolve theme options for preview
+  const themeOptions = useMemo(() => {
+    return resolveThemeOptionsForPreview();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeBaseTheme, composables, resolved, raw, colorScheme]);
 
   return (
     <Box
@@ -48,7 +62,7 @@ export default function EditorCanvas() {
       onMouseEnter={() => setMouseOverCanvas(true)}
       onMouseLeave={() => setMouseOverCanvas(false)}
     >
-      <ZoomPanSurface previewId={activePreviewId} theme={theme} />
+      <BoardSurface previewId={activePreviewId} themeOptions={themeOptions} />
     </Box>
   );
 }

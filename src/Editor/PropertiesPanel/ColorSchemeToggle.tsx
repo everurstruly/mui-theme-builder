@@ -1,9 +1,8 @@
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
-import useWorkfileStore from "../Workfile/useWorkfileStore";
+import { useThemeWorkspaceStore } from "../ThemeWorkspace";
 import { DarkModeOutlined, LightModeOutlined } from "@mui/icons-material";
-
-const defaultColorMode = "light";
+import { alpha } from "@mui/material";
 
 const options = [
   {
@@ -16,35 +15,28 @@ const options = [
     label: "Dark Mode",
     icon: <DarkModeOutlined sx={{ fontSize: 16 }} />,
   },
-];
+] as const;
 
 export default function ColorSchemeToggle() {
-  const workfileTheme = useWorkfileStore((s) => s.themeModifications);
-  const updateTheme = useWorkfileStore((s) => s.setThemeModifications);
-  const mode = workfileTheme?.palette?.mode || defaultColorMode;
+  const colorScheme = useThemeWorkspaceStore((state) => state.colorScheme);
+  const setColorScheme = useThemeWorkspaceStore((state) => state.setColorScheme);
 
   const handleChange = (
     _: React.MouseEvent<HTMLElement>,
-    newMode: string | null
+    newMode: "light" | "dark" | null
   ) => {
-    if (newMode && (newMode === "light" || newMode === "dark")) {
-      updateTheme({
-        ...workfileTheme,
-        palette: {
-          ...workfileTheme?.palette,
-          mode: newMode,
-        },
-      });
+    if (newMode) {
+      setColorScheme(newMode);
     }
   };
 
   return (
     <ToggleButtonGroup
       exclusive
-      size="small"
-      value={mode}
+      // size="small"
+      value={colorScheme}
       onChange={handleChange}
-      aria-label="Workfile theme color mode toggle"
+      aria-label="Theme color mode toggle"
     >
       {options.map((option) => {
         return (
@@ -53,15 +45,15 @@ export default function ColorSchemeToggle() {
             value={option.value}
             aria-label={option.label}
             sx={{
+              backgroundColor: (theme) => alpha(theme.palette.common.black, 0.015),
               borderRadius: 2,
-              // color: "common.black",
-
-              "&:hover": {
-                color: "primary.light",
-              },
+              py: 1,
 
               "&.Mui-selected": {
                 color: "common.black",
+                backgroundColor: "background.default",
+                boxShadow:
+                  "1px 1px 0px rgba(0, 0, 0, .1), -1px 0px 0px rgba(0, 0, 0, 0.1) !important",
               },
             }}
           >
