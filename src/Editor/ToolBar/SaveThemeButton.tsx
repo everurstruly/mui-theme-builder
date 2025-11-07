@@ -18,19 +18,11 @@ export default function SaveThemeButton() {
       color="inherit"
       disabled={isSaved}
       onClick={() => handleSaveChanges()}
+      startIcon={<SaveRounded sx={{ fontSize: 16 }} />}
       sx={{
-        display: "inline-flex",
-        alignItems: "center",
-        columnGap: 1,
-        lineHeight: "none",
-        fontWeight: 700,
         borderRadius: 2,
-        textAlign: "start",
-        boxShadow: "none",
-        textTransform: "none !important",
       }}
     >
-      <SaveRounded sx={{ fontSize: 16 }} />
       {isSaved ? "Saved" : "Save"}
     </Button>
   );

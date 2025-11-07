@@ -37,16 +37,16 @@ export default function ExportThemeDialog() {
         variant="outlined"
         aria-label="Copy and Implement Selected Theme"
         onClick={() => handleClickOpen()}
-        // startIcon={<FileCopyRounded />}
+        startIcon={<FileCopyRounded />}
         sx={{
           borderRadius: 2,
 
           "& .MuiSvgIcon-root": {
-            fontSize: 16,
+            fontSize: "1rem", // FIXME: match font size (not literialy 13px)
           },
         }}
       >
-        Export Theme
+        Copy
       </Button>
 
       <BootstrapDialog

@@ -5,7 +5,6 @@ import SaveThemeButton from "./SaveThemeButton";
 import ChangesHistoryActions from "./ChangesHistoryActions";
 import MobileActionGroup from "./MobileActionGroup";
 import ColorSchemeToggle from "../PropertiesPanel/ColorSchemeToggle";
-import ImportThemeButton from "./ImportThemeButton";
 import {
   AppBar,
   Box,
@@ -16,11 +15,7 @@ import {
   Typography,
   type SxProps,
 } from "@mui/material";
-import {
-  ArrowDropDownOutlined,
-  MenuOpenOutlined,
-  UnfoldMoreOutlined,
-} from "@mui/icons-material";
+import { ArrowDropDownOutlined, MenuOpenOutlined } from "@mui/icons-material";
 import useEditorUiStore from "../editorUiStore";
 
 export default function EditorToolBar() {
@@ -102,15 +97,13 @@ export default function EditorToolBar() {
               )}
             </Typography>
 
-            {isExplorerPanelHidden ? (
-              <IconButton onClick={() => pinExplorerPanel()}>
-                <MenuOpenOutlined fontSize="small" />
-              </IconButton>
-            ) : (
-              <IconButton onClick={() => floatExplorerPanel()}>
-                <UnfoldMoreOutlined fontSize="small" />
-              </IconButton>
-            )}
+            <IconButton
+              onClick={() =>
+                isExplorerPanelHidden ? pinExplorerPanel() : floatExplorerPanel()
+              }
+            >
+              <MenuOpenOutlined fontSize="small" />
+            </IconButton>
           </Stack>
 
           <Stack
@@ -119,11 +112,10 @@ export default function EditorToolBar() {
             direction={"row"}
             marginInline={"auto"}
             paddingInline={{ lg: 1.5 }}
-            columnGap={1}
+            columnGap={1.5}
           >
-            <ImportThemeButton />
             <ThemeSelect />
-            <ExportThemeButton />
+            <SaveThemeButton />
 
             <Stack
               direction={"row"}
@@ -143,11 +135,14 @@ export default function EditorToolBar() {
             columnGap={1.5}
           >
             <Box display="inherit" columnGap={"inherit"}>
-              <ChangesHistoryActions />
-              <SaveThemeButton />
+              <ExportThemeButton />
             </Box>
 
             <ColorSchemeToggle />
+
+            <Box display="inherit" columnGap={"inherit"}>
+              <ChangesHistoryActions />
+            </Box>
           </Stack>
         </Stack>
       </Toolbar>

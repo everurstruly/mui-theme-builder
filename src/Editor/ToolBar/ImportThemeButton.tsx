@@ -34,24 +34,25 @@ export default function ImportThemeAction() {
   return (
     <>
       <Tooltip title="Import Theme">
-        {/* <Button
-          size="small"
+        <Button
+          // size="small"
           color="inherit"
           variant="outlined"
           onClick={() => handleClickOpen()}
-          startIcon={<ContentPasteGoOutlined color="action" />}
+          // startIcon={<ContentPasteGoOutlined color="action" />}
+          sx={{ borderRadius: 2 }}
         >
           Upload
-        </Button> */}
+        </Button>
 
-        <IconButton
+        {/* <IconButton
           size="small"
           // FIXME: py style matches theme selectbox height
           sx={{ py: 0.75, borderRadius: 2, border: 1, borderColor: "divider" }}
           onClick={() => handleClickOpen()}
         >
           <ContentPasteGoOutlined fontSize="small" />
-        </IconButton>
+        </IconButton> */}
       </Tooltip>
 
       <BootstrapDialog

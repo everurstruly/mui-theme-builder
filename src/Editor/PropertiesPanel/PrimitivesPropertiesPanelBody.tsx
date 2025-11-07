@@ -29,7 +29,7 @@ const thinScrollbar = {
   scrollbarColor: "rgba(0,0,0,0.5) transparent",
 };
 
-const panelPaddingInline = 1.5;
+const panelPaddingInline = 1.8;
 
 export default function PrimitiesPropertiesPanelBody() {
   const [selectedPropTab, setSelectedPropTab] = useState("palette");
@@ -46,7 +46,6 @@ export default function PrimitiesPropertiesPanelBody() {
         }}
         sx={{
           position: "sticky",
-          pt: 2,
           top: 0,
           zIndex: 1,
           borderBottom: 1,
@@ -55,7 +54,7 @@ export default function PrimitiesPropertiesPanelBody() {
           backdropFilter: "blur(13px)",
 
           "& .MuiTabs-indicator": {
-            backgroundColor: "text.primary",
+            // backgroundColor: "text.primary",
             // borderInline: "12px solid",
             // borderColor: "white",
           },
@@ -71,10 +70,11 @@ export default function PrimitiesPropertiesPanelBody() {
               minWidth: 0,
               fontWeight: "semibold",
               textTransform: "none",
-              height: "var(--header-height)",
+              height: "var(--toolbar-height)",
+              px: 2,
 
               "&.Mui-selected": {
-                color: "text.primary",
+                // color: "text.primary",
               },
             }}
           />
