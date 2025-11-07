@@ -1,38 +1,17 @@
 import BoardSurface from "./BoardSurface/BoardSurface";
-import { Box } from "@mui/material";
-import {
-  useThemeWorkspaceStore,
-  resolveThemeOptionsForPreview,
-} from "../ThemeWorkspace";
-import { useMemo } from "react";
 import useEditorUiStore from "../editorUiStore";
+import { Box } from "@mui/material";
+import { useThemeWorkspaceStore } from "../ThemeWorkspace";
+import { useThemeWorkspaceCreatedTheme } from "../ThemeWorkspace/useCreatedTheme.hooks";
 
 export default function EditorCanvas() {
   const activePreviewId = useThemeWorkspaceStore((state) => state.activePreviewId);
+  const { themeOptions } = useThemeWorkspaceCreatedTheme();
 
   const setMouseOverCanvas = useEditorUiStore((state) => state.setMouseOverCanvas);
   const mouseOverPropertiesPanel = useEditorUiStore(
     (state) => state.mouseOverPropertiesPanel
   );
-
-  // Subscribe to all state that affects theme resolution
-  const activeBaseTheme = useThemeWorkspaceStore(
-    (state) => state.activeBaseThemeOption
-  );
-  const composables = useThemeWorkspaceStore(
-    (state) => state.appearanceComposablesState
-  );
-  const resolved = useThemeWorkspaceStore(
-    (state) => state.resolvedThemeOptionsModifications
-  );
-  const raw = useThemeWorkspaceStore((state) => state.rawThemeOptionsModifications);
-  const colorScheme = useThemeWorkspaceStore((state) => state.colorScheme);
-
-  // Resolve theme options for preview
-  const themeOptions = useMemo(() => {
-    return resolveThemeOptionsForPreview();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeBaseTheme, composables, resolved, raw, colorScheme]);
 
   return (
     <Box

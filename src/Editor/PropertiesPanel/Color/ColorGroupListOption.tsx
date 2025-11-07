@@ -1,25 +1,57 @@
-import { Button, ListItem, Typography, Box, Stack } from "@mui/material";
-import { useState } from "react";
+import { Button, ListItem, Typography, Box, Stack, Popover } from "@mui/material";
+import { useState, useRef } from "react";
+import { Sketch } from "@uiw/react-color";
+import { useDebouncyEffect } from "use-debouncy";
+import { useThemeValue } from "../../ThemeWorkspace";
 
 type ColorGroupListtOptionProps = {
   name: string;
-  initValue: string;
-  modifiedValue: string;
+  path: string;
+  resolvedValue: string;
 };
 
 export default function ColorGroupListOption(props: ColorGroupListtOptionProps) {
-  const [colorBeingPicked, setColorBeingPicked] = useState(props.modifiedValue);
+  const {
+    value,
+    setValue,
+    isUserEditted,
+    resetToBase,
+    shouldBeEditedWithCode: isControlledByFunction,
+  } = useThemeValue(props.path);
 
-  function handleColorPicked(event: React.ChangeEvent<HTMLInputElement>) {
-    console.log("New color selected:", event.target.value);
-  }
+  const canResetValue = isUserEditted;
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const [tempColor, setTempColor] = useState<string>("");
+  const colorBoxRef = useRef<HTMLDivElement>(null);
 
-  function handleColorBeingPicked(event: React.ChangeEvent<HTMLInputElement>) {
-    setColorBeingPicked(event.target.value);
-  }
+  // Debounce the color updates - only applies to theme after 200ms of no changes
+  useDebouncyEffect(
+    () => {
+      if (tempColor && tempColor !== value) {
+        setValue(tempColor);
+      }
+    },
+    200,
+    [tempColor]
+  );
 
-  const canResetValue = props.initValue !== colorBeingPicked;
-  const inputId = `color-${crypto.randomUUID()}`;
+  const handleOpenPicker = () => {
+    if (!isControlledByFunction) {
+      setTempColor(value?.toString() || "#000000");
+      setAnchorEl(colorBoxRef.current);
+    }
+  };
+
+  const handleClosePicker = () => {
+    setAnchorEl(null);
+  };
+
+  const handleColorChange = (color: { hex: string }) => {
+    // Just update temp color, debounce hook will handle applying it
+    setTempColor(color.hex);
+  };
+
+  const open = Boolean(anchorEl);
 
   return (
     <ListItem
@@ -34,7 +66,6 @@ export default function ColorGroupListOption(props: ColorGroupListtOptionProps) 
           display: "flex",
           alignItems: "center",
           columnGap: 0.75,
-          // color: canResetValue ? "warning.main" : "text.primary",
           cursor: "pointer",
           fontWeight: 400,
           textTransform: "capitalize",
@@ -55,9 +86,9 @@ export default function ColorGroupListOption(props: ColorGroupListtOptionProps) 
         )}
 
         {canResetValue && (
-          <Button 
-          color="warning"
-            onClick={() => setColorBeingPicked(props.initValue)}
+          <Button
+            color="warning"
+            onClick={() => resetToBase()}
             sx={{
               lineHeight: 1,
               fontSize: 10,
@@ -69,13 +100,6 @@ export default function ColorGroupListOption(props: ColorGroupListtOptionProps) 
             Reset
           </Button>
         )}
-        {/* <IconButton sx={{ p: 0, fontSize: "caption.fontSize" }}>
-          <ContentCopyOutlined
-            sx={{
-              fontSize: "inherit",
-            }}
-          />
-        </IconButton> */}
 
         {props.name}
       </Typography>
@@ -86,41 +110,41 @@ export default function ColorGroupListOption(props: ColorGroupListtOptionProps) 
         alignItems="center"
         spacing={1}
       >
-        {/* <IconButton
-          size="small"
-          sx={{
-            borderRadius: 1,
-            paddingBlock: 0.25,
-            paddingInline: 1,
-          }}
-        >
-          <PaletteOutlined sx={{ fontSize: 20, color: "#888", strokeWidth: 1 }} />
-        </IconButton> */}
-
         <Box
-          component="label"
-          htmlFor={inputId}
+          ref={colorBoxRef}
+          onClick={handleOpenPicker}
           sx={{
             width: 32,
             height: 20,
-            bgcolor: colorBeingPicked,
+            bgcolor: open ? tempColor : value,
             borderRadius: 1,
             border: 2,
             borderColor: "divider",
-            cursor: "pointer",
+            cursor: isControlledByFunction ? "not-allowed" : "pointer",
             display: "inline-block",
+            opacity: isControlledByFunction ? 0.5 : 1,
+          }}
+        />
+
+        <Popover
+          open={open}
+          anchorEl={anchorEl}
+          onClose={handleClosePicker}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "left",
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "left",
           }}
         >
-          <input
-            id={inputId}
-            type="color"
-            name={inputId}
-            defaultValue={props.modifiedValue}
-            style={{ visibility: "hidden" }}
-            onChange={handleColorPicked}
-            onInput={handleColorBeingPicked}
+          <Sketch
+            color={tempColor}
+            onChange={handleColorChange}
+            disableAlpha={false}
           />
-        </Box>
+        </Popover>
       </Stack>
     </ListItem>
   );

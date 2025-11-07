@@ -1,8 +1,11 @@
 import ColorGroupListOption from "./ColorGroupListOption";
 import { Typography } from "@mui/material";
 import ColorInputOption from "./ColorInputOption";
+import { useThemeWorkspaceCreatedTheme } from "../../ThemeWorkspace/useCreatedTheme.hooks";
 
 function ActionColors(props: { title?: string }) {
+  const { theme } = useThemeWorkspaceCreatedTheme();
+
   return (
     <>
       <Typography
@@ -12,28 +15,35 @@ function ActionColors(props: { title?: string }) {
         paddingBottom={1.8}
         fontWeight={500}
         color="common.black"
-        paddingInlineStart={0.35} // aesthetics alignment with list items badge
+        paddingInlineStart={0.35}
       >
         {props.title}{" "}
-        {/* <Typography
-          component="span"
-          fontSize={12}
-          color="success.main"
-          marginLeft={1}
-        >
-          Component
-        </Typography> */}
       </Typography>
 
-      <ColorGroupListOption name="Color" initValue="#000" modifiedValue="#000" />
-      <ColorInputOption name={"Active"} initValue={".5"} modifiedValue={".2"} />
-      <ColorInputOption name={"Hover"} initValue={".5"} modifiedValue={".5"} />
-      <ColorInputOption name={"Selection"} initValue={".5"} modifiedValue={".5"} />
-      <ColorInputOption name={"Disabled"} initValue={".5"} modifiedValue={".5"} />
+      <ColorGroupListOption
+        name="active"
+        path="palette.action.active"
+        resolvedValue={theme.palette.action.active}
+      />
       <ColorInputOption
-        name={"Disabled Background"}
-        initValue={".5"}
-        modifiedValue={".5"}
+        name="hover"
+        path="palette.action.hoverOpacity"
+        resolvedValue={theme.palette.action.hoverOpacity}
+      />
+      <ColorInputOption
+        name="selected"
+        path="palette.action.selectedOpacity"
+        resolvedValue={theme.palette.action.selectedOpacity}
+      />
+      <ColorInputOption
+        name="disabled"
+        path="palette.action.disabledOpacity"
+        resolvedValue={theme.palette.action.disabledOpacity}
+      />
+      <ColorInputOption
+        name="disabled background"
+        path="palette.action.disabledBackground"
+        resolvedValue={theme.palette.action.disabledBackground}
       />
     </>
   );

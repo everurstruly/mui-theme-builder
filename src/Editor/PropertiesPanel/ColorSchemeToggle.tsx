@@ -34,6 +34,7 @@ export default function ColorSchemeToggle() {
     <ToggleButtonGroup
       exclusive
       // size="small"
+      color="primary"
       value={colorScheme}
       onChange={handleChange}
       aria-label="Theme color mode toggle"
@@ -45,16 +46,14 @@ export default function ColorSchemeToggle() {
             value={option.value}
             aria-label={option.label}
             sx={{
-              backgroundColor: (theme) => alpha(theme.palette.common.black, 0.015),
+              backgroundColor: (theme) => alpha(theme.palette.common.black, 0.02),
               borderRadius: 2,
               py: 1,
 
-              "&.Mui-selected": {
-                color: "common.black",
-                backgroundColor: "background.default",
-                boxShadow:
-                  "1px 1px 0px rgba(0, 0, 0, .1), -1px 0px 0px rgba(0, 0, 0, 0.1) !important",
-              },
+              // "&.Mui-selected": {
+              //   color: "primary.main",
+              //   backgroundColor: "background.default",
+              // },
             }}
           >
             {option.icon}

@@ -9,10 +9,10 @@
  * ✅ Layered composition order is preserved
  */
 
-import { splitThemeOptions } from './utils/splitThemeOptions';
-import { expandFlatThemeOptions } from './utils/expandFlatThemeOptions';
-import { flattenThemeOptions } from './utils/flattenThemeOptions';
-import { hydrateFunctionsSafely } from './utils/hydrateFunctionsSafely';
+import { splitThemeOptions } from '../utils/splitThemeOptions';
+import { expandFlatThemeOptions } from '../utils/expandFlatThemeOptions';
+import { flattenThemeOptions } from '../utils/flattenThemeOptions';
+import { hydrateFunctionsSafely } from '../utils/hydrateFunctionsSafely';
 import type { ThemeOptions } from '@mui/material/styles';
 
 // ===== Test 1: splitThemeOptions correctly separates literals and functions =====

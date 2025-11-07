@@ -6,21 +6,21 @@ import {
   Box,
   Tooltip,
 } from "@mui/material";
-import { useState } from "react";
+import { useThemeValue } from "../../ThemeWorkspace";
 
 export type StylesInputOptionProps = {
   name: string;
-  initValue: string;
-  modifiedValue: string;
+  path: string;
+  resolvedValue: string | number;
   orientation?: "horizontal" | "vertical";
 };
 
 export default function ColorInputOption(props: StylesInputOptionProps) {
-  const [colorIntensityBeingPicked, setColorIntensityBeingPicked] = useState(
-    props.modifiedValue
-  );
+  const { value, setValue, isUserEditted, resetToBase, shouldBeEditedWithCode } =
+    useThemeValue(props.path);
 
-  const canResetValue = props.initValue !== colorIntensityBeingPicked;
+  const currentValue = (value as string | number) ?? props.resolvedValue;
+  const canResetValue = isUserEditted;
 
   return (
     <ListItem
@@ -69,7 +69,7 @@ export default function ColorInputOption(props: StylesInputOptionProps) {
         {canResetValue && (
           <Button
             color="warning"
-            onClick={() => setColorIntensityBeingPicked(props.initValue)}
+            onClick={() => resetToBase()}
             sx={{
               lineHeight: 1,
               fontSize: 10,
@@ -88,8 +88,9 @@ export default function ColorInputOption(props: StylesInputOptionProps) {
       <Tooltip title={"Action shade color intensity"}>
         <TextField
           size="small"
-          value={colorIntensityBeingPicked}
-          onChange={(e) => setColorIntensityBeingPicked(e.target.value)}
+          value={String(currentValue)}
+          onChange={(e) => setValue(e.target.value)}
+          disabled={shouldBeEditedWithCode}
           sx={{
             flexBasis: props.orientation === "vertical" ? "100%" : "auto",
 
@@ -112,12 +113,13 @@ export default function ColorInputOption(props: StylesInputOptionProps) {
         sx={{
           width: 32,
           height: 20,
-          bgcolor: `rgba(0, 0, 0, 0${colorIntensityBeingPicked})`,
+          bgcolor: `rgba(0, 0, 0, ${currentValue})`,
           borderRadius: 1,
           border: 2,
           borderColor: "divider",
-          cursor: "pointer",
+          cursor: shouldBeEditedWithCode ? "not-allowed" : "pointer",
           display: "inline-block",
+          opacity: shouldBeEditedWithCode ? 0.5 : 1,
         }}
       />
     </ListItem>

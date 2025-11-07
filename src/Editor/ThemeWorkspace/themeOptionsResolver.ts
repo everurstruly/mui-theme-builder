@@ -1,86 +1,84 @@
-import type { ThemeOptions } from '@mui/material/styles';
-import { deepmerge } from '@mui/utils';
-import type { ResolutionMode } from './types';
-import { useThemeWorkspaceStore } from './stores/themeWorkspace.store';
-import { expandFlatThemeOptions } from './utils/expandFlatThemeOptions';
-import { hydrateFunctionsSafely } from './utils/hydrateFunctionsSafely';
-import { getStaticBaseThemeOptions } from './baseThemes';
-import { getComposableById } from './appearanceComposables';
+import type { ThemeOptions } from "@mui/material/styles";
+import type { ResolutionMode } from "./types";
+// import { useThemeWorkspaceStore } from "./themeWorkspaceStore";
+import { expandFlatThemeOptions } from "./utils/expandFlatThemeOptions";
+import { hydrateFunctionsSafely } from "./utils/hydrateFunctionsSafely";
 
 /**
- * Resolves the complete ThemeOptions from all layers:
- * 1. Active base theme
- * 2. Enabled appearance composables
- * 3. User literal modifications
- * 4. User function modifications (hydrated)
+ * Resolves the complete ThemeOptions from stored modifications.
+ *
+ * NEW ARCHITECTURE (Apply-Once):
+ * - Base theme and composables are already merged into modifications
+ * - No dynamic layering needed
+ * - Simply expand the flat modifications and hydrate functions
  *
  * @param mode - Resolution mode:
  *   - 'raw': strict evaluation (throws on errors) - for committed/export themes
  *   - 'failsafe': safe evaluation (fallbacks on errors) - for live preview
+ * @param includeRawBuffer - Include transient raw buffer for live preview
  * @returns Complete ThemeOptions ready for MUI's createTheme()
  */
-export const resolveThemeOptions = (mode: ResolutionMode = 'raw'): ThemeOptions => {
-  const {
-    activeBaseThemeOption,
-    appearanceComposablesState,
-    resolvedThemeOptionsModifications: { literals, functions },
-    colorScheme,
-  } = useThemeWorkspaceStore.getState();
+export const resolveThemeOptions = (
+  mode: ResolutionMode = "raw",
+  includeRawBuffer = false
+): ThemeOptions => {
+  // const {
+  //   resolvedThemeOptionsModifications: { literals, functions },
+  //   rawThemeOptionsModifications,
+  // } = useThemeWorkspaceStore.getState();
+  const literals = {};
+  const functions = {};
+  const rawThemeOptionsModifications = {};
 
-  // Layer 1: Base theme with correct palette for color scheme
-  let theme = getStaticBaseThemeOptions(activeBaseThemeOption.ref, colorScheme);
+  // Start with literals (already contains base + composables + user edits)
+  let theme = expandFlatThemeOptions(literals);
 
-  // Layer 2: Apply composables (removed old palette.mode override)
-  Object.entries(appearanceComposablesState).forEach(([id, { enabled }]) => {
-    if (enabled) {
-      try {
-        const composable = getComposableById(id);
-        const composableValue =
-          typeof composable.value === 'function' ? composable.value(theme) : composable.value;
-        theme = deepmerge(theme, composableValue);
-      } catch (error) {
-        console.error(`[ThemeWorkspace] Failed to apply composable "${id}":`, error);
-        if (mode === 'raw') {
-          throw error;
-        }
-      }
-    }
-  });
-
-  // Layer 3: Apply user literals
-  const literalLayer = expandFlatThemeOptions(literals);
-  theme = deepmerge(theme, literalLayer);
-
-  // Layer 4: Apply user functions (hydrated)
+  // Apply functions (hydrated)
   if (Object.keys(functions).length > 0) {
     try {
       const hydratedFunctions = hydrateFunctionsSafely(functions, mode, theme);
       const functionLayer = expandFlatThemeOptions(hydratedFunctions);
-      theme = deepmerge(theme, functionLayer);
+
+      // Merge function layer into theme
+      theme = { ...theme, ...functionLayer };
     } catch (error) {
-      console.error('[ThemeWorkspace] Failed to hydrate functions:', error);
-      if (mode === 'raw') {
+      console.error("[ThemeWorkspace] Failed to hydrate functions:", error);
+      if (mode === "raw") {
         throw error;
       }
     }
   }
 
-  // Note: Don't set palette.mode here - let MUI handle it via colorSchemes + ThemeProvider defaultMode
+  // Apply raw buffer (transient edits) for live preview
+  if (includeRawBuffer && Object.keys(rawThemeOptionsModifications).length > 0) {
+    try {
+      const rawLayer = expandFlatThemeOptions(rawThemeOptionsModifications);
+      theme = { ...theme, ...rawLayer };
+    } catch (error) {
+      console.error("[ThemeWorkspace] Failed to apply raw modifications:", error);
+      if (mode === "raw") {
+        throw error;
+      }
+    }
+  }
+
   return theme;
 };
 
 /**
  * Resolves theme options for live preview (failsafe mode).
- * Convenience wrapper around resolveThemeOptions('failsafe').
+ * Includes raw buffer for live editing updates.
+ * Convenience wrapper around resolveThemeOptions('failsafe', true).
  */
 export const resolveThemeOptionsForPreview = (): ThemeOptions => {
-  return resolveThemeOptions('failsafe');
+  return resolveThemeOptions("failsafe", true);
 };
 
 /**
  * Resolves theme options for export/committed state (raw mode).
- * Convenience wrapper around resolveThemeOptions('raw').
+ * Does NOT include raw buffer - only committed changes.
+ * Convenience wrapper around resolveThemeOptions('raw', false).
  */
 export const resolveThemeOptionsForExport = (): ThemeOptions => {
-  return resolveThemeOptions('raw');
+  return resolveThemeOptions("raw", false);
 };

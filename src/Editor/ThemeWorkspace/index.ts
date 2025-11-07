@@ -21,7 +21,7 @@ export type {
 } from './types';
 
 // ===== Store =====
-export { useThemeWorkspaceStore } from './stores/themeWorkspace.store';
+export { useThemeWorkspaceStore } from './themeWorkspaceStore';
 
 // ===== Theme Resolution =====
 export {
@@ -32,9 +32,9 @@ export {
 
 // ===== Registries =====
 export {
-  getStaticBaseThemeOptions,
-  listBaseThemeIds,
-} from './baseThemes';
+  getStaticThemeOptionsTemplate as getStaticBaseThemeOptions,
+  listThemeOptionsTemplateIds as listBaseThemeIds,
+} from './themeTemplates';
 
 export {
   getComposableById,
@@ -42,12 +42,9 @@ export {
 } from './appearanceComposables';
 
 // ===== Hooks =====
-export { useThemeValue } from './hooks/useThemeValue.hooks';
-export { useThemeHistory } from './hooks/useThemeHistory.hooks';
-export { useThemeWorkspaceCreatedTheme as useThemePreview } from './hooks/useThemePreview.hooks';
-
-// ===== Components =====
-export { ThemePreviewPane } from './components/ThemePreviewPane';
+export { useThemeWorkspaceEditValue as useThemeValue } from './useThemeOptionsValue';
+export { useThemeWorkspaceHistory as useThemeHistory } from './useThemeHistory.hooks';
+export { useThemeWorkspaceCreatedTheme as useThemeCreated } from './useCreatedTheme.hooks';
 
 // ===== Utilities (advanced usage) =====
 export { flattenThemeOptions } from './utils/flattenThemeOptions';

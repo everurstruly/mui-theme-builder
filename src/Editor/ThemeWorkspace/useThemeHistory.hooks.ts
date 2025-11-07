@@ -1,4 +1,4 @@
-import { useThemeWorkspaceStore } from '../stores/themeWorkspace.store';
+import { useThemeWorkspaceStore } from './themeWorkspaceStore';
 
 /**
  * Hook for managing theme modification history (undo/redo).
@@ -20,7 +20,7 @@ import { useThemeWorkspaceStore } from '../stores/themeWorkspace.store';
  * }
  * ```
  */
-export const useThemeHistory = () => {
+export const useThemeWorkspaceHistory = () => {
   const temporalState = useThemeWorkspaceStore.temporal.getState();
   
   const canUndo = temporalState.pastStates.length > 0;

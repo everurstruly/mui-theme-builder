@@ -53,19 +53,37 @@ export interface ResolvedThemeModifications {
 }
 
 /**
+ * Contribution tracking for reset functionality.
+ * Tracks which paths were contributed by which source (base, composables, user).
+ */
+export interface ContributionTracking {
+  /** Paths contributed by the base theme */
+  base: Set<string>;
+  
+  /** Paths contributed by each composable (composableId -> Set of paths) */
+  composables: Map<string, Set<string>>;
+  
+  /** Paths contributed by direct user edits */
+  user: Set<string>;
+}
+
+/**
  * Complete state of the ThemeWorkspace.
- * Only `resolvedThemeOptionsModifications`, `activeBaseThemeOption`, and
- * `appearanceComposablesState` are persisted and tracked in history.
+ * Only `resolvedThemeOptionsModifications`, `appliedBaseTheme`, `appliedComposables`,
+ * and `contributions` are persisted and tracked in history.
  */
 export interface ThemeWorkspaceState {
-  /** Current base theme reference */
-  activeBaseThemeOption: BaseThemeReference;
+  /** METADATA: Currently applied base theme reference (not used in resolution) */
+  appliedBaseTheme: BaseThemeReference;
 
-  /** Enabled state of appearance composables */
-  appearanceComposablesState: Record<string, { enabled: boolean }>;
+  /** METADATA: Set of applied composable IDs (not used in resolution) */
+  appliedComposables: Set<string>;
 
-  /** PERSISTENT: committed user modifications (history-tracked) */
+  /** PERSISTENT: All modifications (base + composables + user edits combined) */
   resolvedThemeOptionsModifications: ResolvedThemeModifications;
+
+  /** METADATA: Tracks which source contributed which paths (for reset) */
+  contributions: ContributionTracking;
 
   /** TRANSIENT: live editing buffer (not persisted, not history-tracked) */
   rawThemeOptionsModifications: Record<string, RawThemeModification>;
