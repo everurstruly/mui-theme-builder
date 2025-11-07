@@ -1,7 +1,7 @@
 import { StrictMode, useEffect, useState, useMemo, Component } from "react";
 import { createRoot } from "react-dom/client";
 import { ThemeProvider, createTheme, responsiveFontSizes } from "@mui/material/styles";
-import { Box, CircularProgress, Typography } from "@mui/material";
+import { Box, CircularProgress, Paper, Typography } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
 import { samplesRegistry } from "../Previews/registry";
 import type { ErrorInfo, ReactNode } from "react";
@@ -131,7 +131,7 @@ export default function ViewportSimulationIframe() {
       <StrictMode>
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          <Box
+          <Paper
             sx={{
               display: "flex",
               flexDirection: "column",
@@ -148,7 +148,7 @@ export default function ViewportSimulationIframe() {
             <Typography variant="body2" color="text.secondary">
               {renderError.message}
             </Typography>
-          </Box>
+          </Paper>
         </ThemeProvider>
       </StrictMode>
     );
