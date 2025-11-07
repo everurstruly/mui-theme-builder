@@ -1,6 +1,6 @@
 import { Box } from "@mui/material";
 import { memo } from "react";
-import ViewportSimulation from "../../ViewportSimulation";
+import ViewportSimulation from "./ViewportSimulation";
 import type { ThemeOptions } from "@mui/material/styles";
 
 export interface CanvasViewportProps {

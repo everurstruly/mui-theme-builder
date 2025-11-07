@@ -2,7 +2,7 @@ import { Button, ListItem, Typography, Box, Stack, Popover } from "@mui/material
 import { useState, useRef } from "react";
 import { Sketch } from "@uiw/react-color";
 import { useDebouncyEffect } from "use-debouncy";
-import { useThemeValue } from "../../ThemeWorkspace";
+import { useThemeValue } from "../../ThemeWorkspaceV2";
 
 type ColorGroupListtOptionProps = {
   name: string;

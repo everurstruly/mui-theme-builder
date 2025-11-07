@@ -7,7 +7,7 @@ import {
   // BreakpointSimulationToggles,
   useBreakpointSimulation,
   spoofThemeBreakpoints,
-} from "./Controls/BreakpointSimulation";
+} from "./BreakpointSimulation";
 
 export type BoardSurfaceProps = {
   themeOptions: ThemeOptions;

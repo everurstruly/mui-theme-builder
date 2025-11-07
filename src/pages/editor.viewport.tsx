@@ -1,6 +1,6 @@
 import { useSearchParams } from "react-router";
 import { samplesRegistry } from "../Editor/Previews/registry";
-import CanvasViewportSimulationPreviewPage from "../Editor/ViewportSimulation/PreviewPage";
+import CanvasViewportSimulationPreviewPage from "../Editor/Canvas/ZoomPanSurface/ViewportSimulation/PreviewPage";
 
 /**
  * Usage:

@@ -7,7 +7,7 @@ import { HelpOutlineOutlined } from "@mui/icons-material";
 import { Button, colors, Stack } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
-const StyledToolbar = styled(Toolbar)(({}) => ({
+const StyledToolbar = styled(Toolbar)(() => ({
   flexWrap: "wrap",
   alignItems: "center",
   height: "var(--header-height) !important",

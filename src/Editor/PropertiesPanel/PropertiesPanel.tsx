@@ -1,8 +1,65 @@
 import Drawer from "@mui/material/Drawer";
 import useEditorUiStore from "../editorUiStore";
-import PropertiesPanelBody from "./PropertiesPanelBody";
+import PropertiesPanelBody from "./PropertiesPanelBody/PropertiesPanelBody";
 import { TuneOutlined } from "@mui/icons-material";
 import { Divider, Fab } from "@mui/material";
+
+export default function EditorPropertiesPanel() {
+  return (
+    <>
+      <MobilePanelDrawer />
+      <DesktopPanelDrawer />
+    </>
+  );
+}
+
+function DesktopPanelDrawer() {
+  const withHidePanel = useEditorUiStore((state) => state.hidePanel);
+  const hidePanel = () => withHidePanel("properties");
+
+  const isVisible = useEditorUiStore((state) => {
+    return !state.hiddenPanels.includes("properties");
+  });
+
+  return (
+    <Drawer
+      component="aside"
+      anchor={"right"}
+      variant={"permanent"}
+      open={isVisible}
+      onClose={() => hidePanel()}
+      sx={() => ({
+        flexShrink: 0,
+        display: { xs: "none", lg: "block" },
+
+        // hide scrollbar but keep scrolling
+        msOverflowStyle: "none", // IE and Edge
+        scrollbarWidth: "none", // Firefox
+        "&::-webkit-scrollbar": {
+          display: "none", // WebKit
+        },
+      })}
+      slotProps={{
+        paper: {
+          sx: {
+            width: "var(--properties-panel-width)",
+            backgroundColor: "rgba(60, 60, 67, 0.03)",
+            position: "static", // IMPORTANT: ensures responsiveness via dom structure
+            height: "100%",
+            border: "none",
+            overflow: "hidden",
+            
+            animation: `PanelFade 240ms ease`,
+            willChange: "opacity, transform",
+          },
+        },
+      }}
+    >
+      <Divider />
+      <PropertiesPanelBody />
+    </Drawer>
+  );
+}
 
 function MobilePanelDrawer() {
   const display = { sm: "none" };
@@ -62,62 +119,6 @@ function MobilePanelDrawer() {
       >
         <TuneOutlined />
       </Fab>
-    </>
-  );
-}
-
-function DesktopPanelDrawer() {
-  const withHidePanel = useEditorUiStore((state) => state.hidePanel);
-  const hidePanel = () => withHidePanel("properties");
-
-  const isVisible = useEditorUiStore((state) => {
-    return !state.hiddenPanels.includes("properties");
-  });
-
-  return (
-    <Drawer
-      component="aside"
-      anchor={"right"}
-      variant={"permanent"}
-      open={isVisible}
-      onClose={() => hidePanel()}
-      sx={() => ({
-        flexShrink: 0,
-        display: { xs: "none", lg: "block" },
-
-        // hide scrollbar but keep scrolling
-        msOverflowStyle: "none", // IE and Edge
-        scrollbarWidth: "none", // Firefox
-        "&::-webkit-scrollbar": {
-          display: "none", // WebKit
-        },
-
-        "& .MuiDrawer-paper": {
-          position: "relative",
-          height: "100%",
-          width: "var(--properties-panel-width)",
-          border: "none",
-          overflow: "hidden",
-
-          // onload animation — use a static animation name (defined in global.css)
-          // Avoid dynamically generating keyframes on every render which forces
-          // the CSS-in-JS engine to inject new rules and can cause reflow/lag.
-          animation: `PanelFade 240ms ease`,
-          willChange: "opacity, transform",
-        },
-      })}
-    >
-      <Divider />
-      <PropertiesPanelBody />
-    </Drawer>
-  );
-}
-
-export default function EditorPropertiesPanel() {
-  return (
-    <>
-      <MobilePanelDrawer />
-      <DesktopPanelDrawer />
     </>
   );
 }

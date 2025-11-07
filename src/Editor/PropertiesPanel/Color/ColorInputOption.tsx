@@ -6,7 +6,7 @@ import {
   Box,
   Tooltip,
 } from "@mui/material";
-import { useThemeValue } from "../../ThemeWorkspace";
+import { useThemeValue } from "../../ThemeWorkspaceV2";
 
 export type StylesInputOptionProps = {
   name: string;

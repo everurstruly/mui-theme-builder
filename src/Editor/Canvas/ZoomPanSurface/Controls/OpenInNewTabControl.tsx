@@ -1,6 +1,6 @@
 import { Tooltip, IconButton } from "@mui/material";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
-import { useThemeWorkspaceStore, resolveThemeOptionsForExport } from "../../../ThemeWorkspace";
+import { useThemeWorkspaceStore, resolveThemeOptionsForExport } from "../../../ThemeWorkspaceV2";
 
 export default function OpenInNewTabControl() {
   const activePreviewId = useThemeWorkspaceStore((state) => state.activePreviewId);

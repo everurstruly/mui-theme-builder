@@ -4,10 +4,10 @@ import ColorGroupListOption from "./ColorGroupListOption";
 import ActionColors from "./ActionsColors";
 import { useMemo } from "react";
 import type { Theme } from "@mui/material";
-import { useThemeWorkspaceCreatedTheme } from "../../ThemeWorkspace/useCreatedTheme.hooks";
+import { useThemeWorkspaceDocuments } from "../../ThemeWorkspaceV2/useThemeWorkspaceDocuments";
 
 export default function ColorProperty() {
-  const { theme } = useThemeWorkspaceCreatedTheme();
+  const { theme } = useThemeWorkspaceDocuments();
   const palettes = useMemo(() => {
     return mapCreatedThemePaletteToEditablePalette(theme.palette);
   }, [theme.palette]);

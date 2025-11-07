@@ -1,6 +1,6 @@
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
-import { useThemeWorkspaceStore } from "../ThemeWorkspace";
+import { useThemeWorkspaceStore } from "../ThemeWorkspaceV2";
 import { DarkModeOutlined, LightModeOutlined } from "@mui/icons-material";
 import { alpha } from "@mui/material";
 

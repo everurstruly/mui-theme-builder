@@ -1,12 +1,12 @@
 import BoardSurface from "./BoardSurface/BoardSurface";
 import useEditorUiStore from "../editorUiStore";
 import { Box } from "@mui/material";
-import { useThemeWorkspaceStore } from "../ThemeWorkspace";
-import { useThemeWorkspaceCreatedTheme } from "../ThemeWorkspace/useCreatedTheme.hooks";
+import { useThemeWorkspaceStore } from "../ThemeWorkspaceV2";
+import { useThemeWorkspaceDocuments } from "../ThemeWorkspaceV2/useThemeWorkspaceDocuments";
 
 export default function EditorCanvas() {
   const activePreviewId = useThemeWorkspaceStore((state) => state.activePreviewId);
-  const { themeOptions } = useThemeWorkspaceCreatedTheme();
+  const { themeOptions } = useThemeWorkspaceDocuments();
 
   const setMouseOverCanvas = useEditorUiStore((state) => state.setMouseOverCanvas);
   const mouseOverPropertiesPanel = useEditorUiStore(

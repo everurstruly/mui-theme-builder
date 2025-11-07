@@ -1,10 +1,10 @@
 import ColorGroupListOption from "./ColorGroupListOption";
 import { Typography } from "@mui/material";
 import ColorInputOption from "./ColorInputOption";
-import { useThemeWorkspaceCreatedTheme } from "../../ThemeWorkspace/useCreatedTheme.hooks";
+import { useThemeWorkspaceDocuments } from "../../ThemeWorkspaceV2/useThemeWorkspaceDocuments";
 
 function ActionColors(props: { title?: string }) {
-  const { theme } = useThemeWorkspaceCreatedTheme();
+  const { theme } = useThemeWorkspaceDocuments();
 
   return (
     <>

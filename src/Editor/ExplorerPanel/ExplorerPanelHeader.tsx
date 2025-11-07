@@ -1,6 +1,6 @@
 import Typography from "@mui/material/Typography";
-import { useEditorExperienceStore } from "../useEditorExperienceStore";
-import { editorExperiences } from "../editorExperience";
+import { useEditorExperienceStore } from "../useThemingExperienceStore";
+import { editorExperiences } from "../themingExperience";
 
 export default function ExplorerPanelHeader() {
   const selectedTabId = useEditorExperienceStore(
