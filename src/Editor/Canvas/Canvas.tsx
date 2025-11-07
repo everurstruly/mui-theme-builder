@@ -4,7 +4,20 @@ import useWorkfileStore from "../Workfile/useWorkfileStore";
 import ZoomPanSurface from "./ZoomPanSurface/ZoomPanSurface";
 
 export default function EditorCanvas() {
-  const { activePreviewId } = useWorkfileStore();
+  const { activePreviewId);
+
+  const setMouseOverCanvas = useEditorUiStore((state) => state.setMouseOverCanvas);
+  const mouseOverPropertiesPanel = useEditorUiStore(
+    (state) => state.mouseOverPropertiesPanel
+  );
+
+  // Subscribe to all state that affects theme resolution
+  const activeBaseTheme = useThemeWorkspaceStore(
+    (state) => state.activeBaseThemeOption
+  );
+  const composables = useThemeWorkspaceStore(
+    (state) => state.appearanceComposablesState
+  );
   const theme = useWorkfileHydratedTheme();
 
   return (
@@ -18,6 +31,9 @@ export default function EditorCanvas() {
         maxWidth: "var(--canvas-max-width)",
         border: "1px solid",
         borderColor: t.palette.divider,
+        outlineOffset: -1,
+        outline: "1px solid transparent",
+        borderRightColor: mouseOverPropertiesPanel ? "black" : "divider",
         backgroundImage: `
             radial-gradient(circle at center, ${
               t.palette.mode === "dark"
@@ -27,7 +43,10 @@ export default function EditorCanvas() {
           `,
         backgroundSize: "12px 12px",
         backgroundPosition: "0 0",
+        transition: "border-color 500ms ease",
       })}
+      onMouseEnter={() => setMouseOverCanvas(true)}
+      onMouseLeave={() => setMouseOverCanvas(false)}
     >
       <ZoomPanSurface previewId={activePreviewId} theme={theme} />
     </Box>
