@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import React from "react";
-import { Box, CircularProgress, Typography, Alert } from "@mui/material";
+import { Box, CircularProgress, Typography, Alert, Paper } from "@mui/material";
 import type { ThemeOptions } from "@mui/material/styles";
 import { samplesRegistry } from "../Previews/registry";
 import {
@@ -178,7 +178,7 @@ export default function ViewportSimulationIFrame({
   }, [ready, resolvedPreview, workfileTheme, sendUpdate]);
 
   return (
-    <Box
+    <Paper
       className={className}
       style={style}
       sx={{
@@ -253,6 +253,6 @@ export default function ViewportSimulationIFrame({
           }}
         />
       )}
-    </Box>
+    </Paper>
   );
 }
