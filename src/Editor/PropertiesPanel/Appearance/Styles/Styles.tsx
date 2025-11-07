@@ -1,4 +1,3 @@
-import StylesAppearanceSelectOption from "./StylesSelectOption";
 import StylesInputOption from "./StylesInputOption";
 import { Typography } from "@mui/material";
 
@@ -31,7 +30,7 @@ export default function StylesAppearance(props: StylesAppearanceProps) {
 
       <StylesInputOption name="Spacing Factor" initValue="0" modifiedValue="0" />
 
-      <StylesAppearanceSelectOption
+      <StylesInputOption
         name="Border Radius"
         initValue="4px"
         modifiedValue="4px"
