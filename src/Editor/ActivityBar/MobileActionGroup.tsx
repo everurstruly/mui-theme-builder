@@ -1,5 +1,5 @@
 import * as React from "react";
-import ExportThemeButton from "./ExportThemeButton";
+import ExportThemeButton from "./ExportThemeSheetButton";
 import ChangeHistoryActions from "./ThemingHistoryActions";
 import MenuItem from "@mui/material/MenuItem";
 import {

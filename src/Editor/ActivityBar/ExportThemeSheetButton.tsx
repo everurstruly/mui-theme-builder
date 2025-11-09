@@ -5,12 +5,13 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import { FileCopyRounded, ContentCopy } from "@mui/icons-material";
-import { useThemeWorkspaceDocuments } from "../ThemeWorkspaceV2/useThemeWorkspaceDocuments";
+// import { FileCopyRounded, ContentCopy } from "@mui/icons-material";
+import { ContentCopy } from "@mui/icons-material";
+import { useThemeSheet } from "../ThemeSheetV2/useThemeSheet";
 import {
   Stack,
-  Tab,
-  Tabs,
+  // Tab,
+  // Tabs,
   Box,
   MenuItem,
   Select,
@@ -20,16 +21,15 @@ import {
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 
-export default function ExportThemeDialog() {
+export default function ExportThemeSheetButton() {
   const [open, setOpen] = React.useState(false);
-  const [packageManager, setPackageManager] = React.useState<
-    "npm" | "yarn" | "pnpm" | "bun"
-  >("npm");
+  // const [packageManager, setPackageManager] = React.useState<
+  const [packageManager] = React.useState<"npm" | "yarn" | "pnpm" | "bun">("npm");
   const [exportFormat, setExportFormat] = React.useState<"js" | "ts">("ts");
   const [activeFile, setActiveFile] = React.useState<
     "theme" | "package" | "install"
   >("theme");
-  const { theme } = useThemeWorkspaceDocuments();
+  const { theme } = useThemeSheet();
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -116,19 +116,19 @@ export default theme;`;
   return (
     <>
       <Button
-        variant="outlined"
+        variant="contained"
         aria-label="Copy and Implement Selected Theme"
         onClick={() => handleClickOpen()}
-        startIcon={<FileCopyRounded />}
+        // startIcon={<FileCopyRounded />}
         sx={{
-          borderRadius: 2,
+          borderRadius: 2.5,
 
           "& .MuiSvgIcon-root": {
             fontSize: "1rem", // FIXME: match font size (not literialy 13px)
           },
         }}
       >
-        Copy
+        Copy Theme
       </Button>
 
       <Dialog
@@ -137,7 +137,13 @@ export default theme;`;
         aria-labelledby="export-context-dialog"
         fullWidth
         maxWidth="sm"
-        sx={{ borderRadius: 2 }}
+        slotProps={{
+          paper: {
+            sx: {
+              borderRadius: 4,
+            },
+          },
+        }}
       >
         <DialogTitle
           id="export-context-dialog"
@@ -152,7 +158,7 @@ export default theme;`;
           }}
         >
           <Stack direction="row" justifyContent="space-between" alignItems="center">
-            <Typography variant="h6">Designed Theme Source</Typography>
+            <Typography variant="subtitle2">Theme Export</Typography>
 
             <IconButton
               size="small"
@@ -237,7 +243,7 @@ export default theme;`;
 
         <DialogContent
           sx={{
-            p: 0,
+            p: 2,
             mt: 0, // fix: remove annoying jittering
             position: "relative",
             "&::-webkit-scrollbar": {

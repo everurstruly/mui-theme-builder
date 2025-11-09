@@ -1,9 +1,9 @@
 import { Button, ButtonGroup } from "@mui/material";
 import { RedoRounded, UndoRounded } from "@mui/icons-material";
-import { useThemeHistory } from "../ThemeWorkspaceV2";
+import { useThemeSheetHistory } from "../ThemeSheetV2";
 
 export default function ThemingHistoryActions() {
-  const { undo, redo, canUndo, canRedo } = useThemeHistory();
+  const { undo, redo, canUndo, canRedo } = useThemeSheetHistory();
 
   const handleUndo = () => undo();
   const handleRedo = () => redo();
@@ -21,7 +21,7 @@ export default function ThemingHistoryActions() {
         }}
         onClick={handleUndo}
       >
-        <UndoRounded sx={{ fontSize: 18, color: "text.primary" }} />
+        <UndoRounded sx={{ fontSize: 18 }} />
         {/* Undo */}
       </Button>
 
@@ -36,7 +36,7 @@ export default function ThemingHistoryActions() {
         }}
         onClick={handleRedo}
       >
-        <RedoRounded sx={{ fontSize: 18, color: "text.primary" }} />
+        <RedoRounded sx={{ fontSize: 18 }} />
         {/* Redo */}
       </Button>
     </ButtonGroup>
