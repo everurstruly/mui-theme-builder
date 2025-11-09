@@ -3,6 +3,7 @@ import EditorActivityBar from "./ActivityBar/ActivityBar";
 import EditorPropertiesPanel from "./PropertiesPanel/PropertiesPanel";
 import EditorExplorerPanel from "./ExplorerPanel/ExplorerPanel";
 import { GlobalStyles, Paper, Stack } from "@mui/material";
+import ThemeLibrary from "./ThemeLibrary/ThemeLibrary";
 
 export default function Editor() {
   return (
@@ -15,6 +16,7 @@ export default function Editor() {
             "--explorer-panel-width": "auto",
             "--properties-panel-width": "auto",
             "--canvas-max-width": "auto",
+            "--editor-tools-unit-bgColor": "rgba(60, 60, 67, 0.01)",
           },
 
           [theme.breakpoints.up("sm")]: {
@@ -27,7 +29,7 @@ export default function Editor() {
           [theme.breakpoints.up("lg")]: {
             ":root": {
               "--activity-bar-height": "56px",
-              "--explorer-panel-width": "20vw",
+              "--explorer-panel-width": "21vw",
               "--properties-panel-width": "24vw",
             },
           },
@@ -40,6 +42,7 @@ export default function Editor() {
         height={`calc(100dvh - var(--header-height) - 1px)`} // NB: 1px is a magic number that prevents vertical scrollbar from appearing
         overflow={"hidden"}
       >
+        <ThemeLibrary />
         <Paper component="main" sx={{ flexGrow: 1, minWidth: 0 }}>
           <EditorActivityBar />
           <Stack
