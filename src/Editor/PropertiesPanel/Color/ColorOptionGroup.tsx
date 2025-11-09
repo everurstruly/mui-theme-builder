@@ -1,18 +1,18 @@
-import CssStyleInputOption from "./CssStyleInputOption";
 import { Typography } from "@mui/material";
 
-type StylesAppearanceProps = {
+type ColorOptionGroupProps = {
   title: string;
+  children: React.ReactNode;
 };
 
-export default function StylesAppearance(props: StylesAppearanceProps) {
+export default function ColorOptionGroup(props: ColorOptionGroupProps) {
   return (
-    <div>
+    <ul>
       <Typography
         variant="subtitle2"
         component={"h6"}
-        marginTop={5}
-        paddingBlock={1}
+        marginTop={7}
+        paddingBottom={1.8}
         fontWeight={500}
         color="common.black"
         paddingInlineStart={0.35} // aesthetics alignment with list items badge
@@ -28,13 +28,7 @@ export default function StylesAppearance(props: StylesAppearanceProps) {
         </Typography> */}
       </Typography>
 
-      <CssStyleInputOption name="Spacing Factor" initValue="0" modifiedValue="0" />
-
-      <CssStyleInputOption
-        name="Border Radius"
-        initValue="4px"
-        modifiedValue="4px"
-      />
-    </div>
+      {props.children}
+    </ul>
   );
 }

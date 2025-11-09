@@ -1,5 +1,5 @@
 import { Stack } from "@mui/material";
-import ColorSchemeToggle from "./ColorSchemeToggle";
+import ThemeSheetColorSchemeToggle from "../ActivityBar/ThemeSheetColorSchemeToggle";
 
 export default function PropertiesPanelHeader() {
   return (
@@ -15,7 +15,7 @@ export default function PropertiesPanelHeader() {
         {selectedTab?.propsPanelTitle || `${selectedTab?.title} Properties`}
       </Typography> */}
 
-      <ColorSchemeToggle />
+      <ThemeSheetColorSchemeToggle />
     </Stack>
   );
 }

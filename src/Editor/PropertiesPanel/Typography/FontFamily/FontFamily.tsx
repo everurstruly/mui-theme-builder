@@ -1,28 +1,67 @@
-import { Typography } from "@mui/material";
-import fontFamily from "./family";
-import FontFamilySelectOption from "./FontFamilySelectOption";
+import { AddRounded } from "@mui/icons-material";
+import FontFamilyOption from "./FontFamilyOption";
+import { IconButton, Stack, Typography } from "@mui/material";
 
-type FontFamilyProps = {
-  title: string;
+const fontSettings = {
+  title: "Font Family",
+  families: [
+    {
+      name: "Headings & Subtitles",
+      initValue: { key: "fontFamily", value: "Roboto", title: "Roboto" },
+      modifiedValue: { key: "fontFamily", value: "Arial", title: "Arial" },
+    },
+    {
+      name: "Body & Captions",
+      initValue: { key: "fontFamily", value: "Roboto", title: "Roboto" },
+      modifiedValue: { key: "fontFamily", value: "Arial", title: "Arial" },
+    },
+  ],
 };
 
-export default function FontFamily(props: FontFamilyProps) {
+function FontFamilyTypography() {
   return (
     <div>
-      <Typography fontSize={14} fontWeight={600} marginTop={5} paddingBlock={1.5}>
-        {props.title}
-      </Typography>
+      <Stack
+        direction="row"
+        fontSize={14}
+        fontWeight={600}
+        marginTop={5}
+        paddingBlock={1}
+        justifyContent="space-between"
+        alignItems="center"
+      >
+        <Typography
+          variant="subtitle2"
+          component={"h6"}
+          fontWeight={500}
+          color="common.black"
+        >
+          {fontSettings.title}{" "}
+          {/* <Typography
+          component="span"
+          fontSize={12}
+          color="success.main"
+          marginLeft={1}
+        >
+          Component
+        </Typography> */}
+        </Typography>
 
-      {fontFamily.map((font) => {
-        return (
-          <FontFamilySelectOption
-            key={font.name}
-            name={font.name}
-            initValue={font.initValue}
-            modifiedValue={font.modifiedValue}
-          />
-        );
-      })}
+        <IconButton size="small">
+          <AddRounded sx={{ fontSize: "h6.fontSize", lineHeight: 1 }} />
+        </IconButton>
+      </Stack>
+
+      {fontSettings.families.map((family) => (
+        <FontFamilyOption
+          key={family.name}
+          name={family.name}
+          initValue={family.initValue}
+          modifiedValue={family.modifiedValue}
+        />
+      ))}
     </div>
   );
 }
+
+export default FontFamilyTypography;

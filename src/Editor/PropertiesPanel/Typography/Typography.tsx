@@ -1,11 +1,11 @@
-import ButtonTypography from "./Variants/Button";
-import FontFamilyBaselineTypography from "./FontFamilyBaseline";
-import HeadlineTypography from "./Variants/Headline";
+import ButtonTypography from "./Elements/Button";
+import FontFamilyTypography from "./FontFamily/FontFamily";
+import HeadlineTypography from "./Elements/Headline";
 
 export default function TypographyProperty() {
   return (
     <>
-      <FontFamilyBaselineTypography />
+      <FontFamilyTypography />
       <HeadlineTypography title="H1" />
       <HeadlineTypography title="H2" />
       <HeadlineTypography title="H3" />

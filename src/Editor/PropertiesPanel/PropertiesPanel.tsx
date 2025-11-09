@@ -1,6 +1,6 @@
 import Drawer from "@mui/material/Drawer";
 import useEditorUiStore from "../editorUiStore";
-import PropertiesPanelBody from "./PropertiesPanelBody/PropertiesPanelBody";
+import PropertiesPanelBody from "./PropertiesPanelBody";
 import { TuneOutlined } from "@mui/icons-material";
 import { Divider, Fab } from "@mui/material";
 
@@ -43,12 +43,12 @@ function DesktopPanelDrawer() {
         paper: {
           sx: {
             width: "var(--properties-panel-width)",
-            backgroundColor: "rgba(60, 60, 67, 0.03)",
+            backgroundColor: "var(--editor-tools-unit-bgColor, revert)",
             position: "static", // IMPORTANT: ensures responsiveness via dom structure
             height: "100%",
             border: "none",
             overflow: "hidden",
-            
+
             animation: `PanelFade 240ms ease`,
             willChange: "opacity, transform",
           },
