@@ -1,17 +1,9 @@
-import BoardSurface from "./BoardSurface/BoardSurface";
 import useEditorUiStore from "../editorUiStore";
+import BoardSurface from "./BoardSurface/BoardSurface";
 import { Box } from "@mui/material";
-import { useThemeWorkspaceStore } from "../ThemeWorkspaceV2";
-import { useThemeWorkspaceDocuments } from "../ThemeWorkspaceV2/useThemeWorkspaceDocuments";
 
 export default function EditorCanvas() {
-  const activePreviewId = useThemeWorkspaceStore((state) => state.activePreviewId);
-  const { themeOptions } = useThemeWorkspaceDocuments();
-
   const setMouseOverCanvas = useEditorUiStore((state) => state.setMouseOverCanvas);
-  const mouseOverPropertiesPanel = useEditorUiStore(
-    (state) => state.mouseOverPropertiesPanel
-  );
 
   return (
     <Box
@@ -24,9 +16,9 @@ export default function EditorCanvas() {
         maxWidth: "var(--canvas-max-width)",
         border: "1px solid",
         borderColor: t.palette.divider,
-        outlineOffset: -1,
-        outline: "1px solid transparent",
-        borderRightColor: mouseOverPropertiesPanel ? "black" : "divider",
+        // borderRightColor: mouseOverPropertiesPanel ? "text.secondary" : "divider",
+        // backgroundColor: "#f5f5f5",
+        // backgroundColor: mouseOverPropertiesPanel ? "#eee" : "#f5f5f5",
         backgroundImage: `
             radial-gradient(circle at center, ${
               t.palette.mode === "dark"
@@ -41,7 +33,7 @@ export default function EditorCanvas() {
       onMouseEnter={() => setMouseOverCanvas(true)}
       onMouseLeave={() => setMouseOverCanvas(false)}
     >
-      <BoardSurface previewId={activePreviewId} themeOptions={themeOptions} />
+      <BoardSurface />
     </Box>
   );
 }

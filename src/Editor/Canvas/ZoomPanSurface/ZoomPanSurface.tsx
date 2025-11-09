@@ -4,15 +4,11 @@ import CanvasViewport from "./ZoomPanSurfaceViewport";
 import useCanvasZoomPanCamera from "./useZoomPanCamera";
 import useCanvasGestures from "./useCanvasGestures";
 import useCanvasKeyboardShortcuts from "./useCanvasKeyboardShortcuts";
-import { Box } from "@mui/material";
 import React, { useRef, useEffect, useCallback, useMemo } from "react";
-import type { ThemeOptions } from "@mui/material/styles";
+import { useThemeSheet, useThemeSheetStore } from "../../ThemeSheetV2";
+import { Box } from "@mui/material";
 
 type ZoomPanSurfaceProps = {
-  /** Preview (ui component) ID to render (must exist in registry) */
-  previewId: string;
-  /** MUI ThemeOptions to apply to the preview */
-  themeOptions: ThemeOptions;
   /** Custom registry. If not provided, uses samplesRegistry */
   registry?: Record<
     string,
@@ -33,14 +29,14 @@ type ZoomPanSurfaceProps = {
 };
 
 export default function ZoomPanSurface({
-  previewId: component,
-  themeOptions,
   leftControls,
   rightControls,
   topControls,
   showDefaultControls = true,
 }: ZoomPanSurfaceProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const component = useThemeSheetStore((state) => state.activePreviewId);
+  const { themeOptions } = useThemeSheet();
 
   // New unified store selectors
   const width = useCanvasViewStore((s) => s.viewport.width);

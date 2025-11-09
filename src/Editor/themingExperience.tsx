@@ -1,7 +1,7 @@
 import SampleCanvasObjectsTree from "./ExplorerPanel/Menus/SampleCanvasObjectsTree";
 import MuiComponentsTree from "./ExplorerPanel/Menus/MuiComponentsTree";
-import PrimitiesPropertiesPanelBody from "./PropertiesPanel/PropertiesPanelBody/BrandingPropertiesPanelBody";
-import SystemPropertiesPanelBody from "./PropertiesPanel/PropertiesPanelBody/CodingPropertiesPanelBody";
+import PrimitiesPropertiesPanelBody from "./PropertiesPanel/BrandingScene";
+import SystemPropertiesPanelBody from "./PropertiesPanel/CodingScene";
 import { AutoFixHighOutlined, GridViewOutlined } from "@mui/icons-material";
 
 export type EditorExperience = {

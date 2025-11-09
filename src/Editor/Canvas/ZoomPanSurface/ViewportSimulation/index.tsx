@@ -29,6 +29,9 @@ type ViewportSimulationIFrameProps = {
   bordered?: boolean;
 };
 
+const iframePageFileLocation =
+  "/src/Editor/Canvas/ZoomPanSurface/ViewportSimulation/iframe.html";
+
 export default function ViewportSimulationIFrame({
   width,
   height,
@@ -161,7 +164,7 @@ export default function ViewportSimulationIFrame({
 
     // Now set the iframe src (after listener attached)
     // Load the HTML file from ViewportSimulation folder
-    iframe.src = "/src/Editor/ViewportSimulation/iframe.html";
+    iframe.src = iframePageFileLocation;
 
     return () => {
       window.removeEventListener("message", handleMessage);

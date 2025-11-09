@@ -1,33 +1,26 @@
 import previewsRegistry from "../../Previews/registry";
+import { useThemeSheet, useThemeSheetStore } from "../../ThemeSheetV2";
 // import FullscreenPreviewButton from "./Controls/FullscreenPreviewButton";
-import { useRef, useState, useEffect, useMemo } from "react";
-import { Box, CssBaseline, Paper } from "@mui/material";
-import { ThemeProvider, createTheme, type ThemeOptions } from "@mui/material/styles";
+import { useRef, useState, useEffect } from "react";
+import { Box, CssBaseline, Paper, ThemeProvider } from "@mui/material";
 import {
   // BreakpointSimulationToggles,
   useBreakpointSimulation,
   spoofThemeBreakpoints,
 } from "./BreakpointSimulation";
 
-export type BoardSurfaceProps = {
-  themeOptions: ThemeOptions;
-  previewId: string;
-};
-
-export default function BoardSurface({ themeOptions, previewId }: BoardSurfaceProps) {
-  const PreviewComponent = previewsRegistry[previewId]?.component;
+export default function BoardSurface() {
   const containerRef = useRef<HTMLDivElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
-  // const [mouseOverPreview, setMouseOverPreview] = useState(false);
+
+  const previewId = useThemeSheetStore((state) => state.activePreviewId);
+  const PreviewComponent = previewsRegistry[previewId]?.component;
+
   const [availableWidth, setAvailableWidth] = useState<number>(0);
   const { simulatedBreakpoint, getMaxWidth, getMinWidth, getScale } =
     useBreakpointSimulation();
-  
-  // Create theme from options - simple palette.mode control
-  const theme = useMemo(() => {
-    return createTheme(themeOptions);
-  }, [themeOptions]);
-  
+
+  const { theme } = useThemeSheet();
   const breakpointSpoofedTheme = spoofThemeBreakpoints(theme, simulatedBreakpoint);
 
   // Track available width for scaling
@@ -77,7 +70,7 @@ export default function BoardSurface({ themeOptions, previewId }: BoardSurfacePr
           justifyContent: "center",
           alignItems: "flex-start",
           overflow: "auto",
-          p: 3,
+          p: 1.5,
         }}
       >
         <Paper
@@ -89,7 +82,8 @@ export default function BoardSurface({ themeOptions, previewId }: BoardSurfacePr
             display: "flex",
             flexDirection: "column",
             boxShadow: 0,
-            border: "4px double",
+            border: 3,
+            borderStyle: "double",
             borderColor: "primary.light",
             paddingRight: 0.2,
             maxWidth: getMaxWidth(),

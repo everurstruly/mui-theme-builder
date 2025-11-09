@@ -1,9 +1,10 @@
-import { Tooltip, IconButton } from "@mui/material";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
-import { useThemeWorkspaceStore, resolveThemeOptionsForExport } from "../../../ThemeWorkspaceV2";
+import { Tooltip, IconButton } from "@mui/material";
+import { useThemeSheet, useThemeSheetStore } from "../../../ThemeSheetV2";
 
 export default function OpenInNewTabControl() {
-  const activePreviewId = useThemeWorkspaceStore((state) => state.activePreviewId);
+  const activePreviewId = useThemeSheetStore((state) => state.activePreviewId);
+  const { themeOptions } = useThemeSheet();
 
   const handleOpenInNewTab = () => {
     if (!activePreviewId) {
@@ -13,7 +14,6 @@ export default function OpenInNewTabControl() {
 
     try {
       // Get the current theme options for export
-      const themeOptions = resolveThemeOptionsForExport();
       const encodedTheme = btoa(JSON.stringify(themeOptions));
       const url = `/editor/viewport?component=${encodeURIComponent(
         activePreviewId
