@@ -7,7 +7,7 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 // import { FileCopyRounded, ContentCopy } from "@mui/icons-material";
 import { ContentCopy } from "@mui/icons-material";
-import { useThemeSheet } from "../ThemeSheetV2/useThemeSheet";
+import { useThemeDocumentOptions } from "../ThemeDocument";
 import {
   Stack,
   // Tab,
@@ -29,7 +29,7 @@ export default function ExportThemeSheetButton() {
   const [activeFile, setActiveFile] = React.useState<
     "theme" | "package" | "install"
   >("theme");
-  const { theme } = useThemeSheet();
+  const theme = useThemeDocumentOptions();
 
   const handleClickOpen = () => {
     setOpen(true);

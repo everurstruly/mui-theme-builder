@@ -59,17 +59,16 @@ function DesktopToolbarContent() {
         paddingInline={{ lg: 1.5 }}
         columnGap={1.5}
       >
+        <NewThemeSheetButton />
         <OpenLibraryButton />
-        <CollapsedPreviewsActionMenu />
 
         <Stack
           direction={"row"}
           columnGap={"inherit"}
           sx={{ marginInlineStart: "auto" }}
-        >
+          >
           <SaveThemeSheetButton />
           <ThemingHistoryActions />
-          <NewThemeSheetButton />
           <ExportThemeSheetButton />
         </Stack>
       </Stack>

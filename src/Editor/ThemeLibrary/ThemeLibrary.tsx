@@ -14,7 +14,10 @@ import {
   Typography,
 } from "@mui/material";
 import { useState } from "react";
-import { FormatPaintOutlined, PreviewOutlined } from "@mui/icons-material";
+import {
+  CloseOutlined,
+  PreviewOutlined,
+} from "@mui/icons-material";
 
 export default function ThemeLibrary() {
   const hidePanel = useEditorUiStore((state) => state.hidePanel);
@@ -76,14 +79,14 @@ export default function ThemeLibrary() {
               Themes
             </Typography>
 
-            <Button
+            {/* <Button
               size="small"
               color="error"
               variant="contained"
               onClick={handleCloseDrawer}
             >
               Close
-            </Button>
+            </Button> */}
           </Stack>
 
           <Divider />
@@ -92,12 +95,12 @@ export default function ThemeLibrary() {
             <Tab
               value="saves"
               label="My Saves"
-              sx={{ px: 2, minHeight: "var(--activity-bar-height)" }}
+              // sx={{ px: 2, minHeight: "var(--activity-bar-height)" }}
             />
             <Tab
               value="discover"
               label="Templates"
-              sx={{ px: 2, minHeight: "var(--activity-bar-height)" }}
+              // sx={{ px: 2, minHeight: "var(--activity-bar-height)" }}
             />
           </Tabs>
 
@@ -130,7 +133,7 @@ export default function ThemeLibrary() {
                       borderColor: "divider",
                     }}
                   >
-                    <Stack spacing={.5} alignItems={"center"}>
+                    <Stack spacing={0.5} alignItems={"center"}>
                       <Typography
                         variant="subtitle2"
                         fontWeight={"semibold"}
@@ -243,6 +246,23 @@ export default function ThemeLibrary() {
         >
           -- You've reached the end --
         </Typography>
+
+        <Button
+          size="small"
+          color="error"
+          variant="contained"
+          onClick={handleCloseDrawer}
+          sx={{
+            position: "fixed",
+            minWidth: "unset",
+            top: 0,
+            left: "var(--explorer-panel-width)",
+            zIndex: 2,
+          }}
+          startIcon={<CloseOutlined />}
+        >
+          Hide Menu
+        </Button>
       </Drawer>
     </>
   );

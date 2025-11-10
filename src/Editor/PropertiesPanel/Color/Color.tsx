@@ -3,11 +3,11 @@ import ColorOptionGroup from "./ColorOptionGroup";
 import ColorOptionGroupItem from "./ColorOptionGroupItem";
 import ColorOptionActionGroup from "./ColorOptionActionGroup";
 import { useMemo } from "react";
-import { useThemeSheetTheme } from "../../ThemeSheet";
+import { useThemeDocumentTheme } from "../../ThemeDocument";
 import type { Theme } from "@mui/material";
 
 export default function ColorProperty() {
-  const theme = useThemeSheetTheme();
+  const theme = useThemeDocumentTheme();
   
   console.log('🎨 createTheme returned:', theme);
   console.log('🎨 theme.palette:', theme.palette);

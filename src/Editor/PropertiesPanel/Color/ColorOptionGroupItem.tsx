@@ -2,7 +2,7 @@ import { Button, ListItem, Typography, Box, Stack, Popover } from "@mui/material
 import { useState, useRef } from "react";
 import { Sketch } from "@uiw/react-color";
 import { useDebouncyEffect } from "use-debouncy";
-import { useThemeSheetEditValue } from "../../ThemeSheetV2";
+import { useThemeDocumentEditValue } from "../../ThemeDocument";
 
 type ColorOptionGroupItemProps = {
   name: string;
@@ -13,15 +13,16 @@ export default function ColorOptionGroupItem(props: ColorOptionGroupItemProps) {
   const {
     value,
     setValue,
-    isUserEditted: isCustomized,
-    resetToBase: resetValue,
-    shouldBeEditedWithCode: isControlledByFunction,
-  } = useThemeSheetEditValue(props.path);
+    hasVisualEdit: isCustomized,
+    reset: resetValue,
+    hasCodeOverride: isControlledByFunction,
+  } = useThemeDocumentEditValue(props.path);
 
-  const canResetValue = isCustomized;
+  const canResetValue = isCustomized || isControlledByFunction;
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [tempColor, setTempColor] = useState<string>("");
   const colorBoxRef = useRef<HTMLDivElement>(null);
+  const lastAppliedColorRef = useRef<string>("");
 
   const displayValue = (value as string) || "#000000";
 
@@ -30,11 +31,19 @@ export default function ColorOptionGroupItem(props: ColorOptionGroupItemProps) {
     () => {
       if (tempColor && tempColor !== displayValue) {
         setValue(tempColor);
+        lastAppliedColorRef.current = tempColor;
       }
     },
     200,
     [tempColor, displayValue]
   );
+
+  // Clear tempColor when value changes externally (e.g., from reset)
+  // This prevents debounced setValue from re-applying old color after reset
+  if (displayValue !== lastAppliedColorRef.current && tempColor) {
+    setTempColor("");
+    lastAppliedColorRef.current = displayValue;
+  }
 
   const handleOpenPicker = () => {
     if (!isControlledByFunction) {

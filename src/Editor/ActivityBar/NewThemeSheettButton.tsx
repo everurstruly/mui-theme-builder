@@ -34,7 +34,7 @@ export default function NewThemeSheetButton() {
           },
         }}
       >
-        New
+        Starter
       </Button>
 
       <Dialog

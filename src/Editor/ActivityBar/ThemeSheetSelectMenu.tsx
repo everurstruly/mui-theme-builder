@@ -3,29 +3,25 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import type { SelectChangeEvent } from "@mui/material/Select";
 import { PreviewRounded } from "@mui/icons-material";
-import { useThemeSheetStore } from "../ThemeSheet";
 import {
+  useThemeDocumentStore,
   listThemeTemplateIds,
   THEME_TEMPLATE_METADATA,
   type ThemeTemplateId,
-} from "../ThemeSheet";
+} from "../ThemeDocument";
 
 export default function ThemeSheetSelectMenu() {
-  const selectedThemeTemplateId = useThemeSheetStore((state) => {
-    return state.selectedThemeTemplateId.id;
+  const selectedThemeTemplateId = useThemeDocumentStore((state) => {
+    return state.selectedTemplateId.id;
   });
-  const selectThemeTemplate = useThemeSheetStore((state) => {
-    return state.selectThemeTemplate;
-  });
-  const commitEdits = useThemeSheetStore((state) => {
-    return state.commitEdits;
+  const switchTemplate = useThemeDocumentStore((state) => {
+    return state.switchTemplate;
   });
 
   const handleChange = (event: SelectChangeEvent<ThemeTemplateId>) => {
     const themeId = event.target.value as ThemeTemplateId;
-    selectThemeTemplate({ type: "static", id: themeId });
-    // Applying the template now clears the user edits
-    commitEdits();
+    // switchTemplate takes (templateId, keepEdits) - false to reset edits when switching
+    switchTemplate({ type: 'builtin', id: themeId }, false);
   };
 
   return (

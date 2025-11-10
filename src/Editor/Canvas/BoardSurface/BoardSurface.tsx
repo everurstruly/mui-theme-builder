@@ -1,5 +1,5 @@
 import previewsRegistry from "../../Previews/registry";
-import { useThemeSheet, useThemeSheetStore } from "../../ThemeSheetV2";
+import { useThemeDocumentTheme, useThemeDocumentStore } from "../../ThemeDocument";
 // import FullscreenPreviewButton from "./Controls/FullscreenPreviewButton";
 import { useRef, useState, useEffect } from "react";
 import { Box, CssBaseline, Paper, ThemeProvider } from "@mui/material";
@@ -13,14 +13,14 @@ export default function BoardSurface() {
   const containerRef = useRef<HTMLDivElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  const previewId = useThemeSheetStore((state) => state.activePreviewId);
+  const previewId = useThemeDocumentStore((state) => state.activePreviewId);
   const PreviewComponent = previewsRegistry[previewId]?.component;
 
   const [availableWidth, setAvailableWidth] = useState<number>(0);
   const { simulatedBreakpoint, getMaxWidth, getMinWidth, getScale } =
     useBreakpointSimulation();
 
-  const { theme } = useThemeSheet();
+  const theme = useThemeDocumentTheme();
   const breakpointSpoofedTheme = spoofThemeBreakpoints(theme, simulatedBreakpoint);
 
   // Track available width for scaling
