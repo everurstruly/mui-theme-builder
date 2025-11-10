@@ -2,11 +2,11 @@ import Box from "@mui/material/Box";
 import { SimpleTreeView } from "@mui/x-tree-view/SimpleTreeView";
 import { TreeItem } from "@mui/x-tree-view/TreeItem";
 import { muiComponentsRegistry } from "../../Previews/MuiComponents/muiComponentsRegistry";
-import { useThemeSheetStore } from "../../ThemeSheetV2";
+import { useThemeDocumentStore } from "../../ThemeDocument";
 
 export default function MuiComponentsTree() {
-  const activePreviewId = useThemeSheetStore((state) => state.activePreviewId);
-  const selectPreview = useThemeSheetStore((state) => state.selectPreview);
+  const activePreviewId = useThemeDocumentStore((state) => state.activePreviewId);
+  const selectPreview = useThemeDocumentStore((state) => state.selectPreview);
 
   const handleSelectComponent = (_event: React.SyntheticEvent | null, itemId: string | null) => {
     if (itemId && !itemId.startsWith("folder-")) {
