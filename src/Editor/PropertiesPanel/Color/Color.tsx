@@ -9,10 +9,6 @@ import type { Theme } from "@mui/material";
 export default function ColorProperty() {
   const theme = useThemeDesignTheme();
   
-  console.log('🎨 createTheme returned:', theme);
-  console.log('🎨 theme.palette:', theme.palette);
-  console.log('🎨 theme.palette.primary:', theme.palette.primary);
-  
   const paletteGroups = useMemo(() => {
     return extractPaletteGroups(theme.palette);
   }, [theme.palette]);
@@ -38,7 +34,10 @@ export default function ColorProperty() {
           </ColorOptionGroup>
         </li>
       ))}
-      <ColorOptionActionGroup title="Actions States" />
+
+      <li>
+        <ColorOptionActionGroup title="Actions States" />
+      </li>
     </List>
   );
 }

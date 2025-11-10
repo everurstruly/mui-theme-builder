@@ -7,7 +7,7 @@ type ColorOptionGroupProps = {
 
 export default function ColorOptionGroup(props: ColorOptionGroupProps) {
   return (
-    <ul>
+    <>
       <Typography
         variant="subtitle2"
         component={"h6"}
@@ -28,8 +28,10 @@ export default function ColorOptionGroup(props: ColorOptionGroupProps) {
         </Typography> */}
       </Typography>
 
-      {props.children}
-    </ul>
+      <ul>
+        {props.children}
+      </ul>
+    </>
   );
 }
 

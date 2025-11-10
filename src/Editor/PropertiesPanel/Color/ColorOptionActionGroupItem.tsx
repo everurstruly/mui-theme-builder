@@ -6,7 +6,7 @@ import {
   Box,
   Tooltip,
 } from "@mui/material";
-import { useThemeSheetEditValue } from "../../ThemeSheetV2";
+import { useThemeDesignEditValue } from "../../ThemeDesign";
 
 export type ColorOptionActionGroupItemProps = {
   name: string;
@@ -16,11 +16,11 @@ export type ColorOptionActionGroupItemProps = {
 };
 
 export default function ColorOptionActionGroupItem(props: ColorOptionActionGroupItemProps) {
-  const { value, setValue, isUserEditted, resetToBase, shouldBeEditedWithCode } =
-    useThemeSheetEditValue(props.path);
+  const { value, setValue, hasVisualEdit, reset, hasCodeOverride } =
+    useThemeDesignEditValue(props.path);
 
   const currentValue = (value as string | number) ?? props.resolvedValue;
-  const canResetValue = isUserEditted;
+  const canResetValue = hasVisualEdit || hasCodeOverride;
 
   return (
     <ListItem
@@ -69,7 +69,7 @@ export default function ColorOptionActionGroupItem(props: ColorOptionActionGroup
         {canResetValue && (
           <Button
             color="warning"
-            onClick={() => resetToBase()}
+            onClick={() => reset()}
             sx={{
               lineHeight: 1,
               fontSize: 10,
@@ -85,12 +85,12 @@ export default function ColorOptionActionGroupItem(props: ColorOptionActionGroup
         {props.name}
       </Typography>
 
-      <Tooltip title={"Action shade color intensity"}>
+      {/* <Tooltip title={"Action shade color intensity"}>
         <TextField
           size="small"
           value={String(currentValue)}
           onChange={(e) => setValue(e.target.value)}
-          disabled={shouldBeEditedWithCode}
+          disabled={hasCodeOverride}
           sx={{
             flexBasis: props.orientation === "vertical" ? "100%" : "auto",
 
@@ -107,7 +107,7 @@ export default function ColorOptionActionGroupItem(props: ColorOptionActionGroup
             },
           }}
         />
-      </Tooltip>
+      </Tooltip> */}
 
       <Box
         sx={{
@@ -117,9 +117,9 @@ export default function ColorOptionActionGroupItem(props: ColorOptionActionGroup
           borderRadius: 1,
           border: 2,
           borderColor: "divider",
-          cursor: shouldBeEditedWithCode ? "not-allowed" : "pointer",
+          cursor: hasCodeOverride ? "not-allowed" : "pointer",
           display: "inline-block",
-          opacity: shouldBeEditedWithCode ? 0.5 : 1,
+          opacity: hasCodeOverride ? 0.5 : 1,
         }}
       />
     </ListItem>
