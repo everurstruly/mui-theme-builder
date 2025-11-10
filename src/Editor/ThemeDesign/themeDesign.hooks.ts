@@ -62,8 +62,6 @@ function useResolvedThemeOptions(colorScheme?: 'light' | 'dark'): ThemeOptions {
   const modeEdits = targetScheme === 'light' ? lightMode : darkMode;
 
   return useMemo(() => {
-    console.log('Recalculating... theme options with:', { templateId, targetScheme });
-
     // Get base template
     const template = getTemplate(templateId, targetScheme);
 
@@ -109,7 +107,6 @@ export function useThemeDesignTheme(colorScheme?: 'light' | 'dark'): Theme {
       return createTheme(themeOptions);
     } catch (error) {
       console.error('[useThemeDesignTheme] Failed to create theme:', error);
-      // Fallback to default MUI theme
       return createTheme();
     }
   }, [themeOptions]);
