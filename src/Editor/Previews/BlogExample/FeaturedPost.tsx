@@ -67,3 +67,4 @@ export default function FeaturedPost({ post }: Props) {
     </Grid>
   );
 }
+

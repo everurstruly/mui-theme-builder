@@ -86,3 +86,4 @@ export interface ThemeSheetState {
  * - 'failsafe': safe evaluation with fallbacks (for live preview)
  */
 export type ResolutionMode = 'raw' | 'failsafe';
+

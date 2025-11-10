@@ -1,5 +1,5 @@
 /**
- * ThemeDocument
+ * ThemeDesign
  * 
  * A complete theme editing system with:
  * - Multi-layer architecture (template → composables → visual edits → code overrides)
@@ -11,14 +11,14 @@
 
 // === Core Hooks ===
 export {
-  useThemeDocumentTheme,
-  useThemeDocumentOptions,
-  useThemeDocumentEditValue,
+  useThemeDesignTheme,
+  useThemeDesignOptions,
+  useThemeDesignEditValue,
   useCodeEditorPanel,
-} from './themeDocument.hooks';
+} from './themeDesign.hooks';
 
 // === Store ===
-export { useThemeDocumentStore } from './themeDocument.store';
+export { useThemeDesignStore } from './themeDesign.store';
 
 // === Templates ===
 export {
@@ -36,9 +36,9 @@ export {
 
 // === Types ===
 export type {
-  ThemeDocumentState,
-  ThemeDocumentActions,
-  ThemeDocumentStore,
+  ThemeDesignState,
+  ThemeDesignActions,
+  ThemeDesignStore,
   ColorSchemeEdits,
   ThemeTemplateRef,
   ThemeComposable,
@@ -55,7 +55,8 @@ export {
   evaluateCodeOverrides,
   splitLiteralsAndFunctions,
   deepMerge,
-} from './themeDocument.utils';
+} from './themeDesign.utils';
 
 // === Resolver (if needed externally) ===
-export { resolveThemeOptions } from './themeDocument.resolver';
+export { resolveThemeOptions } from './themeDesign.resolver';
+

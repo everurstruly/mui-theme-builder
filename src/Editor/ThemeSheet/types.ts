@@ -99,3 +99,4 @@ export interface ThemeSheetState {
  * - 'safe': safe evaluation with fallbacks (for live preview)
  */
 export type ThemeResolutionMode = 'strict' | 'safe';
+

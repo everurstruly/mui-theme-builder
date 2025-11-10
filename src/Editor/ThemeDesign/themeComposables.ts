@@ -104,3 +104,4 @@ export function getThemeComposable(id: string): ThemeComposable {
 export function listThemeComposables(): ThemeComposable[] {
   return [...THEME_COMPOSABLES];
 }
+

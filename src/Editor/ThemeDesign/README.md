@@ -1,4 +1,4 @@
-# ThemeDocument
+# ThemeDesign
 
 A complete MUI theme editing system with multi-layer architecture, undo/redo support, and performance-optimized React hooks.
 
@@ -6,7 +6,7 @@ A complete MUI theme editing system with multi-layer architecture, undo/redo sup
 
 ### Mental Model
 
-**ThemeDocument = Template + Base Modifications + Color Scheme Modifications**
+**ThemeDesign = Template + Base Modifications + Color Scheme Modifications**
 
 - **Template** = Provides complete theme with full palette for each color scheme
 - **Base Layer** = Color-independent modifications (typography, spacing, shape, etc.) that apply to both light and dark
@@ -71,11 +71,11 @@ Modifications are applied in this order (later layers override earlier ones):
 ### Basic Theme Preview
 
 ```typescript
-import { useThemeDocumentTheme } from '@/Editor/ThemeDocument';
+import { useThemeDesignTheme } from '@/Editor/ThemeDesign';
 import { ThemeProvider } from '@mui/material/styles';
 
 function PreviewPane() {
-  const theme = useThemeDocumentTheme('light');
+  const theme = useThemeDesignTheme('light');
   
   return (
     <ThemeProvider theme={theme}>
@@ -88,7 +88,7 @@ function PreviewPane() {
 ### Color Picker Control
 
 ```typescript
-import { useThemeDocumentEditValue } from '@/Editor/ThemeDocument';
+import { useThemeDesignEditValue } from '@/Editor/ThemeDesign';
 
 function PrimaryColorPicker() {
   const {
@@ -98,7 +98,7 @@ function PrimaryColorPicker() {
     isModified,
     setValue,
     reset,
-  } = useThemeDocumentEditValue('palette.primary.main');
+  } = useThemeDesignEditValue('palette.primary.main');
 
   return (
     <div>
@@ -131,7 +131,7 @@ function PrimaryColorPicker() {
 
 ```typescript
 import { useState } from 'react';
-import { useCodeEditorPanel } from '@/Editor/ThemeDocument';
+import { useCodeEditorPanel } from '@/Editor/ThemeDesign';
 import MonacoEditor from '@monaco-editor/react';
 
 function CodeEditorPanel() {
@@ -188,11 +188,11 @@ function CodeEditorPanel() {
 ### Template Switching
 
 ```typescript
-import { useThemeDocumentStore } from '@/Editor/ThemeDocument';
+import { useThemeDesignStore } from '@/Editor/ThemeDesign';
 
 function TemplateSelector() {
-  const switchTemplate = useThemeDocumentStore((s) => s.switchTemplate);
-  const currentTemplate = useThemeDocumentStore((s) => s.selectedTemplateId);
+  const switchTemplate = useThemeDesignStore((s) => s.switchTemplate);
+  const currentTemplate = useThemeDesignStore((s) => s.selectedTemplateId);
 
   const handleSwitch = (newTemplateId: string) => {
     const confirmed = window.confirm(
@@ -220,11 +220,11 @@ function TemplateSelector() {
 ### Composables (Presets)
 
 ```typescript
-import { useThemeDocumentStore } from '@/Editor/ThemeDocument';
+import { useThemeDesignStore } from '@/Editor/ThemeDesign';
 
 function ComposablesPanel() {
-  const enabledComposables = useThemeDocumentStore((s) => s.enabledComposables);
-  const toggleComposable = useThemeDocumentStore((s) => s.toggleComposable);
+  const enabledComposables = useThemeDesignStore((s) => s.enabledComposables);
+  const toggleComposable = useThemeDesignStore((s) => s.toggleComposable);
 
   return (
     <div>
@@ -265,8 +265,8 @@ Optimizations:
 
 ### Hook Performance Characteristics
 
-- **`useThemeDocumentEditValue(path)`**: O(1) - flat object lookup, no theme computation
-- **`useThemeDocumentTheme()`**: O(n) where n = number of layers, memoized
+- **`useThemeDesignEditValue(path)`**: O(1) - flat object lookup, no theme computation
+- **`useThemeDesignTheme()`**: O(n) where n = number of layers, memoized
 - **`useCodeEditorPanel()`**: O(1) for state access, O(n) for preview computation (memoized)
 
 ## Undo/Redo
@@ -274,7 +274,7 @@ Optimizations:
 Powered by [zundo](https://github.com/charkour/zundo):
 
 ```typescript
-import { useThemeDocumentStore } from '@/Editor/ThemeDocument';
+import { useThemeDesignStore } from '@/Editor/ThemeDesign';
 import { temporal } from 'zundo';
 
 function HistoryControls() {
@@ -362,17 +362,17 @@ function getComposableOptions(composableId: string, colorScheme: 'light' | 'dark
 }
 ```
 
-These are placeholders in `themeDocument.hooks.ts` - replace with your actual template/composable system.
+These are placeholders in `themeDesign.hooks.ts` - replace with your actual template/composable system.
 
 ## File Structure
 
 ```
-ThemeDocument/
+ThemeDesign/
 ├── types.ts                    # TypeScript types
-├── themeDocument.store.ts      # Zustand store with temporal middleware
-├── themeDocument.resolver.ts   # Pure layer merge logic
-├── themeDocument.utils.ts      # Utility functions
-├── themeDocument.hooks.ts      # React hooks
+├── themeDesign.store.ts      # Zustand store with temporal middleware
+├── themeDesign.resolver.ts   # Pure layer merge logic
+├── themeDesign.utils.ts      # Utility functions
+├── themeDesign.hooks.ts      # React hooks
 ├── index.ts                    # Public API exports
 └── README.md                   # This file
 ```
@@ -392,8 +392,9 @@ A: Parsing/evaluating on every keystroke is expensive and may cause errors durin
 A: Yes - just don't render the code editor panel. The store still supports it, but users won't see it.
 
 **Q: How do I export a theme?**  
-A: Use `useThemeDocumentTheme()` to get the final Theme object, or use `resolveThemeOptions()` to get ThemeOptions. Serialize to JSON or TypeScript code.
+A: Use `useThemeDesignTheme()` to get the final Theme object, or use `resolveThemeOptions()` to get ThemeOptions. Serialize to JSON or TypeScript code.
 
 ## License
 
 Part of mui-theme-builder project.
+

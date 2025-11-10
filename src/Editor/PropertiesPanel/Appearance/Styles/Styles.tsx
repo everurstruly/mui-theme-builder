@@ -38,3 +38,4 @@ export default function StylesAppearance(props: StylesAppearanceProps) {
     </div>
   );
 }
+

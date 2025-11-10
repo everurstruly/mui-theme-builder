@@ -183,3 +183,4 @@ export function isSampleIdValid(id: string): boolean {
 export function getValidSampleId(id: string, fallback = "DashboardExample"): string {
   return isSampleIdValid(id) ? id : fallback;
 }
+

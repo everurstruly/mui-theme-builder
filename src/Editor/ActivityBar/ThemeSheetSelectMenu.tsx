@@ -4,17 +4,17 @@ import Select from "@mui/material/Select";
 import type { SelectChangeEvent } from "@mui/material/Select";
 import { PreviewRounded } from "@mui/icons-material";
 import {
-  useThemeDocumentStore,
+  useThemeDesignStore,
   listThemeTemplateIds,
   THEME_TEMPLATE_METADATA,
   type ThemeTemplateId,
-} from "../ThemeDocument";
+} from "../ThemeDesign";
 
 export default function ThemeSheetSelectMenu() {
-  const selectedThemeTemplateId = useThemeDocumentStore((state) => {
+  const selectedThemeTemplateId = useThemeDesignStore((state) => {
     return state.selectedTemplateId.id;
   });
-  const switchTemplate = useThemeDocumentStore((state) => {
+  const switchTemplate = useThemeDesignStore((state) => {
     return state.switchTemplate;
   });
 
@@ -59,3 +59,4 @@ export default function ThemeSheetSelectMenu() {
     </FormControl>
   );
 }
+

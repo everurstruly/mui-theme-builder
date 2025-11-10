@@ -68,3 +68,4 @@ function DeviceToggleButton({ value, Icon }: DeviceToggleButtonProps) {
     </Tooltip>
   );
 }
+

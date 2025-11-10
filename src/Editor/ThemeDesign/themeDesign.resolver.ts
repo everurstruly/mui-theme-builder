@@ -1,6 +1,6 @@
 import type { ThemeOptions } from '@mui/material/styles';
 import type { ThemeResolutionConfig } from './types';
-import { expandFlatThemeOptions, deepMerge } from './themeDocument.utils';
+import { expandFlatThemeOptions, deepMerge } from './themeDesign.utils';
 
 /**
  * Resolves a complete ThemeOptions object from all layers.
@@ -61,3 +61,4 @@ export function resolveThemeOptions(config: ThemeResolutionConfig): ThemeOptions
 
   return resolved;
 }
+

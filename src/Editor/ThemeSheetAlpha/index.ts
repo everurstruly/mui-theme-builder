@@ -54,3 +54,4 @@ export { flattenThemeOptions } from './utils/flattenThemeOptions';
 export { expandFlatThemeOptions } from './utils/expandFlatThemeOptions';
 export { splitThemeOptions } from './utils/splitThemeOptions';
 export { hydrateFunctionsSafely } from './utils/hydrateFunctionsSafely';
+

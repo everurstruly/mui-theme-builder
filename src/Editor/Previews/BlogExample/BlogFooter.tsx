@@ -54,3 +54,4 @@ export default function BlogFooter({ description, title }: Props) {
     </Box>
   )
 }
+

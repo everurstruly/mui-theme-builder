@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import { createTheme, type Theme, type ThemeOptions } from '@mui/material/styles';
-import { useThemeDocumentStore } from './themeDocument.store';
-import { resolveThemeOptions } from './themeDocument.resolver';
-import { isColorSchemePath, getNestedValue } from './themeDocument.utils';
+import { useThemeDesignStore } from './themeDesign.store';
+import { resolveThemeOptions } from './themeDesign.resolver';
+import { isColorSchemePath, getNestedValue } from './themeDesign.utils';
 import type { SerializableValue } from './types';
 import { getThemeTemplate } from './themeTemplates';
 import { getThemeComposable } from './themeComposables';
@@ -42,7 +42,7 @@ function getTemplate(templateId: string, colorScheme: 'light' | 'dark'): ThemeOp
   }
 }
 
-// Composables loader - uses ThemeDocument composables
+// Composables loader - uses ThemeDesign composables
 function getComposableOptions(composableId: string, colorScheme: 'light' | 'dark'): ThemeOptions {
   try {
     const composable = getThemeComposable(composableId);
@@ -57,20 +57,20 @@ function getComposableOptions(composableId: string, colorScheme: 'light' | 'dark
 
 /**
  * Internal hook that resolves ThemeOptions from all layers.
- * Used by useThemeDocumentTheme to compute the final theme.
+ * Used by useThemeDesignTheme to compute the final theme.
  * 
  * @param colorScheme - Target color scheme (defaults to active scheme)
  * @returns Resolved ThemeOptions ready for createTheme()
  */
 function useResolvedThemeOptions(colorScheme?: 'light' | 'dark'): ThemeOptions {
   // Subscribe to all relevant state slices with selectors
-  const templateId = useThemeDocumentStore((s) => s.selectedTemplateId.id);
-  const enabledComposables = useThemeDocumentStore((s) => s.enabledComposables);
-  const baseVisualEdits = useThemeDocumentStore((s) => s.baseVisualEdits);
-  const codeOverridesEvaluated = useThemeDocumentStore((s) => s.codeOverridesEvaluated);
-  const lightMode = useThemeDocumentStore((s) => s.lightMode);
-  const darkMode = useThemeDocumentStore((s) => s.darkMode);
-  const activeColorScheme = useThemeDocumentStore((s) => s.activeColorScheme);
+  const templateId = useThemeDesignStore((s) => s.selectedTemplateId.id);
+  const enabledComposables = useThemeDesignStore((s) => s.enabledComposables);
+  const baseVisualEdits = useThemeDesignStore((s) => s.baseVisualEdits);
+  const codeOverridesEvaluated = useThemeDesignStore((s) => s.codeOverridesEvaluated);
+  const lightMode = useThemeDesignStore((s) => s.lightMode);
+  const darkMode = useThemeDesignStore((s) => s.darkMode);
+  const activeColorScheme = useThemeDesignStore((s) => s.activeColorScheme);
 
   const targetScheme = colorScheme ?? activeColorScheme;
   const modeEdits = targetScheme === 'light' ? lightMode : darkMode;
@@ -118,18 +118,18 @@ function useResolvedThemeOptions(colorScheme?: 'light' | 'dark'): ThemeOptions {
  * 
  * @example
  * function PreviewPane() {
- *   const theme = useThemeDocumentTheme('light');
+ *   const theme = useThemeDesignTheme('light');
  *   return <ThemeProvider theme={theme}><YourApp /></ThemeProvider>;
  * }
  */
-export function useThemeDocumentTheme(colorScheme?: 'light' | 'dark'): Theme {
+export function useThemeDesignTheme(colorScheme?: 'light' | 'dark'): Theme {
   const themeOptions = useResolvedThemeOptions(colorScheme);
 
   const theme = useMemo(() => {
     try {
       return createTheme(themeOptions);
     } catch (error) {
-      console.error('[useThemeDocumentTheme] Failed to create theme:', error);
+      console.error('[useThemeDesignTheme] Failed to create theme:', error);
       // Fallback to default MUI theme
       return createTheme();
     }
@@ -147,7 +147,7 @@ export function useThemeDocumentTheme(colorScheme?: 'light' | 'dark'): Theme {
  * 
  * @example
  * function ExportButton() {
- *   const themeOptions = useThemeDocumentOptions('light');
+ *   const themeOptions = useThemeDesignOptions('light');
  *   const handleExport = () => {
  *     const json = JSON.stringify(themeOptions, null, 2);
  *     downloadFile('theme.json', json);
@@ -155,7 +155,7 @@ export function useThemeDocumentTheme(colorScheme?: 'light' | 'dark'): Theme {
  *   return <Button onClick={handleExport}>Export Theme</Button>;
  * }
  */
-export function useThemeDocumentOptions(colorScheme?: 'light' | 'dark'): ThemeOptions {
+export function useThemeDesignOptions(colorScheme?: 'light' | 'dark'): ThemeOptions {
   return useResolvedThemeOptions(colorScheme);
 }
 
@@ -174,7 +174,7 @@ export function useThemeDocumentOptions(colorScheme?: 'light' | 'dark'): ThemeOp
  * @example
  * function ColorPicker() {
  *   const { value, hasCodeOverride, hasVisualEdit, setValue, reset } =
- *     useThemeDocumentEditValue('palette.primary.main');
+ *     useThemeDesignEditValue('palette.primary.main');
  *   
  *   return (
  *     <div>
@@ -190,8 +190,8 @@ export function useThemeDocumentOptions(colorScheme?: 'light' | 'dark'): ThemeOp
  *   );
  * }
  */
-export function useThemeDocumentEditValue(path: string, colorScheme?: 'light' | 'dark') {
-  const activeColorScheme = useThemeDocumentStore((s) => s.activeColorScheme);
+export function useThemeDesignEditValue(path: string, colorScheme?: 'light' | 'dark') {
+  const activeColorScheme = useThemeDesignStore((s) => s.activeColorScheme);
   const targetScheme = colorScheme ?? activeColorScheme;
   const isColorScheme = isColorSchemePath(path);
   
@@ -199,17 +199,17 @@ export function useThemeDocumentEditValue(path: string, colorScheme?: 'light' | 
   const modeKey = targetScheme === 'light' ? 'lightMode' : 'darkMode';
 
   // Select only the data we need (performance: minimal subscriptions)
-  const baseVisualValue = useThemeDocumentStore((s) =>
+  const baseVisualValue = useThemeDesignStore((s) =>
     isColorScheme ? undefined : s.baseVisualEdits[path]
   );
-  const schemeVisualValue = useThemeDocumentStore((s) =>
+  const schemeVisualValue = useThemeDesignStore((s) =>
     isColorScheme ? s[modeKey].visualEdits[path] : undefined
   );
-  const codeFlattened = useThemeDocumentStore((s) => s.codeOverridesFlattened);
+  const codeFlattened = useThemeDesignStore((s) => s.codeOverridesFlattened);
 
   // Select action functions (stable references)
-  const setVisualEdit = useThemeDocumentStore((s) => s.setVisualEdit);
-  const resetPath = useThemeDocumentStore((s) => s.resetPath);
+  const setVisualEdit = useThemeDesignStore((s) => s.setVisualEdit);
+  const resetPath = useThemeDesignStore((s) => s.resetPath);
 
   // Get the resolved theme options (not Theme object) to read actual values
   const themeOptions = useResolvedThemeOptions(targetScheme);
@@ -283,17 +283,17 @@ export function useThemeDocumentEditValue(path: string, colorScheme?: 'light' | 
  * }
  */
 export function useCodeEditorPanel() {
-  const activeColorScheme = useThemeDocumentStore((s) => s.activeColorScheme);
+  const activeColorScheme = useThemeDesignStore((s) => s.activeColorScheme);
 
   // Select state
-  const source = useThemeDocumentStore((s) => s.codeOverridesSource);
-  const error = useThemeDocumentStore((s) => s.codeOverridesError);
+  const source = useThemeDesignStore((s) => s.codeOverridesSource);
+  const error = useThemeDesignStore((s) => s.codeOverridesError);
 
   // Select actions
-  const applyCodeOverrides = useThemeDocumentStore((s) => s.applyCodeOverrides);
-  const clearCodeOverrides = useThemeDocumentStore((s) => s.clearCodeOverrides);
-  const resetToVisual = useThemeDocumentStore((s) => s.resetToVisual);
-  const resetToTemplate = useThemeDocumentStore((s) => s.resetToTemplate);
+  const applyCodeOverrides = useThemeDesignStore((s) => s.applyCodeOverrides);
+  const clearCodeOverrides = useThemeDesignStore((s) => s.clearCodeOverrides);
+  const resetToVisual = useThemeDesignStore((s) => s.resetToVisual);
+  const resetToTemplate = useThemeDesignStore((s) => s.resetToTemplate);
 
   // Compute merged preview (template + composables + visual edits, excluding code overrides)
   const mergedPreview = useResolvedThemeOptionsWithoutCode(activeColorScheme);
@@ -332,11 +332,11 @@ export function useCodeEditorPanel() {
 function useResolvedThemeOptionsWithoutCode(
   colorScheme: 'light' | 'dark'
 ): ThemeOptions {
-  const templateId = useThemeDocumentStore((s) => s.selectedTemplateId.id);
-  const enabledComposables = useThemeDocumentStore((s) => s.enabledComposables);
-  const baseVisualEdits = useThemeDocumentStore((s) => s.baseVisualEdits);
-  const lightMode = useThemeDocumentStore((s) => s.lightMode);
-  const darkMode = useThemeDocumentStore((s) => s.darkMode);
+  const templateId = useThemeDesignStore((s) => s.selectedTemplateId.id);
+  const enabledComposables = useThemeDesignStore((s) => s.enabledComposables);
+  const baseVisualEdits = useThemeDesignStore((s) => s.baseVisualEdits);
+  const lightMode = useThemeDesignStore((s) => s.lightMode);
+  const darkMode = useThemeDesignStore((s) => s.darkMode);
 
   const modeEdits = colorScheme === 'light' ? lightMode : darkMode;
 
@@ -356,3 +356,4 @@ function useResolvedThemeOptionsWithoutCode(
     });
   }, [templateId, enabledComposables, baseVisualEdits, modeEdits.visualEdits, colorScheme]);
 }
+

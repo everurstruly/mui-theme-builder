@@ -1,10 +1,10 @@
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { Tooltip, IconButton } from "@mui/material";
-import { useThemeDocumentOptions, useThemeDocumentStore } from "../../../ThemeDocument";
+import { useThemeDesignOptions, useThemeDesignStore } from "../../../ThemeDesign";
 
 export default function OpenInNewTabControl() {
-  const activePreviewId = useThemeDocumentStore((state) => state.activePreviewId);
-  const themeOptions = useThemeDocumentOptions();
+  const activePreviewId = useThemeDesignStore((state) => state.activePreviewId);
+  const themeOptions = useThemeDesignOptions();
 
   const handleOpenInNewTab = () => {
     if (!activePreviewId) {
@@ -45,3 +45,4 @@ export default function OpenInNewTabControl() {
     </Tooltip>
   );
 }
+

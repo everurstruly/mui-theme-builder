@@ -73,3 +73,4 @@ export default function SliderInput({ defaultValue, arialLabel }: SliderInputPro
     />
   );
 }
+

@@ -29,3 +29,4 @@ export type MountComponentMessage = {
 };
 
 export type PreviewMessage = IframeReadyMessage | MountComponentMessage;
+

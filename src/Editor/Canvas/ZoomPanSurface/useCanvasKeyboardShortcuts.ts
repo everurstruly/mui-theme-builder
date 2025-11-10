@@ -120,3 +120,4 @@ export default function useCanvasKeyboardShortcuts({
     };
   }, [enabled, target, zoomIn, zoomOut, resetCamera, toggleDragLock, dragLock]);
 }
+

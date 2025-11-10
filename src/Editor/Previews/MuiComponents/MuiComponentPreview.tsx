@@ -228,3 +228,4 @@ export default function MuiComponentPreview({ componentName }: MuiComponentPrevi
     </Container>
   );
 }
+

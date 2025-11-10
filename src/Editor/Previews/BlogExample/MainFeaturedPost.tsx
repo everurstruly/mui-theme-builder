@@ -94,3 +94,4 @@ export default function MainFeaturedPost({ post }: Props) {
     </Paper>
   );
 }
+

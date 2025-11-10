@@ -1,12 +1,12 @@
 import { create } from 'zustand';
 import { temporal } from 'zundo';
 import type {
-  ThemeDocumentStore,
+  ThemeDesignStore,
   ColorSchemeEdits,
   ThemeTemplateRef,
   SerializableValue,
 } from './types';
-import { isColorSchemePath, evaluateCodeOverrides } from './themeDocument.utils';
+import { isColorSchemePath, evaluateCodeOverrides } from './themeDesign.utils';
 
 /**
  * Initial color scheme edits state.
@@ -16,7 +16,7 @@ const createInitialColorSchemeEdits = (): ColorSchemeEdits => ({
 });
 
 /**
- * Theme Document Zustand store with undo/redo support.
+ * Theme Design Zustand store with undo/redo support.
  * 
  * Key features:
  * - Separate layers: template, composables, global edits, color scheme edits, code overrides
@@ -24,7 +24,7 @@ const createInitialColorSchemeEdits = (): ColorSchemeEdits => ({
  * - Automatic path routing (palette/shadows → color scheme, everything else → global)
  * - Code evaluation with error handling
  */
-export const useThemeDocumentStore = create<ThemeDocumentStore>()(
+export const useThemeDesignStore = create<ThemeDesignStore>()(
   temporal(
     (set, get) => ({
       // ===== Initial State =====
@@ -264,3 +264,4 @@ export const useThemeDocumentStore = create<ThemeDocumentStore>()(
     }
   )
 );
+

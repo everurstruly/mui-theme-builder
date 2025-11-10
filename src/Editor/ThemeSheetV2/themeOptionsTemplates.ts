@@ -147,3 +147,4 @@ export const getStaticThemeOptionsTemplate = (
 };
 
 export const listThemeOptionsTemplateIds = () => themeOptionsTemplateIds;
+

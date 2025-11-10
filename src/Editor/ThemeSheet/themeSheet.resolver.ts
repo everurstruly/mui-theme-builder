@@ -136,3 +136,4 @@ export function invalidateThemeCache(): void {
   cachedThemeOptions = null;
   cacheKey = null;
 }
+

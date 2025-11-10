@@ -45,3 +45,4 @@ export const ThemePreviewPane = ({ children }: ThemePreviewPaneProps) => {
 
   return <ThemeProvider theme={theme}>{children}</ThemeProvider>;
 };
+

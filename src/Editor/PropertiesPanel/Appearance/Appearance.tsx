@@ -11,3 +11,4 @@ function AppearanceProperty() {
 }
 
 export default AppearanceProperty;
+

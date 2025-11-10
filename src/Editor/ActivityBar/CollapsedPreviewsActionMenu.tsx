@@ -22,3 +22,4 @@ function CollapsedPreviewsActionMenu() {
 }
 
 export default CollapsedPreviewsActionMenu;
+

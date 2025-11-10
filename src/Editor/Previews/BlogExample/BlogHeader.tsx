@@ -78,3 +78,4 @@ export default function BlogHeader({ sections, title }: Props) {
     </React.Fragment>
   );
 }
+

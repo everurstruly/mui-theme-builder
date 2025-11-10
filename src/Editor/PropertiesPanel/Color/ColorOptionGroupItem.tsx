@@ -2,7 +2,7 @@ import { Button, ListItem, Typography, Box, Stack, Popover } from "@mui/material
 import { useState, useRef } from "react";
 import { Sketch } from "@uiw/react-color";
 import { useDebouncyEffect } from "use-debouncy";
-import { useThemeDocumentEditValue } from "../../ThemeDocument";
+import { useThemeDesignEditValue } from "../../ThemeDesign";
 
 type ColorOptionGroupItemProps = {
   name: string;
@@ -16,7 +16,7 @@ export default function ColorOptionGroupItem(props: ColorOptionGroupItemProps) {
     hasVisualEdit: isCustomized,
     reset: resetValue,
     hasCodeOverride: isControlledByFunction,
-  } = useThemeDocumentEditValue(props.path);
+  } = useThemeDesignEditValue(props.path);
 
   const canResetValue = isCustomized || isControlledByFunction;
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
@@ -159,3 +159,4 @@ export default function ColorOptionGroupItem(props: ColorOptionGroupItemProps) {
     </ListItem>
   );
 }
+

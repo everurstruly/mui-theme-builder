@@ -45,10 +45,10 @@ export interface ColorSchemeEdits {
 }
 
 /**
- * Complete state of a Theme Document.
+ * Complete state of a Theme Design.
  * Separates base layer (color-independent) from color schemes (palette/shadows only).
  */
-export interface ThemeDocumentState {
+export interface ThemeDesignState {
   // === Base Layer ===
   /** Currently selected base template */
   selectedTemplateId: ThemeTemplateRef;
@@ -96,9 +96,9 @@ export interface ThemeDocumentState {
 }
 
 /**
- * Actions available on the Theme Document store.
+ * Actions available on the Theme Design store.
  */
-export interface ThemeDocumentActions {
+export interface ThemeDesignActions {
   // === Template Management ===
   /**
    * Switch to a different base template.
@@ -183,9 +183,9 @@ export interface ThemeDocumentActions {
 }
 
 /**
- * Complete Theme Document store type (state + actions).
+ * Complete Theme Design store type (state + actions).
  */
-export type ThemeDocumentStore = ThemeDocumentState & ThemeDocumentActions;
+export type ThemeDesignStore = ThemeDesignState & ThemeDesignActions;
 
 /**
  * Configuration for resolving a complete theme from all layers.
@@ -223,3 +223,4 @@ export interface CodeEvaluationResult {
   /** Error message if evaluation failed */
   error: string | null;
 }
+

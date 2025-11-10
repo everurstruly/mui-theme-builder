@@ -78,3 +78,4 @@ export default function FloatingCanvasObjectsTree() {
     </Box>
   );
 }
+

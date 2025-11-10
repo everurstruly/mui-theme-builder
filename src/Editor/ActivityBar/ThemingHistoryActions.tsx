@@ -1,22 +1,22 @@
 import { Button, ButtonGroup } from "@mui/material";
 import { RedoRounded, UndoRounded } from "@mui/icons-material";
-import { useThemeDocumentStore } from "../ThemeDocument";
+import { useThemeDesignStore } from "../ThemeDesign";
 import { useEffect, useState } from "react";
 
 export default function ThemingHistoryActions() {
-  const { undo, redo } = useThemeDocumentStore.temporal.getState();
+  const { undo, redo } = useThemeDesignStore.temporal.getState();
   
   // Subscribe to temporal state changes for reactive updates
   const [canUndo, setCanUndo] = useState(false);
   const [canRedo, setCanRedo] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = useThemeDocumentStore.temporal.subscribe((state) => {
+    const unsubscribe = useThemeDesignStore.temporal.subscribe((state) => {
       setCanUndo(state.pastStates.length > 0);
       setCanRedo(state.futureStates.length > 0);
     });
     // Initial state
-    const state = useThemeDocumentStore.temporal.getState();
+    const state = useThemeDesignStore.temporal.getState();
     setCanUndo(state.pastStates.length > 0);
     setCanRedo(state.futureStates.length > 0);
     return unsubscribe;
@@ -59,3 +59,4 @@ export default function ThemingHistoryActions() {
     </ButtonGroup>
   );
 }
+

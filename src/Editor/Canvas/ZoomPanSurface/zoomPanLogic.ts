@@ -97,3 +97,4 @@ export function getNextAlignment(
   const nextIndex = (index + 1) % order.length;
   return order[nextIndex];
 }
+

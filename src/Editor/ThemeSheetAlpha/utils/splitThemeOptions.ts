@@ -81,3 +81,4 @@ export const splitThemeOptions = (
   traverse(obj, prefix);
   return { literals, functions };
 };
+

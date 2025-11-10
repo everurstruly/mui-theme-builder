@@ -68,3 +68,4 @@ export const flattenThemeOptions = (
   traverse(obj, prefix);
   return result;
 };
+
