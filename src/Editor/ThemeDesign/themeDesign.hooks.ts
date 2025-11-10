@@ -5,7 +5,6 @@ import { resolveThemeOptions } from './themeDesign.resolver';
 import { isColorSchemePath, getNestedValue } from './themeDesign.utils';
 import type { SerializableValue } from './types';
 import { getThemeTemplate } from './themeTemplates';
-import { getThemeComposable } from './themeComposables';
 
 // Template loader - uses existing ThemeSheet templates
 function getTemplate(templateId: string, colorScheme: 'light' | 'dark'): ThemeOptions {
@@ -18,13 +17,14 @@ function getTemplate(templateId: string, colorScheme: 'light' | 'dark'): ThemeOp
     const expandedTheme = createTheme(rawTemplate);
     
     // Extract the fully-expanded options from the Theme object
-    // This includes all MUI-generated defaults for palette, typography, spacing, etc.
+    // IMPORTANT: Some properties become functions after createTheme() (spacing, breakpoints)
+    // We need to preserve the original config values, not the computed functions
     return {
       palette: expandedTheme.palette,
       typography: expandedTheme.typography,
-      spacing: expandedTheme.spacing,
-      shape: expandedTheme.shape,
-      breakpoints: expandedTheme.breakpoints,
+      spacing: rawTemplate.spacing ?? 8, // Use original value, not the function
+      shape: rawTemplate.shape ?? { borderRadius: 4 }, // Use original object
+      breakpoints: rawTemplate.breakpoints, // Original breakpoint config
       zIndex: expandedTheme.zIndex,
       transitions: expandedTheme.transitions,
       components: expandedTheme.components,
@@ -42,19 +42,6 @@ function getTemplate(templateId: string, colorScheme: 'light' | 'dark'): ThemeOp
   }
 }
 
-// Composables loader - uses ThemeDesign composables
-function getComposableOptions(composableId: string, colorScheme: 'light' | 'dark'): ThemeOptions {
-  try {
-    const composable = getThemeComposable(composableId);
-    
-    // Call getOptions with the color scheme
-    return composable.getOptions(colorScheme);
-  } catch (error) {
-    console.error(`[getComposableOptions] Failed to load composable ${composableId}:`, error);
-    return {};
-  }
-}
-
 /**
  * Internal hook that resolves ThemeOptions from all layers.
  * Used by useThemeDesignTheme to compute the final theme.
@@ -65,7 +52,6 @@ function getComposableOptions(composableId: string, colorScheme: 'light' | 'dark
 function useResolvedThemeOptions(colorScheme?: 'light' | 'dark'): ThemeOptions {
   // Subscribe to all relevant state slices with selectors
   const templateId = useThemeDesignStore((s) => s.selectedTemplateId.id);
-  const enabledComposables = useThemeDesignStore((s) => s.enabledComposables);
   const baseVisualEdits = useThemeDesignStore((s) => s.baseVisualEdits);
   const codeOverridesEvaluated = useThemeDesignStore((s) => s.codeOverridesEvaluated);
   const lightMode = useThemeDesignStore((s) => s.lightMode);
@@ -81,15 +67,9 @@ function useResolvedThemeOptions(colorScheme?: 'light' | 'dark'): ThemeOptions {
     // Get base template
     const template = getTemplate(templateId, targetScheme);
 
-    // Get enabled composables
-    const composables = Object.entries(enabledComposables)
-      .filter(([, enabled]) => enabled)
-      .map(([id]) => getComposableOptions(id, targetScheme));
-
     // Resolve all layers
     return resolveThemeOptions({
       template,
-      composables,
       baseVisualEdits,
       colorSchemeVisualEdits: modeEdits.visualEdits,
       codeOverrides: codeOverridesEvaluated,
@@ -97,7 +77,6 @@ function useResolvedThemeOptions(colorScheme?: 'light' | 'dark'): ThemeOptions {
     });
   }, [
     templateId,
-    enabledComposables,
     baseVisualEdits,
     codeOverridesEvaluated,
     modeEdits.visualEdits,
@@ -333,7 +312,6 @@ function useResolvedThemeOptionsWithoutCode(
   colorScheme: 'light' | 'dark'
 ): ThemeOptions {
   const templateId = useThemeDesignStore((s) => s.selectedTemplateId.id);
-  const enabledComposables = useThemeDesignStore((s) => s.enabledComposables);
   const baseVisualEdits = useThemeDesignStore((s) => s.baseVisualEdits);
   const lightMode = useThemeDesignStore((s) => s.lightMode);
   const darkMode = useThemeDesignStore((s) => s.darkMode);
@@ -342,18 +320,14 @@ function useResolvedThemeOptionsWithoutCode(
 
   return useMemo(() => {
     const template = getTemplate(templateId, colorScheme);
-    const composables = Object.entries(enabledComposables)
-      .filter(([, enabled]) => enabled)
-      .map(([id]) => getComposableOptions(id, colorScheme));
 
     return resolveThemeOptions({
       template,
-      composables,
       baseVisualEdits,
       colorSchemeVisualEdits: modeEdits.visualEdits,
       codeOverrides: {}, // Exclude code overrides for diff comparison
       colorScheme,
     });
-  }, [templateId, enabledComposables, baseVisualEdits, modeEdits.visualEdits, colorScheme]);
+  }, [templateId, baseVisualEdits, modeEdits.visualEdits, colorScheme]);
 }
 

@@ -19,7 +19,7 @@ const createInitialColorSchemeEdits = (): ColorSchemeEdits => ({
  * Theme Design Zustand store with undo/redo support.
  * 
  * Key features:
- * - Separate layers: template, composables, global edits, color scheme edits, code overrides
+ * - Separate layers: template, global edits, color scheme edits, code overrides
  * - Undo/redo via zundo temporal middleware
  * - Automatic path routing (palette/shadows → color scheme, everything else → global)
  * - Code evaluation with error handling
@@ -30,7 +30,6 @@ export const useThemeDesignStore = create<ThemeDesignStore>()(
       // ===== Initial State =====
       selectedTemplateId: { type: 'builtin', id: 'material' },
       templateHistory: [],
-      enabledComposables: {},
       baseVisualEdits: {},
       codeOverridesSource: '',
       codeOverridesEvaluated: {},
@@ -61,22 +60,9 @@ export const useThemeDesignStore = create<ThemeDesignStore>()(
                 codeOverridesError: null,
                 lightMode: createInitialColorSchemeEdits(),
                 darkMode: createInitialColorSchemeEdits(),
-                enabledComposables: {},
               }),
           hasUnsavedChanges: true,
         });
-      },
-
-      // ===== Composables =====
-
-      toggleComposable: (composableId: string, enabled: boolean) => {
-        set((state) => ({
-          enabledComposables: {
-            ...state.enabledComposables,
-            [composableId]: enabled,
-          },
-          hasUnsavedChanges: true,
-        }));
       },
 
       // ===== Visual Edits =====
@@ -230,7 +216,6 @@ export const useThemeDesignStore = create<ThemeDesignStore>()(
           codeOverridesError: null,
           lightMode: createInitialColorSchemeEdits(),
           darkMode: createInitialColorSchemeEdits(),
-          enabledComposables: {},
           hasUnsavedChanges: true,
         });
       },
@@ -250,7 +235,6 @@ export const useThemeDesignStore = create<ThemeDesignStore>()(
       partialize: (state) => ({
         selectedTemplateId: state.selectedTemplateId,
         templateHistory: state.templateHistory,
-        enabledComposables: state.enabledComposables,
         baseVisualEdits: state.baseVisualEdits,
         codeOverridesSource: state.codeOverridesSource,
         codeOverridesEvaluated: state.codeOverridesEvaluated,

@@ -28,12 +28,6 @@ export {
   type ThemeTemplateId,
 } from './themeTemplates';
 
-// === Composables ===
-export {
-  getThemeComposable,
-  listThemeComposables,
-} from './themeComposables';
-
 // === Types ===
 export type {
   ThemeDesignState,
@@ -41,7 +35,6 @@ export type {
   ThemeDesignStore,
   ColorSchemeEdits,
   ThemeTemplateRef,
-  ThemeComposable,
   ThemeResolutionConfig,
   SerializableValue,
   CodeEvaluationResult,

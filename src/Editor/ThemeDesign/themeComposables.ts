@@ -77,6 +77,122 @@ const THEME_COMPOSABLES: ThemeComposable[] = [
       },
     }),
   },
+  
+  // === Density Composables ===
+  {
+    id: 'dense-buttons',
+    label: 'Dense Buttons',
+    description: 'Applies size="small" as default for all buttons',
+    getOptions: () => ({
+      components: {
+        MuiButton: {
+          defaultProps: {
+            size: 'small',
+          },
+        },
+      },
+    }),
+  },
+  {
+    id: 'dense-inputs',
+    label: 'Dense Inputs',
+    description: 'Applies margin="dense" as default for all input components',
+    getOptions: () => ({
+      components: {
+        MuiFilledInput: {
+          defaultProps: {
+            margin: 'dense',
+          },
+        },
+        MuiFormControl: {
+          defaultProps: {
+            margin: 'dense',
+          },
+        },
+        MuiFormHelperText: {
+          defaultProps: {
+            margin: 'dense',
+          },
+        },
+        MuiInputBase: {
+          defaultProps: {
+            margin: 'dense',
+          },
+        },
+        MuiInputLabel: {
+          defaultProps: {
+            margin: 'dense',
+          },
+        },
+        MuiOutlinedInput: {
+          defaultProps: {
+            margin: 'dense',
+          },
+        },
+        MuiTextField: {
+          defaultProps: {
+            margin: 'dense',
+          },
+        },
+      },
+    }),
+  },
+  {
+    id: 'dense-icon-buttons',
+    label: 'Dense Icon Buttons',
+    description: 'Applies size="small" as default for all icon buttons',
+    getOptions: () => ({
+      components: {
+        MuiIconButton: {
+          defaultProps: {
+            size: 'small',
+          },
+        },
+      },
+    }),
+  },
+  {
+    id: 'dense-tables',
+    label: 'Dense Tables',
+    description: 'Applies size="small" as default for all tables',
+    getOptions: () => ({
+      components: {
+        MuiTable: {
+          defaultProps: {
+            size: 'small',
+          },
+        },
+      },
+    }),
+  },
+  {
+    id: 'dense-lists',
+    label: 'Dense Lists',
+    description: 'Applies dense prop as default for all list items',
+    getOptions: () => ({
+      components: {
+        MuiListItem: {
+          defaultProps: {
+            dense: true,
+          },
+        },
+      },
+    }),
+  },
+  {
+    id: 'dense-toolbars',
+    label: 'Dense Toolbars',
+    description: 'Applies variant="dense" as default for all toolbars',
+    getOptions: () => ({
+      components: {
+        MuiToolbar: {
+          defaultProps: {
+            variant: 'dense',
+          },
+        },
+      },
+    }),
+  },
 ];
 
 /**

@@ -56,12 +56,8 @@ export interface ThemeDesignState {
   /** History of previously selected templates (for comparison feature) */
   templateHistory: string[];
   
-  // === Composables Layer (Global) ===
-  /** Enabled composables (apply to both light and dark mode) */
-  enabledComposables: Record<string, boolean>;
-  
   // === Base Modifications (Color-Independent) ===
-  /** Base visual edits (typography, spacing, shape, breakpoints, etc.) */
+  /** Base visual edits (typography, spacing, shape, breakpoints, component defaults, etc.) */
   baseVisualEdits: Record<string, SerializableValue>;
   
   // === Code Overrides (Global - Can Override Any Path) ===
@@ -106,14 +102,6 @@ export interface ThemeDesignActions {
    * @param keepEdits - If true, preserve existing modifications
    */
   switchTemplate: (templateId: ThemeTemplateRef, keepEdits: boolean) => void;
-  
-  // === Composables ===
-  /**
-   * Toggle a composable on or off.
-   * @param composableId - Composable identifier
-   * @param enabled - Enable or disable
-   */
-  toggleComposable: (composableId: string, enabled: boolean) => void;
   
   // === Visual Edits ===
   /**
@@ -194,10 +182,7 @@ export interface ThemeResolutionConfig {
   /** Base template ThemeOptions (full theme for color scheme) */
   template: ThemeOptions;
   
-  /** Enabled composables with their resolved options */
-  composables: ThemeOptions[];
-  
-  /** Base visual edits (non-palette, non-shadows) */
+  /** Base visual edits (typography, spacing, shape, component defaults) */
   baseVisualEdits: Record<string, SerializableValue>;
   
   /** Color-scheme-specific visual edits (palette.*, shadows) */
