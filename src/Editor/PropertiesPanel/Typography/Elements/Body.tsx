@@ -1,5 +1,5 @@
-import FontStyleSelectOption from "../FontStyleOption/FontStyleSelectOption";
 import FontFamilyOption from "../FontFamily/FontFamilyOption";
+import FontStyleFieldOption from "../FontStyleOptions/FontStyleFieldOption";
 import FontWeightOption from "../FontWeightOption/FontWeightOption";
 import { Typography } from "@mui/material";
 
@@ -38,7 +38,7 @@ function BodyTypography() {
         modifiedValue={font.weight.modifiedValue}
       />
 
-      <FontStyleSelectOption
+      <FontStyleFieldOption
         name={"Line height"}
         initValue={font.lineHeight.initValue}
         modifiedValue={font.lineHeight.modifiedValue}

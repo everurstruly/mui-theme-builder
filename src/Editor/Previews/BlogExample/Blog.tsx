@@ -5,7 +5,6 @@ import { Paper, type SvgIconTypeMap } from "@mui/material";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import type { OverridableComponent } from "@mui/material/OverridableComponent";
-import React from "react";
 import BlogFooter from "./BlogFooter";
 import BlogHeader from "./BlogHeader";
 import BlogSidebar from "./BlogSidebar";

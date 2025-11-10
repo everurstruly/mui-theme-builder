@@ -4,8 +4,6 @@ import ContactForm from "./ContactForm";
 import ProductCardGrid from "./ProductCardGrid";
 import BlogExample from "./BlogExample";
 import CheckoutExample from "./CheckoutExample";
-import { getMuiComponentsRegistry } from "./MuiComponents/muiComponentsRegistry";
-import MuiComponentPreview from "./MuiComponents/MuiComponentPreview";
 import DevSandbox from "./DevSandbox";
 
 export type SampleMetadata = {
@@ -79,30 +77,6 @@ const samplesRegistry: Record<string, SampleMetadata> = {
   //   component: LoginForm,
   // },
 };
-
-/**
- * Create wrapper entries for MUI components
- */
-function getMuiComponentSamples(): Record<string, SampleMetadata> {
-  const muiRegistry = getMuiComponentsRegistry();
-  const muiSamples: Record<string, SampleMetadata> = {};
-
-  Object.entries(muiRegistry).forEach(([id, compMetadata]) => {
-    muiSamples[`mui-${id}`] = {
-      id: `mui-${id}`,
-      label: compMetadata.label,
-      description: `MUI ${compMetadata.name} component preview`,
-      // Force flat placement for all MUI components in the Previews tree
-      // Ignore any category-derived paths and place at the root level
-      path: "root",
-      component: () => MuiComponentPreview({ componentName: compMetadata.name }),
-      isMuiComponent: true,
-      muiComponentName: compMetadata.name,
-    };
-  });
-
-  return muiSamples;
-}
 
 /**
  * Combined registry: custom samples + auto-generated MUI components

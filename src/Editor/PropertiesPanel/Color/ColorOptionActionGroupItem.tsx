@@ -1,10 +1,8 @@
 import {
   Button,
   Typography,
-  TextField,
   ListItem,
   Box,
-  Tooltip,
 } from "@mui/material";
 import { useThemeDesignEditValue } from "../../ThemeDesign";
 
@@ -16,7 +14,7 @@ export type ColorOptionActionGroupItemProps = {
 };
 
 export default function ColorOptionActionGroupItem(props: ColorOptionActionGroupItemProps) {
-  const { value, setValue, hasVisualEdit, reset, hasCodeOverride } =
+  const { value, hasVisualEdit, reset, hasCodeOverride } =
     useThemeDesignEditValue(props.path);
 
   const currentValue = (value as string | number) ?? props.resolvedValue;

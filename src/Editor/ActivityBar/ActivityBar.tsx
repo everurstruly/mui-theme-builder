@@ -8,7 +8,6 @@ import ThemeSheetColorSchemeToggle from "./ThemeSheetColorSchemeToggle";
 import OpenLibraryButton from "./OpenLibraryButton";
 import NewThemeSheetButton from "./NewThemeSheettButton";
 import OpenedThemeSheetDisplay from "./OpenedThemeSheetDisplay";
-import CollapsedPreviewsActionMenu from "./CollapsedPreviewsActionMenu";
 import ExplorerPanelVisibilityToggle from "./ExplorerPanelVisibilityToggle";
 import { AppBar, Box, Divider, Stack, Toolbar, type SxProps } from "@mui/material";
 
