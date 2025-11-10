@@ -1,11 +1,11 @@
 import { Typography } from "@mui/material";
 import PresetsToggleGroup from "./PresetsToggleGroup";
 
-type MinimalismAppearanceProps = {
+type LayoutAppearanceProps = {
   title?: string;
 };
 
-export default function MinimalismAppearance(props: MinimalismAppearanceProps) {
+export default function LayoutAppearance(props: LayoutAppearanceProps) {
   return (
     <div>
       <Typography

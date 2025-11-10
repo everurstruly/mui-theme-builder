@@ -28,14 +28,12 @@ export default function StylesAppearance(props: StylesAppearanceProps) {
         </Typography> */}
       </Typography>
 
-      <CssStyleInputOption name="Spacing Factor" initValue="0" modifiedValue="0" />
+      {/* <CssStyleInputOption 
+        name="Spacing Factor" 
+        path="spacing" 
+      /> */}
 
-      <CssStyleInputOption
-        name="Border Radius"
-        initValue="4px"
-        modifiedValue="4px"
-      />
+      <CssStyleInputOption name="Border Radius" path="shape.borderRadius" />
     </div>
   );
 }
-

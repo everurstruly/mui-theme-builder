@@ -1,14 +1,42 @@
 import { Button, Typography, TextField, ListItem } from "@mui/material";
+import { useThemeDesignEditValue } from "../../../ThemeDesign";
 
 export type CssStyleInputOptionProps = {
   name: string;
-  initValue: string;
-  modifiedValue: string;
+  path: string;
   orientation?: "horizontal" | "vertical";
 };
 
 export default function CssStyleInputOption(props: CssStyleInputOptionProps) {
-  const canResetValue = props.initValue !== props.modifiedValue;
+  const {
+    value,
+    setValue,
+    reset,
+    hasVisualEdit,
+    hasCodeOverride,
+  } = useThemeDesignEditValue(props.path);
+
+  const displayValue = value?.toString() ?? '';
+  const canResetValue = hasVisualEdit || hasCodeOverride;
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = event.target.value;
+    
+    // Parse as number for numeric paths (spacing, shape.borderRadius)
+    if (props.path === 'spacing' || props.path === 'shape.borderRadius') {
+      const numValue = Number(newValue);
+      if (!isNaN(numValue)) {
+        setValue(numValue);
+      }
+    } else {
+      // For other paths that might need strings (like '4px')
+      setValue(newValue);
+    }
+  };
+
+  const handleReset = () => {
+    reset();
+  };
 
   return (
     <ListItem
@@ -53,6 +81,7 @@ export default function CssStyleInputOption(props: CssStyleInputOptionProps) {
         {canResetValue && (
           <Button
             color="warning"
+            onClick={handleReset}
             sx={{
               lineHeight: 1,
               fontSize: 10,
@@ -71,7 +100,9 @@ export default function CssStyleInputOption(props: CssStyleInputOptionProps) {
       <TextField
         size="small"
         variant="filled"
-        value={`${props.modifiedValue}`}
+        value={displayValue}
+        onChange={handleChange}
+        disabled={hasCodeOverride}
         sx={{
           flexBasis: props.orientation === "vertical" ? "100%" : "auto",
 
