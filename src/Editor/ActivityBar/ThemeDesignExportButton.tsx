@@ -5,13 +5,10 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-// import { FileCopyRounded, ContentCopy } from "@mui/icons-material";
 import { ContentCopy } from "@mui/icons-material";
 import { useThemeDesignOptions } from "../ThemeDesign";
 import {
   Stack,
-  // Tab,
-  // Tabs,
   Box,
   MenuItem,
   Select,
@@ -21,15 +18,17 @@ import {
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 
-export default function ExportThemeSheetButton() {
+type ExportType = "themeOptions" | "themeObject";
+type ExportFormat = "js" | "ts" | "json";
+type FileType = "theme" | "package" | "install";
+
+export default function ThemeDesignExportButton() {
   const [open, setOpen] = React.useState(false);
-  // const [packageManager, setPackageManager] = React.useState<
   const [packageManager] = React.useState<"npm" | "yarn" | "pnpm" | "bun">("npm");
-  const [exportFormat, setExportFormat] = React.useState<"js" | "ts">("ts");
-  const [activeFile, setActiveFile] = React.useState<
-    "theme" | "package" | "install"
-  >("theme");
-  const theme = useThemeDesignOptions();
+  const [exportType, setExportType] = React.useState<ExportType>("themeOptions");
+  const [exportFormat, setExportFormat] = React.useState<ExportFormat>("ts");
+  const [activeFile, setActiveFile] = React.useState<FileType>("theme");
+  const themeOptions = useThemeDesignOptions();
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -64,18 +63,39 @@ export default function ExportThemeSheetButton() {
   };
 
   const getThemeCode = () => {
-    if (!theme) return "// No theme available";
+    if (!themeOptions) return "// No theme available";
 
-    const themeJson = JSON.stringify(theme, null, 2);
+    const themeJson = JSON.stringify(themeOptions, null, 2);
 
+    // JSON format - just the raw theme options
+    if (exportFormat === "json") {
+      return themeJson;
+    }
+
+    // ThemeOptions only (config object)
+    if (exportType === "themeOptions") {
+      if (exportFormat === "js") {
+        return `export const themeOptions = ${themeJson};`;
+      } else {
+        // TypeScript
+        return `import type { ThemeOptions } from '@mui/material/styles';
+
+export const themeOptions: ThemeOptions = ${themeJson};`;
+      }
+    }
+
+    // Whole Theme object (with createTheme)
     if (exportFormat === "js") {
       return `import { createTheme } from '@mui/material/styles';
 
-const theme = createTheme(${themeJson});
+const themeOptions = ${themeJson};
+
+const theme = createTheme(themeOptions);
 
 export default theme;`;
     } else {
-      return `import { createTheme, ThemeOptions } from '@mui/material/styles';
+      // TypeScript
+      return `import { createTheme, type ThemeOptions } from '@mui/material/styles';
 
 const themeOptions: ThemeOptions = ${themeJson};
 
@@ -104,12 +124,16 @@ export default theme;`;
   const getLanguage = () => {
     if (activeFile === "install") return "bash";
     if (activeFile === "package") return "json";
+    if (exportFormat === "json") return "json";
     return exportFormat === "js" ? "javascript" : "typescript";
   };
 
   const getFileName = () => {
     if (activeFile === "install") return "install";
     if (activeFile === "package") return "package.json";
+    
+    // Theme file name based on format
+    if (exportFormat === "json") return "theme.json";
     return exportFormat === "js" ? "theme.js" : "theme.ts";
   };
 
@@ -192,10 +216,10 @@ export default theme;`;
             <Tab value="bun" label="bun" />
           </Tabs> */}
 
-          <Stack direction="row" spacing={1} alignItems="center">
+          <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
             <Select
-              value={exportFormat}
-              onChange={(e) => setExportFormat(e.target.value as "js" | "ts")}
+              value={exportType}
+              onChange={(e) => setExportType(e.target.value as ExportType)}
               size="small"
               sx={{
                 minWidth: 140,
@@ -203,8 +227,23 @@ export default theme;`;
                 fontSize: "12px",
               }}
             >
+              <MenuItem value="themeOptions">ThemeOptions</MenuItem>
+              <MenuItem value="themeObject">Theme Object</MenuItem>
+            </Select>
+
+            <Select
+              value={exportFormat}
+              onChange={(e) => setExportFormat(e.target.value as ExportFormat)}
+              size="small"
+              sx={{
+                minWidth: 120,
+                borderRadius: 2,
+                fontSize: "12px",
+              }}
+            >
               <MenuItem value="ts">TypeScript</MenuItem>
               <MenuItem value="js">JavaScript</MenuItem>
+              <MenuItem value="json">JSON</MenuItem>
             </Select>
 
             <Chip

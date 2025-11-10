@@ -1,5 +1,5 @@
 import ThemeSheetSelectMenu from "./ThemeSheetSelectMenu";
-import ExportThemeSheetButton from "./ExportThemeSheetButton";
+import ThemeDesignExportButton from "./ThemeDesignExportButton";
 import ThemingExperienceTab from "./ThemingExperienceTab";
 import SaveThemeSheetButton from "./SaveThemeSheetButton";
 import ThemingHistoryActions from "./ThemingHistoryActions";
@@ -69,7 +69,7 @@ function DesktopToolbarContent() {
           >
           <SaveThemeSheetButton />
           <ThemingHistoryActions />
-          <ExportThemeSheetButton />
+          <ThemeDesignExportButton />
         </Stack>
       </Stack>
 
