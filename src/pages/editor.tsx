@@ -52,17 +52,20 @@ export default function EditorPage() {
             alignItems="center"
             sx={{
               marginLeft: "auto",
-              marginRight: -1, // size of button padding
             }}
           >
-            <Button aria-label="search" color="inherit" sx={{ px: 1, minWidth: 0 }}>
+            <Button
+              aria-label="search"
+              color="inherit"
+              sx={{ px: 1.5, minWidth: 0 }}
+            >
               <HelpOutlineOutlined />
             </Button>
 
             <Button
               aria-label="display more actions"
               color="inherit"
-              sx={{ px: 1, minWidth: 0 }}
+              sx={{ px: 1.5, minWidth: 0 }}
             >
               <MenuIcon />
             </Button>

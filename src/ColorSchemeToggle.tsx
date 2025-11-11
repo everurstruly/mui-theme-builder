@@ -14,8 +14,7 @@ function ColorSchemeToggle() {
       value="color-scheme-mode"
       size="small"
       sx={[
-        // px should align with body content
-        () => ({ minWidth: 0, px: 2, color: "black" }),
+        () => ({ minWidth: 0, px: 1, color: "black" }),
         (theme) =>
           theme.applyStyles("dark", {
             color: "white",
