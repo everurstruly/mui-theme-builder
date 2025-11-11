@@ -1,5 +1,6 @@
-import { Button, Typography, TextField, ListItem } from "@mui/material";
+import { Typography, TextField, ListItem, Stack } from "@mui/material";
 import { useThemeDesignEditValue } from "../../../ThemeDesign";
+import OptionListItemResetButton from "../../OptionListItemResetButton";
 
 export type CssStyleInputOptionProps = {
   name: string;
@@ -8,22 +9,17 @@ export type CssStyleInputOptionProps = {
 };
 
 export default function CssStyleInputOption(props: CssStyleInputOptionProps) {
-  const {
-    value,
-    setValue,
-    reset,
-    hasVisualEdit,
-    hasCodeOverride,
-  } = useThemeDesignEditValue(props.path);
+  const { value, setValue, reset, hasVisualEdit, hasCodeOverride } =
+    useThemeDesignEditValue(props.path);
 
-  const displayValue = value?.toString() ?? '';
+  const displayValue = value?.toString() ?? "";
   const canResetValue = hasVisualEdit || hasCodeOverride;
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = event.target.value;
-    
+
     // Parse as number for numeric paths (spacing, shape.borderRadius)
-    if (props.path === 'spacing' || props.path === 'shape.borderRadius') {
+    if (props.path === "spacing" || props.path === "shape.borderRadius") {
       const numValue = Number(newValue);
       if (!isNaN(numValue)) {
         setValue(numValue);
@@ -54,48 +50,22 @@ export default function CssStyleInputOption(props: CssStyleInputOptionProps) {
         columnGap: 2.5,
       }}
     >
-      <Typography
-        component="div"
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          columnGap: 0.5,
-          fontSize: 12,
-          // color: canResetValue ? "warning.main" : "text.primary",
-        }}
-      >
-        {!canResetValue && (
-          <Typography
-            color="green"
-            sx={{
-              p: 0.5,
-              fontSize: 10,
-              lineHeight: 1,
-              backgroundColor: "#e0f8e089",
-            }}
-          >
-            Default
-          </Typography>
-        )}
+      <Stack direction="row" alignItems="center" spacing={0.75}>
+        <OptionListItemResetButton
+          canResetValue={canResetValue}
+          resetValue={handleReset}
+          initStateLabel="Default"
+        />
 
-        {canResetValue && (
-          <Button
-            color="warning"
-            onClick={handleReset}
-            sx={{
-              lineHeight: 1,
-              fontSize: 10,
-              padding: 0.5,
-              fontWeight: 400,
-              minWidth: "auto",
-            }}
-          >
-            Reset
-          </Button>
-        )}
-
-        {props.name}
-      </Typography>
+        <Typography
+          variant="caption"
+          sx={{
+            textTransform: "capitalize",
+          }}
+        >
+          {props.name}
+        </Typography>
+      </Stack>
 
       <TextField
         size="small"
@@ -122,4 +92,3 @@ export default function CssStyleInputOption(props: CssStyleInputOptionProps) {
     </ListItem>
   );
 }
-

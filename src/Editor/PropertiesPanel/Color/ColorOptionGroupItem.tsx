@@ -1,8 +1,9 @@
-import { Button, ListItem, Typography, Box, Stack, Popover } from "@mui/material";
+import { ListItem, Typography, Box, Stack, Popover } from "@mui/material";
 import { useState, useRef } from "react";
 import { Sketch } from "@uiw/react-color";
 import { useDebouncyEffect } from "use-debouncy";
 import { useThemeDesignEditValue } from "../../ThemeDesign";
+import OptionListItemResetButton from "../OptionListItemResetButton";
 
 type ColorOptionGroupItemProps = {
   name: string;
@@ -70,49 +71,22 @@ export default function ColorOptionGroupItem(props: ColorOptionGroupItemProps) {
         paddingInline: 0,
       }}
     >
-      <Typography
-        variant="caption"
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          columnGap: 0.75,
-          cursor: "pointer",
-          fontWeight: 400,
-          textTransform: "capitalize",
-        }}
-      >
-        {!canResetValue && (
-          <Typography
-            color="green"
-            sx={{
-              p: 0.5,
-              fontSize: 10,
-              lineHeight: 1,
-              backgroundColor: "#e0f8e089",
-            }}
-          >
-            Default
-          </Typography>
-        )}
+      <Stack direction="row" alignItems="center" spacing={0.75}>
+        <OptionListItemResetButton
+          canResetValue={canResetValue}
+          resetValue={resetValue}
+          initStateLabel="Default"
+        />
 
-        {canResetValue && (
-          <Button
-            color="warning"
-            onClick={() => resetValue()}
-            sx={{
-              lineHeight: 1,
-              fontSize: 10,
-              padding: 0.5,
-              fontWeight: 400,
-              minWidth: "auto",
-            }}
-          >
-            Reset
-          </Button>
-        )}
-
-        {props.name}
-      </Typography>
+        <Typography
+          variant="caption"
+          sx={{
+            textTransform: "capitalize",
+          }}
+        >
+          {props.name}
+        </Typography>
+      </Stack>
 
       <Stack
         direction="row"
@@ -159,4 +133,3 @@ export default function ColorOptionGroupItem(props: ColorOptionGroupItemProps) {
     </ListItem>
   );
 }
-
