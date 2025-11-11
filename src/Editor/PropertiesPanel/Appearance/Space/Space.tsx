@@ -61,7 +61,6 @@ export default function SpaceAppearance(props: SpaceAppearanceProps) {
         marginTop={5}
         paddingBlock={1}
         fontWeight={500}
-        color="common.black"
         paddingInlineStart={0.35} // aesthetics alignment with list items badge
       >
         {props.title}
@@ -72,7 +71,7 @@ export default function SpaceAppearance(props: SpaceAppearanceProps) {
       <Stack
         divider={<Divider />}
         sx={{
-          py: 1,
+          mt: 3,
           px: 0,
         }}
       >

@@ -1,7 +1,8 @@
-import { ListItemButton, Switch } from "@mui/material";
+import { ListItemButton, Switch, Tooltip } from "@mui/material";
 import ListItemText from "@mui/material/ListItemText";
 import { useThemeDesignStore, type SerializableValue } from "../ThemeDesign";
 import { useMemo } from "react";
+import { InfoOutline } from "@mui/icons-material";
 
 export type BatchToggleInputProps = {
   label: string;
@@ -14,7 +15,7 @@ export type BatchToggleInputProps = {
 /**
  * A toggle input that applies multiple visual edits as a batch.
  * Shows as a single switch but sets/removes multiple theme paths.
- * 
+ *
  * Enabled state is determined by checking if ALL paths match their expected values.
  */
 export default function BatchToggleInput(props: BatchToggleInputProps) {
@@ -27,7 +28,7 @@ export default function BatchToggleInput(props: BatchToggleInputProps) {
 
   // Get the appropriate visual edits based on active color scheme
   const activeVisualEdits = useMemo(() => {
-    const modeEdits = activeColorScheme === 'light' ? lightMode : darkMode;
+    const modeEdits = activeColorScheme === "light" ? lightMode : darkMode;
     return { ...baseVisualEdits, ...modeEdits.visualEdits };
   }, [baseVisualEdits, lightMode, darkMode, activeColorScheme]);
 
@@ -70,20 +71,18 @@ export default function BatchToggleInput(props: BatchToggleInputProps) {
 
       <ListItemText
         primary={props.label}
-        secondary={props.description}
         slotProps={{
           primary: {
             sx: {
               fontSize: "body2.fontSize",
             },
           },
-          secondary: {
-            sx: {
-              fontSize: "caption.fontSize",
-            },
-          },
         }}
       />
+
+      <Tooltip title={props.description} placement="left-start">
+        <InfoOutline fontSize="small" sx={{ mx: 0.5 }} />
+      </Tooltip>
     </ListItemButton>
   );
 }
