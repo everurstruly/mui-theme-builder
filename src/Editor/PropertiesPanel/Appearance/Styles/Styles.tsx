@@ -14,7 +14,6 @@ export default function StylesAppearance(props: StylesAppearanceProps) {
         marginTop={5}
         paddingBlock={1}
         fontWeight={500}
-        color="common.black"
         paddingInlineStart={0.35} // aesthetics alignment with list items badge
       >
         {props.title}{" "}

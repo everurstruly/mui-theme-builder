@@ -3,6 +3,7 @@ import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import MenuIcon from "@mui/icons-material/Menu";
+import ColorSchemeToggle from "../ColorSchemeToggle";
 import { HelpOutlineOutlined } from "@mui/icons-material";
 import { Button, colors, Stack } from "@mui/material";
 import { styled } from "@mui/material/styles";
@@ -21,12 +22,19 @@ export default function EditorPage() {
         position="static"
         color="inherit"
         elevation={0}
-        sx={{
-          overflow: "hidden",
-          borderBottom: 1,
-          borderBottomColor: "divider",
-          backgroundColor: colors.common.black,
-        }}
+        sx={[
+          () => ({
+            overflow: "hidden",
+            borderBottom: 1,
+            borderBottomColor: colors.grey[300],
+            backgroundColor: colors.common.white,
+          }),
+          (theme) =>
+            theme.applyStyles("dark", {
+              borderBottomColor: "divider",
+              backgroundColor: colors.common.black,
+            }),
+        ]}
       >
         <StyledToolbar sx={{ px: { lg: 1.5 } }}>
           <Typography
@@ -58,6 +66,8 @@ export default function EditorPage() {
             >
               <MenuIcon />
             </Button>
+
+            <ColorSchemeToggle />
           </Stack>
         </StyledToolbar>
       </AppBar>

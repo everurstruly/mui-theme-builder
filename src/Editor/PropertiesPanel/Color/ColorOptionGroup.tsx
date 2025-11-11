@@ -14,7 +14,6 @@ export default function ColorOptionGroup(props: ColorOptionGroupProps) {
         marginTop={7}
         paddingBottom={1.8}
         fontWeight={500}
-        color="common.black"
         paddingInlineStart={0.35} // aesthetics alignment with list items badge
       >
         {props.title}{" "}

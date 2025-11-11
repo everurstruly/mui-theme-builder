@@ -26,6 +26,10 @@ createRoot(document.getElementById("root")!).render(
               primary: "#444",
             },
           },
+          colorSchemes: {
+            dark: true,
+            light: true,
+          },
           typography: {
             htmlFontSize: 16,
 
