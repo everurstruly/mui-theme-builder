@@ -2,7 +2,6 @@ import { ContrastOutlined } from "@mui/icons-material";
 import { useColorScheme, Button } from "@mui/material";
 
 const modeCycleOrder: Array<ReturnType<typeof useColorScheme>["mode"]> = [
-  "system",
   "light",
   "dark",
 ];
