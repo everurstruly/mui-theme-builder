@@ -27,7 +27,6 @@ function DesktopToolbarContent() {
       direction="row"
       alignItems={"center"}
       justifyContent="space-between"
-      borderLeft={1}
       divider={
         <Divider
           orientation="vertical"
@@ -37,6 +36,9 @@ function DesktopToolbarContent() {
       }
       borderColor={"divider"}
       display={{ xs: "none", md: "flex" }}
+      sx={{
+        backgroundColor: (theme) => theme.palette.background.default,
+      }}
     >
       <Stack
         direction="row"
@@ -44,7 +46,6 @@ function DesktopToolbarContent() {
         justifyContent={"space-between"}
         paddingInline={{ lg: 1.5 }}
         width={"var(--explorer-panel-width)"}
-        marginLeft={"-1px"} // REMOVES WEIRD BROWSER ALLOCATED SPACE IMPERFECT MISALIGNMENT
       >
         <OpenedThemeSheetDisplay />
         <ExplorerPanelVisibilityToggle />
@@ -65,7 +66,7 @@ function DesktopToolbarContent() {
           direction={"row"}
           columnGap={"inherit"}
           sx={{ marginInlineStart: "auto" }}
-          >
+        >
           <SaveThemeSheetButton />
           <ThemingHistoryActions />
           <ThemeDesignExportButton />
@@ -148,4 +149,3 @@ function SectionLayout({ sx, children }: SectionLayoutProps) {
     </AppBar>
   );
 }
-
