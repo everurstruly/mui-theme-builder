@@ -3,7 +3,7 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import { useEditorExperienceStore } from "../useThemingExperienceStore";
 import { editorExperiences, type EditorExperienceId } from "../themingExperience";
-import { alpha, type SxProps } from "@mui/material";
+import { type SxProps } from "@mui/material";
 
 type EditorThemingExperienceTabProps = {
   sx?: SxProps;
@@ -40,7 +40,7 @@ export default function ThemingExperienceTab({
         borderRadius: 2,
         border: "1px solid",
         borderColor: "divider",
-        backgroundColor: (theme) => alpha(theme.palette.common.black, 0.0125),
+        // backgroundColor: (theme) => alpha(theme.palette.common.black, 0.0125),
 
         "& .MuiTab-root": {
           minHeight: "auto", // fix vertical responsiveness issue
@@ -62,7 +62,7 @@ export default function ThemingExperienceTab({
           // },
 
           "&.Mui-selected": {
-            color: "common.black",
+            color: (theme) => theme.palette.text.primary,
             zIndex: 2,
           },
         },
@@ -74,7 +74,7 @@ export default function ThemingExperienceTab({
           height: "99%",
           border: "1px solid",
           borderColor: "divider",
-          backgroundColor: "white",
+          backgroundColor: (theme) => theme.palette.background.paper,
         },
 
         ...rest.sx,
@@ -96,4 +96,3 @@ export default function ThemingExperienceTab({
     </Tabs>
   );
 }
-

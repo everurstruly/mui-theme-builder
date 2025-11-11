@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 export default function ThemingHistoryActions() {
   const { undo, redo } = useThemeDesignStore.temporal.getState();
-  
+
   // Subscribe to temporal state changes for reactive updates
   const [canUndo, setCanUndo] = useState(false);
   const [canRedo, setCanRedo] = useState(false);
@@ -28,30 +28,28 @@ export default function ThemingHistoryActions() {
   return (
     <ButtonGroup size="large">
       <Button
-        color="inherit"
         value="undo"
         aria-label="undo"
         disabled={!canUndo}
+        onClick={handleUndo}
         sx={{
           borderRadius: 2,
           px: 1,
         }}
-        onClick={handleUndo}
       >
         <UndoRounded sx={{ fontSize: 18 }} />
         {/* Undo */}
       </Button>
 
       <Button
-        color="inherit"
         value="redo"
         aria-label="redo"
         disabled={!canRedo}
+        onClick={handleRedo}
         sx={{
           borderRadius: 2,
           px: 1,
         }}
-        onClick={handleRedo}
       >
         <RedoRounded sx={{ fontSize: 18 }} />
         {/* Redo */}
@@ -59,4 +57,3 @@ export default function ThemingHistoryActions() {
     </ButtonGroup>
   );
 }
-
