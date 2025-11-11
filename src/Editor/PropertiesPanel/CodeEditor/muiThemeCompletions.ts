@@ -1,0 +1,21 @@
+export const muiThemeCompletions = [
+  { label: "alpha", type: "keyword", info: "" },
+  { label: "applyStyles", type: "keyword", info: "" },
+  { label: "breakpoints", type: "keyword", info: "" },
+  { label: "components", type: "keyword", info: "" },
+  { label: "containerQueries", type: "keyword", info: "" },
+  { label: "darken", type: "keyword", info: "" },
+  { label: "direction", type: "keyword", info: "" },
+  { label: "lighten", type: "keyword", info: "" },
+  { label: "mixins", type: "keyword", info: "" },
+  { label: "palette", type: "keyword", info: "" },
+  { label: "shadows", type: "keyword", info: "" },
+  { label: "shape", type: "keyword", info: "" },
+  { label: "spacing", type: "keyword", info: "" },
+  { label: "toRuntimeSource", type: "keyword", info: "" },
+  { label: "transitions", type: "keyword", info: "" },
+  { label: "typography", type: "keyword", info: "" },
+  { label: "unstable_sx", type: "keyword", info: "" },
+  { label: "unstable_sxConfig", type: "keyword", info: "" },
+  { label: "zIndex", type: "keyword", info: "" }
+];

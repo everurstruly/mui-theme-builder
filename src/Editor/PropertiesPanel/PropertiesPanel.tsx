@@ -47,7 +47,9 @@ function DesktopPanelDrawer() {
             position: "static", // IMPORTANT: ensures responsiveness via dom structure
             height: "100%",
             border: "none",
-            overflow: "hidden",
+            // Allow Monaco's suggestion/hover widgets to escape the panel
+            // so IntelliSense isn't clipped by the drawer boundaries.
+            overflow: "visible",
 
             animation: `PanelFade 240ms ease`,
             willChange: "opacity, transform",

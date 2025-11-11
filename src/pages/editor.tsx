@@ -2,9 +2,8 @@ import Editor from "../Editor/Editor";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import MenuIcon from "@mui/icons-material/Menu";
 import ColorSchemeToggle from "../ColorSchemeToggle";
-import { HelpOutlineOutlined } from "@mui/icons-material";
+import { GitHub, LogoDevRounded } from "@mui/icons-material";
 import { Button, colors, Stack } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
@@ -40,34 +39,33 @@ export default function EditorPage() {
           <Typography
             noWrap
             variant="h6"
-            color="inherit"
-            aria-label="open drawer"
-            sx={{ fontSize: 14, fontWeight: 500 }}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              columnGap: 0.5,
+            }}
           >
-            MUI Theme Builder
+            <LogoDevRounded />
+            {/* MUI Theme Builder @^6 */}
+            MUI Theme Editor
           </Typography>
 
           <Stack
             direction="row"
             alignItems="center"
-            sx={{
-              marginLeft: "auto",
-            }}
+            columnGap={0.5}
+            marginLeft="auto"
           >
-            <Button
-              aria-label="search"
-              color="inherit"
-              sx={{ px: 1.5, minWidth: 0 }}
-            >
-              <HelpOutlineOutlined />
+            <Button aria-label="search" color="inherit" sx={{ px: 1, minWidth: 0 }}>
+              Help
             </Button>
 
             <Button
-              aria-label="display more actions"
+              href="https://github.com/everurstruly/mui-theme-builder"
               color="inherit"
-              sx={{ px: 1.5, minWidth: 0 }}
+              sx={{ px: 1, minWidth: 0 }}
             >
-              <MenuIcon />
+              <GitHub />
             </Button>
 
             <ColorSchemeToggle />

@@ -17,6 +17,7 @@ export default function PanelBody() {
     return (
       <Box
         height={"100%"}
+        overflow={"auto"}
         onMouseEnter={() => setMouseOverPropertiesPanel(true)}
         onMouseLeave={() => setMouseOverPropertiesPanel(false)}
       >

@@ -8,6 +8,7 @@ import {
   useBreakpointSimulation,
   spoofThemeBreakpoints,
 } from "./BreakpointSimulation";
+import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 
 export default function BoardSurface() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -70,55 +71,58 @@ export default function BoardSurface() {
           justifyContent: "center",
           alignItems: "flex-start",
           overflow: "auto",
-          p: 1.5,
+          py: 1.5,
+          p: 3,
         }}
       >
-        <Paper
-          ref={containerRef}
-          role="presentation"
-          sx={(theme) => ({
-            position: "relative",
-            overflow: "auto",
-            display: "flex",
-            flexDirection: "column",
-            boxShadow: 0,
-            border: 3,
-            borderStyle: "double",
-            borderColor: "primary.light",
-            paddingRight: 0.2,
-            maxWidth: getMaxWidth(),
-            minWidth: getMinWidth(),
-            width: simulatedBreakpoint ? getMaxWidth() : "100%",
-            transform: `scale(${scale})`,
-            transformOrigin: "top center",
-            transition:
-              "max-width 0.3s ease-in-out, min-width 0.3s ease-in-out, width 0.3s ease-in-out, transform 0.3s ease-in-out",
+        <PanelGroup direction="horizontal">
+          <Panel defaultSize={100} minSize={30}>
+            <Paper
+              ref={containerRef}
+              role="presentation"
+              sx={(theme) => ({
+                position: "relative",
+                overflow: "auto",
+                display: "flex",
+                flexDirection: "column",
+                boxShadow: 0,
+                border: 3,
+                borderStyle: "double",
+                borderColor: "primary.light",
+                paddingRight: 0.2,
+                maxWidth: getMaxWidth(),
+                minWidth: getMinWidth(),
+                width: simulatedBreakpoint ? getMaxWidth() : "100%",
+                transform: `scale(${scale})`,
+                transformOrigin: "top center",
+                transition:
+                  "max-width 0.3s ease-in-out, min-width 0.3s ease-in-out, width 0.3s ease-in-out, transform 0.3s ease-in-out",
 
-            // Scrollbar styling: WebKit and Firefox
-            // Thin thumb and track matching primary palette
-            "::-webkit-scrollbar": {
-              width: 5,
-              height: 5,
-            },
-            "::-webkit-scrollbar-track": {
-              background:
-                theme.palette.mode === "dark"
-                  ? `${theme.palette.primary.main}15`
-                  : `${theme.palette.primary.main}10`,
-              borderRadius: theme.shape.borderRadius,
-            },
-            "::-webkit-scrollbar-thumb": {
-              background: theme.palette.primary.main,
-              borderRadius: theme.shape.borderRadius,
-              border: `2px solid ${
-                theme.palette.mode === "dark"
-                  ? `${theme.palette.primary.main}15`
-                  : `${theme.palette.primary.main}10`
-              }`,
-            },
-          })}
-        >
-          {/* <Box sx={{ position: "sticky", top: 0, zIndex: 1, py: 0.4 }}>
+                // Scrollbar styling: WebKit and Firefox
+                // Thin thumb and track matching primary palette
+                "::-webkit-scrollbar": {
+                  width: 5,
+                  height: 5,
+                },
+                "::-webkit-scrollbar-track": {
+                  background:
+                    theme.palette.mode === "dark"
+                      ? `${theme.palette.primary.main}15`
+                      : `${theme.palette.primary.main}10`,
+                  borderRadius: theme.shape.borderRadius,
+                },
+                "::-webkit-scrollbar-thumb": {
+                  background: theme.palette.primary.main,
+                  borderRadius: theme.shape.borderRadius,
+                  border: `2px solid ${
+                    theme.palette.mode === "dark"
+                      ? `${theme.palette.primary.main}15`
+                      : `${theme.palette.primary.main}10`
+                  }`,
+                },
+              })}
+            >
+              {/* <Box sx={{ position: "sticky", top: 0, zIndex: 1, py: 0.4 }}>
             <Box
               sx={{
                 display: "flex",
@@ -135,10 +139,13 @@ export default function BoardSurface() {
             </Box>
           </Box> */}
 
-          <PreviewComponent />
-        </Paper>
+              <PreviewComponent />
+            </Paper>
+          </Panel>
+          <PanelResizeHandle />
+          <Panel />
+        </PanelGroup>
       </Box>
     </ThemeProvider>
   );
 }
-

@@ -50,7 +50,7 @@ export default function PrimitiesPropertiesPanelBody() {
           zIndex: 1,
           borderBottom: 1,
           borderColor: "divider",
-          backgroundColor: "rgba(255, 255, 255, .95)",
+          backgroundColor: "background.default",
 
           "& .MuiTabs-indicator": {
             // backgroundColor: "text.primary",

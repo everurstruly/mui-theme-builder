@@ -29,8 +29,8 @@ export default function Editor() {
           [theme.breakpoints.up("lg")]: {
             ":root": {
               "--activity-bar-height": "56px",
-              "--explorer-panel-width": "21vw",
-              "--properties-panel-width": "25vw",
+              "--explorer-panel-width": "20vw",
+              "--properties-panel-width": "24vw",
             },
           },
         })}
