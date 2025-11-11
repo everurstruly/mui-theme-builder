@@ -30,7 +30,7 @@ export default function Editor() {
             ":root": {
               "--activity-bar-height": "56px",
               "--explorer-panel-width": "21vw",
-              "--properties-panel-width": "24vw",
+              "--properties-panel-width": "25vw",
             },
           },
         })}

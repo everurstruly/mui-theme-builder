@@ -32,6 +32,7 @@ export default function ThemeSheetColorSchemeToggle() {
   return (
     <ToggleButtonGroup
       exclusive
+      color="primary"
       value={colorScheme}
       onChange={handleChange}
       aria-label="Theme color mode toggle"
@@ -60,4 +61,3 @@ export default function ThemeSheetColorSchemeToggle() {
     </ToggleButtonGroup>
   );
 }
-
