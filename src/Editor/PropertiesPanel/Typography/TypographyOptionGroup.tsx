@@ -14,7 +14,6 @@ export default function TypographyOptionGroup(props: TypographyOptionGroupProps)
         marginTop={6}
         paddingBottom={1.5}
         fontWeight={600}
-        paddingInlineStart={0.35} // aesthetics alignment with list items badge
       >
         {props.title}
       </Typography>
