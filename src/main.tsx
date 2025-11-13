@@ -15,6 +15,7 @@ import {
   responsiveFontSizes,
   ThemeProvider,
 } from "@mui/material";
+import EditorGlobalKeyboardShortcuts from "./Editor/EditorGlobalKeyboardShortcuts";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -69,6 +70,8 @@ createRoot(document.getElementById("root")!).render(
       )}
     >
       <CssBaseline />
+    {/* Global keyboard shortcuts */}
+    <EditorGlobalKeyboardShortcuts />
       <BrowserRouter>
         <Routes>
           <Route index element={<HomePage />} />
