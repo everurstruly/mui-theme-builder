@@ -64,12 +64,16 @@ export default function useResolvedPaletteShade(path: string, name: string) {
   // Display the generated shade if Auto conditions met; otherwise use stored value or default.
   const displayValue = (isResolved ? resolvedShade : editHook.value) || "#000000";
 
-  // Wrap reset to suppress Auto immediately after user resets this derived shade.
+  // Wrap reset so that:
+  // - If the parent `main` is actively user-edited, Reset should restore Auto (no suppress).
+  // - Otherwise (parent not edited), Reset should revert to default and suppress Auto briefly.
   const resetWithSuppress = () => {
     editHook.reset();
-    resetSuppressMap.set(path, true);
-    // Clear suppress flag after a short delay so future parent edits can re-enable Auto.
-    setTimeout(() => resetSuppressMap.delete(path), 100);
+    if (!parentIsActivelyEdited) {
+      resetSuppressMap.set(path, true);
+      // Clear suppress flag after a short delay so future parent edits can re-enable Auto.
+      setTimeout(() => resetSuppressMap.delete(path), 100);
+    }
   };
 
   return {
