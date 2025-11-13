@@ -1,8 +1,8 @@
-import { Box, Button, Typography, useTheme, Paper, Stack, Divider } from "@mui/material";
+import { Box, Button, Typography, Paper, Stack, Divider } from "@mui/material";
 
 function ButtonsSection() {
   return (
-    <Paper elevation={1} sx={{ p: 3, mb: 3 }}>
+    <Paper elevation={1} sx={{ p: 2 }}>
       <Typography variant="subtitle2" color="text.secondary" mb={2}>
         Button Typography
       </Typography>
@@ -24,9 +24,8 @@ function ButtonsSection() {
 }
 
 function BackgroundsSection() {
-
   return (
-    <Paper elevation={1} sx={{ p: 3, mb: 3 }}>
+    <Paper elevation={1} sx={{ p: 2 }}>
       <Typography variant="subtitle2" color="text.secondary" mb={2}>
         Backgrounds & Paper
       </Typography>
@@ -45,7 +44,12 @@ function BackgroundsSection() {
             Colored background (primary)
           </Typography>
           <Paper
-            sx={{ p: 2, mt: 1, backgroundColor: "primary.main", color: "primary.contrastText" }}
+            sx={{
+              p: 2,
+              mt: 1,
+              backgroundColor: "primary.main",
+              color: "primary.contrastText",
+            }}
             elevation={0}
           >
             Paper with primary background and contrast text
@@ -72,16 +76,10 @@ function BackgroundsSection() {
 }
 
 function TypographyPlayground() {
-  const theme = useTheme();
-
   return (
-    <Box sx={{ p: 2, maxWidth: 1200 }}>
-      <Typography variant="h4" gutterBottom fontWeight={600} mb={4}>
-        Typography Playground
-      </Typography>
-
+    <>
       {/* Headlines Section */}
-      <Paper elevation={1} sx={{ p: 3, mb: 3 }}>
+      <Paper elevation={1} sx={{ p: 2 }}>
         <Typography variant="subtitle2" color="text.secondary" mb={2}>
           Headlines
         </Typography>
@@ -97,7 +95,7 @@ function TypographyPlayground() {
       <Divider sx={{ my: 2 }} />
 
       {/* Body Text Section */}
-      <Paper elevation={1} sx={{ p: 3, mb: 3 }}>
+      <Paper elevation={1} sx={{ p: 2 }}>
         <Typography variant="subtitle2" color="text.secondary" mb={2}>
           Body Text
         </Typography>
@@ -124,67 +122,16 @@ function TypographyPlayground() {
           </Typography>
         </Stack>
       </Paper>
-
-      <Divider sx={{ my: 2 }} />
-
-      <ButtonsSection />
-
-      <Divider sx={{ my: 2 }} />
-
-      <BackgroundsSection />
-
-      <Divider sx={{ my: 2 }} />
-
-      {/* Font Properties Display */}
-      <Paper elevation={1} sx={{ p: 3 }}>
-        <Typography variant="subtitle2" color="text.secondary" mb={2}>
-          Current Font Settings
-        </Typography>
-        <Box
-          sx={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-            gap: 2,
-          }}
-        >
-          <Box>
-            <Typography variant="caption" color="text.secondary">
-              Base Font Family
-            </Typography>
-            <Typography variant="body2" fontWeight={500}>
-              {theme.typography.fontFamily}
-            </Typography>
-          </Box>
-          <Box>
-            <Typography variant="caption" color="text.secondary">
-              H1 Font Weight
-            </Typography>
-            <Typography variant="body2" fontWeight={500}>
-              {theme.typography.h1.fontWeight}
-            </Typography>
-          </Box>
-          <Box>
-            <Typography variant="caption" color="text.secondary">
-              H1 Line Height
-            </Typography>
-            <Typography variant="body2" fontWeight={500}>
-              {theme.typography.h1.lineHeight}
-            </Typography>
-          </Box>
-          <Box>
-            <Typography variant="caption" color="text.secondary">
-              Button Font Weight
-            </Typography>
-            <Typography variant="body2" fontWeight={500}>
-              {theme.typography.button.fontWeight}
-            </Typography>
-          </Box>
-        </Box>
-      </Paper>
-    </Box>
+    </>
   );
 }
 
 export default function DevSandbox() {
-  return <TypographyPlayground />;
+  return (
+    <Stack spacing={8} px={2} pb={16}>
+      <TypographyPlayground />
+      <BackgroundsSection />
+      <ButtonsSection />
+    </Stack>
+  );
 }
