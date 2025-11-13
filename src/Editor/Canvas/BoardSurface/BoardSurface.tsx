@@ -71,7 +71,7 @@ export default function BoardSurface() {
           justifyContent: "center",
           alignItems: "flex-start",
           overflow: "auto",
-          py: 3,
+          p: 1,
         }}
       >
         <PanelGroup direction="horizontal">
@@ -85,9 +85,9 @@ export default function BoardSurface() {
                 display: "flex",
                 flexDirection: "column",
                 boxShadow: 0,
-                // border: 2,
-                // borderStyle: "double",
-                borderColor: "common.black",
+                border: 2,
+                borderStyle: "dotted",
+                borderColor: "primary.dark",
                 maxWidth: getMaxWidth(),
                 minWidth: getMinWidth(),
                 height: "100%",
@@ -113,7 +113,7 @@ export default function BoardSurface() {
                 },
                 "::-webkit-scrollbar-thumb": {
                   background: theme.palette.primary.main,
-                  borderRadius: theme.shape.borderRadius,
+                  // borderRadius: theme.shape.borderRadius,
                   border: `2px solid ${
                     theme.palette.mode === "dark"
                       ? `${theme.palette.primary.main}15`
