@@ -71,8 +71,7 @@ export default function BoardSurface() {
           justifyContent: "center",
           alignItems: "flex-start",
           overflow: "auto",
-          py: 1.5,
-          p: 3,
+          py: 3,
         }}
       >
         <PanelGroup direction="horizontal">
@@ -86,12 +85,13 @@ export default function BoardSurface() {
                 display: "flex",
                 flexDirection: "column",
                 boxShadow: 0,
-                border: 3,
-                borderStyle: "double",
-                borderColor: "primary.light",
-                paddingRight: 0.2,
+                // border: 2,
+                // borderStyle: "double",
+                borderColor: "common.black",
                 maxWidth: getMaxWidth(),
                 minWidth: getMinWidth(),
+                height: "100%",
+                marginRight: 0.2,
                 width: simulatedBreakpoint ? getMaxWidth() : "100%",
                 transform: `scale(${scale})`,
                 transformOrigin: "top center",
