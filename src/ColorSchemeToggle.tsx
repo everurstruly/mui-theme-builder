@@ -13,13 +13,8 @@ function ColorSchemeToggle() {
     <Button
       value="color-scheme-mode"
       size="small"
-      sx={[
-        () => ({ minWidth: 0, px: 1, color: "black" }),
-        (theme) =>
-          theme.applyStyles("dark", {
-            color: "white",
-          }),
-      ]}
+      color="inherit"
+      sx={[() => ({ minWidth: 0, px: 1 })]}
       onClick={() => {
         const currentIndex = modeCycleOrder.indexOf(mode);
         const nextIndex = (currentIndex + 1) % modeCycleOrder.length;

@@ -38,7 +38,8 @@ export default function EditorPage() {
         <StyledToolbar sx={{ px: { lg: 1.5 } }}>
           <Typography
             noWrap
-            variant="h6"
+            variant="subtitle1"
+            fontWeight="bold"
             sx={{
               display: "flex",
               alignItems: "center",
@@ -56,10 +57,6 @@ export default function EditorPage() {
             columnGap={0.5}
             marginLeft="auto"
           >
-            <Button aria-label="search" color="inherit" sx={{ px: 1, minWidth: 0 }}>
-              Help
-            </Button>
-
             <Button
               href="https://github.com/everurstruly/mui-theme-builder"
               color="inherit"
