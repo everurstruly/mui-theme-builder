@@ -1,7 +1,6 @@
 import Typography from "@mui/material/Typography";
 import { useTheme } from "@mui/material/styles";
-import type { SxProps } from "@mui/system";
-import type { Theme } from "@mui/material";
+import type { SxProps, Theme } from "@mui/material";
 
 type StatusBadgeProps = {
   label: string;
@@ -36,6 +35,6 @@ export default function StatusBadge({ label, kind, sx }: StatusBadgeProps) {
   })();
 
   return (
-    <Typography sx={[base, kindSx, sx]}>{label}</Typography>
+    <Typography sx={[base, kindSx, sx] as SxProps<Theme>}>{label}</Typography>
   );
 }

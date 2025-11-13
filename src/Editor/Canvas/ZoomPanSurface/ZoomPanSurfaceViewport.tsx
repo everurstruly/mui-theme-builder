@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import { memo, Component, ReactNode } from "react";
+import { memo, Component, type ReactNode } from "react";
 import ViewportSimulation from "./ViewportSimulation";
 import type { ThemeOptions } from "@mui/material/styles";
 

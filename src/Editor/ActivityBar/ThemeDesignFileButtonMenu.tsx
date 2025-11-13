@@ -24,6 +24,7 @@ export default function ThemeDesignFileButtonMenu() {
     event: React.MouseEvent<HTMLLIElement, MouseEvent>,
     index: number,
   ) => {
+    void event;
     setSelectedIndex(index);
     setOpen(false);
   };
