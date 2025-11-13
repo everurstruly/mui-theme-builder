@@ -56,15 +56,16 @@ export default function FontWeightOptionInput(props: FontWeightOptionInputProps)
     <FormControl variant="standard" disabled={props.disabled}>
       <Select
         autoWidth
+        variant="filled"
         id={props.id}
         value={props.value}
         onChange={handleChange}
         sx={{
           fontSize: 12,
-          paddingLeft: 1.5,
+          paddingLeft: .5,
 
           "& .MuiSelect-select": {
-            padding: 0.75,
+            padding: 0.875,
           },
         }}
       >

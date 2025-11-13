@@ -55,15 +55,16 @@ export default function FontFamilyOptionInput(props: FontFamilyOptionInputProps)
     <FormControl variant="standard" disabled={props.disabled}>
       <Select
         autoWidth
+        variant="filled"
         id={props.id}
         value={primaryFont}
         onChange={handleChange}
         sx={{
           fontSize: 12,
-          paddingLeft: 2,
+          paddingLeft: .5,
 
           "& .MuiSelect-select": {
-            padding: 1,
+            padding: 0.875,
           },
         }}
       >

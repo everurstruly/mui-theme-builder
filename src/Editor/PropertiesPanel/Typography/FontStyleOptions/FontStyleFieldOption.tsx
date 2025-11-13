@@ -36,10 +36,10 @@ export default function FontStyleFieldOption(props: FontStyleFieldOptionProps) {
       if (hasCodeOverride) return;
       // Parse as number if possible, otherwise keep as string
       const numValue = Number(inputValue);
-      const newVal = isNaN(numValue) ? inputValue : numValue;
+      const newValParsed: string | number = isNaN(numValue) ? inputValue : numValue;
       // Only set when value actually differs to avoid extra updates
-      if (newVal !== currentValue) {
-        setValue(newVal as any);
+      if (newValParsed !== currentValue) {
+        setValue(newValParsed);
       }
     },
     200,
@@ -49,10 +49,13 @@ export default function FontStyleFieldOption(props: FontStyleFieldOptionProps) {
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter" && !hasCodeOverride) {
       const numValue = Number(inputValue);
-      const newVal = isNaN(numValue) ? inputValue : numValue;
-      setValue(newVal as any);
+      const newValParsed: string | number = isNaN(numValue) ? inputValue : numValue;
+      setValue(newValParsed);
     }
   };
+
+  // Compute width in ch units based on input length for a responsive fit
+  const widthCh = Math.max(3, String(inputValue ?? "").length) + 1;
 
   return (
     <ListItem
@@ -70,14 +73,14 @@ export default function FontStyleFieldOption(props: FontStyleFieldOptionProps) {
         columnGap: 2.5,
       }}
     >
-      <Stack direction="row" alignItems="center" spacing={0.75}>
+      <Stack direction="row" alignItems="center" spacing={0.75} flexBasis={"100%"}>
         <OptionListItemResetButton
           canResetValue={canResetValue}
           resetValue={reset}
           initStateLabel={"Default"}
         />
 
-        <Typography variant="caption" sx={{ fontStyle: 400, fontSize: 12 }}>
+        <Typography variant="caption" sx={{ whiteSpace: "nowrap", fontStyle: 400, fontSize: 12 }}>
           {props.name}
         </Typography>
       </Stack>
@@ -97,10 +100,10 @@ export default function FontStyleFieldOption(props: FontStyleFieldOptionProps) {
           paddingBlock: 0,
 
           "& .MuiInputBase-input": {
-            width: "6ch",
+            width: `${widthCh}ch`,
             fontSize: 12,
             textAlign: "center",
-            paddingInline: 0,
+            paddingInline: 1,
             paddingBlock: 0.75,
           },
         }}
