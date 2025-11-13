@@ -176,9 +176,15 @@ export function evaluateCodeOverrides(source: string): CodeEvaluationResult {
   }
 
   try {
+    // If the source contains a full file-like wrapper (e.g. "const theme: ThemeOptions = {...};")
+    // extract the inner object so evaluation works. This lets the editor store the full
+    // content (with header/footer) while evaluation still receives an object literal.
+    const objectMatch = /const\s+theme(?:\s*:\s*[^=]+)?\s*=\s*\{([\s\S]*?)\};/m.exec(source);
+    const evalSource = objectMatch ? `{${objectMatch[1]}}` : source;
+
     // Wrap source in parentheses to support object literals
     // Use Function constructor for safer eval (no access to closure scope)
-    const wrappedSource = `(${source})`;
+    const wrappedSource = `(${evalSource})`;
     const evaluator = new Function(`return ${wrappedSource}`);
     const evaluated = evaluator() as ThemeOptions;
 
@@ -193,6 +199,41 @@ export function evaluateCodeOverrides(source: string): CodeEvaluationResult {
 
     // Flatten for quick path lookups (skip functions)
     const flattened = flattenThemeOptions(evaluated as Record<string, unknown>);
+
+    // Validate color formats in flattened values to avoid runtime crashes
+    // from MUI color utilities which expect specific formats.
+    // Conservative predicate: only treat a path as a color candidate when it
+    // appears to reference palette entries or contains "color". Explicitly
+    // skip the well-known `palette.mode` property which is not a color but
+    // a mode string ('light'|'dark').
+    const colorKeyPredicate = (path: string) => {
+      if (path.endsWith('.mode')) return false; // skip palette.mode
+      return path.startsWith('palette') || path.toLowerCase().includes('color');
+    };
+
+    const isValidMuiColor = (val: unknown) => {
+      if (typeof val !== 'string') return true;
+      const s = val.trim();
+      // Hex: #rgb or #rrggbb
+      if (/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(s)) return true;
+      // rgb() / rgba()
+      if (/^rgba?\s*\(/i.test(s)) return true;
+      // hsl() / hsla()
+      if (/^hsla?\s*\(/i.test(s)) return true;
+      // color() function
+      if (/^color\s*\(/i.test(s)) return true;
+      return false;
+    };
+
+    for (const [path, value] of Object.entries(flattened)) {
+      if (colorKeyPredicate(path) && typeof value === 'string' && !isValidMuiColor(value)) {
+        return {
+          evaluated: {},
+          flattened: {},
+          error: `Evaluation failed: Unsupported color '${value}' at path '${path}'.\nThe following formats are supported: #nnn, #nnnnnn, rgb(), rgba(), hsl(), hsla(), color().`,
+        };
+      }
+    }
 
     return {
       evaluated,
@@ -209,50 +250,7 @@ export function evaluateCodeOverrides(source: string): CodeEvaluationResult {
   }
 }
 
-/**
- * Splits a ThemeOptions object into serializable literals and function strings.
- * Used for persistence and history tracking.
- * 
- * @param obj - ThemeOptions object (may contain functions)
- * @returns Object with separate literals and functions
- * 
- * @example
- * splitLiteralsAndFunctions({
- *   palette: { primary: { main: '#1976d2' } },
- *   spacing: (factor) => factor * 8
- * })
- * // Returns: {
- * //   literals: { 'palette.primary.main': '#1976d2' },
- * //   functions: { 'spacing': '(factor) => factor * 8' }
- * // }
- */
-export function splitLiteralsAndFunctions(
-  obj: Record<string, unknown>,
-  prefix: string = ''
-): { literals: Record<string, SerializableValue>; functions: Record<string, string> } {
-  const literals: Record<string, SerializableValue> = {};
-  const functions: Record<string, string> = {};
 
-  for (const [key, value] of Object.entries(obj)) {
-    const fullPath = prefix ? `${prefix}.${key}` : key;
-
-    if (typeof value === 'function') {
-      functions[fullPath] = value.toString();
-    } else if (value === null || value === undefined) {
-      literals[fullPath] = null;
-    } else if (Array.isArray(value)) {
-      literals[fullPath] = value as SerializableValue;
-    } else if (typeof value === 'object' && Object.keys(value).length > 0) {
-      const nested = splitLiteralsAndFunctions(value as Record<string, unknown>, fullPath);
-      Object.assign(literals, nested.literals);
-      Object.assign(functions, nested.functions);
-    } else {
-      literals[fullPath] = value as SerializableValue;
-    }
-  }
-
-  return { literals, functions };
-}
 
 /**
  * Deep merge multiple objects into one.

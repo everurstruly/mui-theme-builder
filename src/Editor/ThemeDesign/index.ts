@@ -6,7 +6,7 @@
  * - Separate light/dark mode customization
  * - Undo/redo support
  * - Performance-optimized hooks with targeted subscriptions
- * - Code editor integration with safe evaluation
+ * - DSL-based code editor with safe transformation (no eval)
  */
 
 // === Core Hooks ===
@@ -15,7 +15,22 @@ export {
   useThemeDesignOptions,
   useThemeDesignEditValue,
   useCodeEditorPanel,
+  useCodeOverridesState,
+  useCodeOverridesActions,
+  useMergedThemePreview,
 } from './themeDesign.hooks';
+
+// === Validation ===
+export {
+  validateCodeBeforeEvaluation,
+  useCodeOverridesValidation,
+  type ValidationError,
+  type ValidationResult,
+} from './themeDesign.validation';
+
+// === DSL Transformation (Code → DSL → ThemeOptions) ===
+export { transformCodeToDsl } from './themeDesign.codeToDsl';
+export { transformDslToThemeOptions } from './themeDesign.dslToTheme';
 
 // === Store ===
 export { useThemeDesignStore } from './themeDesign.store';
@@ -38,6 +53,17 @@ export type {
   ThemeResolutionConfig,
   SerializableValue,
   CodeEvaluationResult,
+  // DSL Types
+  ThemeDsl,
+  DslValue,
+  DslPlaceholder,
+  DslTransformResult,
+  DslResolutionContext,
+  DslSpacingPlaceholder,
+  DslTokenPlaceholder,
+  DslBreakpointPlaceholder,
+  DslHelperPlaceholder,
+  DslFunctionPlaceholder,
 } from './types';
 
 // === Utilities (if needed externally) ===
@@ -45,11 +71,10 @@ export {
   isColorSchemePath,
   flattenThemeOptions,
   expandFlatThemeOptions,
-  evaluateCodeOverrides,
-  splitLiteralsAndFunctions,
   deepMerge,
 } from './themeDesign.utils';
 
 // === Resolver (if needed externally) ===
 export { resolveThemeOptions } from './themeDesign.resolver';
+
 

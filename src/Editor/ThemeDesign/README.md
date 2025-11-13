@@ -131,38 +131,61 @@ function PrimaryColorPicker() {
 
 ```typescript
 import { useState } from 'react';
-import { useCodeEditorPanel } from '@/Editor/ThemeDesign';
-import MonacoEditor from '@monaco-editor/react';
+import {
+  useCodeOverridesState,
+  useCodeOverridesActions,
+  useCodeOverridesValidation,
+  useMergedThemePreview,
+} from '@/Editor/ThemeDesign';
+import CodeMirror from '@uiw/react-codemirror';
 
 function CodeEditorPanel() {
-  const {
-    source,
-    error,
-    hasOverrides,
-    mergedPreview,
-    applyChanges,
-    clearOverrides,
-    resetToVisual,
-    resetToTemplate,
-  } = useCodeEditorPanel('current-scheme');
+  // Use focused hooks for better separation of concerns
+  const { source, error, hasOverrides } = useCodeOverridesState();
+  const { applyChanges, clearOverrides, resetToVisual, resetToTemplate } = useCodeOverridesActions();
+  const { validate } = useCodeOverridesValidation();
+  const mergedPreview = useMergedThemePreview();
 
   const [editorContent, setEditorContent] = useState(source);
+  const [validationErrors, setValidationErrors] = useState([]);
+
+  const handleApply = () => {
+    // Pre-validate before evaluation
+    const result = validate(editorContent);
+    
+    if (!result.valid) {
+      setValidationErrors(result.errors);
+      return;
+    }
+    
+    // Apply changes (will evaluate and merge)
+    applyChanges(editorContent);
+  };
 
   return (
     <div>
-      <MonacoEditor
-        language="typescript"
+      <CodeMirror
         value={editorContent}
         onChange={(value) => setEditorContent(value || '')}
         height="400px"
       />
+      
+      {validationErrors.length > 0 && (
+        <Alert severity="error">
+          {validationErrors.map((err) => (
+            <div key={err.message}>
+              {err.line}:{err.column} - {err.message}
+            </div>
+          ))}
+        </Alert>
+      )}
       
       {error && (
         <Alert severity="error">{error}</Alert>
       )}
       
       <ButtonGroup>
-        <Button onClick={() => applyChanges(editorContent)}>
+        <Button onClick={handleApply}>
           Apply Changes
         </Button>
         <Button onClick={clearOverrides} disabled={!hasOverrides}>
@@ -176,12 +199,37 @@ function CodeEditorPanel() {
         </Button>
       </ButtonGroup>
       
-      <DiffViewer
-        before={JSON.stringify(mergedPreview, null, 2)}
-        after={editorContent}
-      />
+      <ThemePreview mergedPreview={mergedPreview} />
     </div>
   );
+}
+```
+
+**Validation Features:**
+- AST-based parsing to ensure code is syntactically valid
+- Validates code is an object literal (not arbitrary JavaScript)
+- Checks that properties are valid ThemeOptions keys
+- Warns about function calls (only MUI helpers like `alpha`, `darken` are safe)
+- Returns line/column information for precise error reporting
+
+**Alternative: Use Composed Hook**
+
+For simpler cases, you can use the composed `useCodeEditorPanel()` hook:
+
+```typescript
+import { useCodeEditorPanel } from '@/Editor/ThemeDesign';
+
+function SimpleCodeEditor() {
+  const {
+    source,
+    error,
+    hasOverrides,
+    mergedPreview,
+    applyChanges,
+    clearOverrides,
+  } = useCodeEditorPanel();
+  
+  // ... rest of component
 }
 ```
 

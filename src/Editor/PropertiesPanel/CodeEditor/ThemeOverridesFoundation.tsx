@@ -1,11 +1,11 @@
 import CodeMirror from "@uiw/react-codemirror";
 import { Box, Typography } from "@mui/material";
 import { useMemo } from "react";
-import { useCodeEditorPanel } from "../../ThemeDesign";
+import { useMergedThemePreview } from "../../ThemeDesign";
 import { javascript } from "@codemirror/lang-javascript";
 
-export default function ThemePreview() {
-  const { mergedPreview } = useCodeEditorPanel();
+export default function ThemeOverridesFoundation() {
+  const mergedPreview = useMergedThemePreview();
 
   // Render mergedPreview as JavaScript-like object literal (no quoted keys)
   const themeJson = useMemo(() => {
@@ -93,7 +93,7 @@ export default function ThemePreview() {
         sx={{
           flex: 1,
           minHeight: 0,
-          "& .cm-editor": { height: "100%", fontSize: "13px" },
+          "& .cm-editor": { height: "100%", fontSize: "12px" },
         }}
       >
         <CodeMirror

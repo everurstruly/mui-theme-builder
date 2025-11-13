@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { createTheme, type Theme, type ThemeOptions } from '@mui/material/styles';
 import { useThemeDesignStore } from './themeDesign.store';
 import { resolveThemeOptions } from './themeDesign.resolver';
+import { transformDslToThemeOptions } from './themeDesign.dslToTheme';
 import { isColorSchemePath, getNestedValue } from './themeDesign.utils';
 import type { SerializableValue } from './types';
 import { getThemeTemplate } from './themeTemplates';
@@ -53,7 +54,7 @@ function useResolvedThemeOptions(colorScheme?: 'light' | 'dark'): ThemeOptions {
   // Subscribe to all relevant state slices with selectors
   const templateId = useThemeDesignStore((s) => s.selectedTemplateId.id);
   const baseVisualEdits = useThemeDesignStore((s) => s.baseVisualEdits);
-  const codeOverridesEvaluated = useThemeDesignStore((s) => s.codeOverridesEvaluated);
+  const codeOverridesDsl = useThemeDesignStore((s) => s.codeOverridesDsl);
   const lightMode = useThemeDesignStore((s) => s.lightMode);
   const darkMode = useThemeDesignStore((s) => s.darkMode);
   const activeColorScheme = useThemeDesignStore((s) => s.activeColorScheme);
@@ -65,18 +66,28 @@ function useResolvedThemeOptions(colorScheme?: 'light' | 'dark'): ThemeOptions {
     // Get base template
     const template = getTemplate(templateId, targetScheme);
 
+    // Resolve DSL to executable ThemeOptions (only if DSL exists)
+    const codeOverrides =
+      Object.keys(codeOverridesDsl).length > 0
+        ? transformDslToThemeOptions(codeOverridesDsl, {
+            template,
+            colorScheme: targetScheme,
+            spacingFactor: 8, // TODO: get from template if available
+          })
+        : {};
+
     // Resolve all layers
     return resolveThemeOptions({
       template,
       baseVisualEdits,
       colorSchemeVisualEdits: modeEdits.visualEdits,
-      codeOverrides: codeOverridesEvaluated,
+      codeOverrides,
       colorScheme: targetScheme,
     });
   }, [
     templateId,
     baseVisualEdits,
-    codeOverridesEvaluated,
+    codeOverridesDsl,
     modeEdits.visualEdits,
     targetScheme,
   ]);
@@ -229,27 +240,134 @@ export function useThemeDesignEditValue(path: string, colorScheme?: 'light' | 'd
 }
 
 /**
- * Hook for code editor panel to manage code overrides.
+ * Hook for accessing code overrides state.
+ * Provides read-only access to source, error, and override status.
  * 
- * @param scope - 'global' or 'current-scheme'
- * @returns Code editor state and actions
+ * @returns Code overrides state
+ * 
+ * @example
+ * function StatusBadge() {
+ *   const { hasOverrides, error } = useCodeOverridesState();
+ *   return hasOverrides ? <Badge color="warning">Code Active</Badge> : null;
+ * }
+ */
+export function useCodeOverridesState() {
+  const source = useThemeDesignStore((s) => s.codeOverridesSource);
+  const error = useThemeDesignStore((s) => s.codeOverridesError);
+  const hasOverrides = source.length > 0;
+
+  return useMemo(
+    () => ({
+      /** Current saved code override source */
+      source,
+
+      /** Parse/evaluation error, if any */
+      error,
+
+      /** True if there are code overrides applied */
+      hasOverrides,
+    }),
+    [source, error, hasOverrides]
+  );
+}
+
+/**
+ * Hook for accessing code overrides actions.
+ * Provides functions to modify code overrides.
+ * 
+ * @returns Code overrides actions
+ * 
+ * @example
+ * function ApplyButton() {
+ *   const { applyChanges } = useCodeOverridesActions();
+ *   const handleApply = () => applyChanges('{ palette: { primary: { main: "#ff0000" } } }');
+ *   return <Button onClick={handleApply}>Apply</Button>;
+ * }
+ */
+export function useCodeOverridesActions() {
+  const applyCodeOverrides = useThemeDesignStore((s) => s.applyCodeOverrides);
+  const clearCodeOverrides = useThemeDesignStore((s) => s.clearCodeOverrides);
+  const resetToVisual = useThemeDesignStore((s) => s.resetToVisual);
+  const resetToTemplate = useThemeDesignStore((s) => s.resetToTemplate);
+
+  return useMemo(
+    () => ({
+      /** Apply code overrides from editor */
+      applyChanges: (code: string) => applyCodeOverrides(code),
+
+      /** Clear all code overrides */
+      clearOverrides: () => clearCodeOverrides(),
+
+      /** Reset to visual edits only (clear all code overrides) */
+      resetToVisual,
+
+      /** Reset to template base (clear all modifications) */
+      resetToTemplate,
+    }),
+    [applyCodeOverrides, clearCodeOverrides, resetToVisual, resetToTemplate]
+  );
+}
+
+/**
+ * Hook for accessing merged theme preview without code overrides.
+ * Used for diff comparison in code editor.
+ * 
+ * @param colorScheme - Optional color scheme override (defaults to active scheme)
+ * @returns Merged theme preview (excludes code overrides)
+ * 
+ * @example
+ * function DiffViewer() {
+ *   const mergedPreview = useMergedThemePreview();
+ *   return <pre>{JSON.stringify(mergedPreview, null, 2)}</pre>;
+ * }
+ */
+export function useMergedThemePreview(colorScheme?: 'light' | 'dark'): ThemeOptions {
+  const activeColorScheme = useThemeDesignStore((s) => s.activeColorScheme);
+  const targetScheme = colorScheme ?? activeColorScheme;
+
+  const templateId = useThemeDesignStore((s) => s.selectedTemplateId.id);
+  const baseVisualEdits = useThemeDesignStore((s) => s.baseVisualEdits);
+  const lightMode = useThemeDesignStore((s) => s.lightMode);
+  const darkMode = useThemeDesignStore((s) => s.darkMode);
+
+  const modeEdits = targetScheme === 'light' ? lightMode : darkMode;
+
+  return useMemo(() => {
+    const template = getTemplate(templateId, targetScheme);
+
+    return resolveThemeOptions({
+      template,
+      baseVisualEdits,
+      colorSchemeVisualEdits: modeEdits.visualEdits,
+      codeOverrides: {}, // Exclude code overrides for diff comparison
+      colorScheme: targetScheme,
+    });
+  }, [templateId, baseVisualEdits, modeEdits.visualEdits, targetScheme]);
+}
+
+/**
+ * Hook for code editor panel to manage code overrides.
+ * Composes state, actions, and preview hooks for convenience.
+ * 
+ * @param colorScheme - Optional color scheme override (defaults to active scheme)
+ * @returns Combined code editor state, actions, and preview
  * 
  * @example
  * function CodeEditorPanel() {
  *   const {
  *     source,
  *     error,
- *     hasChanges,
+ *     hasOverrides,
  *     mergedPreview,
  *     applyChanges,
  *     clearOverrides,
- *   } = useCodeEditorPanel('current-scheme');
+ *   } = useCodeEditorPanel();
  *   
  *   const [editorContent, setEditorContent] = useState(source);
  *   
  *   return (
  *     <div>
- *       <MonacoEditor value={editorContent} onChange={setEditorContent} />
+ *       <CodeMirror value={editorContent} onChange={setEditorContent} />
  *       {error && <ErrorBanner>{error}</ErrorBanner>}
  *       <Button onClick={() => applyChanges(editorContent)}>Apply</Button>
  *       <Button onClick={clearOverrides}>Clear Overrides</Button>
@@ -258,73 +376,19 @@ export function useThemeDesignEditValue(path: string, colorScheme?: 'light' | 'd
  *   );
  * }
  */
-export function useCodeEditorPanel() {
-  const activeColorScheme = useThemeDesignStore((s) => s.activeColorScheme);
+export function useCodeEditorPanel(colorScheme?: 'light' | 'dark') {
+  const state = useCodeOverridesState();
+  const actions = useCodeOverridesActions();
+  const mergedPreview = useMergedThemePreview(colorScheme);
 
-  // Select state
-  const source = useThemeDesignStore((s) => s.codeOverridesSource);
-  const error = useThemeDesignStore((s) => s.codeOverridesError);
-
-  // Select actions
-  const applyCodeOverrides = useThemeDesignStore((s) => s.applyCodeOverrides);
-  const clearCodeOverrides = useThemeDesignStore((s) => s.clearCodeOverrides);
-  const resetToVisual = useThemeDesignStore((s) => s.resetToVisual);
-  const resetToTemplate = useThemeDesignStore((s) => s.resetToTemplate);
-
-  // Compute merged preview (template + composables + visual edits, excluding code overrides)
-  const mergedPreview = useResolvedThemeOptionsWithoutCode(activeColorScheme);
-
-  return {
-    /** Current saved code override source */
-    source,
-
-    /** Parse/evaluation error, if any */
-    error,
-
-    /** True if there are code overrides applied */
-    hasOverrides: source.length > 0,
-
-    /** Merged theme preview (excludes code overrides, for diff comparison) */
-    mergedPreview,
-
-    /** Apply code overrides from Monaco editor */
-    applyChanges: (code: string) => applyCodeOverrides(code),
-
-    /** Clear all code overrides */
-    clearOverrides: () => clearCodeOverrides(),
-
-    /** Reset to visual edits only (clear all code overrides) */
-    resetToVisual,
-
-    /** Reset to template base (clear all modifications) */
-    resetToTemplate,
-  };
-}
-
-/**
- * Internal helper that resolves theme options WITHOUT code overrides.
- * Used for diff comparison in code editor.
- */
-function useResolvedThemeOptionsWithoutCode(
-  colorScheme: 'light' | 'dark'
-): ThemeOptions {
-  const templateId = useThemeDesignStore((s) => s.selectedTemplateId.id);
-  const baseVisualEdits = useThemeDesignStore((s) => s.baseVisualEdits);
-  const lightMode = useThemeDesignStore((s) => s.lightMode);
-  const darkMode = useThemeDesignStore((s) => s.darkMode);
-
-  const modeEdits = colorScheme === 'light' ? lightMode : darkMode;
-
-  return useMemo(() => {
-    const template = getTemplate(templateId, colorScheme);
-
-    return resolveThemeOptions({
-      template,
-      baseVisualEdits,
-      colorSchemeVisualEdits: modeEdits.visualEdits,
-      codeOverrides: {}, // Exclude code overrides for diff comparison
-      colorScheme,
-    });
-  }, [templateId, baseVisualEdits, modeEdits.visualEdits, colorScheme]);
+  return useMemo(
+    () => ({
+      ...state,
+      ...actions,
+      /** Merged theme preview (excludes code overrides, for diff comparison) */
+      mergedPreview,
+    }),
+    [state, actions, mergedPreview]
+  );
 }
 

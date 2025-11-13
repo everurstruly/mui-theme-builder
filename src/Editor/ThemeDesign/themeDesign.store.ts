@@ -6,7 +6,8 @@ import type {
   ThemeTemplateRef,
   SerializableValue,
 } from './types';
-import { isColorSchemePath, evaluateCodeOverrides } from './themeDesign.utils';
+import { isColorSchemePath } from './themeDesign.utils';
+import { transformCodeToDsl } from './themeDesign.codeToDsl';
 
 /**
  * Initial color scheme edits state.
@@ -32,7 +33,8 @@ export const useThemeDesignStore = create<ThemeDesignStore>()(
       templateHistory: [],
       baseVisualEdits: {},
       codeOverridesSource: '',
-      codeOverridesEvaluated: {},
+      codeOverridesDsl: {},
+      codeOverridesResolved: {},
       codeOverridesFlattened: {},
       codeOverridesError: null,
       lightMode: createInitialColorSchemeEdits(),
@@ -55,7 +57,8 @@ export const useThemeDesignStore = create<ThemeDesignStore>()(
             : {
                 baseVisualEdits: {},
                 codeOverridesSource: '',
-                codeOverridesEvaluated: {},
+                codeOverridesDsl: {},
+                codeOverridesResolved: {},
                 codeOverridesFlattened: {},
                 codeOverridesError: null,
                 lightMode: createInitialColorSchemeEdits(),
@@ -159,13 +162,30 @@ export const useThemeDesignStore = create<ThemeDesignStore>()(
       // ===== Code Overrides =====
 
       applyCodeOverrides: (source: string) => {
-        const result = evaluateCodeOverrides(source);
+        // Transform user code to DSL (no eval - safe)
+        const result = transformCodeToDsl(source);
 
+        // If transform failed, store error and clear DSL
+        if (result.error) {
+          set({
+            codeOverridesSource: source,
+            codeOverridesDsl: {},
+            codeOverridesResolved: {},
+            codeOverridesFlattened: {},
+            codeOverridesError: result.error,
+            hasUnsavedChanges: true,
+          });
+          return;
+        }
+
+        // Transform succeeded - store DSL
+        // The resolved ThemeOptions will be computed on-demand in the resolver
         set({
           codeOverridesSource: source,
-          codeOverridesEvaluated: result.evaluated,
-          codeOverridesFlattened: result.flattened,
-          codeOverridesError: result.error,
+          codeOverridesDsl: result.dsl,
+          codeOverridesResolved: {}, // Will be resolved by themeDesign.resolver
+          codeOverridesFlattened: {}, // Will be computed after resolution
+          codeOverridesError: null,
           hasUnsavedChanges: true,
         });
       },
@@ -173,7 +193,8 @@ export const useThemeDesignStore = create<ThemeDesignStore>()(
       clearCodeOverrides: () => {
         set({
           codeOverridesSource: '',
-          codeOverridesEvaluated: {},
+          codeOverridesDsl: {},
+          codeOverridesResolved: {},
           codeOverridesFlattened: {},
           codeOverridesError: null,
           hasUnsavedChanges: true,
@@ -211,7 +232,8 @@ export const useThemeDesignStore = create<ThemeDesignStore>()(
         set({
           baseVisualEdits: {},
           codeOverridesSource: '',
-          codeOverridesEvaluated: {},
+          codeOverridesDsl: {},
+          codeOverridesResolved: {},
           codeOverridesFlattened: {},
           codeOverridesError: null,
           lightMode: createInitialColorSchemeEdits(),
@@ -237,7 +259,8 @@ export const useThemeDesignStore = create<ThemeDesignStore>()(
         templateHistory: state.templateHistory,
         baseVisualEdits: state.baseVisualEdits,
         codeOverridesSource: state.codeOverridesSource,
-        codeOverridesEvaluated: state.codeOverridesEvaluated,
+        codeOverridesDsl: state.codeOverridesDsl,
+        codeOverridesResolved: state.codeOverridesResolved,
         codeOverridesFlattened: state.codeOverridesFlattened,
         codeOverridesError: state.codeOverridesError,
         lightMode: state.lightMode,
