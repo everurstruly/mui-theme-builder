@@ -1,49 +1,38 @@
 import FontFamilyOption from "../FontFamily/FontFamilyOption";
 import FontStyleFieldOption from "../FontStyleOptions/FontStyleFieldOption";
 import FontWeightOption from "../FontWeightOption/FontWeightOption";
-import { Typography } from "@mui/material";
-
-const font = {
-  name: "Body (p)",
-  family: {
-    initValue: { key: "fontFamily", value: "Roboto", title: "Roboto" },
-    modifiedValue: { key: "fontFamily", value: "Arial", title: "Arial" },
-  },
-  weight: {
-    initValue: { key: "fontWeight", value: "400" },
-    modifiedValue: { key: "fontWeight", value: "700" },
-  },
-  lineHeight: {
-    initValue: "1.1",
-    modifiedValue: "1.1",
-  },
-};
+import { useThemeDesignTheme } from "../../../ThemeDesign";
+import TypographyOptionGroup from "../TypographyOptionGroup";
 
 function BodyTypography() {
-  return (
-    <div>
-      <Typography fontSize={14} fontWeight={600} marginTop={5} paddingBlock={1.5}>
-        {font.name}
-      </Typography>
+  const theme = useThemeDesignTheme();
 
+  return (
+    <TypographyOptionGroup title="Body (p)">
       <FontFamilyOption
         name={"Font family"}
-        initValue={font.family.initValue}
-        modifiedValue={font.family.modifiedValue}
+        path="typography.body1.fontFamily"
+        templateValue={(theme.typography.body1.fontFamily || theme.typography.fontFamily) as string}
+      />
+
+      <FontStyleFieldOption
+        name={"Font size"}
+        path={`typography.body1.fontSize`}
+        templateValue={theme.typography.body1.fontSize as string | number}
       />
 
       <FontWeightOption
         name={"Font weight"}
-        initValue={font.weight.initValue}
-        modifiedValue={font.weight.modifiedValue}
+        path="typography.body1.fontWeight"
+        templateValue={theme.typography.body1.fontWeight as string | number}
       />
 
       <FontStyleFieldOption
         name={"Line height"}
-        initValue={font.lineHeight.initValue}
-        modifiedValue={font.lineHeight.modifiedValue}
+        path="typography.body1.lineHeight"
+        templateValue={theme.typography.body1.lineHeight as string | number}
       />
-    </div>
+    </TypographyOptionGroup>
   );
 }
 

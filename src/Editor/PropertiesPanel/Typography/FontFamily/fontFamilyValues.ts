@@ -35,10 +35,14 @@ const fontFamily = [
 ];
 
 export const googleFontFamilyValues = [
-  { key: "arial", title: "Arial" },
-  { key: "verdana", title: "Verdana" },
-  { key: "helvetica", title: "Helvetica" },
-  { key: "times-new-roman", title: "Times New Roman" },
+  { key: "Roboto", title: "Roboto" },
+  { key: "Arial", title: "Arial" },
+  { key: "Verdana", title: "Verdana" },
+  { key: "Helvetica", title: "Helvetica" },
+  { key: "Times New Roman", title: "Times New Roman" },
+  { key: "Georgia", title: "Georgia" },
+  { key: "Courier New", title: "Courier New" },
+  { key: "Inter", title: "Inter" },
 ];
 
 export default fontFamily;

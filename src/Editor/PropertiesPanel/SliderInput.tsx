@@ -59,9 +59,11 @@ const IOSSlider = styled(Slider)(({ theme }) => ({
 type SliderInputProps = {
   defaultValue?: number;
   arialLabel?: string;
+  onChange?: (event: Event, value: number | number[]) => void;
+  disabled?: boolean;
 };
 
-export default function SliderInput({ defaultValue, arialLabel }: SliderInputProps) {
+export default function SliderInput({ defaultValue, arialLabel, onChange, disabled }: SliderInputProps) {
   return (
     <IOSSlider
       aria-label={arialLabel}
@@ -70,6 +72,8 @@ export default function SliderInput({ defaultValue, arialLabel }: SliderInputPro
       valueLabelFormat={(value) => `${value}px`}
       min={0}
       max={100}
+      onChange={onChange}
+      disabled={disabled}
     />
   );
 }

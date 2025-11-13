@@ -5,13 +5,14 @@ import {
   MenuItem,
   type SelectChangeEvent,
 } from "@mui/material";
-import type { FontWeightOptionProps } from "./FontWeightOption";
+import { useThemeDesignEditValue } from "../../../ThemeDesign";
 
 type FontWeightOptionInputProps = {
   id: string;
-  title: FontWeightOptionProps["name"];
-  input: FontWeightOptionProps["initValue" | "modifiedValue"];
+  title: string;
+  value: string;
   disabled?: boolean;
+  path: string;
 };
 
 const fontWeightValues = [
@@ -46,10 +47,10 @@ const fontWeightValues = [
 ];
 
 export default function FontWeightOptionInput(props: FontWeightOptionInputProps) {
-  const [fontWeight, setFontWeight] = React.useState(props.input.value);
+  const { setValue } = useThemeDesignEditValue(props.path);
 
   const handleChange = (event: SelectChangeEvent) => {
-    setFontWeight(event.target.value);
+    setValue(Number(event.target.value));
   };
 
   return (
@@ -57,7 +58,7 @@ export default function FontWeightOptionInput(props: FontWeightOptionInputProps)
       <Select
         autoWidth
         id={props.id}
-        value={fontWeight}
+        value={props.value}
         onChange={handleChange}
         sx={{
           fontSize: 12,
@@ -68,10 +69,6 @@ export default function FontWeightOptionInput(props: FontWeightOptionInputProps)
           },
         }}
       >
-        <MenuItem value={props.input.value}>
-          <em>{props.title}</em>
-        </MenuItem>
-
         {fontWeightValues.map((option) => (
           <MenuItem key={option.key} value={option.key}>
             {option.title}

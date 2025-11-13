@@ -1,4 +1,3 @@
-import React from "react";
 import { googleFontFamilyValues } from "./fontFamilyValues";
 import {
   FormControl,
@@ -6,19 +5,50 @@ import {
   MenuItem,
   type SelectChangeEvent,
 } from "@mui/material";
-import type { FontFamilyOptionProps } from "./FontFamilyOption";
+import { useThemeDesignEditValue, useThemeDesignStore } from "../../../ThemeDesign";
 
 type FontFamilyOptionInputProps = {
   id: string;
   disabled?: boolean;
-  value: FontFamilyOptionProps["initValue" | "modifiedValue"];
+  value: string;
+  path: string;
 };
 
 export default function FontFamilyOptionInput(props: FontFamilyOptionInputProps) {
-  const [value, setValue] = React.useState(props.value.key);
+  const { setValue } = useThemeDesignEditValue(props.path);
+  const setVisualEdit = useThemeDesignStore((s) => s.setVisualEdit);
+
+  // Extract primary font from full fontFamily string (e.g., "Roboto", "Helvetica", "Arial", sans-serif -> Roboto)
+  const extractPrimaryFont = (fontFamily: string): string => {
+    const match = fontFamily.match(/^['"]?([^'"\,]+)['"]?/);
+    return match ? match[1].trim() : fontFamily;
+  };
+
+  const primaryFont = extractPrimaryFont(props.value);
 
   const handleChange = (event: SelectChangeEvent) => {
-    setValue(event.target.value);
+    const selectedFont = event.target.value;
+    // Build proper CSS font-family value with fallbacks
+    const fontFamilyValue = selectedFont.includes(' ') 
+      ? `"${selectedFont}", sans-serif`
+      : `${selectedFont}, sans-serif`;
+    // If this input was wired to the H1 path for "Headings", also apply
+    // the same font-family to all heading variants H1..H6 so the control
+    // acts as a single "Headings" font selector.
+    if (props.path === 'typography.h1.fontFamily') {
+      const headingPaths = [
+        'typography.h1.fontFamily',
+        'typography.h2.fontFamily',
+        'typography.h3.fontFamily',
+        'typography.h4.fontFamily',
+        'typography.h5.fontFamily',
+        'typography.h6.fontFamily',
+      ];
+      headingPaths.forEach((p) => setVisualEdit(p, fontFamilyValue));
+      return;
+    }
+
+    setValue(fontFamilyValue);
   };
 
   return (
@@ -26,7 +56,7 @@ export default function FontFamilyOptionInput(props: FontFamilyOptionInputProps)
       <Select
         autoWidth
         id={props.id}
-        value={value}
+        value={primaryFont}
         onChange={handleChange}
         sx={{
           fontSize: 12,
@@ -37,10 +67,6 @@ export default function FontFamilyOptionInput(props: FontFamilyOptionInputProps)
           },
         }}
       >
-        <MenuItem value={props.value.key}>
-          <em>{props.value.title}</em>
-        </MenuItem>
-
         {googleFontFamilyValues.map((font) => (
           <MenuItem key={font.key} value={font.key}>
             {font.title}

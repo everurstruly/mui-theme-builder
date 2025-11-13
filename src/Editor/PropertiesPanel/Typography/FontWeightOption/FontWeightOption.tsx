@@ -1,20 +1,22 @@
-import { Button, ListItem, Typography } from "@mui/material";
+import { ListItem, Typography, Stack } from "@mui/material";
 import FontWeightOptionInput from "./FontWeightOptionInput";
+import { useThemeDesignEditValue } from "../../../ThemeDesign";
+import OptionListItemResetButton from "../../OptionListItemResetButton";
 
 export type FontWeightOptionProps = {
   disabled?: boolean;
   name: string;
   orientation?: "horizontal" | "vertical";
-  initValue: {
-    value: string;
-  };
-  modifiedValue: {
-    value: string;
-  };
+  path: string;
+  templateValue: string | number;
 };
 
 export default function FontWeightOption(props: FontWeightOptionProps) {
-  const canResetValue = props.initValue.value !== props.modifiedValue.value;
+  const { value, hasVisualEdit, hasCodeOverride, reset } = 
+    useThemeDesignEditValue(props.path);
+
+  const currentValue = (value as string | number) ?? props.templateValue;
+  const canResetValue = hasVisualEdit || hasCodeOverride;
 
   return (
     <ListItem
@@ -29,53 +31,24 @@ export default function FontWeightOption(props: FontWeightOptionProps) {
         paddingBlock: 0.75,
       }}
     >
-      <Typography
-        component="div"
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          columnGap: 0.5,
-          fontSize: 12,
-          // color: canResetValue ? "warning.main" : "text.primary",
-        }}
-      >
-        {!canResetValue && (
-          <Typography
-            color="green"
-            sx={{
-              p: 0.5,
-              fontSize: 10,
-              lineHeight: 1,
-              backgroundColor: "#e0f8e089",
-            }}
-          >
-            Default
-          </Typography>
-        )}
+      <Stack direction="row" alignItems="center" spacing={0.75}>
+        <OptionListItemResetButton
+          canResetValue={canResetValue}
+          resetValue={reset}
+          initStateLabel={"Default"}
+        />
 
-        {canResetValue && (
-          <Button
-            color="warning"
-            sx={{
-              lineHeight: 1,
-              fontSize: 10,
-              padding: 0.5,
-              fontWeight: 400,
-              minWidth: "auto",
-            }}
-          >
-            Reset
-          </Button>
-        )}
-
-        {props.name}
-      </Typography>
+        <Typography variant="caption" sx={{ fontSize: 12 }}>
+          {props.name}
+        </Typography>
+      </Stack>
 
       <FontWeightOptionInput
         title={props.name}
-        input={props.initValue}
-        id={props.initValue.value}
-        disabled={props.disabled}
+        value={String(currentValue)}
+        id={`font-weight-${props.path}`}
+        disabled={props.disabled || hasCodeOverride}
+        path={props.path}
       />
     </ListItem>
   );

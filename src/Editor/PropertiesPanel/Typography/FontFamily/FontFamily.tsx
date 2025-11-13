@@ -1,66 +1,30 @@
 import { AddRounded } from "@mui/icons-material";
 import FontFamilyOption from "./FontFamilyOption";
-import { IconButton, Stack, Typography } from "@mui/material";
-
-const fontSettings = {
-  title: "Font Family",
-  families: [
-    {
-      name: "Headings & Subtitles",
-      initValue: { key: "fontFamily", value: "Roboto", title: "Roboto" },
-      modifiedValue: { key: "fontFamily", value: "Arial", title: "Arial" },
-    },
-    {
-      name: "Body & Captions",
-      initValue: { key: "fontFamily", value: "Roboto", title: "Roboto" },
-      modifiedValue: { key: "fontFamily", value: "Arial", title: "Arial" },
-    },
-  ],
-};
+import { IconButton } from "@mui/material";
+import { useThemeDesignTheme } from "../../../ThemeDesign";
+import TypographyOptionGroup from "../TypographyOptionGroup";
 
 function FontFamilyTypography() {
+  const theme = useThemeDesignTheme();
+  
   return (
-    <div>
-      <Stack
-        direction="row"
-        fontSize={14}
-        fontWeight={600}
-        marginTop={5}
-        paddingBlock={1}
-        justifyContent="space-between"
-        alignItems="center"
-      >
-        <Typography
-          variant="subtitle2"
-          component={"h6"}
-          fontWeight={500}
-          color="common.black"
-        >
-          {fontSettings.title}{" "}
-          {/* <Typography
-          component="span"
-          fontSize={12}
-          color="success.main"
-          marginLeft={1}
-        >
-          Component
-        </Typography> */}
-        </Typography>
+    <TypographyOptionGroup title="Font Family">
+      <IconButton size="small" style={{ float: "right", marginTop: -28 }}>
+        <AddRounded sx={{ fontSize: "h6.fontSize", lineHeight: 1 }} />
+      </IconButton>
 
-        <IconButton size="small">
-          <AddRounded sx={{ fontSize: "h6.fontSize", lineHeight: 1 }} />
-        </IconButton>
-      </Stack>
+      <FontFamilyOption
+        name="Base (Body & Captions)"
+        path="typography.fontFamily"
+        templateValue={theme.typography.fontFamily as string}
+      />
 
-      {fontSettings.families.map((family) => (
-        <FontFamilyOption
-          key={family.name}
-          name={family.name}
-          initValue={family.initValue}
-          modifiedValue={family.modifiedValue}
-        />
-      ))}
-    </div>
+      <FontFamilyOption
+        name="Headings (H1-H6)"
+        path="typography.h1.fontFamily"
+        templateValue={(theme.typography.h1.fontFamily || theme.typography.fontFamily) as string}
+      />
+    </TypographyOptionGroup>
   );
 }
 

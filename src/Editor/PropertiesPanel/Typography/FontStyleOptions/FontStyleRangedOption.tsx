@@ -1,15 +1,45 @@
-import { Button, Typography, TextField, ListItem } from "@mui/material";
+import { Typography, TextField, ListItem, Stack } from "@mui/material";
 import SliderInput from "../../SliderInput";
+import { useThemeDesignEditValue } from "../../../ThemeDesign";
+import { useState, useEffect } from "react";
+import OptionListItemResetButton from "../../OptionListItemResetButton";
 
 export type FontStyleRangedOptionProps = {
   name: string;
-  initValue: string;
-  modifiedValue: string;
+  path: string;
+  templateValue: string | number;
   orientation?: "horizontal" | "vertical";
 };
 
 export default function FontStyleRangedOption(props: FontStyleRangedOptionProps) {
-  const canResetValue = props.initValue !== props.modifiedValue;
+  const { value, hasVisualEdit, hasCodeOverride, setValue, reset } = 
+    useThemeDesignEditValue(props.path);
+
+  const currentValue = value ?? props.templateValue;
+  const canResetValue = hasVisualEdit || hasCodeOverride;
+  
+  const [inputValue, setInputValue] = useState(String(currentValue));
+
+  // Sync input value when currentValue changes
+  useEffect(() => {
+    setInputValue(String(currentValue));
+  }, [currentValue]);
+
+  const handleSliderChange = (_event: Event, newValue: number | number[]) => {
+    const val = Array.isArray(newValue) ? newValue[0] : newValue;
+    const normalizedValue = val / 20; // Convert slider value back to line height
+    setValue(normalizedValue);
+    setInputValue(String(normalizedValue));
+  };
+
+  const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(event.target.value);
+  };
+
+  const handleBlur = () => {
+    const numValue = Number(inputValue);
+    setValue(isNaN(numValue) ? inputValue : numValue);
+  };
 
   return (
     <ListItem
@@ -27,59 +57,32 @@ export default function FontStyleRangedOption(props: FontStyleRangedOptionProps)
         columnGap: 2.5,
       }}
     >
-      <Typography
-        component="div"
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          columnGap: 0.5,
-          fontStyle: 400,
-          fontSize: 12,
-          textWrap: "nowrap",
-          // color: canResetValue ? "warning.main" : "text.primary",
-        }}
-      >
-        {!canResetValue && (
-          <Typography
-            color="green"
-            sx={{
-              p: 0.5,
-              fontSize: 10,
-              lineHeight: 1,
-              backgroundColor: "#e0f8e089",
-            }}
-          >
-            Default
-          </Typography>
-        )}
+      <Stack direction="row" alignItems="center" spacing={0.75}>
+        <OptionListItemResetButton
+          canResetValue={canResetValue}
+          resetValue={reset}
+          initStateLabel={"Default"}
+        />
 
-        {canResetValue && (
-          <Button
-            color="warning"
-            sx={{
-              lineHeight: 1,
-              fontSize: 10,
-              padding: 0.5,
-              fontWeight: 400,
-              minWidth: "auto",
-            }}
-          >
-            Reset
-          </Button>
-        )}
-
-        {props.name}
-      </Typography>
+        <Typography variant="caption" sx={{ fontStyle: 400, fontSize: 12 }}>
+          {props.name}
+        </Typography>
+      </Stack>
 
       <SliderInput
-        defaultValue={parseFloat(props.modifiedValue) * 20}
+        defaultValue={parseFloat(String(currentValue)) * 20}
         arialLabel={props.name}
+        onChange={handleSliderChange}
+        disabled={hasCodeOverride}
       />
 
       <TextField
         size="small"
         variant="filled"
-        value={`${props.modifiedValue}`}
+        value={inputValue}
+        onChange={handleTextChange}
+        onBlur={handleBlur}
+        disabled={hasCodeOverride}
         sx={{
           flexBasis: props.orientation === "vertical" ? "100%" : "auto",
 

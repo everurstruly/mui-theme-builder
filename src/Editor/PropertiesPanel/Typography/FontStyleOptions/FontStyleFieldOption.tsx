@@ -1,14 +1,58 @@
-import { Button, Typography, TextField, ListItem } from "@mui/material";
+import { Typography, TextField, ListItem, Stack } from "@mui/material";
+import { useThemeDesignEditValue } from "../../../ThemeDesign";
+import { useState, useEffect } from "react";
+import { useDebouncyEffect } from "use-debouncy";
+import OptionListItemResetButton from "../../OptionListItemResetButton";
 
 export type FontStyleFieldOptionProps = {
   name: string;
-  initValue: string;
-  modifiedValue: string;
+  path: string;
+  templateValue: string | number;
   orientation?: "horizontal" | "vertical";
 };
 
 export default function FontStyleFieldOption(props: FontStyleFieldOptionProps) {
-  const canResetValue = props.initValue !== props.modifiedValue;
+  const { value, hasVisualEdit, hasCodeOverride, setValue, reset } = 
+    useThemeDesignEditValue(props.path);
+
+  const currentValue = value ?? props.templateValue;
+  const canResetValue = hasVisualEdit || hasCodeOverride;
+  
+  const [inputValue, setInputValue] = useState(String(currentValue));
+
+  // Sync input value when currentValue changes
+  useEffect(() => {
+    setInputValue(String(currentValue));
+  }, [currentValue]);
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = event.target.value;
+    setInputValue(newValue);
+  };
+
+  // Apply changes with debounce for better UX (rather than onBlur)
+  useDebouncyEffect(
+    () => {
+      if (hasCodeOverride) return;
+      // Parse as number if possible, otherwise keep as string
+      const numValue = Number(inputValue);
+      const newVal = isNaN(numValue) ? inputValue : numValue;
+      // Only set when value actually differs to avoid extra updates
+      if (newVal !== currentValue) {
+        setValue(newVal as any);
+      }
+    },
+    200,
+    [inputValue]
+  );
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter" && !hasCodeOverride) {
+      const numValue = Number(inputValue);
+      const newVal = isNaN(numValue) ? inputValue : numValue;
+      setValue(newVal as any);
+    }
+  };
 
   return (
     <ListItem
@@ -26,54 +70,25 @@ export default function FontStyleFieldOption(props: FontStyleFieldOptionProps) {
         columnGap: 2.5,
       }}
     >
-      <Typography
-        component="div"
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          columnGap: 0.5,
-          fontStyle: 400,
-          fontSize: 12,
-          textWrap: "nowrap",
-          // color: canResetValue ? "warning.main" : "text.primary",
-        }}
-      >
-        {!canResetValue && (
-          <Typography
-            color="green"
-            sx={{
-              p: 0.5,
-              fontSize: 10,
-              lineHeight: 1,
-              backgroundColor: "#e0f8e089",
-            }}
-          >
-            Default
-          </Typography>
-        )}
+      <Stack direction="row" alignItems="center" spacing={0.75}>
+        <OptionListItemResetButton
+          canResetValue={canResetValue}
+          resetValue={reset}
+          initStateLabel={"Default"}
+        />
 
-        {canResetValue && (
-          <Button
-            color="warning"
-            sx={{
-              lineHeight: 1,
-              fontSize: 10,
-              padding: 0.5,
-              fontWeight: 400,
-              minWidth: "auto",
-            }}
-          >
-            Reset
-          </Button>
-        )}
-
-        {props.name}
-      </Typography>
+        <Typography variant="caption" sx={{ fontStyle: 400, fontSize: 12 }}>
+          {props.name}
+        </Typography>
+      </Stack>
 
       <TextField
         size="small"
         variant="filled"
-        value={`${props.modifiedValue}`}
+        value={inputValue}
+        onChange={handleChange}
+        onKeyDown={handleKeyDown}
+        disabled={hasCodeOverride}
         sx={{
           flexBasis: props.orientation === "vertical" ? "100%" : "auto",
 

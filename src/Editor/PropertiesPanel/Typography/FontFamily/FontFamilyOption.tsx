@@ -1,21 +1,63 @@
-import { Button, ListItem, Typography } from "@mui/material";
+import { ListItem, Typography, Stack } from "@mui/material";
 import FontFamilyOptionInput from "./FontFamilyOptionInput";
+import { useThemeDesignEditValue, useThemeDesignStore } from "../../../ThemeDesign";
+import OptionListItemResetButton from "../../OptionListItemResetButton";
 
 export type FontFamilyOptionProps = {
   name: string;
-  initValue: {
-    key: string;
-    title: string;
-  };
-  modifiedValue: {
-    key: string;
-    title: string;
-  };
+  path: string;
+  templateValue: string;
   disabled?: boolean;
 };
 
 export default function FontFamilyOption(props: FontFamilyOptionProps) {
-  const canResetValue = props.initValue.key !== props.modifiedValue.key;
+  const { value, hasVisualEdit, hasCodeOverride, reset } = 
+    useThemeDesignEditValue(props.path);
+  const store = useThemeDesignStore();
+
+  // Detect if this is the headings control (path = typography.h1.fontFamily)
+  const isHeadingsControl = props.path === 'typography.h1.fontFamily';
+
+  // For headings: check if ANY h1-h6 has a visual edit
+  const hasAnyHeadingEdit = isHeadingsControl && [
+    'typography.h1.fontFamily',
+    'typography.h2.fontFamily',
+    'typography.h3.fontFamily',
+    'typography.h4.fontFamily',
+    'typography.h5.fontFamily',
+    'typography.h6.fontFamily',
+  ].some(p => {
+    const scheme = store.activeColorScheme;
+    const modeKey = scheme === 'light' ? 'lightMode' : 'darkMode';
+    return p in store.baseVisualEdits || p in store[modeKey].visualEdits;
+  });
+
+  // Auto-inherit: when headings control has no edits, derive from base fontFamily
+  const isAutoInheriting = isHeadingsControl && !hasAnyHeadingEdit && !hasCodeOverride;
+  const baseFontFamily = store.baseVisualEdits['typography.fontFamily'] as string | undefined;
+
+  // Current value priority: user edit > auto-inherit (base) > template default
+  const currentValue = isAutoInheriting && baseFontFamily
+    ? baseFontFamily
+    : ((value as string) ?? props.templateValue);
+
+  const canResetValue = (isHeadingsControl ? hasAnyHeadingEdit : hasVisualEdit) || hasCodeOverride;
+
+  // Custom reset handler: for headings control, remove all h1-h6 visual edits
+  const handleReset = () => {
+    if (isHeadingsControl) {
+      [
+        'typography.h1.fontFamily',
+        'typography.h2.fontFamily',
+        'typography.h3.fontFamily',
+        'typography.h4.fontFamily',
+        'typography.h5.fontFamily',
+        'typography.h6.fontFamily',
+      ].forEach(p => store.removeVisualEdit(p));
+    } else {
+      reset();
+    }
+  };
 
   function getColor() {
     if (props.disabled) {
@@ -38,70 +80,31 @@ export default function FontFamilyOption(props: FontFamilyOptionProps) {
         paddingBlock: 0.75,
       }}
     >
-      <Typography
-        component="div"
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          columnGap: 0.5,
-          fontWeight: 400,
-          fontSize: 12,
-          color: getColor(),
-        }}
-      >
-        {!canResetValue && (
-          <Typography
-            color="green"
-            sx={{
-              p: 0.5,
-              fontSize: 10,
-              lineHeight: 1,
-              backgroundColor: "#e0f8e089",
-            }}
-          >
-            Default
-          </Typography>
-        )}
+      <Stack direction="row" alignItems="center" spacing={0.75}>
+        <OptionListItemResetButton
+          canResetValue={canResetValue}
+          resetValue={handleReset}
+          initStateLabel={isAutoInheriting ? "Auto" : "Default"}
+          labelColor={isAutoInheriting ? "resolved" : undefined}
+        />
 
-        {canResetValue && (
-          <Button
-            color="warning"
-            sx={{
-              lineHeight: 1,
-              fontSize: 10,
-              padding: 0.5,
-              fontWeight: 400,
-              minWidth: "auto",
-            }}
-          >
-            Reset
-          </Button>
-        )}
-
-        {props.name}
-        {/* 
-        {canResetValue && (
-          <Button
-            sx={{
-              marginLeft: 1,
-              backgroundColor: "rgba(137, 194, 244, 0.2)",
-              fontSize: 10,
-              lineHeight: 1,
-              paddingInline: 0.75,
-              paddingBlock: 0.5,
-              minWidth: "auto",
-              textTransform: "none",
-            }}
-          >
-            Reset
-          </Button>
-        )} */}
-      </Typography>
+        <Typography
+          variant="caption"
+          sx={{
+            fontWeight: 400,
+            fontSize: 12,
+            color: getColor(),
+          }}
+        >
+          {props.name}
+        </Typography>
+      </Stack>
 
       <FontFamilyOptionInput
         id={`font-family-select-${props.name}`}
-        value={props.modifiedValue}
-        disabled={props.disabled}
+        value={currentValue}
+        disabled={props.disabled || hasCodeOverride}
+        path={props.path}
       />
     </ListItem>
   );

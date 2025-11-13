@@ -1,64 +1,45 @@
 import FontStyleRangedOption from "../FontStyleOptions/FontStyleRangedOption";
 import FontWeightOption from "../FontWeightOption/FontWeightOption";
 import FontStyleFieldOption from "../FontStyleOptions/FontStyleFieldOption";
-import { Typography } from "@mui/material";
-
-const placeholderSettings = {
-  family: {
-    initValue: { key: "fontFamily", value: "Roboto", title: "Roboto" },
-    modifiedValue: { key: "fontFamily", value: "Arial", title: "Arial" },
-  },
-  weight: {
-    initValue: { key: "fontWeight", value: "400" },
-    modifiedValue: { key: "fontWeight", value: "400" },
-  },
-  lineHeight: {
-    initValue: "1.1",
-    modifiedValue: "1.1",
-  },
-  letterSpacing: {
-    initValue: "0",
-    modifiedValue: "0",
-  },
-};
+import { useThemeDesignTheme } from "../../../ThemeDesign";
+import TypographyOptionGroup from "../TypographyOptionGroup";
 
 type HeadlineTypographyProps = {
   title: string;
+  variant: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 };
 
 function HeadlineTypography(props: HeadlineTypographyProps) {
-  return (
-    <div>
-      <Typography
-        variant="subtitle2"
-        component={"h6"}
-        marginTop={5}
-        paddingBlock={1}
-        fontWeight={500}
-        color="common.black"
-        paddingInlineStart={0.35} // aesthetics alignment with list items badge
-      >
-        {props.title}{" "}
-      </Typography>
+  const theme = useThemeDesignTheme();
+  const variant = props.variant;
+  const variantTypography = theme.typography[variant];
 
+  return (
+    <TypographyOptionGroup title={props.title}>
       <FontWeightOption
         name={"Font weight"}
-        initValue={placeholderSettings.weight.initValue}
-        modifiedValue={placeholderSettings.weight.modifiedValue}
+        path={`typography.${variant}.fontWeight`}
+        templateValue={variantTypography.fontWeight as number | string}
+      />
+
+      <FontStyleFieldOption
+        name={"Font size"}
+        path={`typography.${variant}.fontSize`}
+        templateValue={variantTypography.fontSize as string | number}
       />
 
       <FontStyleFieldOption
         name={"Letter Spacing"}
-        initValue={placeholderSettings.letterSpacing.initValue}
-        modifiedValue={placeholderSettings.letterSpacing.modifiedValue}
+        path={`typography.${variant}.letterSpacing`}
+        templateValue={variantTypography.letterSpacing as string | number}
       />
 
       <FontStyleRangedOption
         name={"Line height"}
-        initValue={placeholderSettings.lineHeight.initValue}
-        modifiedValue={placeholderSettings.lineHeight.modifiedValue}
+        path={`typography.${variant}.lineHeight`}
+        templateValue={variantTypography.lineHeight as string | number}
       />
-    </div>
+    </TypographyOptionGroup>
   );
 }
 
