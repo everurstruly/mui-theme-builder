@@ -5,8 +5,7 @@ import SaveThemeSheetButton from "./SaveThemeSheetButton";
 import ThemingHistoryActions from "./ThemingHistoryActions";
 import MobileActionGroup from "./MobileActionGroup";
 import ThemeSheetColorSchemeToggle from "./ThemeSheetColorSchemeToggle";
-import OpenLibraryButton from "./OpenLibraryButton";
-import NewThemeSheetButton from "./NewThemeSheettButton";
+import ThemeDesignListMenu from "./ThemeDesignListMenu";
 import OpenedThemeSheetDisplay from "./OpenedThemeSheetDisplay";
 import ExplorerPanelVisibilityToggle from "./ExplorerPanelVisibilityToggle";
 import { AppBar, Box, Divider, Stack, Toolbar, type SxProps } from "@mui/material";
@@ -59,8 +58,7 @@ function DesktopToolbarContent() {
         paddingInline={{ lg: 1.5 }}
         columnGap={1.5}
       >
-        <NewThemeSheetButton />
-        <OpenLibraryButton />
+        <ThemeDesignListMenu />
 
         <Stack
           direction={"row"}
