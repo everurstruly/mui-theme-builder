@@ -80,11 +80,11 @@ function DesktopToolbarContent() {
         columnGap={1.5}
       >
         <Box display="inherit" columnGap={"inherit"}>
-          <ThemingExperienceTab />
+          <ThemeSheetColorSchemeToggle />
         </Box>
 
         <Box display="inherit" columnGap={"inherit"}>
-          <ThemeSheetColorSchemeToggle />
+          <ThemingExperienceTab />
         </Box>
       </Stack>
     </Stack>
