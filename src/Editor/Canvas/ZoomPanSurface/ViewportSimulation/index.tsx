@@ -69,10 +69,30 @@ export default function ViewportSimulationIFrame({
 
     mountIdRef.current++;
 
+    // Sanitize theme object by stripping functions so it can be postMessage()-cloned
+    const stripFunctions = (value: unknown): unknown => {
+      if (value === null || value === undefined) return value;
+      if (Array.isArray(value)) return value.map((v) => stripFunctions(v));
+      if (typeof value === "object") {
+        const obj: Record<string, unknown> = {};
+        for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
+          if (typeof v === "function") {
+            // skip functions
+            continue;
+          }
+          obj[k] = stripFunctions(v);
+        }
+        return obj;
+      }
+      return value;
+    };
+
+    const safeTheme = stripFunctions(workfileTheme) as Record<string, unknown> | undefined;
+
     const message: MountComponentMessage = {
       mountId: mountIdRef.current,
       type: MESSAGE_MOUNT_COMPONENT,
-      theme: workfileTheme,
+      theme: safeTheme,
       previewId: previewId, // Send ID for iframe to look up
       previewLabel: resolvedPreview.label, // Send label for debugging
       registryPreviewIds: Object.keys(previewRegistry), // Send list of available components

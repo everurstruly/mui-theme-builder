@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import { memo } from "react";
+import { memo, Component, ReactNode } from "react";
 import ViewportSimulation from "./ViewportSimulation";
 import type { ThemeOptions } from "@mui/material/styles";
 
@@ -12,6 +12,33 @@ export interface CanvasViewportProps {
   translatePosition: { x: number; y: number };
   isDragging: boolean;
   dragLock: boolean;
+}
+
+class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean; error: Error | null }> {
+  constructor(props: { children: ReactNode }) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error) {
+    // Log to console for diagnostics
+    console.error('[Viewport ErrorBoundary] Caught error:', error);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <Box sx={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ color: '#d32f2f' }}>Preview failed to render: {this.state.error?.message}</div>
+        </Box>
+      );
+    }
+    return this.props.children as ReactNode;
+  }
 }
 
 const CanvasViewport = memo(function CanvasViewport({
@@ -44,13 +71,15 @@ const CanvasViewport = memo(function CanvasViewport({
         },
       }}
     >
-      <ViewportSimulation
-        bordered
-        width={width}
-        height={height}
-        previewId={previewId}
-        workfileTheme={workfileTheme}
-      />
+      <ErrorBoundary>
+        <ViewportSimulation
+          bordered
+          width={width}
+          height={height}
+          previewId={previewId}
+          workfileTheme={workfileTheme}
+        />
+      </ErrorBoundary>
     </Box>
   );
 });
