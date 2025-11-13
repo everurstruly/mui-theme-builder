@@ -42,6 +42,11 @@ export const useThemeDesignStore = create<ThemeDesignStore>()(
       activeColorScheme: 'light',
       activePreviewId: 'DashboardExample',
       hasUnsavedChanges: false,
+  // Per-experience history (kept in-memory only)
+  visualHistoryPast: [],
+  visualHistoryFuture: [],
+  codeHistoryPast: [],
+  codeHistoryFuture: [],
 
       // ===== Template Management =====
 
@@ -74,6 +79,18 @@ export const useThemeDesignStore = create<ThemeDesignStore>()(
         const isColorScheme = isColorSchemePath(path);
         const scheme = get().activeColorScheme;
 
+        // Snapshot visual state before mutation
+        const snapshot = () => ({
+          baseVisualEdits: get().baseVisualEdits,
+          light: get().lightMode.visualEdits,
+          dark: get().darkMode.visualEdits,
+        });
+
+        set((state) => ({
+          visualHistoryPast: [...state.visualHistoryPast, snapshot()].slice(-50),
+          visualHistoryFuture: [],
+        }));
+
         if (isColorScheme) {
           // Color-scheme-specific path (palette.*, shadows)
           const modeKey = scheme === 'light' ? 'lightMode' : 'darkMode';
@@ -103,6 +120,18 @@ export const useThemeDesignStore = create<ThemeDesignStore>()(
         const isColorScheme = isColorSchemePath(path);
         const scheme = get().activeColorScheme;
 
+        // Snapshot before removal
+        const snapshot = () => ({
+          baseVisualEdits: get().baseVisualEdits,
+          light: get().lightMode.visualEdits,
+          dark: get().darkMode.visualEdits,
+        });
+
+        set((state) => ({
+          visualHistoryPast: [...state.visualHistoryPast, snapshot()].slice(-50),
+          visualHistoryFuture: [],
+        }));
+
         if (isColorScheme) {
           const modeKey = scheme === 'light' ? 'lightMode' : 'darkMode';
           set((state) => {
@@ -131,6 +160,16 @@ export const useThemeDesignStore = create<ThemeDesignStore>()(
       clearVisualEdits: (scope: 'global' | 'current-scheme' | 'all') => {
         const scheme = get().activeColorScheme;
         const modeKey = scheme === 'light' ? 'lightMode' : 'darkMode';
+
+        // Snapshot before clearing visual edits
+        set((state) => ({
+          visualHistoryPast: [...state.visualHistoryPast, {
+            baseVisualEdits: state.baseVisualEdits,
+            light: state.lightMode.visualEdits,
+            dark: state.darkMode.visualEdits,
+          }].slice(-50),
+          visualHistoryFuture: [],
+        }));
 
         if (scope === 'global') {
           set({ baseVisualEdits: {}, hasUnsavedChanges: true });
@@ -178,6 +217,12 @@ export const useThemeDesignStore = create<ThemeDesignStore>()(
           return;
         }
 
+        // Store previous source in code history (for undo) then store DSL
+        set((state) => ({
+          codeHistoryPast: [...state.codeHistoryPast, state.codeOverridesSource].slice(-50),
+          codeHistoryFuture: [],
+        }));
+
         // Transform succeeded - store DSL
         // The resolved ThemeOptions will be computed on-demand in the resolver
         set({
@@ -191,6 +236,12 @@ export const useThemeDesignStore = create<ThemeDesignStore>()(
       },
 
       clearCodeOverrides: () => {
+        // Push current source to code history so clear is undoable
+        set((state) => ({
+          codeHistoryPast: [...state.codeHistoryPast, state.codeOverridesSource].slice(-50),
+          codeHistoryFuture: [],
+        }));
+
         set({
           codeOverridesSource: '',
           codeOverridesDsl: {},
@@ -229,6 +280,18 @@ export const useThemeDesignStore = create<ThemeDesignStore>()(
       },
 
       resetToTemplate: () => {
+        // Snapshot visual and code before wiping
+        set((state) => ({
+          visualHistoryPast: [...state.visualHistoryPast, {
+            baseVisualEdits: state.baseVisualEdits,
+            light: state.lightMode.visualEdits,
+            dark: state.darkMode.visualEdits,
+          }].slice(-50),
+          codeHistoryPast: [...state.codeHistoryPast, state.codeOverridesSource].slice(-50),
+          visualHistoryFuture: [],
+          codeHistoryFuture: [],
+        }));
+
         set({
           baseVisualEdits: {},
           codeOverridesSource: '',
@@ -240,6 +303,72 @@ export const useThemeDesignStore = create<ThemeDesignStore>()(
           darkMode: createInitialColorSchemeEdits(),
           hasUnsavedChanges: true,
         });
+      },
+
+      // ===== Scoped undo/redo actions =====
+
+      undoVisual: () => {
+        const past = get().visualHistoryPast;
+        if (!past || past.length === 0) return;
+        const prev = past[past.length - 1];
+        set((state) => ({
+          visualHistoryPast: state.visualHistoryPast.slice(0, -1),
+          visualHistoryFuture: [...state.visualHistoryFuture, {
+            baseVisualEdits: state.baseVisualEdits,
+            light: state.lightMode.visualEdits,
+            dark: state.darkMode.visualEdits,
+          }].slice(-50),
+          baseVisualEdits: prev.baseVisualEdits,
+          lightMode: { ...state.lightMode, visualEdits: prev.light },
+          darkMode: { ...state.darkMode, visualEdits: prev.dark },
+          hasUnsavedChanges: true,
+        }));
+      },
+
+      redoVisual: () => {
+        const future = get().visualHistoryFuture;
+        if (!future || future.length === 0) return;
+        const next = future[future.length - 1];
+        set((state) => ({
+          visualHistoryFuture: state.visualHistoryFuture.slice(0, -1),
+          visualHistoryPast: [...state.visualHistoryPast, {
+            baseVisualEdits: state.baseVisualEdits,
+            light: state.lightMode.visualEdits,
+            dark: state.darkMode.visualEdits,
+          }].slice(-50),
+          baseVisualEdits: next.baseVisualEdits,
+          lightMode: { ...state.lightMode, visualEdits: next.light },
+          darkMode: { ...state.darkMode, visualEdits: next.dark },
+          hasUnsavedChanges: true,
+        }));
+      },
+
+      undoCode: () => {
+        const past = get().codeHistoryPast;
+        if (!past || past.length === 0) return;
+        const prevSource = past[past.length - 1];
+        // push current to future
+        set((state) => ({
+          codeHistoryPast: state.codeHistoryPast.slice(0, -1),
+          codeHistoryFuture: [...state.codeHistoryFuture, state.codeOverridesSource].slice(-50),
+          codeOverridesSource: prevSource,
+          // Re-run transform to set DSL (best-effort)
+          codeOverridesDsl: prevSource ? transformCodeToDsl(prevSource).dsl : {},
+          hasUnsavedChanges: true,
+        }));
+      },
+
+      redoCode: () => {
+        const future = get().codeHistoryFuture;
+        if (!future || future.length === 0) return;
+        const nextSource = future[future.length - 1];
+        set((state) => ({
+          codeHistoryFuture: state.codeHistoryFuture.slice(0, -1),
+          codeHistoryPast: [...state.codeHistoryPast, state.codeOverridesSource].slice(-50),
+          codeOverridesSource: nextSource,
+          codeOverridesDsl: nextSource ? transformCodeToDsl(nextSource).dsl : {},
+          hasUnsavedChanges: true,
+        }));
       },
 
       // ===== UI State =====

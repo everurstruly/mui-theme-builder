@@ -92,6 +92,27 @@ export interface ThemeDesignState {
   
   /** Dirty flag for unsaved changes */
   hasUnsavedChanges: boolean;
+
+  // === Per-experience history (non-persistent) ===
+  /** Visual edits history (past snapshots) */
+  visualHistoryPast: Array<{
+    baseVisualEdits: Record<string, SerializableValue>;
+    light: Record<string, SerializableValue>;
+    dark: Record<string, SerializableValue>;
+  }>;
+
+  /** Visual edits redo stack */
+  visualHistoryFuture: Array<{
+    baseVisualEdits: Record<string, SerializableValue>;
+    light: Record<string, SerializableValue>;
+    dark: Record<string, SerializableValue>;
+  }>;
+
+  /** Code edits history (past sources) */
+  codeHistoryPast: string[];
+
+  /** Code edits redo stack (future) */
+  codeHistoryFuture: string[];
 }
 
 /**
@@ -171,6 +192,16 @@ export interface ThemeDesignActions {
    * @param previewId - Preview component identifier
    */
   selectPreview: (previewId: string) => void;
+
+  // === Scoped undo/redo (per-experience) ===
+  /** Undo last visual edit (affects baseVisualEdits/lightMode/darkMode) */
+  undoVisual: () => void;
+  /** Redo last undone visual edit */
+  redoVisual: () => void;
+  /** Undo last code apply (restores previous codeOverridesSource) */
+  undoCode: () => void;
+  /** Redo last undone code apply */
+  redoCode: () => void;
 }
 
 /**
