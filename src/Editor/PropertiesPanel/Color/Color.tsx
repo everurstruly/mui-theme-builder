@@ -63,7 +63,7 @@ function extractPaletteGroups(palette: Theme['palette']): PaletteGroup[] {
     warning: "Warning",
     info: "Info",
     success: "Success",
-    text: "Typography",
+    text: "Text Content",
     background: "Backgrounds",
     common: "Common",
   } as const;

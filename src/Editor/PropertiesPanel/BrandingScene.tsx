@@ -83,7 +83,6 @@ export default function PrimitiesPropertiesPanelBody() {
       <Box
         paddingInline={panelPaddingInline}
         paddingBottom={10}
-        paddingInlineEnd={3}
       >
         {selectedPropTab === "palette" && <ColorProperty />}
         {selectedPropTab === "typography" && <TypographyProperty />}
