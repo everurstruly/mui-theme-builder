@@ -29,7 +29,7 @@ const thinScrollbar = {
   scrollbarColor: "rgba(0,0,0,0.5) transparent",
 };
 
-const panelPaddingInline = 1.5;
+const panelPaddingInline = 2;
 
 export default function PrimitiesPropertiesPanelBody() {
   const [selectedPropTab, setSelectedPropTab] = useState("palette");
