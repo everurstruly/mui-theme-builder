@@ -112,15 +112,46 @@ function useResolvedThemeOptions(colorScheme?: 'light' | 'dark'): ThemeOptions {
  */
 export function useThemeDesignTheme(colorScheme?: 'light' | 'dark'): Theme {
   const themeOptions = useResolvedThemeOptions(colorScheme);
+  const activeColorScheme = useThemeDesignStore((s) => s.activeColorScheme);
+  const targetScheme = colorScheme ?? activeColorScheme;
+  const modeKey = targetScheme === 'light' ? 'lightMode' : 'darkMode';
+  const visualEdits = useThemeDesignStore((s) => s[modeKey].visualEdits);
 
   const theme = useMemo(() => {
     try {
-      return createTheme(themeOptions);
+      // Strip derived palette shades (light/dark/contrastText) if their parent main
+      // has been user-edited, so MUI can auto-regenerate them from the new main.
+      const cleanedOptions = { ...themeOptions };
+      
+      if (cleanedOptions.palette && typeof cleanedOptions.palette === 'object') {
+        const palette = { ...cleanedOptions.palette } as Record<string, unknown>;
+        
+        // Check each color key (primary, secondary, error, etc.)
+        for (const [colorKey, colorValue] of Object.entries(palette)) {
+          if (colorKey === 'mode' || typeof colorValue !== 'object' || !colorValue) continue;
+          
+          const mainPath = `palette.${colorKey}.main`;
+          const hasMainEdit = mainPath in visualEdits;
+          
+          // If user edited the main color, strip derived shades so MUI regenerates them
+          if (hasMainEdit) {
+            const cleanedColor = { ...(colorValue as Record<string, unknown>) };
+            delete cleanedColor.light;
+            delete cleanedColor.dark;
+            delete cleanedColor.contrastText;
+            palette[colorKey] = cleanedColor;
+          }
+        }
+        
+        cleanedOptions.palette = palette as ThemeOptions['palette'];
+      }
+
+      return createTheme(cleanedOptions);
     } catch (error) {
       console.error('[useThemeDesignTheme] Failed to create theme:', error);
       return createTheme();
     }
-  }, [themeOptions]);
+  }, [themeOptions, visualEdits]);
 
   return theme;
 }

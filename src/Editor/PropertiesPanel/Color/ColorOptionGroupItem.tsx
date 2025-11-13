@@ -127,7 +127,7 @@ export default function ColorOptionGroupItem(props: ColorOptionGroupItemProps) {
           }}
         >
           <Sketch
-            color={tempColor}
+            color={(tempColor || (displayValue as string)) as string}
             onChange={handleColorChange}
             disableAlpha={false}
           />

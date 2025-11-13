@@ -1,6 +1,6 @@
 import { useMemo, useEffect, useRef } from "react";
+import { useThemeDesignEditValue, useThemeDesignTheme, useThemeDesignStore } from "../../ThemeDesign";
 import { createTheme } from "@mui/material/styles";
-import { useThemeDesignEditValue, useThemeDesignTheme } from "../../ThemeDesign";
 
 // In-memory map to suppress auto-generation immediately after user resets a derived shade.
 const resetSuppressMap = new Map<string, boolean>();
@@ -9,7 +9,8 @@ const resetSuppressMap = new Map<string, boolean>();
 // only when the parent main color is actively user-edited (not default, not after reset).
 export default function useResolvedPaletteShade(path: string, name: string) {
   const editHook = useThemeDesignEditValue(path);
-  const baseTheme = useThemeDesignTheme();
+  const resolvedTheme = useThemeDesignTheme(); // MUI-resolved theme with correct derived shades
+  const activeColorScheme = useThemeDesignStore((s) => s.activeColorScheme); // Get current mode directly
 
   const parts = path.split(".");
   const parentKey = parts.length >= 2 ? parts[1] : null;
@@ -18,28 +19,35 @@ export default function useResolvedPaletteShade(path: string, name: string) {
   const isDerived = ["light", "dark", "contrastText"].includes(name);
   const prevParentEditRef = useRef(parentHook.hasVisualEdit);
 
+  // Use MUI's logic to compute derived shades from the live user-edited main color.
+  // We create a minimal theme with just the user's edited main to get correct light/dark/contrastText.
   const resolvedShade = useMemo(() => {
     if (!isDerived || !parentKey) return undefined;
 
-    const paletteObj = baseTheme.palette as unknown as Record<string, unknown>;
+    // Get the live user-edited main color (or fall back to resolved theme's main)
+    const paletteObj = resolvedTheme.palette as unknown as Record<string, unknown>;
     const parentEntry = paletteObj[parentKey] as Record<string, unknown> | undefined;
     const parentMain = parentHook.value || (parentEntry ? (parentEntry["main"] as string | undefined) : undefined);
 
+    if (!parentMain) return undefined;
+
     try {
-      const resolved = createTheme({
+      // Let MUI compute the derived shades using its internal augmentColor logic
+      // Use the active color scheme from store to ensure mode matches what user sees
+      const tempTheme = createTheme({
         palette: {
-          mode: baseTheme.palette?.mode,
+          mode: activeColorScheme,
           [parentKey]: { main: parentMain },
         },
       });
 
-      const resolvedPalette = resolved.palette as unknown as Record<string, unknown>;
-      const resolvedEntry = resolvedPalette[parentKey] as Record<string, unknown> | undefined;
-      return resolvedEntry ? (resolvedEntry[name] as string | undefined) : undefined;
+      const tempPalette = tempTheme.palette as unknown as Record<string, unknown>;
+      const tempEntry = tempPalette[parentKey] as Record<string, unknown> | undefined;
+      return tempEntry ? (tempEntry[name] as string | undefined) : undefined;
     } catch {
       return undefined;
     }
-  }, [isDerived, parentKey, parentHook.value, baseTheme, name]);
+  }, [isDerived, parentKey, parentHook.value, resolvedTheme, name, activeColorScheme]);
 
   // Detect when parent main is actively user-edited (not code-overridden).
   const parentIsActivelyEdited = parentHook ? parentHook.hasVisualEdit && !parentHook.hasCodeOverride : false;

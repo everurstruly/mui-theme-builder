@@ -91,6 +91,33 @@ export const useThemeDesignStore = create<ThemeDesignStore>()(
           visualHistoryFuture: [],
         }));
 
+        // If editing a palette main color, auto-remove any explicit derived shades
+        // so MUI can regenerate them from the new main color
+        const mainColorMatch = path.match(/^palette\.(\w+)\.main$/);
+        if (mainColorMatch) {
+          const colorKey = mainColorMatch[1];
+          const derivedPaths = [
+            `palette.${colorKey}.light`,
+            `palette.${colorKey}.dark`,
+            `palette.${colorKey}.contrastText`,
+          ];
+
+          const modeKey = scheme === 'light' ? 'lightMode' : 'darkMode';
+          set((state) => {
+            const cleanedEdits = { ...state[modeKey].visualEdits };
+            derivedPaths.forEach(derivedPath => {
+              delete cleanedEdits[derivedPath];
+            });
+
+            return {
+              [modeKey]: {
+                ...state[modeKey],
+                visualEdits: cleanedEdits,
+              },
+            };
+          });
+        }
+
         if (isColorScheme) {
           // Color-scheme-specific path (palette.*, shadows)
           const modeKey = scheme === 'light' ? 'lightMode' : 'darkMode';
