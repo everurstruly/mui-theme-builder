@@ -63,10 +63,9 @@ function extractPaletteGroups(palette: Theme['palette']): PaletteGroup[] {
     warning: "Warning",
     info: "Info",
     success: "Success",
-    text: "Text",
-    background: "Background",
+    text: "Typography",
+    background: "Backgrounds",
     common: "Common",
-    grey: "Grey",
   } as const;
   
   Object.entries(sections).forEach(([key, title]) => {

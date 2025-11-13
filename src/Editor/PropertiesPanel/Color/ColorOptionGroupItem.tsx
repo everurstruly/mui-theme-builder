@@ -2,7 +2,7 @@ import { ListItem, Typography, Box, Stack, Popover } from "@mui/material";
 import { useState, useRef } from "react";
 import { Sketch } from "@uiw/react-color";
 import { useDebouncyEffect } from "use-debouncy";
-import { useThemeDesignEditValue } from "../../ThemeDesign";
+import useResolvedPaletteShade from "./useResolvedPaletteShade";
 import OptionListItemResetButton from "../OptionListItemResetButton";
 
 type ColorOptionGroupItemProps = {
@@ -12,43 +12,45 @@ type ColorOptionGroupItemProps = {
 
 export default function ColorOptionGroupItem(props: ColorOptionGroupItemProps) {
   const {
-    value,
+    displayValue,
+    isResolved,
     setValue,
-    hasVisualEdit: isCustomized,
     reset: resetValue,
+    hasVisualEdit: isCustomized,
     hasCodeOverride: isControlledByFunction,
-  } = useThemeDesignEditValue(props.path);
+  } = useResolvedPaletteShade(props.path, props.name as string);
 
+  // Show Reset button only when the user has actually customized this value or it's code-controlled.
   const canResetValue = isCustomized || isControlledByFunction;
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [tempColor, setTempColor] = useState<string>("");
   const colorBoxRef = useRef<HTMLDivElement>(null);
   const lastAppliedColorRef = useRef<string>("");
 
-  const displayValue = (value as string) || "#000000";
+  // displayValue, resolvedShadeValue and isResolved are provided by the hook
 
   // Debounce the color updates - only applies to theme after 200ms of no changes
   useDebouncyEffect(
     () => {
-      if (tempColor && tempColor !== displayValue) {
-        setValue(tempColor);
-        lastAppliedColorRef.current = tempColor;
-      }
+        if (tempColor && tempColor !== (displayValue as string)) {
+          setValue(tempColor);
+          lastAppliedColorRef.current = tempColor;
+        }
     },
-    200,
+    165,
     [tempColor, displayValue]
   );
 
   // Clear tempColor when value changes externally (e.g., from reset)
   // This prevents debounced setValue from re-applying old color after reset
-  if (displayValue !== lastAppliedColorRef.current && tempColor) {
+  if ((displayValue as string) !== lastAppliedColorRef.current && tempColor) {
     setTempColor("");
-    lastAppliedColorRef.current = displayValue;
+    lastAppliedColorRef.current = displayValue as string;
   }
 
   const handleOpenPicker = () => {
     if (!isControlledByFunction) {
-      setTempColor(displayValue);
+      setTempColor(displayValue as string);
       setAnchorEl(colorBoxRef.current);
     }
   };
@@ -75,7 +77,8 @@ export default function ColorOptionGroupItem(props: ColorOptionGroupItemProps) {
         <OptionListItemResetButton
           canResetValue={canResetValue}
           resetValue={resetValue}
-          initStateLabel="Default"
+          initStateLabel={isResolved ? "Auto" : "Default"}
+          labelColor={isResolved ? "resolved" : undefined}
         />
 
         <Typography
@@ -100,7 +103,7 @@ export default function ColorOptionGroupItem(props: ColorOptionGroupItemProps) {
           sx={{
             width: 32,
             height: 20,
-            bgcolor: tempColor || displayValue,
+            bgcolor: (tempColor || (displayValue as string)) as string,
             borderRadius: 1,
             border: 2,
             borderColor: "divider",

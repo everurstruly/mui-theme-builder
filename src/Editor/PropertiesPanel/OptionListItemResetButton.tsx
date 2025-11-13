@@ -1,31 +1,45 @@
 import { Button, Typography } from "@mui/material";
+import type { Theme } from "@mui/material";
 
 type OptionListItemResetButtonProps = {
   canResetValue: boolean;
   resetValue: () => void;
   initStateLabel?: string;
+  labelColor?: string;
 };
 
+const baseLabelSx = {
+  p: 0.5,
+  fontSize: 10,
+  lineHeight: 1,
+  minWidth: "7ch", // matches previous visual width
+  textAlign: "center",
+  fontWeight: 500,
+};
+
+function labelColorOverride(theme: Theme, labelColor?: string) {
+  const isDarkMode = theme.palette.mode === "dark";
+
+  if (labelColor === "resolved") {
+    return isDarkMode
+      ? { color: "violet", backgroundColor: "#100128ff" }
+      : { color: "purple", backgroundColor: "#f0ecfcff" };
+  }
+
+  return isDarkMode
+    ? { color: "limegreen", backgroundColor: "#1a3e1a89" }
+    : { color: "forestgreen", backgroundColor: "#e0f8e089" };
+}
+
 function OptionListItemResetButton(props: OptionListItemResetButtonProps) {
-  if (!props.canResetValue) {
+  const { canResetValue, resetValue, initStateLabel, labelColor } = props;
+
+  if (!canResetValue) {
     return (
       <Typography
-        color="green"
-        sx={[
-          () => ({
-            p: 0.5,
-            fontSize: 10,
-            lineHeight: 1,
-            backgroundColor: "#e0f8e089",
-          }),
-          (theme) =>
-            theme.applyStyles("dark", {
-              color: "limegreen",
-              backgroundColor: "#1a3e1a89",
-            }),
-        ]}
+        sx={[baseLabelSx, (theme: Theme) => labelColorOverride(theme, labelColor)]}
       >
-        {props.initStateLabel ?? "Default"}
+        {initStateLabel ?? "Default"}
       </Typography>
     );
   }
@@ -33,7 +47,7 @@ function OptionListItemResetButton(props: OptionListItemResetButtonProps) {
   return (
     <Button
       color="warning"
-      onClick={() => props.resetValue()}
+      onClick={() => resetValue()}
       sx={{
         lineHeight: 1,
         fontSize: 10,
