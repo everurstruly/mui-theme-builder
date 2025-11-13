@@ -14,13 +14,13 @@ function FontFamilyTypography() {
       </IconButton>
 
       <FontFamilyOption
-        name="Base (Body & Captions)"
+        name="Body & Captions"
         path="typography.fontFamily"
         templateValue={theme.typography.fontFamily as string}
       />
 
       <FontFamilyOption
-        name="Headings (H1-H6)"
+        name="Headings & Subtitles"
         path="typography.h1.fontFamily"
         templateValue={(theme.typography.h1.fontFamily || theme.typography.fontFamily) as string}
       />

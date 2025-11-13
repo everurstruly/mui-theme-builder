@@ -22,12 +22,12 @@ function labelColorOverride(theme: Theme, labelColor?: string) {
 
   if (labelColor === "resolved") {
     return isDarkMode
-      ? { color: "violet", backgroundColor: "#100128ff" }
+      ? { color: "violet", backgroundColor: "#232127ff" }
       : { color: "purple", backgroundColor: "#f0ecfcff" };
   }
 
   return isDarkMode
-    ? { color: "limegreen", backgroundColor: "#1a3e1a89" }
+    ? { color: "limegreen", backgroundColor: "#112d1189" }
     : { color: "forestgreen", backgroundColor: "#e0f8e089" };
 }
 

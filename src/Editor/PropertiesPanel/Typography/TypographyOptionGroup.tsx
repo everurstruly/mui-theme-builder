@@ -11,7 +11,7 @@ export default function TypographyOptionGroup(props: TypographyOptionGroupProps)
       <Typography
         variant="subtitle2"
         component={"h6"}
-        marginTop={5}
+        marginTop={6}
         paddingBottom={1.5}
         fontWeight={600}
         paddingInlineStart={0.35} // aesthetics alignment with list items badge
