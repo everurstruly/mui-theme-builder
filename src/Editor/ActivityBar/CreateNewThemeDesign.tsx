@@ -8,7 +8,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { Stack, Typography } from "@mui/material";
 import { AddCircleOutline } from "@mui/icons-material";
 
-export default function NewThemeSheetButton() {
+export default function CreateNewThemeDesign() {
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
@@ -22,19 +22,21 @@ export default function NewThemeSheetButton() {
   return (
     <>
       <Button
+        size="small"
         variant="outlined"
         aria-label="Copy and Implement Selected Theme"
-        onClick={() => handleClickOpen()}
-        startIcon={<AddCircleOutline />}
         sx={{
-          borderRadius: 2.5,
-
-          "& .MuiSvgIcon-root": {
-            fontSize: "1rem", // FIXME: match font size (not literialy 13px)
+          px: 1,
+          borderRadius: 2,
+          "& .MuiButton-startIcon": {
+            // marginInlineEnd: 0.5,
+            marginBottom: 0.125, // fix: ensure text alignement with icons
           },
         }}
+        onClick={() => handleClickOpen()}
+        startIcon={<AddCircleOutline />}
       >
-        Starter
+        New
       </Button>
 
       <Dialog
@@ -93,4 +95,3 @@ export default function NewThemeSheetButton() {
     </>
   );
 }
-

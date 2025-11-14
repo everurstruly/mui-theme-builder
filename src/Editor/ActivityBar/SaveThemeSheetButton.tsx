@@ -23,7 +23,7 @@ export default function SaveThemeSheetButton() {
         borderRadius: 2.5,
       }}
     >
-      {isSaved ? "Saved" : "Save Changes"}
+      {isSaved ? "Saved" : "Save as Changes"}
     </Button>
   );
 }

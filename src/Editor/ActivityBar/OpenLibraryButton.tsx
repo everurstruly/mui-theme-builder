@@ -1,3 +1,4 @@
+import { BookmarkBorderOutlined } from "@mui/icons-material";
 import useEditorUiStore from "../editorUiStore";
 import { Button } from "@mui/material";
 
@@ -6,14 +7,22 @@ function OpenLibraryButton() {
 
   return (
     <Button
-      // sx={{ minWidth: 0, px: 0, borderRadius: 2 }}
-      sx={{ borderRadius: 2 }}
+      size="small"
+      variant="outlined"
+      sx={{
+        px: 1,
+        borderRadius: 2,
+        "& .MuiButton-startIcon": {
+          // marginInlineEnd: 0.5,
+          marginBottom: 0.125, // fix: ensure text alignement with icons
+        },
+      }}
       onClick={() => showPanel("library")}
+      startIcon={<BookmarkBorderOutlined />}
     >
-      My Saved Themes
+      My Saves
     </Button>
   );
 }
 
 export default OpenLibraryButton;
-

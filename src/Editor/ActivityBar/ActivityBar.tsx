@@ -6,8 +6,7 @@ import ThemingHistoryActions from "./ThemingHistoryActions";
 import MobileActionGroup from "./MobileActionGroup";
 import ThemeSheetColorSchemeToggle from "./ThemeSheetColorSchemeToggle";
 import ThemeDesignListMenu from "./ThemeDesignListMenu";
-import OpenedThemeSheetDisplay from "./OpenedThemeSheetDisplay";
-import ExplorerPanelVisibilityToggle from "./ExplorerPanelVisibilityToggle";
+import CurrentThemeDesignStatus from "./CurrentThemeDesignStatus";
 import { AppBar, Box, Divider, Stack, Toolbar, type SxProps } from "@mui/material";
 
 export default function EditorActivityBar() {
@@ -46,8 +45,9 @@ function DesktopToolbarContent() {
         paddingInline={{ lg: 1.5 }}
         width={"var(--explorer-panel-width)"}
       >
-        <OpenedThemeSheetDisplay />
-        <ExplorerPanelVisibilityToggle />
+        {/* <ExplorerPanelVisibilityToggle /> */}
+        {/* <Divider orientation="vertical" flexItem /> */}
+        <CurrentThemeDesignStatus />
       </Stack>
 
       <Stack

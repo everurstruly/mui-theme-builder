@@ -1,16 +1,12 @@
-import { Stack, Button } from "@mui/material";
-// import NewThemeSheetButton from "./NewThemeSheettButton";
+import { Stack } from "@mui/material";
 import OpenLibraryButton from "./OpenLibraryButton";
+import CreateNewThemeDesign from "./CreateNewThemeDesign";
 
 function ThemeDesignListMenu() {
   return (
-    <Stack
-      direction={"row"}
-      columnGap={1}
-    >
-      {/* <NewThemeSheetButton /> */}
+    <Stack direction={"row"} spacing={1.5}>
       <OpenLibraryButton />
-      <Button sx={{ minWidth: 0 }}>Try a Template</Button>
+      <CreateNewThemeDesign />
     </Stack>
   );
 }
