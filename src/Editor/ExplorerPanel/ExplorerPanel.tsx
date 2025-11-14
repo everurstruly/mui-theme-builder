@@ -14,12 +14,11 @@ export default function EditorExplorerPanel() {
 }
 
 function DesktopActivitiesDrawer() {
+  const hiddenPanels = useEditorUiStore((state) => state.hiddenPanels);
+  const isVisible = !hiddenPanels.includes("explorer");
+
   const withHidePanel = useEditorUiStore((state) => state.hidePanel);
   const hidePanel = () => withHidePanel("explorer");
-
-  const isVisible = useEditorUiStore((state) => {
-    return !state.hiddenPanels.includes("explorer");
-  });
 
   return (
     <Drawer
@@ -68,18 +67,15 @@ function DesktopActivitiesDrawer() {
 }
 
 function MobileActivitiesDrawer() {
-  const withHidePanel = useEditorUiStore((state) => state.hidePanel);
-  const hidePanel = () => withHidePanel("explorer.mobile");
-
+  const display = { xs: "block", sm: "none" };
+  const hiddenPanels = useEditorUiStore((state) => state.hiddenPanels);
+  const isVisible = !hiddenPanels.includes("explorer.mobile");
   const selectedTabId = useEditorExperienceStore(
     (state) => state.selectedExperienceId
   );
 
-  const isVisible = useEditorUiStore((state) => {
-    return !state.hiddenPanels.includes("explorer.mobile");
-  });
-
-  const display = { xs: "block", sm: "none" };
+  const withHidePanel = useEditorUiStore((state) => state.hidePanel);
+  const hidePanel = () => withHidePanel("explorer.mobile");
 
   return (
     <Drawer
@@ -138,4 +134,3 @@ function MobileActivitiesDrawer() {
     </Drawer>
   );
 }
-

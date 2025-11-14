@@ -14,12 +14,11 @@ export default function EditorPropertiesPanel() {
 }
 
 function DesktopPanelDrawer() {
+  const hiddenPanels = useEditorUiStore((state) => state.hiddenPanels);
+  const isVisible = !hiddenPanels.includes("properties");
+
   const withHidePanel = useEditorUiStore((state) => state.hidePanel);
   const hidePanel = () => withHidePanel("properties");
-
-  const isVisible = useEditorUiStore((state) => {
-    return !state.hiddenPanels.includes("properties");
-  });
 
   return (
     <Drawer
@@ -30,7 +29,7 @@ function DesktopPanelDrawer() {
       onClose={() => hidePanel()}
       sx={() => ({
         flexShrink: 0,
-        display: { xs: "none", lg: "block" },
+        display: { xs: "none", lg: isVisible ? "block" : "none" },
 
         // hide scrollbar but keep scrolling
         msOverflowStyle: "none", // IE and Edge
@@ -72,9 +71,8 @@ function MobilePanelDrawer() {
   const withShowPanel = useEditorUiStore((state) => state.showPanel);
   const showPanel = () => withShowPanel("properties.mobile");
 
-  const isVisible = useEditorUiStore((state) => {
-    return !state.hiddenPanels.includes("properties.mobile");
-  });
+  const hiddenPanels = useEditorUiStore((state) => state.hiddenPanels);
+  const isVisible = !hiddenPanels.includes("properties.mobile");
 
   return (
     <>
@@ -124,4 +122,3 @@ function MobilePanelDrawer() {
     </>
   );
 }
-
