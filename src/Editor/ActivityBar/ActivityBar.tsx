@@ -7,7 +7,7 @@ import MobileActionGroup from "./MobileActionGroup";
 import ThemeSheetColorSchemeToggle from "./ThemeSheetColorSchemeToggle";
 import ThemeDesignListMenu from "./ThemeDesignListMenu";
 import CurrentThemeDesignStatus from "./CurrentThemeDesignStatus";
-import { AppBar, Box, Divider, Stack, Toolbar, type SxProps } from "@mui/material";
+import { AppBar, Box, Stack, Toolbar, type SxProps } from "@mui/material";
 
 export default function EditorActivityBar() {
   return (
@@ -25,16 +25,10 @@ function DesktopToolbarContent() {
       direction="row"
       alignItems={"center"}
       justifyContent="space-between"
-      divider={
-        <Divider
-          orientation="vertical"
-          flexItem
-          sx={{ height: "var(--toolbar-height)" }}
-        />
-      }
       borderColor={"divider"}
       display={{ xs: "none", md: "flex" }}
       sx={{
+        height: "var(--toolbar-height)",
         backgroundColor: (theme) => theme.palette.background.default,
       }}
     >
@@ -45,8 +39,6 @@ function DesktopToolbarContent() {
         paddingInline={{ lg: 1.5 }}
         width={"var(--explorer-panel-width)"}
       >
-        {/* <ExplorerPanelVisibilityToggle /> */}
-        {/* <Divider orientation="vertical" flexItem /> */}
         <CurrentThemeDesignStatus />
       </Stack>
 
@@ -78,6 +70,9 @@ function DesktopToolbarContent() {
         width={"var(--properties-panel-width)"}
         paddingInline={{ lg: 1.5 }}
         columnGap={1.5}
+        sx={{
+          borderLeft: (t) => `1px solid ${t.palette.divider}`,
+        }}
       >
         <Box display="inherit" columnGap={"inherit"}>
           <ThemeSheetColorSchemeToggle />

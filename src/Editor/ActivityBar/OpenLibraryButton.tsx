@@ -8,17 +8,17 @@ function OpenLibraryButton() {
   return (
     <Button
       size="small"
-      variant="outlined"
+      // variant="outlined"
+      startIcon={<BookmarkBorderOutlined sx={{ fontSize: "1rem !important" }} />}
       sx={{
         px: 1,
         borderRadius: 2,
         "& .MuiButton-startIcon": {
-          // marginInlineEnd: 0.5,
-          marginBottom: 0.125, // fix: ensure text alignement with icons
+          marginInlineEnd: 0.5,
+          marginBottom: 0.25, // fix: ensure text alignement with icons
         },
       }}
       onClick={() => showPanel("library")}
-      startIcon={<BookmarkBorderOutlined />}
     >
       My Saves
     </Button>

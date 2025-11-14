@@ -94,7 +94,7 @@ function CurrentThemeDesignStatus() {
           justifyContent: "space-between",
           textAlign: "start",
           flexGrow: 1,
-          mx: -1.25,
+          mx: -1.5,
           px: 1.5,
         }}
         id="basic-button"
@@ -106,26 +106,29 @@ function CurrentThemeDesignStatus() {
       >
         <Stack
           direction={"row"}
-          columnGap={1}
+          columnGap={0.5}
           alignItems={"center"}
-          sx={{ overflow: "hidden", textOverflow: "ellipsis" }}
+          sx={{ overflow: "hidden" }}
         >
           <Typography
-            color="primary"
             variant="caption"
+            color="primary"
+            fontWeight={"semibold"}
             sx={{ lineHeight: 1.2, ps: 0.5, whiteSpace: "nowrap" }}
           >
-            You're Editing
+            You're editing
           </Typography>
-          –
           <Typography
             variant="caption"
+            color="action.medium"
             fontWeight={"semibold"}
             sx={{
               whiteSpace: "nowrap",
+              textOverflow: "ellipsis",
+              overflow: "hidden",
             }}
           >
-            Renna Games Dashboardslkjsldfkj
+            / Renna Games Dashboardslsjljsdf
           </Typography>
         </Stack>
       </Button>
