@@ -2,9 +2,9 @@ import { create } from "zustand";
 import { combine } from "zustand/middleware";
 
 export type EditorUiPanels =
+  | "library"
   | "properties"
   | "explorer"
-  | "library"
   | "properties.mobile"
   | "explorer.mobile";
 
@@ -14,7 +14,12 @@ const useEditorUiStore = create(
       mouseOverCanvas: false,
       mouseOverPropertiesPanel: false,
       hasSavedChanges: true,
-      hiddenPanels: ["library", "properties.mobile", "explorer.mobile"] as EditorUiPanels[],
+      hiddenPanels: [
+        "library",
+        "properties.mobile",
+        "explorer",
+        "explorer.mobile",
+      ] as EditorUiPanels[],
     },
 
     (set) => ({
@@ -70,4 +75,3 @@ const useEditorUiStore = create(
 );
 
 export default useEditorUiStore;
-
