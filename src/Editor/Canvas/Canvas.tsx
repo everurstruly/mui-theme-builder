@@ -1,9 +1,15 @@
+import QuickPreviewBar from "../ActivityBar/QuickPreviewBar";
 import useEditorUiStore from "../editorUiStore";
 import BoardSurface from "./BoardSurface/BoardSurface";
-import { Box } from "@mui/material";
+import CanvasControlsSlots from "./CanvasControlsSlots";
+import FullscreenPreviewButton from "./BoardSurface/Controls/FullscreenPreviewButton";
+import { alpha, Box, Stack } from "@mui/material";
+import { useRef } from "react";
+import ExplorerPanelVisibilityToggle from "../ActivityBar/ExplorerPanelVisibilityToggle";
 
 export default function EditorCanvas() {
   const setMouseOverCanvas = useEditorUiStore((state) => state.setMouseOverCanvas);
+  const previewDivWrapperRef = useRef<HTMLDivElement>(null);
 
   return (
     <Box
@@ -33,8 +39,26 @@ export default function EditorCanvas() {
       onMouseEnter={() => setMouseOverCanvas(true)}
       onMouseLeave={() => setMouseOverCanvas(false)}
     >
-      <BoardSurface />
+      <QuickPreviewBar />
+      <BoardSurface containerRef={previewDivWrapperRef} />
+      <CanvasControlsSlots
+        bottomRight={
+          <Stack
+            direction="row"
+            sx={{
+              columnGap: 1,
+              borderRadius: 3,
+              minWidth: 0,
+              backdropFilter: "blur(40px)",
+              boxShadow: 1,
+              backgroundColor: (theme) => alpha(theme.palette.background.paper, 1),
+            }}
+          >
+            <ExplorerPanelVisibilityToggle />
+            <FullscreenPreviewButton containerRef={previewDivWrapperRef} />
+          </Stack>
+        }
+      />
     </Box>
   );
 }
-
