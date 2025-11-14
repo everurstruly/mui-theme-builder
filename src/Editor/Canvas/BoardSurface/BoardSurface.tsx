@@ -1,7 +1,7 @@
 import previewsRegistry from "../../Previews/registry";
 import { useThemeDesignTheme, useThemeDesignStore } from "../../ThemeDesign";
 // import FullscreenPreviewButton from "./Controls/FullscreenPreviewButton";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, type RefObject } from "react";
 import { Box, CssBaseline, Paper, ThemeProvider } from "@mui/material";
 import {
   // BreakpointSimulationToggles,
@@ -10,8 +10,22 @@ import {
 } from "./BreakpointSimulation";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 
-export default function BoardSurface() {
-  const containerRef = useRef<HTMLDivElement>(null);
+type BoardSurfaceControls = {
+  containerRef: RefObject<HTMLDivElement | null>;
+
+  leftControls?: React.ReactNode;
+  rightControls?: React.ReactNode;
+  topControls?: React.ReactNode;
+};
+
+export default function BoardSurface({
+  containerRef,
+
+  leftControls,
+  rightControls,
+  topControls,
+}: BoardSurfaceControls) {
+  // const containerRef = useRef<HTMLDivElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   const previewId = useThemeDesignStore((state) => state.activePreviewId);
@@ -140,6 +154,52 @@ export default function BoardSurface() {
           </Box> */}
 
               <PreviewComponent />
+
+              {/* Render any control slots provided by the canvas. These are
+                    positioned inside the Paper so they scale/scroll with the
+                    preview content when appropriate. */}
+              {topControls && (
+                <Box
+                  sx={{
+                    position: "absolute",
+                    top: 8,
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    zIndex: 1400,
+                    pointerEvents: "auto",
+                  }}
+                >
+                  {topControls}
+                </Box>
+              )}
+
+              {leftControls && (
+                <Box
+                  sx={{
+                    position: "absolute",
+                    left: 8,
+                    bottom: 8,
+                    zIndex: 1400,
+                    pointerEvents: "auto",
+                  }}
+                >
+                  {leftControls}
+                </Box>
+              )}
+
+              {rightControls && (
+                <Box
+                  sx={{
+                    position: "absolute",
+                    right: 8,
+                    bottom: 8,
+                    zIndex: 1400,
+                    pointerEvents: "auto",
+                  }}
+                >
+                  {rightControls}
+                </Box>
+              )}
             </Paper>
           </Panel>
           <PanelResizeHandle />

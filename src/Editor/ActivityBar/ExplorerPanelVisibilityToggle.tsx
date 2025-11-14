@@ -1,6 +1,6 @@
 import useEditorUiStore from "../editorUiStore";
 import { IconButton } from "@mui/material";
-import { MenuOpenOutlined } from "@mui/icons-material";
+import { ExpandOutlined } from "@mui/icons-material";
 
 function ExplorerPanelVisibilityToggle() {
   const hiddenPanels = useEditorUiStore((state) => state.hiddenPanels);
@@ -26,11 +26,16 @@ function ExplorerPanelVisibilityToggle() {
   }
 
   return (
-    <IconButton onClick={handleToggleClick}>
-      <MenuOpenOutlined fontSize="small" />
+    <IconButton
+      // color="inherit"
+      // variant="contained"
+      // sx={{ minWidth: 0, px: 1, borderRadius: 2 }}
+      onClick={handleToggleClick}
+      sx={{ backgroundColor: "transparent" }}
+    >
+      <ExpandOutlined fontSize="small" sx={{ rotate: "90deg" }} />
     </IconButton>
   );
 }
 
 export default ExplorerPanelVisibilityToggle;
-

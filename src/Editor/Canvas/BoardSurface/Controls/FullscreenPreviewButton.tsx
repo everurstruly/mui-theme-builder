@@ -11,8 +11,7 @@ export type FullscreenPreviewButtonProps = {
 
 export default function FullscreenPreviewButton({
   containerRef,
-  mouseOverPreview = false,
-  float,
+  mouseOverPreview = true,
 }: FullscreenPreviewButtonProps) {
   const [isFullscreen, setIsFullscreen] = useState(false);
 
@@ -50,55 +49,28 @@ export default function FullscreenPreviewButton({
   return (
     <Tooltip
       title={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
-      placement="auto-start"
+      // placement="auto-start"
     >
       <IconButton
         onClick={handleFullscreen}
         size="small"
         sx={[
           {
-            opacity: mouseOverPreview ? 1 : 0.2,
             transition: "opacity 300ms ease",
-            border: 1,
-            borderRadius: 1,
             fontSize: "0.75rem",
             textTransform: "none",
-            borderColor: "divider",
-            backgroundColor: "rgba(255, 255, 255, 0.7)",
-            backdropFilter: "blur(10px)",
-            "&:hover": {
-              backgroundColor: "rgba(255, 255, 255, 0.9)",
-            },
-          },
-          () => {
-            return !float
-              ? {
-                  //   borderBottomLeftRadius: 0,
-                  //   borderBottomRightRadius: 0,
-                }
-              : {
-                  zIndex: 10,
-                  position: "absolute",
-                  top: "0",
-                  right: "0",
-                };
+            backgroundColor: "transparent",
+
+            // backgroundColor: "rgba(255, 255, 255, 0.7)",
+            // backdropFilter: "blur(10px)",
+            // "&:hover": {
+            //   backgroundColor: "rgba(255, 255, 255, 0.9)",
+            // },
           },
         ]}
-        // startIcon={
-        //   isFullscreen ? (
-        //     <FullscreenExitIcon fontSize="small" />
-        //   ) : (
-        //     <FullscreenIcon fontSize="small" />
-        //   )
-        // }
       >
-        {isFullscreen ? (
-          <FullscreenExitIcon sx={{ fontSize: 16 }} />
-        ) : (
-          <FullscreenIcon sx={{ fontSize: 16 }} />
-        )}
+        {isFullscreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
       </IconButton>
     </Tooltip>
   );
 }
-
