@@ -20,6 +20,7 @@ import EditorGlobalKeyboardShortcuts from "./Editor/EditorGlobalKeyboardShortcut
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ThemeProvider
+      defaultMode="dark"
       theme={responsiveFontSizes(
         createTheme({
           palette: {
@@ -70,8 +71,8 @@ createRoot(document.getElementById("root")!).render(
       )}
     >
       <CssBaseline />
-    {/* Global keyboard shortcuts */}
-    <EditorGlobalKeyboardShortcuts />
+      {/* Global keyboard shortcuts */}
+      <EditorGlobalKeyboardShortcuts />
       <BrowserRouter>
         <Routes>
           <Route index element={<HomePage />} />
