@@ -47,6 +47,8 @@ export default function EditorCanvas() {
             direction="row"
             sx={{
               columnGap: 1,
+              px: 1,
+              py: 0.5,
               borderRadius: 3,
               minWidth: 0,
               backdropFilter: "blur(40px)",
