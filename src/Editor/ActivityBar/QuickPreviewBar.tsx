@@ -1,9 +1,10 @@
-import React from "react";
+// React imports are not required with the new JSX transform
 import useEditorUiStore from "../editorUiStore";
 import { DoubleArrowOutlined } from "@mui/icons-material";
 import { Stack, Breadcrumbs, Link, Typography, Box } from "@mui/material";
 import { useThemeDesignStore } from "../ThemeDesign";
-import { buildSamplesTree, type TreeNode } from "../Previews/registry";
+import { getFolderNodeByChain } from "../Previews/registry";
+import useFolderNavigator from "../hooks/useFolderNavigator";
 
 function QuickPreviewBar() {
   const hiddenPanels = useEditorUiStore((state) => state.hiddenPanels);
@@ -11,56 +12,11 @@ function QuickPreviewBar() {
 
   const activePreviewId = useThemeDesignStore((s) => s.activePreviewId);
   const selectPreview = useThemeDesignStore((s) => s.selectPreview);
-  // Build static tree once per session
-  const samplesTree = React.useMemo(() => buildSamplesTree(), []);
 
-  // activeFolderChain: folder-focused navigation state. Initialized from activePreviewId's folder.
-  const initialChain = activePreviewId
-    ? findFolderChain(samplesTree, activePreviewId) ?? []
-    : [];
-  const [activeFolderChain, setActiveFolderChain] =
-    React.useState<string[]>(initialChain);
+  const { samplesTree, activeFolderChain, setActiveFolderChain, childrenEntries, upCue } =
+    useFolderNavigator(activePreviewId);
 
-  React.useEffect(() => {
-    const newChain = activePreviewId
-      ? findFolderChain(samplesTree, activePreviewId) ?? []
-      : [];
-    setActiveFolderChain((prev) => {
-      if (JSON.stringify(prev) === JSON.stringify(newChain)) return prev;
-      return newChain;
-    });
-  }, [activePreviewId, samplesTree]);
-
-  // Current folder node and its children entries (folders + components)
-  const currentFolderNode =
-    activeFolderChain && activeFolderChain.length > 0
-      ? getFolderNodeByChain(samplesTree, activeFolderChain)
-      : null;
-
-  const childrenEntries: Array<[string, TreeNode]> = currentFolderNode
-    ? Object.entries(currentFolderNode.children || {})
-    : Object.entries(samplesTree);
-
-  // Visual cue when navigating up one level: detect chain shortening
-  const prevChainRef = React.useRef<string[] | null>(null);
-  const [upCue, setUpCue] = React.useState(false);
-  const upCueTimerRef = React.useRef<number | null>(null);
-
-  React.useEffect(() => {
-    const prev = prevChainRef.current;
-    const curr = activeFolderChain || [];
-    if (prev && curr.length < prev.length) {
-      // triggered navigation up
-      setUpCue(true);
-      if (upCueTimerRef.current) window.clearTimeout(upCueTimerRef.current);
-      upCueTimerRef.current = window.setTimeout(() => setUpCue(false), 300);
-    }
-    prevChainRef.current = curr;
-
-    return () => {
-      if (upCueTimerRef.current) window.clearTimeout(upCueTimerRef.current);
-    };
-  }, [activeFolderChain]);
+  
 
   if (shouldBeHidden) {
     return null;
@@ -154,10 +110,13 @@ function QuickPreviewBar() {
           backgroundColor: "transparent",
           overflowX: "auto",
           // animation/visual cue when navigating up: translate + fade briefly
-          transition: "transform 220ms ease, opacity 220ms ease, box-shadow 220ms ease",
+          transition:
+            "transform 220ms ease, opacity 220ms ease, box-shadow 220ms ease",
           transform: upCue ? "translateY(-6px)" : "translateY(0)",
           opacity: upCue ? 0.85 : 1,
-          boxShadow: upCue ? (theme) => `0 6px 18px ${theme.palette.action.hover}` : "none",
+          boxShadow: upCue
+            ? (theme) => `0 6px 18px ${theme.palette.action.hover}`
+            : "none",
         }}
       >
         {childrenEntries.map(([key, node]) => {
@@ -198,44 +157,6 @@ function QuickPreviewBar() {
   );
 }
 
-function findFolderChain(
-  tree: Record<string, TreeNode>,
-  targetId: string
-): string[] | null {
-  const helper = (
-    nodeMap: Record<string, TreeNode>,
-    path: string[]
-  ): string[] | null => {
-    for (const [key, node] of Object.entries(nodeMap)) {
-      if (node.type === "component" && node.id === targetId) {
-        return path; // found at this level
-      }
-
-      if (node.type === "folder") {
-        const res = helper(node.children || {}, [...path, key]);
-        if (res) return res;
-      }
-    }
-    return null;
-  };
-
-  return helper(tree, []);
-}
-
-function getFolderNodeByChain(
-  tree: Record<string, TreeNode>,
-  chain: string[]
-): TreeNode | null {
-  let current: Record<string, TreeNode> = tree;
-  let node: TreeNode | null = null;
-
-  for (const key of chain) {
-    node = current[key];
-    if (!node || node.type !== "folder") return null;
-    current = node.children || {};
-  }
-
-  return node;
-}
+// helpers moved to the registry and into `useFolderNavigator`
 
 export default QuickPreviewBar;

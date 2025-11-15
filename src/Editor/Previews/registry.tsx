@@ -140,6 +140,66 @@ export const buildSamplesTree = (): Record<string, TreeNode> => {
 };
 
 /**
+ * Build an index mapping sample id -> folder chain (array of folder keys)
+ * Useful for fast lookups (avoids walking the tree repeatedly).
+ */
+export function buildSamplesIndex(tree?: Record<string, TreeNode>) {
+  const t = tree ?? buildSamplesTree();
+  const index: Record<string, string[]> = {};
+
+  const walk = (nodeMap: Record<string, TreeNode>, path: string[]) => {
+    for (const [key, node] of Object.entries(nodeMap)) {
+      if (node.type === 'component' && node.id) {
+        index[node.id] = path;
+      } else if (node.type === 'folder') {
+        walk(node.children || {}, [...path, key]);
+      }
+    }
+  };
+
+  walk(t, []);
+  return index;
+}
+
+/**
+ * Find the folder chain (array of folder keys) that contains the given sample id.
+ * Uses a tree produced by `buildSamplesTree`.
+ */
+export function findFolderChain(tree: Record<string, TreeNode>, targetId: string): string[] | null {
+  const helper = (nodeMap: Record<string, TreeNode>, path: string[]): string[] | null => {
+    for (const [key, node] of Object.entries(nodeMap)) {
+      if (node.type === 'component' && node.id === targetId) {
+        return path;
+      }
+
+      if (node.type === 'folder') {
+        const res = helper(node.children || {}, [...path, key]);
+        if (res) return res;
+      }
+    }
+    return null;
+  };
+
+  return helper(tree, []);
+}
+
+/**
+ * Get folder node by a chain of keys.
+ */
+export function getFolderNodeByChain(tree: Record<string, TreeNode>, chain: string[]): TreeNode | null {
+  let current: Record<string, TreeNode> = tree;
+  let node: TreeNode | null = null;
+
+  for (const key of chain) {
+    node = current[key];
+    if (!node || node.type !== 'folder') return null;
+    current = node.children || {};
+  }
+
+  return node;
+}
+
+/**
  * Export the combined registry as default and named export
  * This includes both custom examples and auto-generated MUI components
  */
