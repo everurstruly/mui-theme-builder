@@ -93,48 +93,49 @@ export default function BoardSurface({
             <Paper
               ref={containerRef}
               role="presentation"
-              sx={(theme) => ({
-                position: "relative",
-                overflow: "auto",
-                display: "flex",
-                flexDirection: "column",
-                boxShadow: 0,
-                border: 2,
-                borderStyle: "dotted",
-                borderColor: "primary.dark",
-                maxWidth: getMaxWidth(),
-                minWidth: getMinWidth(),
-                height: "100%",
-                marginRight: 0.2,
-                width: simulatedBreakpoint ? getMaxWidth() : "100%",
-                transform: `scale(${scale})`,
-                transformOrigin: "top center",
-                transition:
-                  "max-width 0.3s ease-in-out, min-width 0.3s ease-in-out, width 0.3s ease-in-out, transform 0.3s ease-in-out",
+              sx={[
+                (theme) => ({
+                  position: "relative",
+                  overflow: "auto",
+                  display: "flex",
+                  flexDirection: "column",
+                  boxShadow: 0,
+                  border: 2,
+                  borderColor: theme.palette.primary.main,
+                  maxWidth: getMaxWidth(),
+                  minWidth: getMinWidth(),
+                  height: "100%",
+                  marginRight: 0.2,
+                  width: simulatedBreakpoint ? getMaxWidth() : "100%",
+                  transform: `scale(${scale})`,
+                  transformOrigin: "top center",
+                  transition:
+                    "max-width 0.3s ease-in-out, min-width 0.3s ease-in-out, width 0.3s ease-in-out, transform 0.3s ease-in-out",
 
-                // Scrollbar styling: WebKit and Firefox
-                // Thin thumb and track matching primary palette
-                "::-webkit-scrollbar": {
-                  width: 5,
-                  height: 5,
-                },
-                "::-webkit-scrollbar-track": {
-                  background:
-                    theme.palette.mode === "dark"
-                      ? `${theme.palette.primary.main}15`
-                      : `${theme.palette.primary.main}10`,
-                  borderRadius: theme.shape.borderRadius,
-                },
-                "::-webkit-scrollbar-thumb": {
-                  background: theme.palette.primary.main,
-                  // borderRadius: theme.shape.borderRadius,
-                  border: `2px solid ${
-                    theme.palette.mode === "dark"
-                      ? `${theme.palette.primary.main}15`
-                      : `${theme.palette.primary.main}10`
-                  }`,
-                },
-              })}
+                  // Scrollbar styling: WebKit and Firefox
+                  // Thin thumb and track matching primary palette
+                  "::-webkit-scrollbar": {
+                    width: 5,
+                    height: 5,
+                  },
+                  "::-webkit-scrollbar-track": {
+                    background:
+                      theme.palette.mode === "dark"
+                        ? `${theme.palette.primary.main}15`
+                        : `${theme.palette.primary.main}10`,
+                    borderRadius: theme.shape.borderRadius,
+                  },
+                  "::-webkit-scrollbar-thumb": {
+                    background: theme.palette.primary.main,
+                    // borderRadius: theme.shape.borderRadius,
+                    border: `2px solid ${
+                      theme.palette.mode === "dark"
+                        ? `${theme.palette.primary.main}15`
+                        : `${theme.palette.primary.main}10`
+                    }`,
+                  },
+                }),
+              ]}
             >
               {/* <Box sx={{ position: "sticky", top: 0, zIndex: 1, py: 0.4 }}>
             <Box

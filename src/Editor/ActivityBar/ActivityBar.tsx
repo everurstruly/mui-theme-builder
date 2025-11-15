@@ -7,7 +7,7 @@ import MobileActionGroup from "./MobileActionGroup";
 import ThemeSheetColorSchemeToggle from "./ThemeSheetColorSchemeToggle";
 import ThemeDesignListMenu from "./ThemeDesignListMenu";
 import CurrentThemeDesignStatus from "./CurrentThemeDesignStatus";
-import { AppBar, Box, Stack, Toolbar, type SxProps } from "@mui/material";
+import { AppBar, Box, Stack, Divider, Toolbar, type SxProps } from "@mui/material";
 
 export default function EditorActivityBar() {
   return (
@@ -48,20 +48,19 @@ function DesktopToolbarContent() {
         direction={"row"}
         marginInline={"auto"}
         paddingInline={{ lg: 1.5 }}
+        justifyContent={"space-between"}
         columnGap={1.5}
       >
         <ThemeDesignListMenu />
 
-        <Stack
-          direction={"row"}
-          columnGap={"inherit"}
-          sx={{ marginInlineStart: "auto" }}
-        >
+        <Stack direction={"row"} columnGap={"inherit"}>
           <SaveThemeSheetButton />
           <ThemingHistoryActions />
           <ThemeDesignExportButton />
         </Stack>
       </Stack>
+
+      <Divider flexItem orientation="vertical" />
 
       <Stack
         direction="row"
@@ -69,10 +68,8 @@ function DesktopToolbarContent() {
         justifyContent={"space-between"}
         width={"var(--properties-panel-width)"}
         paddingInline={{ lg: 1.5 }}
+        height={"100%"}
         columnGap={1.5}
-        sx={{
-          borderLeft: (t) => `1px solid ${t.palette.divider}`,
-        }}
       >
         <Box display="inherit" columnGap={"inherit"}>
           <ThemeSheetColorSchemeToggle />

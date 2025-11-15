@@ -26,7 +26,7 @@ export default function ThemingHistoryActions() {
   const handleRedo = () => redo();
 
   return (
-    <ButtonGroup size="large">
+    <ButtonGroup size="large" aria-label="theming history actions">
       <Button
         value="undo"
         aria-label="undo"

@@ -4,7 +4,7 @@ import CreateNewThemeDesign from "./CreateNewThemeDesign";
 
 function ThemeDesignListMenu() {
   return (
-    <Stack direction={"row"} spacing={1.5}>
+    <Stack direction={"row"} spacing={2}>
       <OpenLibraryButton />
       <CreateNewThemeDesign />
     </Stack>
