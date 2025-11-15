@@ -1,10 +1,9 @@
-// React imports are not required with the new JSX transform
 import useEditorUiStore from "../editorUiStore";
-import { DoubleArrowOutlined, ListOutlined } from "@mui/icons-material";
+import useFolderNavigator from "../hooks/useFolderNavigator";
+import { DoubleArrowOutlined } from "@mui/icons-material";
 import { Stack, Breadcrumbs, Link, Typography, Box } from "@mui/material";
 import { useThemeDesignStore } from "../ThemeDesign";
 import { getFolderNodeByChain } from "../Previews/registry";
-import useFolderNavigator from "../hooks/useFolderNavigator";
 
 function QuickPreviewBar() {
   const hiddenPanels = useEditorUiStore((state) => state.hiddenPanels);

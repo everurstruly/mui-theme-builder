@@ -11,7 +11,6 @@ export type FullscreenPreviewButtonProps = {
 
 export default function FullscreenPreviewButton({
   containerRef,
-  mouseOverPreview = true,
 }: FullscreenPreviewButtonProps) {
   const [isFullscreen, setIsFullscreen] = useState(false);
 

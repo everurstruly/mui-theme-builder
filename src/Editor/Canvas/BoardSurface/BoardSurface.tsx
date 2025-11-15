@@ -8,7 +8,7 @@ import {
   useBreakpointSimulation,
   spoofThemeBreakpoints,
 } from "./BreakpointSimulation";
-import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
+// import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 
 type BoardSurfaceControls = {
   containerRef: RefObject<HTMLDivElement | null>;
