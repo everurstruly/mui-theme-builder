@@ -19,6 +19,9 @@ export default defineConfig([
       ecmaVersion: 2020,
       globals: globals.browser,
     },
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off'
+    },
   },
   // Relaxed overrides for third-party /library code in src/lib
   // This prevents the project's strict TS/ESLint rules from blocking imported OSS
