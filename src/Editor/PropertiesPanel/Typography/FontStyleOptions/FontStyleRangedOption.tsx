@@ -61,7 +61,7 @@ export default function FontStyleRangedOption(props: FontStyleRangedOptionProps)
         <OptionListItemResetButton
           canResetValue={canResetValue}
           resetValue={reset}
-          initStateLabel={"Default"}
+          label={"Default"}
         />
 
         <Typography variant="caption" sx={{ fontStyle: 400, fontSize: 12 }}>

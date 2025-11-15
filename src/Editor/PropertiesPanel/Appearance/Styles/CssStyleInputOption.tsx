@@ -54,7 +54,7 @@ export default function CssStyleInputOption(props: CssStyleInputOptionProps) {
         <OptionListItemResetButton
           canResetValue={canResetValue}
           resetValue={handleReset}
-          initStateLabel="Default"
+          label="Default"
         />
 
         <Typography

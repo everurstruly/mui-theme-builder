@@ -82,7 +82,7 @@ export default function ColorOptionGroupItem(props: ColorOptionGroupItemProps) {
         <OptionListItemResetButton
           canResetValue={canResetValue}
           resetValue={resetValue}
-          initStateLabel={isResolved ? "Auto" : "Default"}
+          label={isResolved ? "Auto" : "Default"}
           labelColor={isResolved ? "resolved" : undefined}
         />
 

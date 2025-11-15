@@ -4,7 +4,7 @@ import type { Theme } from "@mui/material";
 type OptionListItemResetButtonProps = {
   canResetValue: boolean;
   resetValue: () => void;
-  initStateLabel?: string;
+  label?: string;
   labelColor?: string;
 };
 
@@ -32,7 +32,7 @@ function labelColorOverride(theme: Theme, labelColor?: string) {
 }
 
 function OptionListItemResetButton(props: OptionListItemResetButtonProps) {
-  const { canResetValue, resetValue, initStateLabel, labelColor } = props;
+  const { canResetValue, resetValue, label: initStateLabel, labelColor } = props;
 
   if (!canResetValue) {
     return (

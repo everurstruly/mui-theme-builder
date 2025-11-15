@@ -35,7 +35,7 @@ export default function FontWeightOption(props: FontWeightOptionProps) {
         <OptionListItemResetButton
           canResetValue={canResetValue}
           resetValue={reset}
-          initStateLabel={"Default"}
+          label={"Default"}
         />
 
         <Typography variant="caption" sx={{ fontSize: 12 }}>
