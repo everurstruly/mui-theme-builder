@@ -112,9 +112,9 @@ function CurrentThemeDesignStatus() {
         >
           <Typography
             variant="caption"
-            color="primary"
+            // color="primary"
             fontWeight={"semibold"}
-            sx={{ lineHeight: 1.2, ps: 0.5, whiteSpace: "nowrap" }}
+            sx={{ lineHeight: 1.2, whiteSpace: "nowrap" }}
           >
             You're editing
           </Typography>
