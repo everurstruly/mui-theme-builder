@@ -29,7 +29,7 @@ function DesktopToolbarContent() {
       display={{ xs: "none", md: "flex" }}
       sx={{
         height: "var(--toolbar-height)",
-        backgroundColor: (theme) => theme.palette.background.default,
+        backgroundColor: (theme) => theme.palette.background.paper,
       }}
     >
       <Stack
@@ -116,11 +116,11 @@ function SectionLayout({ sx, children }: SectionLayoutProps) {
         // borderBottom: 1,
         // borderColor: "divider",
 
-        backgroundColor: "var(--editor-tools-unit-bgColor, revert)",
+        // backgroundColor: "var(--editor-tools-unit-bgColor, revert)",
         // backgroundColor: "rgba(255, 255, 255, 0.5)",
         // backgroundImage:
         //   "linear-gradient(to bottom, rgba(255,255,255,0.25) 10%, rgba(255,255,255,0.12) 70%, rgba(0,0,0,0.04) 100%)",
-        backgroundRepeat: "no-repeat",
+        // backgroundRepeat: "no-repeat",
         // backdropFilter: "blur(20px)",
         ...sx,
       }}

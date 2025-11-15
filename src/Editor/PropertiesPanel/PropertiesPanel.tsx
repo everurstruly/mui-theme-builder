@@ -42,7 +42,7 @@ function DesktopPanelDrawer() {
         paper: {
           sx: {
             width: "var(--properties-panel-width)",
-            backgroundColor: "var(--editor-tools-unit-bgColor, revert)",
+            // backgroundColor: "var(--editor-tools-unit-bgColor, revert)",
             position: "static", // IMPORTANT: ensures responsiveness via dom structure
             height: "100%",
             border: "none",

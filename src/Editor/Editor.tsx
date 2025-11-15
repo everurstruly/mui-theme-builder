@@ -16,7 +16,7 @@ export default function Editor() {
             "--explorer-panel-width": "auto",
             "--properties-panel-width": "auto",
             "--canvas-max-width": "auto",
-            "--editor-tools-unit-bgColor": "rgba(60, 60, 67, 0.01)",
+            // "--editor-tools-unit-bgColor": "rgba(60, 60, 67, 0.01)",
           },
 
           [theme.breakpoints.up("sm")]: {

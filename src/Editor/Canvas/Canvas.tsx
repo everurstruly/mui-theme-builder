@@ -6,6 +6,7 @@ import FullscreenPreviewButton from "./BoardSurface/Controls/FullscreenPreviewBu
 import { alpha, Box, Stack } from "@mui/material";
 import { useRef } from "react";
 import ExplorerPanelVisibilityToggle from "../ActivityBar/ExplorerPanelVisibilityToggle";
+import { BreakpointSimulationToggles } from "./BoardSurface/BreakpointSimulation";
 
 export default function EditorCanvas() {
   const setMouseOverCanvas = useEditorUiStore((state) => state.setMouseOverCanvas);
@@ -25,6 +26,7 @@ export default function EditorCanvas() {
         // borderRightColor: mouseOverPropertiesPanel ? "text.secondary" : "divider",
         // backgroundColor: "#f5f5f5",
         // backgroundColor: mouseOverPropertiesPanel ? "#eee" : "#f5f5f5",
+        backgroundColor: t.palette.background.default,
         backgroundImage: `
             radial-gradient(circle at center, ${
               t.palette.mode === "dark"
@@ -42,14 +44,14 @@ export default function EditorCanvas() {
       <QuickPreviewBar />
       <BoardSurface containerRef={previewDivWrapperRef} />
       <CanvasControlsSlots
-        bottomRight={
+        bottomLeft={
           <Stack
             direction="row"
             sx={{
               columnGap: 1,
               px: 1,
               py: 0.5,
-              borderRadius: 3,
+              borderRadius: 2.5,
               minWidth: 0,
               backdropFilter: "blur(40px)",
               boxShadow: 1,
@@ -57,6 +59,23 @@ export default function EditorCanvas() {
             }}
           >
             <ExplorerPanelVisibilityToggle />
+            <BreakpointSimulationToggles mouseOverPreview={true} />
+          </Stack>
+        }
+        bottomRight={
+          <Stack
+            direction="row"
+            sx={{
+              columnGap: 1,
+              px: 1,
+              py: 0.5,
+              borderRadius: 2.5,
+              minWidth: 0,
+              backdropFilter: "blur(40px)",
+              boxShadow: 1,
+              backgroundColor: (theme) => alpha(theme.palette.background.paper, 1),
+            }}
+          >
             <FullscreenPreviewButton containerRef={previewDivWrapperRef} />
           </Stack>
         }

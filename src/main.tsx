@@ -23,14 +23,18 @@ createRoot(document.getElementById("root")!).render(
       defaultMode="dark"
       theme={responsiveFontSizes(
         createTheme({
-          palette: {
-            text: {
-              primary: "#444",
-            },
-          },
           colorSchemes: {
             dark: true,
-            light: true,
+            light: {
+              palette: {
+                text: {
+                  primary: "#444",
+                },
+                background: {
+                  paper: "#f5f5f5",
+                }
+              }
+            },
           },
           typography: {
             htmlFontSize: 16,

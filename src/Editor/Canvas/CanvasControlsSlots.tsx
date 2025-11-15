@@ -35,7 +35,7 @@ export default function CanvasControlsSlots({
         <Box
           sx={{
             position: "absolute",
-            bottom: 10,
+            bottom: 2,
             left: 8,
             zIndex: 1400,
             pointerEvents: "auto",
@@ -50,8 +50,8 @@ export default function CanvasControlsSlots({
         <Box
           sx={{
             position: "absolute",
-            bottom: 10,
-            right: 18,
+            bottom: 2,
+            right: 10,
             zIndex: 1400,
             pointerEvents: "auto",
           }}

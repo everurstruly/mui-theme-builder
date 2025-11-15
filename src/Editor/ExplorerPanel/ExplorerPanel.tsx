@@ -40,7 +40,7 @@ function DesktopActivitiesDrawer() {
         paper: {
           sx: () => ({
             width: "var(--explorer-panel-width)",
-            backgroundColor: "var(--editor-tools-unit-bgColor, revert)",
+            // backgroundColor: "var(--editor-tools-unit-bgColor, revert)",
             position: "static", // IMPORTANT: ensures responsiveness via dom structure
             height: "100%",
             border: "none",

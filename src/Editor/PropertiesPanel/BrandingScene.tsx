@@ -1,7 +1,7 @@
 import ColorProperty from "./Color/Color";
 import TypographyProperty from "./Typography/Typography";
 import AppearanceProperty from "./Appearance/Appearance";
-import { Tabs, Tab, Box, Typography } from "@mui/material";
+import { Tabs, Tab, Box, Typography, alpha, Paper } from "@mui/material";
 import { useState } from "react";
 
 const properties = [
@@ -35,7 +35,7 @@ export default function PrimitiesPropertiesPanelBody() {
   const [selectedPropTab, setSelectedPropTab] = useState("palette");
 
   return (
-    <Box height={"100%"} overflow={"auto"} sx={thinScrollbar}>
+    <Paper sx={{ height: "100%", overflow: "auto", ...thinScrollbar }} elevation={0}>
       <Tabs
         aria-label="Editor Theme Design File Properties Panel Tabs"
         variant="fullWidth"
@@ -50,7 +50,8 @@ export default function PrimitiesPropertiesPanelBody() {
           zIndex: 1,
           borderBottom: 1,
           borderColor: "divider",
-          backgroundColor: "background.default",
+          backdropFilter: "blur(20px)",
+          backgroundColor: (theme) => alpha(theme.palette.background.paper, 0.8),
 
           "& .MuiTabs-indicator": {
             // backgroundColor: "text.primary",
@@ -80,10 +81,7 @@ export default function PrimitiesPropertiesPanelBody() {
         ))}
       </Tabs>
 
-      <Box
-        paddingInline={panelPaddingInline}
-        paddingBottom={10}
-      >
+      <Box paddingInline={panelPaddingInline} paddingBottom={10}>
         {selectedPropTab === "palette" && <ColorProperty />}
         {selectedPropTab === "typography" && <TypographyProperty />}
         {selectedPropTab === "appearance" && <AppearanceProperty />}
@@ -120,7 +118,6 @@ export default function PrimitiesPropertiesPanelBody() {
       >
         Colors: primary, secondary, success, warning, error, info, gray.
       </Typography> */}
-    </Box>
+    </Paper>
   );
 }
-

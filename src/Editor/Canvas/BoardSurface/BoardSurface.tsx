@@ -88,8 +88,6 @@ export default function BoardSurface({
           p: 1,
         }}
       >
-        <PanelGroup direction="horizontal">
-          <Panel defaultSize={100} minSize={30}>
             <Paper
               ref={containerRef}
               role="presentation"
@@ -202,10 +200,12 @@ export default function BoardSurface({
                 </Box>
               )}
             </Paper>
+        {/* <PanelGroup direction="horizontal">
+          <Panel defaultSize={100} minSize={30}>
           </Panel>
           <PanelResizeHandle />
           <Panel />
-        </PanelGroup>
+        </PanelGroup> */}
       </Box>
     </ThemeProvider>
   );

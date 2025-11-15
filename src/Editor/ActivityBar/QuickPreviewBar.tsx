@@ -1,6 +1,6 @@
 // React imports are not required with the new JSX transform
 import useEditorUiStore from "../editorUiStore";
-import { DoubleArrowOutlined } from "@mui/icons-material";
+import { DoubleArrowOutlined, ListOutlined } from "@mui/icons-material";
 import { Stack, Breadcrumbs, Link, Typography, Box } from "@mui/material";
 import { useThemeDesignStore } from "../ThemeDesign";
 import { getFolderNodeByChain } from "../Previews/registry";
@@ -13,10 +13,13 @@ function QuickPreviewBar() {
   const activePreviewId = useThemeDesignStore((s) => s.activePreviewId);
   const selectPreview = useThemeDesignStore((s) => s.selectPreview);
 
-  const { samplesTree, activeFolderChain, setActiveFolderChain, childrenEntries, upCue } =
-    useFolderNavigator(activePreviewId);
-
-  
+  const {
+    samplesTree,
+    activeFolderChain,
+    setActiveFolderChain,
+    childrenEntries,
+    upCue,
+  } = useFolderNavigator(activePreviewId);
 
   if (shouldBeHidden) {
     return null;
@@ -29,6 +32,7 @@ function QuickPreviewBar() {
       sx={{
         alignItems: "center",
         backdropFilter: "blur(40px)",
+        backgroundColor: (theme) => theme.palette.background.paper,
         borderBottom: 1,
         borderBottomColor: "divider",
       }}
@@ -47,12 +51,19 @@ function QuickPreviewBar() {
           component="button"
           underline="none"
           color="inherit"
-          sx={{ whiteSpace: "nowrap", py: 1 }}
+          sx={{
+            whiteSpace: "nowrap",
+            py: 1,
+            // display: "flex",
+            // alignItems: "center",
+            // columnGap: 0.5,
+          }}
           onClick={() => {
             // Clicking 'Previews' -> focus root folder
             setActiveFolderChain([]);
           }}
         >
+          {/* <ListOutlined fontSize="small" /> */}
           List of Previews
         </Link>
 
@@ -128,7 +139,7 @@ function QuickPreviewBar() {
                 component="button"
                 underline="none"
                 color="inherit"
-                sx={{ whiteSpace: "nowrap", px: 1.5, py: 1 }}
+                sx={{ whiteSpace: "nowrap", px: 1.5, py: 1.5 }}
                 onClick={() =>
                   setActiveFolderChain([...(activeFolderChain || []), key])
                 }
@@ -144,7 +155,7 @@ function QuickPreviewBar() {
               variant="body2"
               component="button"
               underline="none"
-              sx={{ whiteSpace: "nowrap", px: 1.5, py: 1 }}
+              sx={{ whiteSpace: "nowrap", px: 1.5, py: 1.5 }}
               color={node.id === activePreviewId ? "primary" : "inherit"}
               onClick={() => selectPreview(node.id as string)}
             >
