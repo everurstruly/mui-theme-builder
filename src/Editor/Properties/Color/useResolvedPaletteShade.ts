@@ -1,24 +1,12 @@
-import {
-  useDesignedEditsResolvedThemeOptions,
-  useThemeDesignEditValue,
-  useThemeDesignTheme,
-} from "../../Design";
-import { getNestedValue } from "../../Design/shared";
+import { useEditWithVisualTool } from "../../Design";
 
 export default function useResolvedPaletteShade(path: string) {
-  const { value, setValue, reset, hasVisualEdit, hasCodeOverride } =
-    useThemeDesignEditValue(path);
-
-  const resolvedTheme = useThemeDesignTheme();
-  const resolvedThemeOptions = useDesignedEditsResolvedThemeOptions();
-
-  const expectedShade = getNestedValue(resolvedThemeOptions as any, path);
-  const resolvedShade = getNestedValue(resolvedTheme as any, path);
-  const isResolved = resolvedShade && !expectedShade;
+  const { value, resolvedValue, setValue, reset, hasVisualEdit, hasCodeOverride } =
+    useEditWithVisualTool(path);
 
   return {
-    value: value ?? resolvedShade,
-    isResolved,
+    value: value ?? resolvedValue,
+    isResolved: !value && resolvedValue,
     setValue,
     reset,
     hasVisualEdit,

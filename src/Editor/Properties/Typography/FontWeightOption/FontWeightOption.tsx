@@ -1,8 +1,8 @@
 import { ListItem, Typography, Stack } from "@mui/material";
 import FontWeightOptionInput from "./FontWeightOptionInput";
-import { useThemeDesignEditValue } from "../../../Design";
+import { useEditWithVisualTool } from "../../../Design";
 import OptionListItemResetButton from "../../OptionListItemResetButton";
-import useDesignCreatedTheme from "../../../Design/useDesignCreatedTheme";
+import useDesignCreatedTheme from "../../../Design/useCreatedTheme";
 import { getNestedValue } from "../../../Design/shared";
 
 export type FontWeightOptionProps = {
@@ -17,7 +17,7 @@ export default function FontWeightOption(props: FontWeightOptionProps) {
   const autoResolvedValue = getNestedValue(theme, props.path);
   
   const { value, hasVisualEdit, hasCodeOverride, reset } = 
-    useThemeDesignEditValue(props.path);
+    useEditWithVisualTool(props.path);
 
   const currentValue = (value as string | number) ?? autoResolvedValue;
   const canResetValue = hasVisualEdit || hasCodeOverride;

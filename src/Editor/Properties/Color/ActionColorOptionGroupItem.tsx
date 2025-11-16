@@ -4,7 +4,7 @@ import {
   ListItem,
   Box,
 } from "@mui/material";
-import { useThemeDesignEditValue } from "../../Design";
+import { useEditWithVisualTool } from "../../Design";
 
 export type ColorOptionActionGroupItemProps = {
   name: string;
@@ -15,7 +15,7 @@ export type ColorOptionActionGroupItemProps = {
 
 export default function ColorOptionActionGroupItem(props: ColorOptionActionGroupItemProps) {
   const { value, hasVisualEdit, reset, hasCodeOverride } =
-    useThemeDesignEditValue(props.path);
+    useEditWithVisualTool(props.path);
 
   const currentValue = (value as string | number) ?? props.resolvedValue;
   const canResetValue = hasVisualEdit || hasCodeOverride;

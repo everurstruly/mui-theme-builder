@@ -1,10 +1,10 @@
 import { Typography } from "@mui/material";
 import ColorOptionActionGroupItem from "./ActionColorOptionGroupItem";
-import { useThemeDesignTheme } from "../../Design";
+import { useCreatedTheme } from "../../Design";
 import ColorOptionGroupItem from "./ColorOptionGroupItem";
 
 function ColorOptionActionGroup(props: { title?: string }) {
-  const theme = useThemeDesignTheme();
+  const theme = useCreatedTheme();
 
   return (
     <>

@@ -7,12 +7,12 @@ import { useMemo } from "react";
 
 /**
  * Internal hook that resolves ThemeOptions from all layers.
- * Used by useThemeDesignTheme to compute the final theme.
+ * Used by useCreatedTheme to compute the final theme.
  *
  * @param colorScheme - Target color scheme (defaults to active scheme)
  * @returns Resolved ThemeOptions ready for createTheme()
  */
-export default function useDesignCreatedThemeOption(
+export default function useCreatedThemeOption(
   colorScheme?: "light" | "dark"
 ): ThemeOptions {
   // Subscribe to all relevant state slices with selectors

@@ -1,9 +1,8 @@
-export { default as useDesignedEditsResolvedThemeOptions } from "./useVisualToolEditsThemeOptions";
 export { default as useCodeOverridesActions } from "./useCodeOverridesActions";
 export { default as useCodeOverridesState } from "./useCodeOverridesState";
-export { default as useThemeDesignEditValue } from "./useEditWithVisualTool";
-export { default as useThemeDesignTheme } from "./useDesignCreatedTheme";
-export { default as useDesignCreatedThemeOption } from "./useDesignCreatedThemeOptions";
+export { default as useEditWithVisualTool } from "./useEditWithVisualTool";
+export { default as useCreatedTheme } from "./useCreatedTheme";
+export { default as useCreatedThemeOption } from "./useCreatedThemeOption";
 
 // === Validation ===
 export {

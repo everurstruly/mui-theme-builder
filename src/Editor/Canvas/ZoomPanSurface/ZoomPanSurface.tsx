@@ -5,7 +5,7 @@ import useCanvasZoomPanCamera from "./useZoomPanCamera";
 import useCanvasGestures from "./useCanvasGestures";
 import useCanvasKeyboardShortcuts from "./useCanvasKeyboardShortcuts";
 import React, { useRef, useEffect, useCallback, useMemo } from "react";
-import { useDesignCreatedThemeOption, useThemeDesignStore } from "../../Design";
+import { useCreatedThemeOption, useThemeDesignStore } from "../../Design";
 import { Box } from "@mui/material";
 
 type ZoomPanSurfaceProps = {
@@ -36,7 +36,7 @@ export default function ZoomPanSurface({
 }: ZoomPanSurfaceProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const component = useThemeDesignStore((state) => state.activePreviewId);
-  const themeOptions = useDesignCreatedThemeOption();
+  const themeOptions = useCreatedThemeOption();
 
   // New unified store selectors
   const width = useCanvasViewStore((s) => s.viewport.width);

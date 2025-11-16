@@ -1,12 +1,12 @@
 import CodeMirror from "@uiw/react-codemirror";
 import { Box, Typography, TextField, IconButton } from "@mui/material";
 import { useMemo, useState, useRef, useEffect } from "react";
-import { useThemeDesignTheme } from "../../Design";
+import { useCreatedTheme } from "../../Design";
 import { javascript } from "@codemirror/lang-javascript";
 import { EditorView, ViewPlugin } from "@codemirror/view";
 
 export default function ThemeOverridesFoundation() {
-  const mergedPreview = useThemeDesignTheme();
+  const mergedPreview = useCreatedTheme();
 
   // Render mergedPreview as JavaScript-like object literal (no quoted keys)
   const themeJson = useMemo(() => {

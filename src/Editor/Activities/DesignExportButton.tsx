@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
-import { useDesignCreatedThemeOption } from "../Design";
+import { useCreatedThemeOption } from "../Design";
 
 type ExportType = "themeOptions" | "themeObject";
 type ExportFormat = "js" | "ts" | "json";
@@ -28,7 +28,7 @@ export default function DesignExportButton() {
   const [exportType, setExportType] = React.useState<ExportType>("themeOptions");
   const [exportFormat, setExportFormat] = React.useState<ExportFormat>("ts");
   const [activeFile, setActiveFile] = React.useState<FileType>("theme");
-  const themeOptions = useDesignCreatedThemeOption();
+  const themeOptions = useCreatedThemeOption();
 
   const handleClickOpen = () => {
     setOpen(true);

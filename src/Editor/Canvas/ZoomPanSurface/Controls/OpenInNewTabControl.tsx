@@ -1,10 +1,10 @@
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { Tooltip, IconButton } from "@mui/material";
-import { useDesignCreatedThemeOption, useThemeDesignStore } from "../../../Design";
+import { useCreatedThemeOption, useThemeDesignStore } from "../../../Design";
 
 export default function OpenInNewTabControl() {
   const activePreviewId = useThemeDesignStore((state) => state.activePreviewId);
-  const themeOptions = useDesignCreatedThemeOption();
+  const themeOptions = useCreatedThemeOption();
 
   const handleOpenInNewTab = () => {
     if (!activePreviewId) {

@@ -1,5 +1,5 @@
 import { Typography, TextField, ListItem, Stack } from "@mui/material";
-import { useThemeDesignEditValue } from "../../../Design";
+import { useEditWithVisualTool } from "../../../Design";
 import OptionListItemResetButton from "../../OptionListItemResetButton";
 
 export type CssStyleInputOptionProps = {
@@ -10,7 +10,7 @@ export type CssStyleInputOptionProps = {
 
 export default function CssStyleInputOption(props: CssStyleInputOptionProps) {
   const { value, setValue, reset, hasVisualEdit, hasCodeOverride } =
-    useThemeDesignEditValue(props.path);
+    useEditWithVisualTool(props.path);
 
   const displayValue = value?.toString() ?? "";
   const canResetValue = hasVisualEdit || hasCodeOverride;

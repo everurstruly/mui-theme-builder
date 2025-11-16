@@ -2,11 +2,11 @@ import List from "@mui/material/List";
 import ColorOptionGroup from "./ColorOptionGroup";
 import ColorOptionGroupItem from "./ColorOptionGroupItem";
 import { useMemo } from "react";
-import { useThemeDesignTheme } from "../../Design";
+import { useCreatedTheme } from "../../Design";
 import type { Theme } from "@mui/material";
 
 export default function ColorProperty() {
-  const theme = useThemeDesignTheme();
+  const theme = useCreatedTheme();
   
   const paletteGroups = useMemo(() => {
     return extractPaletteGroups(theme.palette);
