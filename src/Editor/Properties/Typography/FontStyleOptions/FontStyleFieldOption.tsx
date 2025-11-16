@@ -19,7 +19,7 @@ export default function FontStyleFieldOption(props: FontStyleFieldOptionProps) {
   const { value, hasVisualEdit, hasCodeOverride, setValue, reset } =
     useThemeDesignEditValue(props.path);
 
-  const currentValue = value ?? autoResolvedValue;
+  const currentValue = value ?? resolvedValue ?? "";
   const canResetValue = hasVisualEdit || hasCodeOverride;
 
   const [inputValue, setInputValue] = useState(String(currentValue));
