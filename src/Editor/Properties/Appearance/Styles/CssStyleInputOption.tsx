@@ -9,23 +9,17 @@ export type CssStyleInputOptionProps = {
 };
 
 export default function CssStyleInputOption(props: CssStyleInputOptionProps) {
-  const { value, setValue, reset, hasVisualEdit, hasCodeOverride } =
+  const { value, resolvedValue, setValue, reset, canReset, hasCodeOverride } =
     useEditWithVisualTool(props.path);
 
-  const displayValue = value?.toString() ?? "";
-  const canResetValue = hasVisualEdit || hasCodeOverride;
+  const displayValue = value ?? resolvedValue;
+  const valueIsDynamicallyCalculated = typeof displayValue === "function";
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = event.target.value;
-
-    // Parse as number for numeric paths (spacing, shape.borderRadius)
-    if (props.path === "spacing" || props.path === "shape.borderRadius") {
-      const numValue = Number(newValue);
-      if (!isNaN(numValue)) {
-        setValue(numValue);
-      }
+    if (newValue === "") {
+      setValue(undefined);
     } else {
-      // For other paths that might need strings (like '4px')
       setValue(newValue);
     }
   };
@@ -52,9 +46,10 @@ export default function CssStyleInputOption(props: CssStyleInputOptionProps) {
     >
       <Stack direction="row" alignItems="center" spacing={0.75}>
         <OptionListItemResetButton
-          canResetValue={canResetValue}
+          canResetValue={canReset}
           resetValue={handleReset}
-          label="Default"
+          label={valueIsDynamicallyCalculated ? "Auto" : "Default"}
+          labelColor={valueIsDynamicallyCalculated ? "resolved" : "primary"}
         />
 
         <Typography

@@ -9,7 +9,7 @@ export default function useEditWithVisualTool(path: string) {
   const getVisualToolEdit = useDesignStore((s) => s.getVisualToolEdit);
 
   const codeValue = codeFlattened[path];
-  const autoResolvedValue = getNestedValue(theme, path);
+  const autoResolvedValue = getNestedValue(theme, path) as SerializableValue;
   const editValue = getVisualToolEdit(path);
 
   const value = codeValue ?? editValue;

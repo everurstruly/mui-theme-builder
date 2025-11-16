@@ -12,7 +12,7 @@ export default function FontStyleFieldOption(props: FontStyleFieldOptionProps) {
   const { value, resolvedValue, hasCodeOverride, setValue, reset, canReset } =
     useEditWithVisualTool(props.path);
 
-  const currentValue = value ?? resolvedValue ?? "";
+  const currentValue = value ?? resolvedValue;
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = event.target.value;
@@ -39,7 +39,12 @@ export default function FontStyleFieldOption(props: FontStyleFieldOptionProps) {
       }}
     >
       <Stack direction="row" alignItems="center" spacing={0.75} flexBasis={"100%"}>
-        <OptionListItemResetButton canResetValue={canReset} resetValue={reset} />
+        <OptionListItemResetButton
+          canResetValue={canReset}
+          resetValue={reset}
+          label={currentValue === undefined ? "Auto" : "Default"}
+          labelColor={currentValue === undefined ? "resolved" : "primary"}
+        />
 
         <Typography
           variant="caption"
