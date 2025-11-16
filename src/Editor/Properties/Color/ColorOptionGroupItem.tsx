@@ -13,6 +13,7 @@ type ColorOptionGroupItemProps = {
 export default function ColorOptionGroupItem(props: ColorOptionGroupItemProps) {
   const {
     value,
+    resolvedValue,
     setValue,
     reset: resetValue,
     hasVisualEdit: isCustomized,
@@ -106,7 +107,7 @@ export default function ColorOptionGroupItem(props: ColorOptionGroupItemProps) {
           sx={{
             width: 32,
             height: 20,
-            bgcolor: (tempColor || (value as string)) as string,
+            bgcolor: tempColor || value || resolvedValue,
             borderRadius: 1,
             border: 2,
             borderColor: "divider",

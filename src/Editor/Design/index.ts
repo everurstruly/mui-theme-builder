@@ -3,7 +3,7 @@ export { default as useCodeOverridesActions } from "./useCodeOverridesActions";
 export { default as useCodeOverridesState } from "./useCodeOverridesState";
 export { default as useThemeDesignEditValue } from "./useEditWithVisualTool";
 export { default as useThemeDesignTheme } from "./useDesignCreatedTheme";
-export { default as useResolvedThemeOptions } from "./useDesignCreatedThemeOptions";
+export { default as useDesignCreatedThemeOption } from "./useDesignCreatedThemeOptions";
 
 // === Validation ===
 export {

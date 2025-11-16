@@ -1,368 +1,374 @@
 import { create } from "zustand";
 import { isColorSchemePath } from "./shared";
 import { transformCodeToDsl } from "./domainSpecificLanguage/themeOptionsToDslTransformer";
+import { devtools } from "zustand/middleware";
 import type { EditorExperienceId } from "./designExperience";
 import type { ThemeDsl } from "./domainSpecificLanguage/types";
 import type { ThemeOptions } from "@mui/material";
 
-export const useDesignStore = create<ThemeDesignStore>((set, get) => ({
-  selectedExperienceId: "primitives",
-  activePreviewId: "DashboardExample",
+export const useDesignStore = create<ThemeDesignStore>()(
+  devtools((set, get) => ({
+    selectedExperienceId: "primitives",
+    activePreviewId: "DashboardExample",
 
-  activeColorScheme: "light",
-  light: createInitialColorSchemeEdits(),
-  dark: createInitialColorSchemeEdits(),
+    activeColorScheme: "light",
+    light: createInitialColorSchemeEdits(),
+    dark: createInitialColorSchemeEdits(),
 
-  selectedTemplateId: { type: "builtin", id: "material" },
-  templateHistory: [],
+    selectedTemplateId: { type: "builtin", id: "material" },
+    templateHistory: [],
 
-  colorSchemeIndependentDesignToolEdits: {},
+    colorSchemeIndependentDesignToolEdits: {},
 
-  codeOverridesSource: "",
-  codeOverridesDsl: {},
-  codeOverridesResolved: {},
-  codeOverridesFlattened: {},
-  codeOverridesError: null,
-  hasUnsavedChanges: false,
+    codeOverridesSource: "",
+    codeOverridesDsl: {},
+    codeOverridesResolved: {},
+    codeOverridesFlattened: {},
+    codeOverridesError: null,
+    hasUnsavedChanges: false,
 
-  visualHistoryPast: [],
-  visualHistoryFuture: [],
-  codeHistoryPast: [],
-  codeHistoryFuture: [],
+    visualHistoryPast: [],
+    visualHistoryFuture: [],
+    codeHistoryPast: [],
+    codeHistoryFuture: [],
 
-  addDesignToolEdit: (path: string, value: SerializableValue) => {
-    const isColorSchemeScoped = isColorSchemePath(path);
-    const scheme = get().activeColorScheme;
+    addDesignToolEdit: (path: string, value: SerializableValue) => {
+      console.log("adding edit: ", path, " /value: ", value);
 
-    const snapshot = () => ({
-      baseVisualEdits: get().colorSchemeIndependentDesignToolEdits,
-      light: get().light.designToolEdits,
-      dark: get().dark.designToolEdits,
-    });
+      const isColorSchemeScoped = isColorSchemePath(path);
+      const scheme = get().activeColorScheme;
 
-    set((state) => ({
-      visualHistoryPast: [...state.visualHistoryPast, snapshot()].slice(-50),
-      visualHistoryFuture: [],
-    }));
+      const snapshot = () => ({
+        baseVisualEdits: get().colorSchemeIndependentDesignToolEdits,
+        light: get().light.designToolEdits,
+        dark: get().dark.designToolEdits,
+      });
 
-    if (isColorSchemeScoped) {
-      return set((state) => ({
-        [scheme]: {
-          ...state[scheme],
-          designToolEdits: {
-            ...state[scheme].designToolEdits,
-            [path]: value,
+      set((state) => ({
+        visualHistoryPast: [...state.visualHistoryPast, snapshot()].slice(-50),
+        visualHistoryFuture: [],
+      }));
+
+      if (isColorSchemeScoped) {
+        return set((state) => ({
+          [scheme]: {
+            ...state[scheme],
+            designToolEdits: {
+              ...state[scheme].designToolEdits,
+              [path]: value,
+            },
           },
+          hasUnsavedChanges: true,
+        }));
+      }
+
+      set((state) => ({
+        colorSchemeIndependentDesignToolEdits: {
+          ...state.colorSchemeIndependentDesignToolEdits,
+          [path]: value,
         },
         hasUnsavedChanges: true,
       }));
-    }
+    },
 
-    set((state) => ({
-      colorSchemeIndependentDesignToolEdits: {
-        ...state.colorSchemeIndependentDesignToolEdits,
-        [path]: value,
-      },
-      hasUnsavedChanges: true,
-    }));
-  },
+    removeDesignToolEdit: (path: string) => {
+      const isColorSchemeScoped = isColorSchemePath(path);
+      const scheme = get().activeColorScheme;
 
-  removeDesignToolEdit: (path: string) => {
-    const isColorSchemeScoped = isColorSchemePath(path);
-    const scheme = get().activeColorScheme;
+      // Snapshot before removal
+      const snapshot = () => ({
+        baseVisualEdits: get().colorSchemeIndependentDesignToolEdits,
+        light: get().light.designToolEdits,
+        dark: get().dark.designToolEdits,
+      });
 
-    // Snapshot before removal
-    const snapshot = () => ({
-      baseVisualEdits: get().colorSchemeIndependentDesignToolEdits,
-      light: get().light.designToolEdits,
-      dark: get().dark.designToolEdits,
-    });
+      set((state) => ({
+        visualHistoryPast: [...state.visualHistoryPast, snapshot()].slice(-50),
+        visualHistoryFuture: [],
+      }));
 
-    set((state) => ({
-      visualHistoryPast: [...state.visualHistoryPast, snapshot()].slice(-50),
-      visualHistoryFuture: [],
-    }));
+      if (isColorSchemeScoped) {
+        return set((state) => {
+          const newEdits = { ...state[scheme].designToolEdits };
+          delete newEdits[path];
+          return {
+            [scheme]: {
+              ...state[scheme],
+              designToolEdits: newEdits,
+            },
+            hasUnsavedChanges: true,
+          };
+        });
+      }
 
-    if (isColorSchemeScoped) {
-      return set((state) => {
-        const newEdits = { ...state[scheme].designToolEdits };
-        delete newEdits[path];
+      set((state) => {
+        const edits = { ...state.colorSchemeIndependentDesignToolEdits };
+        delete edits[path];
         return {
-          [scheme]: {
-            ...state[scheme],
-            designToolEdits: newEdits,
-          },
+          colorSchemeIndependentDesignToolEdits: edits,
           hasUnsavedChanges: true,
         };
       });
-    }
+    },
 
-    set((state) => {
-      const edits = { ...state.colorSchemeIndependentDesignToolEdits };
-      delete edits[path];
+    getDesignToolEdit: (path: string) => {
+      const { activeColorScheme, colorSchemeIndependentDesignToolEdits, ...rest } =
+        get();
+
       return {
-        colorSchemeIndependentDesignToolEdits: edits,
-        hasUnsavedChanges: true,
-      };
-    });
-  },
+        ...colorSchemeIndependentDesignToolEdits,
+        ...rest[activeColorScheme].designToolEdits,
+      }[path];
+    },
 
-  getDesignToolEdit: (path: string) => {
-    const { activeColorScheme, colorSchemeIndependentDesignToolEdits, ...rest } =
-      get();
-    return {
-      ...colorSchemeIndependentDesignToolEdits,
-      ...rest[activeColorScheme].designToolEdits,
-    }[path];
-  },
+    clearDesignToolsEdits: (scope: "global" | "current-scheme" | "all") => {
+      const scheme = get().activeColorScheme;
 
-  clearDesignToolsEdits: (scope: "global" | "current-scheme" | "all") => {
-    const scheme = get().activeColorScheme;
+      // Snapshot before clearing visual edits
+      set((state) => ({
+        visualHistoryPast: [
+          ...state.visualHistoryPast,
+          {
+            baseVisualEdits: state.colorSchemeIndependentDesignToolEdits,
+            light: state.light.designToolEdits,
+            dark: state.dark.designToolEdits,
+          },
+        ].slice(-50),
+        visualHistoryFuture: [],
+      }));
 
-    // Snapshot before clearing visual edits
-    set((state) => ({
-      visualHistoryPast: [
-        ...state.visualHistoryPast,
-        {
-          baseVisualEdits: state.colorSchemeIndependentDesignToolEdits,
-          light: state.light.designToolEdits,
-          dark: state.dark.designToolEdits,
-        },
-      ].slice(-50),
-      visualHistoryFuture: [],
-    }));
+      if (scope === "global") {
+        return set({
+          colorSchemeIndependentDesignToolEdits: {},
+          hasUnsavedChanges: true,
+        });
+      }
 
-    if (scope === "global") {
-      return set({
+      if (scope === "current-scheme") {
+        return set((state) => ({
+          [scheme]: {
+            ...state[scheme],
+            designToolEdits: {},
+          },
+          hasUnsavedChanges: true,
+        }));
+      }
+
+      set({
         colorSchemeIndependentDesignToolEdits: {},
-        hasUnsavedChanges: true,
-      });
-    }
-
-    if (scope === "current-scheme") {
-      return set((state) => ({
-        [scheme]: {
-          ...state[scheme],
+        light: {
+          ...get().light,
+          designToolEdits: {},
+        },
+        dark: {
+          ...get().dark,
           designToolEdits: {},
         },
         hasUnsavedChanges: true,
+      });
+    },
+
+    applyCodeOverrides: (unsafeThemeAsCode: string) => {
+      const result = transformCodeToDsl(unsafeThemeAsCode);
+
+      // If transform failed, store error and clear DSL
+      if (result.error) {
+        set({
+          codeOverridesSource: unsafeThemeAsCode,
+          codeOverridesDsl: {},
+          codeOverridesResolved: {},
+          codeOverridesFlattened: {},
+          codeOverridesError: result.error,
+          hasUnsavedChanges: true,
+        });
+        return;
+      }
+
+      // Store previous source in code history (for undo) then store DSL
+      set((state) => ({
+        codeHistoryPast: [...state.codeHistoryPast, state.codeOverridesSource].slice(
+          -50
+        ),
+        codeHistoryFuture: [],
       }));
-    }
 
-    set({
-      colorSchemeIndependentDesignToolEdits: {},
-      light: {
-        ...get().light,
-        designToolEdits: {},
-      },
-      dark: {
-        ...get().dark,
-        designToolEdits: {},
-      },
-      hasUnsavedChanges: true,
-    });
-  },
-
-  applyCodeOverrides: (unsafeThemeAsCode: string) => {
-    const result = transformCodeToDsl(unsafeThemeAsCode);
-
-    // If transform failed, store error and clear DSL
-    if (result.error) {
+      // Transform succeeded - store DSL
+      // The resolved ThemeOptions will be computed on-demand in the resolver
       set({
         codeOverridesSource: unsafeThemeAsCode,
+        codeOverridesDsl: result.dsl,
+        codeOverridesResolved: {}, // Will be resolved by themeDesign.resolver
+        codeOverridesFlattened: {}, // Will be computed after resolution
+        codeOverridesError: null,
+        hasUnsavedChanges: true,
+      });
+    },
+
+    clearCodeOverrides: () => {
+      // Push current source to code history so clear is undoable
+      set((state) => ({
+        codeHistoryPast: [...state.codeHistoryPast, state.codeOverridesSource].slice(
+          -50
+        ),
+        codeHistoryFuture: [],
+      }));
+
+      set({
+        codeOverridesSource: "",
         codeOverridesDsl: {},
         codeOverridesResolved: {},
         codeOverridesFlattened: {},
-        codeOverridesError: result.error,
+        codeOverridesError: null,
         hasUnsavedChanges: true,
       });
-      return;
-    }
+    },
 
-    // Store previous source in code history (for undo) then store DSL
-    set((state) => ({
-      codeHistoryPast: [...state.codeHistoryPast, state.codeOverridesSource].slice(
-        -50
-      ),
-      codeHistoryFuture: [],
-    }));
+    resetToDesignToolEdits: () => {
+      get().clearCodeOverrides();
+    },
 
-    // Transform succeeded - store DSL
-    // The resolved ThemeOptions will be computed on-demand in the resolver
-    set({
-      codeOverridesSource: unsafeThemeAsCode,
-      codeOverridesDsl: result.dsl,
-      codeOverridesResolved: {}, // Will be resolved by themeDesign.resolver
-      codeOverridesFlattened: {}, // Will be computed after resolution
-      codeOverridesError: null,
-      hasUnsavedChanges: true,
-    });
-  },
+    resetToTemplate: () => {
+      // Snapshot visual and code before wiping
+      set((state) => ({
+        visualHistoryPast: [
+          ...state.visualHistoryPast,
+          {
+            baseVisualEdits: state.colorSchemeIndependentDesignToolEdits,
+            light: state.light.designToolEdits,
+            dark: state.dark.designToolEdits,
+          },
+        ].slice(-50),
+        codeHistoryPast: [...state.codeHistoryPast, state.codeOverridesSource].slice(
+          -50
+        ),
+        visualHistoryFuture: [],
+        codeHistoryFuture: [],
+      }));
 
-  clearCodeOverrides: () => {
-    // Push current source to code history so clear is undoable
-    set((state) => ({
-      codeHistoryPast: [...state.codeHistoryPast, state.codeOverridesSource].slice(
-        -50
-      ),
-      codeHistoryFuture: [],
-    }));
+      set({
+        colorSchemeIndependentDesignToolEdits: {},
+        codeOverridesSource: "",
+        codeOverridesDsl: {},
+        codeOverridesResolved: {},
+        codeOverridesFlattened: {},
+        codeOverridesError: null,
+        light: createInitialColorSchemeEdits(),
+        dark: createInitialColorSchemeEdits(),
+        hasUnsavedChanges: true,
+      });
+    },
 
-    set({
-      codeOverridesSource: "",
-      codeOverridesDsl: {},
-      codeOverridesResolved: {},
-      codeOverridesFlattened: {},
-      codeOverridesError: null,
-      hasUnsavedChanges: true,
-    });
-  },
+    undoDesignToolEdit: () => {
+      const past = get().visualHistoryPast;
+      if (!past || past.length === 0) return;
+      const prev = past[past.length - 1];
+      set((state) => ({
+        visualHistoryPast: state.visualHistoryPast.slice(0, -1),
+        visualHistoryFuture: [
+          ...state.visualHistoryFuture,
+          {
+            baseVisualEdits: state.colorSchemeIndependentDesignToolEdits,
+            light: state.light.designToolEdits,
+            dark: state.dark.designToolEdits,
+          },
+        ].slice(-50),
+        colorSchemeIndependentDesignToolEdits: prev.baseVisualEdits,
+        light: { ...state.light, designToolEdits: prev.light },
+        dark: { ...state.dark, designToolEdits: prev.dark },
+        hasUnsavedChanges: true,
+      }));
+    },
 
-  resetToDesignToolEdits: () => {
-    get().clearCodeOverrides();
-  },
+    redoDesignToolEdit: () => {
+      const future = get().visualHistoryFuture;
+      if (!future || future.length === 0) return;
+      const next = future[future.length - 1];
+      set((state) => ({
+        visualHistoryFuture: state.visualHistoryFuture.slice(0, -1),
+        visualHistoryPast: [
+          ...state.visualHistoryPast,
+          {
+            baseVisualEdits: state.colorSchemeIndependentDesignToolEdits,
+            light: state.light.designToolEdits,
+            dark: state.dark.designToolEdits,
+          },
+        ].slice(-50),
+        colorSchemeIndependentDesignToolEdits: next.baseVisualEdits,
+        light: { ...state.light, designToolEdits: next.light },
+        dark: { ...state.dark, designToolEdits: next.dark },
+        hasUnsavedChanges: true,
+      }));
+    },
 
-  resetToTemplate: () => {
-    // Snapshot visual and code before wiping
-    set((state) => ({
-      visualHistoryPast: [
-        ...state.visualHistoryPast,
-        {
-          baseVisualEdits: state.colorSchemeIndependentDesignToolEdits,
-          light: state.light.designToolEdits,
-          dark: state.dark.designToolEdits,
-        },
-      ].slice(-50),
-      codeHistoryPast: [...state.codeHistoryPast, state.codeOverridesSource].slice(
-        -50
-      ),
-      visualHistoryFuture: [],
-      codeHistoryFuture: [],
-    }));
+    undoCodeOverride: () => {
+      const past = get().codeHistoryPast;
+      if (!past || past.length === 0) return;
+      const prevSource = past[past.length - 1];
+      // push current to future
+      set((state) => ({
+        codeHistoryPast: state.codeHistoryPast.slice(0, -1),
+        codeHistoryFuture: [
+          ...state.codeHistoryFuture,
+          state.codeOverridesSource,
+        ].slice(-50),
+        codeOverridesSource: prevSource,
+        // Re-run transform to set DSL (best-effort)
+        codeOverridesDsl: prevSource ? transformCodeToDsl(prevSource).dsl : {},
+        hasUnsavedChanges: true,
+      }));
+    },
 
-    set({
-      colorSchemeIndependentDesignToolEdits: {},
-      codeOverridesSource: "",
-      codeOverridesDsl: {},
-      codeOverridesResolved: {},
-      codeOverridesFlattened: {},
-      codeOverridesError: null,
-      light: createInitialColorSchemeEdits(),
-      dark: createInitialColorSchemeEdits(),
-      hasUnsavedChanges: true,
-    });
-  },
+    redoCodeOverride: () => {
+      const future = get().codeHistoryFuture;
+      if (!future || future.length === 0) return;
+      const nextSource = future[future.length - 1];
+      set((state) => ({
+        codeHistoryFuture: state.codeHistoryFuture.slice(0, -1),
+        codeHistoryPast: [...state.codeHistoryPast, state.codeOverridesSource].slice(
+          -50
+        ),
+        codeOverridesSource: nextSource,
+        codeOverridesDsl: nextSource ? transformCodeToDsl(nextSource).dsl : {},
+        hasUnsavedChanges: true,
+      }));
+    },
 
-  undoDesignToolEdit: () => {
-    const past = get().visualHistoryPast;
-    if (!past || past.length === 0) return;
-    const prev = past[past.length - 1];
-    set((state) => ({
-      visualHistoryPast: state.visualHistoryPast.slice(0, -1),
-      visualHistoryFuture: [
-        ...state.visualHistoryFuture,
-        {
-          baseVisualEdits: state.colorSchemeIndependentDesignToolEdits,
-          light: state.light.designToolEdits,
-          dark: state.dark.designToolEdits,
-        },
-      ].slice(-50),
-      colorSchemeIndependentDesignToolEdits: prev.baseVisualEdits,
-      light: { ...state.light, designToolEdits: prev.light },
-      dark: { ...state.dark, designToolEdits: prev.dark },
-      hasUnsavedChanges: true,
-    }));
-  },
+    switchTemplate: (templateId: ThemeTemplateRef, keepEdits: boolean) => {
+      const currentTemplateId = get().selectedTemplateId.id;
 
-  redoDesignToolEdit: () => {
-    const future = get().visualHistoryFuture;
-    if (!future || future.length === 0) return;
-    const next = future[future.length - 1];
-    set((state) => ({
-      visualHistoryFuture: state.visualHistoryFuture.slice(0, -1),
-      visualHistoryPast: [
-        ...state.visualHistoryPast,
-        {
-          baseVisualEdits: state.colorSchemeIndependentDesignToolEdits,
-          light: state.light.designToolEdits,
-          dark: state.dark.designToolEdits,
-        },
-      ].slice(-50),
-      colorSchemeIndependentDesignToolEdits: next.baseVisualEdits,
-      light: { ...state.light, designToolEdits: next.light },
-      dark: { ...state.dark, designToolEdits: next.dark },
-      hasUnsavedChanges: true,
-    }));
-  },
+      set({
+        selectedTemplateId: templateId,
+        templateHistory: [...get().templateHistory, currentTemplateId],
+        // Clear edits if not keeping them
+        ...(keepEdits
+          ? {}
+          : {
+              colorSchemeIndependentDesignToolEdits: {},
+              codeOverridesSource: "",
+              codeOverridesDsl: {},
+              codeOverridesResolved: {},
+              codeOverridesFlattened: {},
+              codeOverridesError: null,
+              light: createInitialColorSchemeEdits(),
+              dark: createInitialColorSchemeEdits(),
+            }),
+        hasUnsavedChanges: true,
+      });
+    },
 
-  undoCodeOverride: () => {
-    const past = get().codeHistoryPast;
-    if (!past || past.length === 0) return;
-    const prevSource = past[past.length - 1];
-    // push current to future
-    set((state) => ({
-      codeHistoryPast: state.codeHistoryPast.slice(0, -1),
-      codeHistoryFuture: [
-        ...state.codeHistoryFuture,
-        state.codeOverridesSource,
-      ].slice(-50),
-      codeOverridesSource: prevSource,
-      // Re-run transform to set DSL (best-effort)
-      codeOverridesDsl: prevSource ? transformCodeToDsl(prevSource).dsl : {},
-      hasUnsavedChanges: true,
-    }));
-  },
+    setActiveColorScheme: (scheme: "light" | "dark") => {
+      set({ activeColorScheme: scheme });
+    },
 
-  redoCodeOverride: () => {
-    const future = get().codeHistoryFuture;
-    if (!future || future.length === 0) return;
-    const nextSource = future[future.length - 1];
-    set((state) => ({
-      codeHistoryFuture: state.codeHistoryFuture.slice(0, -1),
-      codeHistoryPast: [...state.codeHistoryPast, state.codeOverridesSource].slice(
-        -50
-      ),
-      codeOverridesSource: nextSource,
-      codeOverridesDsl: nextSource ? transformCodeToDsl(nextSource).dsl : {},
-      hasUnsavedChanges: true,
-    }));
-  },
+    selectPreview: (previewId: string) => {
+      set({ activePreviewId: previewId });
+    },
 
-  switchTemplate: (templateId: ThemeTemplateRef, keepEdits: boolean) => {
-    const currentTemplateId = get().selectedTemplateId.id;
-
-    set({
-      selectedTemplateId: templateId,
-      templateHistory: [...get().templateHistory, currentTemplateId],
-      // Clear edits if not keeping them
-      ...(keepEdits
-        ? {}
-        : {
-            colorSchemeIndependentDesignToolEdits: {},
-            codeOverridesSource: "",
-            codeOverridesDsl: {},
-            codeOverridesResolved: {},
-            codeOverridesFlattened: {},
-            codeOverridesError: null,
-            light: createInitialColorSchemeEdits(),
-            dark: createInitialColorSchemeEdits(),
-          }),
-      hasUnsavedChanges: true,
-    });
-  },
-
-  setActiveColorScheme: (scheme: "light" | "dark") => {
-    set({ activeColorScheme: scheme });
-  },
-
-  selectPreview: (previewId: string) => {
-    set({ activePreviewId: previewId });
-  },
-
-  selectExperience: (experienceId: EditorExperienceId) => {
-    set({ selectedExperienceId: experienceId });
-  },
-}));
+    selectExperience: (experienceId: EditorExperienceId) => {
+      set({ selectedExperienceId: experienceId });
+    },
+  }), { trace: true })
+);
 
 function createInitialColorSchemeEdits(): ColorSchemeEdits {
   return { designToolEdits: {} };
@@ -554,6 +560,7 @@ export type SerializableValue =
   | string
   | number
   | boolean
+  | undefined
   | null
   | SerializableValue[]
   | { [key: string]: SerializableValue };

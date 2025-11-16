@@ -1,16 +1,12 @@
 import { useMemo } from "react";
-import { useResolvedThemeOptions } from ".";
+import { useDesignCreatedThemeOption } from ".";
 import { createTheme, type Theme } from "@mui/material";
 
-export default function useDesignCreatedTheme(colorScheme?: "light" | "dark"): Theme {
-  const themeOptions = useResolvedThemeOptions(colorScheme);
-
+export default function useDesignCreatedTheme(
+  colorScheme?: "light" | "dark"
+): Theme {
+  const themeOptions = useDesignCreatedThemeOption(colorScheme);
   return useMemo(() => {
-    try {
-      return createTheme(themeOptions);
-    } catch (error) {
-      console.error("[useThemeDesignTheme] Failed to create theme:", error);
-      return createTheme();
-    }
+    return createTheme(themeOptions);
   }, [themeOptions]);
 }

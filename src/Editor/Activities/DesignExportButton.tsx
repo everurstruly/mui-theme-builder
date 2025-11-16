@@ -6,7 +6,6 @@ import DialogContent from "@mui/material/DialogContent";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { ContentCopy } from "@mui/icons-material";
-import { useResolvedThemeOptions } from "../Design";
 import {
   Stack,
   Box,
@@ -17,6 +16,7 @@ import {
 } from "@mui/material";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { useDesignCreatedThemeOption } from "../Design";
 
 type ExportType = "themeOptions" | "themeObject";
 type ExportFormat = "js" | "ts" | "json";
@@ -28,7 +28,7 @@ export default function DesignExportButton() {
   const [exportType, setExportType] = React.useState<ExportType>("themeOptions");
   const [exportFormat, setExportFormat] = React.useState<ExportFormat>("ts");
   const [activeFile, setActiveFile] = React.useState<FileType>("theme");
-  const themeOptions = useResolvedThemeOptions();
+  const themeOptions = useDesignCreatedThemeOption();
 
   const handleClickOpen = () => {
     setOpen(true);

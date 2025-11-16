@@ -1,14 +1,24 @@
-import { ListItem, Typography, Stack } from "@mui/material";
+import { ListItem, Typography, Stack, type SelectChangeEvent } from "@mui/material";
 import FontFamilyOptionInput from "./FontFamilyOptionInput";
 import { useThemeDesignEditValue } from "../../../Design";
 import OptionListItemResetButton from "../../OptionListItemResetButton";
 import useDesignCreatedTheme from "../../../Design/useDesignCreatedTheme";
+import { useDesignStore } from "../../../Design/designStore";
 
 export type FontFamilyOptionProps = {
   title: string;
   path: string;
   disabled?: boolean;
 };
+
+const headingPaths = [
+  "typography.h1.fontFamily",
+  "typography.h2.fontFamily",
+  "typography.h3.fontFamily",
+  "typography.h4.fontFamily",
+  "typography.h5.fontFamily",
+  "typography.h6.fontFamily",
+];
 
 export default function FontFamilyOption({
   path,
@@ -19,12 +29,34 @@ export default function FontFamilyOption({
     typography: { fontFamily },
   } = useDesignCreatedTheme();
 
-  const { value, hasVisualEdit, hasCodeOverride, reset } =
+  const removeDesignToolEdit = useDesignStore((s) => s.removeDesignToolEdit);
+  const addDesignToolEdit = useDesignStore((s) => s.addDesignToolEdit);
+
+  const { value, hasVisualEdit, hasCodeOverride } =
     useThemeDesignEditValue(path);
 
   const autoResolvedValue = fontFamily;
-  const resolvedValue = value ?? autoResolvedValue;
+  const resolvedValue = (value as string) ?? autoResolvedValue;
   const canResetValue = hasVisualEdit || hasCodeOverride;
+
+  const handleChange = (event: SelectChangeEvent) => {
+    const selectedFont = event.target.value;
+    const fontFamilyValue = formatFontFamilyWithFallback(selectedFont);
+
+    if (path === "typography.h1.fontFamily") {
+      headingPaths.forEach((p) => addDesignToolEdit(p, fontFamilyValue));
+    } else {
+      addDesignToolEdit(path, fontFamilyValue);
+    }
+  };
+  
+  const handleReset = () => {
+    if (path === "typography.h1.fontFamily") {
+      headingPaths.forEach((p) => removeDesignToolEdit(p));
+    } else {
+      removeDesignToolEdit(path);
+    }
+  };
 
   function getColor() {
     if (disabled) {
@@ -50,7 +82,7 @@ export default function FontFamilyOption({
       <Stack direction="row" alignItems="center" spacing={0.75}>
         <OptionListItemResetButton
           canResetValue={canResetValue}
-          resetValue={reset}
+          resetValue={handleReset}
           label={"Default"}
         />
 
@@ -68,10 +100,22 @@ export default function FontFamilyOption({
 
       <FontFamilyOptionInput
         id={`font-family-select-${title}`}
-        value={resolvedValue}
         disabled={disabled || hasCodeOverride}
-        path={path}
+        value={extractPrimaryFont(resolvedValue)}
+        onChange={handleChange}
       />
     </ListItem>
   );
+}
+
+function formatFontFamilyWithFallback(selectedFont: string) {
+  return selectedFont.includes(" ")
+    ? `"${selectedFont}", sans-serif`
+    : `${selectedFont}, sans-serif`;
+}
+
+// Extract primary font from full fontFamily string (e.g., "Roboto", "Helvetica", "Arial", sans-serif -> Roboto)
+function extractPrimaryFont(fontFamily: string): string {
+  const match = fontFamily.match(/^['"]?([^'",]+)['"]?/);
+  return match ? match[1].trim() : fontFamily;
 }

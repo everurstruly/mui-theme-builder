@@ -3,8 +3,6 @@ import { useThemeDesignEditValue } from "../../../Design";
 import { useState, useEffect } from "react";
 import { useDebouncyEffect } from "use-debouncy";
 import OptionListItemResetButton from "../../OptionListItemResetButton";
-import useDesignCreatedTheme from "../../../Design/useDesignCreatedTheme";
-import { getNestedValue } from "../../../Design/shared";
 
 export type FontStyleFieldOptionProps = {
   name: string;
@@ -13,10 +11,7 @@ export type FontStyleFieldOptionProps = {
 };
 
 export default function FontStyleFieldOption(props: FontStyleFieldOptionProps) {
-  const theme = useDesignCreatedTheme();
-  const autoResolvedValue = getNestedValue(theme, props.path);
-
-  const { value, hasVisualEdit, hasCodeOverride, setValue, reset } =
+  const { value, resolvedValue, hasVisualEdit, hasCodeOverride, setValue, reset } =
     useThemeDesignEditValue(props.path);
 
   const currentValue = value ?? resolvedValue ?? "";
