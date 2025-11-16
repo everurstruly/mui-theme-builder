@@ -7,14 +7,16 @@ export default function useEditWithVisualTool(path: string) {
   const theme = useDesignCreatedTheme();
   const codeFlattened = useDesignStore((s) => s.codeOverridesFlattened);
   const getVisualToolEdit = useDesignStore((s) => s.getVisualToolEdit);
-  
+
   const codeValue = codeFlattened[path];
   const autoResolvedValue = getNestedValue(theme, path);
   const editValue = getVisualToolEdit(path);
 
   const value = codeValue ?? editValue;
-  const hasVisualEdit = !!editValue;
+  const hasVisualEdit = typeof editValue === "string" || !!editValue;
   const hasCodeOverride = !!codeValue;
+
+  const canReset = hasVisualEdit || hasCodeOverride;
 
   const setVisualEdit = useDesignStore((s) => s.addVisualToolEdit);
   const resetPath = useDesignStore((s) => s.removeVisualToolEdit);
@@ -25,6 +27,7 @@ export default function useEditWithVisualTool(path: string) {
       resolvedValue: autoResolvedValue,
       hasCodeOverride,
       hasVisualEdit,
+      canReset,
       isModified: hasCodeOverride || hasVisualEdit,
       setValue: (value: SerializableValue) => setVisualEdit(path, value),
       reset: () => resetPath(path),
@@ -34,6 +37,7 @@ export default function useEditWithVisualTool(path: string) {
       autoResolvedValue,
       hasCodeOverride,
       hasVisualEdit,
+      canReset,
       setVisualEdit,
       path,
       resetPath,

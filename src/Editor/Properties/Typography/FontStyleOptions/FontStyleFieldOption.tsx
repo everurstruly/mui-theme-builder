@@ -1,7 +1,5 @@
 import { Typography, TextField, ListItem, Stack } from "@mui/material";
 import { useEditWithVisualTool } from "../../../Design";
-import { useState, useEffect } from "react";
-import { useDebouncyEffect } from "use-debouncy";
 import OptionListItemResetButton from "../../OptionListItemResetButton";
 
 export type FontStyleFieldOptionProps = {
@@ -11,50 +9,18 @@ export type FontStyleFieldOptionProps = {
 };
 
 export default function FontStyleFieldOption(props: FontStyleFieldOptionProps) {
-  const { value, resolvedValue, hasVisualEdit, hasCodeOverride, setValue, reset } =
+  const { value, resolvedValue, hasCodeOverride, setValue, reset, canReset } =
     useEditWithVisualTool(props.path);
 
   const currentValue = value ?? resolvedValue ?? "";
-  const canResetValue = hasVisualEdit || hasCodeOverride;
-
-  const [inputValue, setInputValue] = useState(String(currentValue));
-
-  // Sync input value when currentValue changes
-  useEffect(() => {
-    setInputValue(String(currentValue));
-  }, [currentValue]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = event.target.value;
-    setInputValue(newValue);
-  };
-
-  // Apply changes with debounce for better UX (rather than onBlur)
-  useDebouncyEffect(
-    () => {
-      if (hasCodeOverride) return;
-      // Parse as number if possible, otherwise keep as string
-      const numValue = Number(inputValue);
-      const newValParsed: string | number = isNaN(numValue) ? inputValue : numValue;
-      // Only set when value actually differs to avoid extra updates
-      if (newValParsed !== currentValue) {
-        setValue(newValParsed);
-      }
-    },
-    200,
-    [inputValue]
-  );
-
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter" && !hasCodeOverride) {
-      const numValue = Number(inputValue);
-      const newValParsed: string | number = isNaN(numValue) ? inputValue : numValue;
-      setValue(newValParsed);
-    }
+    setValue(newValue);
   };
 
   // Compute width in ch units based on input length for a responsive fit
-  const widthCh = Math.max(3, String(inputValue ?? "").length) + 1;
+  const widthCh = Math.max(3, String(currentValue ?? "").length) + 1;
 
   return (
     <ListItem
@@ -73,10 +39,7 @@ export default function FontStyleFieldOption(props: FontStyleFieldOptionProps) {
       }}
     >
       <Stack direction="row" alignItems="center" spacing={0.75} flexBasis={"100%"}>
-        <OptionListItemResetButton
-          canResetValue={canResetValue}
-          resetValue={reset}
-        />
+        <OptionListItemResetButton canResetValue={canReset} resetValue={reset} />
 
         <Typography
           variant="caption"
@@ -89,9 +52,8 @@ export default function FontStyleFieldOption(props: FontStyleFieldOptionProps) {
       <TextField
         size="small"
         variant="outlined"
-        value={inputValue}
+        value={currentValue}
         onChange={handleChange}
-        onKeyDown={handleKeyDown}
         disabled={hasCodeOverride}
         sx={{
           flexBasis: props.orientation === "vertical" ? "100%" : "auto",
