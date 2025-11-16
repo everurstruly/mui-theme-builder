@@ -13,7 +13,7 @@ export default function MuiComponentsTree() {
       // Add 'mui-' prefix to match the registry ID format
       const previewId = `mui-${itemId}`;
       selectPreview(previewId);
-      console.log("[MuiComponentsTree] Selected:", previewId);
+      // console.log("[MuiComponentsTree] Selected:", previewId);
     }
   };
 

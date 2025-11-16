@@ -33,8 +33,6 @@ export const useDesignStore = create<ThemeDesignStore>()(
     codeHistoryFuture: [],
 
     addVisualToolEdit: (path: string, value: SerializableValue) => {
-      console.log("adding edit: ", path, " /value: ", value);
-
       const isColorSchemeScoped = isColorSchemePath(path);
       const scheme = get().activeColorScheme;
 
