@@ -7,8 +7,8 @@ export default function createThemeOptionsFromEdits(
 ): ThemeOptions {
   const {
     template,
-    baseDesignToolEdits,
-    colorSchemeDesignToolEdits,
+    baseVisualToolEdits,
+    colorSchemeVisualToolEdits,
     codeOverrides,
   } = config;
 
@@ -16,8 +16,8 @@ export default function createThemeOptionsFromEdits(
   let resolved: ThemeOptions = { ...template };
 
   // 2. Apply base visual edits (typography, spacing, shape, component defaults, etc.)
-  if (Object.keys(baseDesignToolEdits).length > 0) {
-    const expandedBaseVisual = expandFlatThemeOptions(baseDesignToolEdits);
+  if (Object.keys(baseVisualToolEdits).length > 0) {
+    const expandedBaseVisual = expandFlatThemeOptions(baseVisualToolEdits);
     resolved = deepMerge(
       resolved as Record<string, unknown>,
       expandedBaseVisual
@@ -25,9 +25,9 @@ export default function createThemeOptionsFromEdits(
   }
 
   // 3. Apply color-scheme-specific visual edits (palette, shadows)
-  if (Object.keys(colorSchemeDesignToolEdits).length > 0) {
+  if (Object.keys(colorSchemeVisualToolEdits).length > 0) {
     const expandedColorSchemeVisual = expandFlatThemeOptions(
-      colorSchemeDesignToolEdits
+      colorSchemeVisualToolEdits
     );
     resolved = deepMerge(
       resolved as Record<string, unknown>,
@@ -54,10 +54,10 @@ export interface ThemeResolutionConfig {
   template: ThemeOptions;
 
   /** Base visual edits (typography, spacing, shape, component defaults) */
-  baseDesignToolEdits: Record<string, SerializableValue>;
+  baseVisualToolEdits: Record<string, SerializableValue>;
 
   /** Color-scheme-specific visual edits (palette.*, shadows) */
-  colorSchemeDesignToolEdits: Record<string, SerializableValue>;
+  colorSchemeVisualToolEdits: Record<string, SerializableValue>;
 
   /** Code overrides (global - can override any path including palette) */
   codeOverrides: ThemeOptions;

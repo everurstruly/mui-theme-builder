@@ -3,8 +3,8 @@ import { useDesignStore } from "./Design/designStore";
 
 export default function EditorGlobalKeyboardShortcuts() {
   const selected = useDesignStore((s) => s.selectedExperienceId);
-  const undoVisual = useDesignStore((s) => s.undoDesignToolEdit);
-  const redoVisual = useDesignStore((s) => s.redoDesignToolEdit);
+  const undoVisual = useDesignStore((s) => s.undoVisualToolEdit);
+  const redoVisual = useDesignStore((s) => s.redoVisualToolEdit);
   const undoCode = useDesignStore((s) => s.undoCodeOverride);
   const redoCode = useDesignStore((s) => s.redoCodeOverride);
 

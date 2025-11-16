@@ -18,15 +18,15 @@ export default function useDesignCreatedThemeOption(
   // Subscribe to all relevant state slices with selectors
   const activeColorScheme = useDesignStore((s) => s.activeColorScheme);
   const templateId = useDesignStore((s) => s.selectedTemplateId.id);
-  const baseDesignToolEdits = useDesignStore(
-    (s) => s.colorSchemeIndependentDesignToolEdits
+  const baseVisualToolEdits = useDesignStore(
+    (s) => s.colorSchemeIndependentVisualToolEdits
   );
   const codeOverridesDsl = useDesignStore((s) => s.codeOverridesDsl);
   const lightMode = useDesignStore((s) => s.light);
   const darkMode = useDesignStore((s) => s.dark);
 
   const targetScheme = colorScheme ?? activeColorScheme;
-  const { designToolEdits } = targetScheme === "light" ? lightMode : darkMode;
+  const { visualToolEdits } = targetScheme === "light" ? lightMode : darkMode;
 
   return useMemo(() => {
     // Get base template
@@ -45,16 +45,16 @@ export default function useDesignCreatedThemeOption(
     // Resolve all layers
     return createThemeOptionsFromEdits({
       template,
-      baseDesignToolEdits,
-      colorSchemeDesignToolEdits: designToolEdits,
+      baseVisualToolEdits,
+      colorSchemeVisualToolEdits: visualToolEdits,
       codeOverrides: codeOverrides,
       colorScheme: targetScheme,
     });
   }, [
     templateId,
-    baseDesignToolEdits,
+    baseVisualToolEdits,
     codeOverridesDsl,
-    designToolEdits,
+    visualToolEdits,
     targetScheme,
   ]);
 }

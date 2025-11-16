@@ -18,7 +18,7 @@ export const useDesignStore = create<ThemeDesignStore>()(
     selectedTemplateId: { type: "builtin", id: "material" },
     templateHistory: [],
 
-    colorSchemeIndependentDesignToolEdits: {},
+    colorSchemeIndependentVisualToolEdits: {},
 
     codeOverridesSource: "",
     codeOverridesDsl: {},
@@ -32,16 +32,16 @@ export const useDesignStore = create<ThemeDesignStore>()(
     codeHistoryPast: [],
     codeHistoryFuture: [],
 
-    addDesignToolEdit: (path: string, value: SerializableValue) => {
+    addVisualToolEdit: (path: string, value: SerializableValue) => {
       console.log("adding edit: ", path, " /value: ", value);
 
       const isColorSchemeScoped = isColorSchemePath(path);
       const scheme = get().activeColorScheme;
 
       const snapshot = () => ({
-        baseVisualEdits: get().colorSchemeIndependentDesignToolEdits,
-        light: get().light.designToolEdits,
-        dark: get().dark.designToolEdits,
+        baseVisualToolEdits: get().colorSchemeIndependentVisualToolEdits,
+        light: get().light.visualToolEdits,
+        dark: get().dark.visualToolEdits,
       });
 
       set((state) => ({
@@ -53,8 +53,8 @@ export const useDesignStore = create<ThemeDesignStore>()(
         return set((state) => ({
           [scheme]: {
             ...state[scheme],
-            designToolEdits: {
-              ...state[scheme].designToolEdits,
+            visualToolEdits: {
+              ...state[scheme].visualToolEdits,
               [path]: value,
             },
           },
@@ -63,23 +63,23 @@ export const useDesignStore = create<ThemeDesignStore>()(
       }
 
       set((state) => ({
-        colorSchemeIndependentDesignToolEdits: {
-          ...state.colorSchemeIndependentDesignToolEdits,
+        colorSchemeIndependentVisualToolEdits: {
+          ...state.colorSchemeIndependentVisualToolEdits,
           [path]: value,
         },
         hasUnsavedChanges: true,
       }));
     },
 
-    removeDesignToolEdit: (path: string) => {
+    removeVisualToolEdit: (path: string) => {
       const isColorSchemeScoped = isColorSchemePath(path);
       const scheme = get().activeColorScheme;
 
       // Snapshot before removal
       const snapshot = () => ({
-        baseVisualEdits: get().colorSchemeIndependentDesignToolEdits,
-        light: get().light.designToolEdits,
-        dark: get().dark.designToolEdits,
+        baseVisualToolEdits: get().colorSchemeIndependentVisualToolEdits,
+        light: get().light.visualToolEdits,
+        dark: get().dark.visualToolEdits,
       });
 
       set((state) => ({
@@ -89,12 +89,12 @@ export const useDesignStore = create<ThemeDesignStore>()(
 
       if (isColorSchemeScoped) {
         return set((state) => {
-          const newEdits = { ...state[scheme].designToolEdits };
+          const newEdits = { ...state[scheme].visualToolEdits };
           delete newEdits[path];
           return {
             [scheme]: {
               ...state[scheme],
-              designToolEdits: newEdits,
+              visualToolEdits: newEdits,
             },
             hasUnsavedChanges: true,
           };
@@ -102,26 +102,26 @@ export const useDesignStore = create<ThemeDesignStore>()(
       }
 
       set((state) => {
-        const edits = { ...state.colorSchemeIndependentDesignToolEdits };
+        const edits = { ...state.colorSchemeIndependentVisualToolEdits };
         delete edits[path];
         return {
-          colorSchemeIndependentDesignToolEdits: edits,
+          colorSchemeIndependentVisualToolEdits: edits,
           hasUnsavedChanges: true,
         };
       });
     },
 
-    getDesignToolEdit: (path: string) => {
-      const { activeColorScheme, colorSchemeIndependentDesignToolEdits, ...rest } =
+    getVisualToolEdit: (path: string) => {
+      const { activeColorScheme, colorSchemeIndependentVisualToolEdits, ...rest } =
         get();
 
       return {
-        ...colorSchemeIndependentDesignToolEdits,
-        ...rest[activeColorScheme].designToolEdits,
+        ...colorSchemeIndependentVisualToolEdits,
+        ...rest[activeColorScheme].visualToolEdits,
       }[path];
     },
 
-    clearDesignToolsEdits: (scope: "global" | "current-scheme" | "all") => {
+    removeAllVisualToolsEdits: (scope: "global" | "current-scheme" | "all") => {
       const scheme = get().activeColorScheme;
 
       // Snapshot before clearing visual edits
@@ -129,9 +129,9 @@ export const useDesignStore = create<ThemeDesignStore>()(
         visualHistoryPast: [
           ...state.visualHistoryPast,
           {
-            baseVisualEdits: state.colorSchemeIndependentDesignToolEdits,
-            light: state.light.designToolEdits,
-            dark: state.dark.designToolEdits,
+            baseVisualToolEdits: state.colorSchemeIndependentVisualToolEdits,
+            light: state.light.visualToolEdits,
+            dark: state.dark.visualToolEdits,
           },
         ].slice(-50),
         visualHistoryFuture: [],
@@ -139,7 +139,7 @@ export const useDesignStore = create<ThemeDesignStore>()(
 
       if (scope === "global") {
         return set({
-          colorSchemeIndependentDesignToolEdits: {},
+          colorSchemeIndependentVisualToolEdits: {},
           hasUnsavedChanges: true,
         });
       }
@@ -148,21 +148,21 @@ export const useDesignStore = create<ThemeDesignStore>()(
         return set((state) => ({
           [scheme]: {
             ...state[scheme],
-            designToolEdits: {},
+            visualToolEdits: {},
           },
           hasUnsavedChanges: true,
         }));
       }
 
       set({
-        colorSchemeIndependentDesignToolEdits: {},
+        colorSchemeIndependentVisualToolEdits: {},
         light: {
           ...get().light,
-          designToolEdits: {},
+          visualToolEdits: {},
         },
         dark: {
           ...get().dark,
-          designToolEdits: {},
+          visualToolEdits: {},
         },
         hasUnsavedChanges: true,
       });
@@ -204,7 +204,7 @@ export const useDesignStore = create<ThemeDesignStore>()(
       });
     },
 
-    clearCodeOverrides: () => {
+    removeAllCodeOverrides: () => {
       // Push current source to code history so clear is undoable
       set((state) => ({
         codeHistoryPast: [...state.codeHistoryPast, state.codeOverridesSource].slice(
@@ -223,19 +223,15 @@ export const useDesignStore = create<ThemeDesignStore>()(
       });
     },
 
-    resetToDesignToolEdits: () => {
-      get().clearCodeOverrides();
-    },
-
     resetToTemplate: () => {
       // Snapshot visual and code before wiping
       set((state) => ({
         visualHistoryPast: [
           ...state.visualHistoryPast,
           {
-            baseVisualEdits: state.colorSchemeIndependentDesignToolEdits,
-            light: state.light.designToolEdits,
-            dark: state.dark.designToolEdits,
+            baseVisualToolEdits: state.colorSchemeIndependentVisualToolEdits,
+            light: state.light.visualToolEdits,
+            dark: state.dark.visualToolEdits,
           },
         ].slice(-50),
         codeHistoryPast: [...state.codeHistoryPast, state.codeOverridesSource].slice(
@@ -246,7 +242,7 @@ export const useDesignStore = create<ThemeDesignStore>()(
       }));
 
       set({
-        colorSchemeIndependentDesignToolEdits: {},
+        colorSchemeIndependentVisualToolEdits: {},
         codeOverridesSource: "",
         codeOverridesDsl: {},
         codeOverridesResolved: {},
@@ -258,7 +254,7 @@ export const useDesignStore = create<ThemeDesignStore>()(
       });
     },
 
-    undoDesignToolEdit: () => {
+    undoVisualToolEdit: () => {
       const past = get().visualHistoryPast;
       if (!past || past.length === 0) return;
       const prev = past[past.length - 1];
@@ -267,19 +263,19 @@ export const useDesignStore = create<ThemeDesignStore>()(
         visualHistoryFuture: [
           ...state.visualHistoryFuture,
           {
-            baseVisualEdits: state.colorSchemeIndependentDesignToolEdits,
-            light: state.light.designToolEdits,
-            dark: state.dark.designToolEdits,
+            baseVisualToolEdits: state.colorSchemeIndependentVisualToolEdits,
+            light: state.light.visualToolEdits,
+            dark: state.dark.visualToolEdits,
           },
         ].slice(-50),
-        colorSchemeIndependentDesignToolEdits: prev.baseVisualEdits,
-        light: { ...state.light, designToolEdits: prev.light },
-        dark: { ...state.dark, designToolEdits: prev.dark },
+        colorSchemeIndependentVisualToolEdits: prev.baseVisualToolEdits,
+        light: { ...state.light, visualToolEdits: prev.light },
+        dark: { ...state.dark, visualToolEdits: prev.dark },
         hasUnsavedChanges: true,
       }));
     },
 
-    redoDesignToolEdit: () => {
+    redoVisualToolEdit: () => {
       const future = get().visualHistoryFuture;
       if (!future || future.length === 0) return;
       const next = future[future.length - 1];
@@ -288,14 +284,14 @@ export const useDesignStore = create<ThemeDesignStore>()(
         visualHistoryPast: [
           ...state.visualHistoryPast,
           {
-            baseVisualEdits: state.colorSchemeIndependentDesignToolEdits,
-            light: state.light.designToolEdits,
-            dark: state.dark.designToolEdits,
+            baseVisualToolEdits: state.colorSchemeIndependentVisualToolEdits,
+            light: state.light.visualToolEdits,
+            dark: state.dark.visualToolEdits,
           },
         ].slice(-50),
-        colorSchemeIndependentDesignToolEdits: next.baseVisualEdits,
-        light: { ...state.light, designToolEdits: next.light },
-        dark: { ...state.dark, designToolEdits: next.dark },
+        colorSchemeIndependentVisualToolEdits: next.baseVisualToolEdits,
+        light: { ...state.light, visualToolEdits: next.light },
+        dark: { ...state.dark, visualToolEdits: next.dark },
         hasUnsavedChanges: true,
       }));
     },
@@ -343,7 +339,7 @@ export const useDesignStore = create<ThemeDesignStore>()(
         ...(keepEdits
           ? {}
           : {
-              colorSchemeIndependentDesignToolEdits: {},
+              colorSchemeIndependentVisualToolEdits: {},
               codeOverridesSource: "",
               codeOverridesDsl: {},
               codeOverridesResolved: {},
@@ -371,7 +367,7 @@ export const useDesignStore = create<ThemeDesignStore>()(
 );
 
 function createInitialColorSchemeEdits(): ColorSchemeEdits {
-  return { designToolEdits: {} };
+  return { visualToolEdits: {} };
 }
 
 /**
@@ -391,7 +387,7 @@ export type ThemeTemplateRef = {
  */
 export interface ColorSchemeEdits {
   /** Visual edits for color-scheme paths (palette.*, shadows) */
-  designToolEdits: Record<string, SerializableValue>;
+  visualToolEdits: Record<string, SerializableValue>;
 }
 
 /**
@@ -410,7 +406,7 @@ export interface ThemeDesignState {
 
   // === Base Modifications (Color-Independent) ===
   /** Base visual edits (typography, spacing, shape, breakpoints, component defaults, etc.) */
-  colorSchemeIndependentDesignToolEdits: Record<string, SerializableValue>;
+  colorSchemeIndependentVisualToolEdits: Record<string, SerializableValue>;
 
   // === Code Overrides (Global - Can Override Any Path) ===
   /** Raw code overrides source (can override palette, typography, anything) */
@@ -448,14 +444,14 @@ export interface ThemeDesignState {
   // === Per-experience history (non-persistent) ===
   /** Visual edits history (past snapshots) */
   visualHistoryPast: Array<{
-    baseVisualEdits: Record<string, SerializableValue>;
+    baseVisualToolEdits: Record<string, SerializableValue>;
     light: Record<string, SerializableValue>;
     dark: Record<string, SerializableValue>;
   }>;
 
   /** Visual edits redo stack */
   visualHistoryFuture: Array<{
-    baseVisualEdits: Record<string, SerializableValue>;
+    baseVisualToolEdits: Record<string, SerializableValue>;
     light: Record<string, SerializableValue>;
     dark: Record<string, SerializableValue>;
   }>;
@@ -488,21 +484,21 @@ export interface ThemeDesignActions {
    * @param path - Dot-notation path (e.g., 'palette.primary.main')
    * @param value - Serializable value
    */
-  addDesignToolEdit: (path: string, value: SerializableValue) => void;
+  addVisualToolEdit: (path: string, value: SerializableValue) => void;
 
-  getDesignToolEdit: (path: string) => SerializableValue;
+  getVisualToolEdit: (path: string) => SerializableValue;
 
   /**
    * Remove a visual edit at a specific path.
    * @param path - Dot-notation path
    */
-  removeDesignToolEdit: (path: string) => void;
+  removeVisualToolEdit: (path: string) => void;
 
   /**
    * Clear all visual edits for current color scheme or globally.
    * @param scope - 'global' | 'current-scheme' | 'all'
    */
-  clearDesignToolsEdits: (scope: "global" | "current-scheme" | "all") => void;
+  removeAllVisualToolsEdits: (scope: "global" | "current-scheme" | "all") => void;
 
   // === Code Overrides ===
   /**
@@ -516,12 +512,7 @@ export interface ThemeDesignActions {
   /**
    * Clear all code overrides.
    */
-  clearCodeOverrides: () => void;
-
-  /**
-   * Reset to visual edits only (clear all code overrides).
-   */
-  resetToDesignToolEdits: () => void;
+  removeAllCodeOverrides: () => void;
 
   /**
    * Reset to template base (clear all modifications).
@@ -542,10 +533,10 @@ export interface ThemeDesignActions {
   selectPreview: (previewId: string) => void;
 
   // === Scoped undo/redo (per-experience) ===
-  /** Undo last visual edit (affects baseVisualEdits/lightMode/darkMode) */
-  undoDesignToolEdit: () => void;
+  /** Undo last visual edit (affects baseVisualToolEdits/lightMode/darkMode) */
+  undoVisualToolEdit: () => void;
   /** Redo last undone visual edit */
-  redoDesignToolEdit: () => void;
+  redoVisualToolEdit: () => void;
   /** Undo last code apply (restores previous codeOverridesSource) */
   undoCodeOverride: () => void;
   /** Redo last undone code apply */

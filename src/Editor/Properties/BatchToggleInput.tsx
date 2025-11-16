@@ -19,28 +19,28 @@ export type BatchToggleInputProps = {
  * Enabled state is determined by checking if ALL paths match their expected values.
  */
 export default function BatchToggleInput(props: BatchToggleInputProps) {
-  const setVisualEdit = useThemeDesignStore((s) => s.addDesignToolEdit);
-  const removeVisualEdit = useThemeDesignStore((s) => s.removeDesignToolEdit);
-  const baseVisualEdits = useThemeDesignStore(
-    (s) => s.colorSchemeIndependentDesignToolEdits
+  const setVisualEdit = useThemeDesignStore((s) => s.addVisualToolEdit);
+  const removeVisualEdit = useThemeDesignStore((s) => s.removeVisualToolEdit);
+  const baseVisualToolEdits = useThemeDesignStore(
+    (s) => s.colorSchemeIndependentVisualToolEdits
   );
   const lightMode = useThemeDesignStore((s) => s.light);
   const darkMode = useThemeDesignStore((s) => s.dark);
   const activeColorScheme = useThemeDesignStore((s) => s.activeColorScheme);
 
   // Get the appropriate visual edits based on active color scheme
-  const activeVisualEdits = useMemo(() => {
+  const activeVisualToolEdits = useMemo(() => {
     const modeEdits = activeColorScheme === "light" ? lightMode : darkMode;
-    return { ...baseVisualEdits, ...modeEdits.designToolEdits };
-  }, [baseVisualEdits, lightMode, darkMode, activeColorScheme]);
+    return { ...baseVisualToolEdits, ...modeEdits.visualToolEdits };
+  }, [baseVisualToolEdits, lightMode, darkMode, activeColorScheme]);
 
   // Check if all edits are currently applied
   const isEnabled = useMemo(() => {
     return Object.entries(props.edits).every(([path, expectedValue]) => {
-      const currentValue = activeVisualEdits[path];
+      const currentValue = activeVisualToolEdits[path];
       return currentValue === expectedValue;
     });
-  }, [props.edits, activeVisualEdits]);
+  }, [props.edits, activeVisualToolEdits]);
 
   const handleToggle = () => {
     if (isEnabled) {

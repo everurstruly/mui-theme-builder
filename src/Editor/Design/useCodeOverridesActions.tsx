@@ -4,9 +4,9 @@ import { useDesignStore } from "./designStore";
 /**
  * Hook for accessing code overrides actions.
  * Provides functions to modify code overrides.
- * 
+ *
  * @returns Code overrides actions
- * 
+ *
  * @example
  * function ApplyButton() {
  *   const { applyChanges } = useCodeOverridesActions();
@@ -16,8 +16,8 @@ import { useDesignStore } from "./designStore";
  */
 export default function useCodeOverridesActions() {
   const applyCodeOverrides = useDesignStore((s) => s.applyCodeOverrides);
-  const clearCodeOverrides = useDesignStore((s) => s.clearCodeOverrides);
-  const resetToVisual = useDesignStore((s) => s.resetToDesignToolEdits);
+  const clearCodeOverrides = useDesignStore((s) => s.removeAllCodeOverrides);
+  const resetToVisual = useDesignStore((s) => s.removeAllCodeOverrides);
   const resetToTemplate = useDesignStore((s) => s.resetToTemplate);
 
   return useMemo(

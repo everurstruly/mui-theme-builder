@@ -6,8 +6,8 @@ export default function DesignChangeHistoryButtons() {
   // Use the same per-experience undo/redo API that keyboard shortcuts use
   const selected = useThemeDesignStore((s) => s.selectedExperienceId);
 
-  const undoVisual = useThemeDesignStore((s) => s.undoDesignToolEdit);
-  const redoVisual = useThemeDesignStore((s) => s.redoDesignToolEdit);
+  const undoVisual = useThemeDesignStore((s) => s.undoVisualToolEdit);
+  const redoVisual = useThemeDesignStore((s) => s.redoVisualToolEdit);
   const undoCode = useThemeDesignStore((s) => s.undoCodeOverride);
   const redoCode = useThemeDesignStore((s) => s.redoCodeOverride);
 

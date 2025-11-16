@@ -29,8 +29,8 @@ export default function FontFamilyOption({
     typography: { fontFamily },
   } = useDesignCreatedTheme();
 
-  const removeDesignToolEdit = useDesignStore((s) => s.removeDesignToolEdit);
-  const addDesignToolEdit = useDesignStore((s) => s.addDesignToolEdit);
+  const removeVisualToolEdit = useDesignStore((s) => s.removeVisualToolEdit);
+  const addVisualToolEdit = useDesignStore((s) => s.addVisualToolEdit);
 
   const { value, hasVisualEdit, hasCodeOverride } =
     useThemeDesignEditValue(path);
@@ -44,17 +44,17 @@ export default function FontFamilyOption({
     const fontFamilyValue = formatFontFamilyWithFallback(selectedFont);
 
     if (path === "typography.h1.fontFamily") {
-      headingPaths.forEach((p) => addDesignToolEdit(p, fontFamilyValue));
+      headingPaths.forEach((p) => addVisualToolEdit(p, fontFamilyValue));
     } else {
-      addDesignToolEdit(path, fontFamilyValue);
+      addVisualToolEdit(path, fontFamilyValue);
     }
   };
   
   const handleReset = () => {
     if (path === "typography.h1.fontFamily") {
-      headingPaths.forEach((p) => removeDesignToolEdit(p));
+      headingPaths.forEach((p) => removeVisualToolEdit(p));
     } else {
-      removeDesignToolEdit(path);
+      removeVisualToolEdit(path);
     }
   };
 

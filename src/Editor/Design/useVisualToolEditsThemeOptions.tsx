@@ -22,21 +22,21 @@ export default function useVisualToolEditsThemeOptions(
   const activeColorScheme = useDesignStore((s) => s.activeColorScheme);
   const targetScheme = colorScheme ?? activeColorScheme;
 
-  const baseVisualEdits = useDesignStore(
-    (s) => s.colorSchemeIndependentDesignToolEdits
+  const baseVisualToolEdits = useDesignStore(
+    (s) => s.colorSchemeIndependentVisualToolEdits
   );
   const lightMode = useDesignStore((s) => s.light);
   const darkMode = useDesignStore((s) => s.dark);
 
-  const { designToolEdits } = targetScheme === "light" ? lightMode : darkMode;
+  const { visualToolEdits } = targetScheme === "light" ? lightMode : darkMode;
 
   return useMemo(() => {
     return createThemeOptionsFromEdits({
       template: {},
-      baseDesignToolEdits: baseVisualEdits,
-      colorSchemeDesignToolEdits: designToolEdits,
+      baseVisualToolEdits: baseVisualToolEdits,
+      colorSchemeVisualToolEdits: visualToolEdits,
       codeOverrides: {},
       colorScheme: targetScheme,
     });
-  }, [baseVisualEdits, designToolEdits, targetScheme]);
+  }, [baseVisualToolEdits, visualToolEdits, targetScheme]);
 }
