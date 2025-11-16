@@ -1,9 +1,9 @@
 import EditorCanvas from "./Canvas/Canvas";
-import EditorActivityBar from "./ActivityBar/ActivityBar";
-import EditorPropertiesPanel from "./PropertiesPanel/PropertiesPanel";
-import EditorExplorerPanel from "./ExplorerPanel/ExplorerPanel";
+import EditorActivityBar from "./Activities/ActivityBar";
+import EditorPropertiesPanel from "./Properties/PropertiesPanel";
+import EditorExplorerPanel from "./Explorer/ExplorerPanel";
+import EditorLibrary from "./Explorer/Library/EditorLibrary";
 import { GlobalStyles, Paper, Stack } from "@mui/material";
-import ThemeLibrary from "./ThemeLibrary/ThemeLibrary";
 
 export default function Editor() {
   return (
@@ -42,7 +42,7 @@ export default function Editor() {
         height={`calc(100dvh - var(--header-height) - 1px)`} // NB: 1px is a magic number that prevents vertical scrollbar from appearing
         overflow={"hidden"}
       >
-        <ThemeLibrary />
+        <EditorLibrary />
         <Paper component="main" sx={{ flexGrow: 1, minWidth: 0 }}>
           <EditorActivityBar />
           <Stack

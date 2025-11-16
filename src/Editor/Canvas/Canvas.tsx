@@ -1,11 +1,11 @@
-import QuickPreviewBar from "../ActivityBar/QuickPreviewBar";
-import useEditorUiStore from "../editorUiStore";
+import QuickPreviewBar from "../Explorer/QuickPreviewBar";
+import useEditorUiStore from "../editorStore";
 import BoardSurface from "./BoardSurface/BoardSurface";
 import CanvasControlsSlots from "./CanvasControlsSlots";
 import FullscreenPreviewButton from "./BoardSurface/Controls/FullscreenPreviewButton";
 import { alpha, Box, Stack } from "@mui/material";
 import { useRef } from "react";
-import ExplorerPanelVisibilityToggle from "../ActivityBar/ExplorerPanelVisibilityToggle";
+import ExplorerPanelVisibilityToggle from "../Activities/ExplorerPanelVisibilityToggle";
 import { BreakpointSimulationToggles } from "./BoardSurface/BreakpointSimulation";
 
 export default function EditorCanvas() {

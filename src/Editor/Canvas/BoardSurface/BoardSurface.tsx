@@ -1,5 +1,5 @@
 import previewsRegistry from "../../Previews/registry";
-import { useThemeDesignTheme, useThemeDesignStore } from "../../ThemeDesign";
+import { useThemeDesignTheme, useThemeDesignStore } from "../../Design";
 // import FullscreenPreviewButton from "./Controls/FullscreenPreviewButton";
 import { useRef, useState, useEffect, type RefObject } from "react";
 import { Box, CssBaseline, Paper, ThemeProvider } from "@mui/material";
