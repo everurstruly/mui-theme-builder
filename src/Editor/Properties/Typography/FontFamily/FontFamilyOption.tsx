@@ -82,8 +82,7 @@ export default function FontFamilyOption(props: FontFamilyOptionProps) {
         <OptionListItemResetButton
           canResetValue={canResetValue}
           resetValue={handleReset}
-          label={isAutoInheriting ? "Auto" : "Default"}
-          labelColor={isAutoInheriting ? "resolved" : undefined}
+          label={"Default"}
         />
 
         <Typography
