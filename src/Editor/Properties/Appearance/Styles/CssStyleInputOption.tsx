@@ -69,7 +69,7 @@ export default function CssStyleInputOption(props: CssStyleInputOptionProps) {
 
       <TextField
         size="small"
-        variant="filled"
+        variant="outlined"
         value={displayValue}
         onChange={handleChange}
         disabled={hasCodeOverride}
@@ -81,7 +81,7 @@ export default function CssStyleInputOption(props: CssStyleInputOptionProps) {
           paddingBlock: 0,
 
           "& .MuiInputBase-input": {
-            width: "5ch", // FIXME: magic number
+            width: "6ch", // FIXME: magic number
             fontSize: 12,
             textAlign: "center",
             paddingInline: 0,

@@ -78,7 +78,7 @@ export default function FontStyleRangedOption(props: FontStyleRangedOptionProps)
 
       <TextField
         size="small"
-        variant="filled"
+        variant="outlined"
         value={inputValue}
         onChange={handleTextChange}
         onBlur={handleBlur}

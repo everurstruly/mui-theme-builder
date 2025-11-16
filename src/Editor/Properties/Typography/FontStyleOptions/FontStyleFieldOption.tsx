@@ -86,7 +86,7 @@ export default function FontStyleFieldOption(props: FontStyleFieldOptionProps) {
 
       <TextField
         size="small"
-        variant="filled"
+        variant="outlined"
         value={inputValue}
         onChange={handleChange}
         onKeyDown={handleKeyDown}

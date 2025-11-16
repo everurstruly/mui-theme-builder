@@ -55,7 +55,7 @@ export default function FontFamilyOptionInput(props: FontFamilyOptionInputProps)
     <FormControl variant="standard" disabled={props.disabled}>
       <Select
         autoWidth
-        variant="filled"
+        variant="outlined"
         id={props.id}
         value={primaryFont}
         onChange={handleChange}

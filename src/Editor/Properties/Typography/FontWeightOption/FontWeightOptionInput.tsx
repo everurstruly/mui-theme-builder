@@ -56,7 +56,7 @@ export default function FontWeightOptionInput(props: FontWeightOptionInputProps)
     <FormControl variant="standard" disabled={props.disabled}>
       <Select
         autoWidth
-        variant="filled"
+        variant="outlined"
         id={props.id}
         value={props.value}
         onChange={handleChange}

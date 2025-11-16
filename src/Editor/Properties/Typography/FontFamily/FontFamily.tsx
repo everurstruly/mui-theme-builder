@@ -1,6 +1,4 @@
-import { AddRounded } from "@mui/icons-material";
 import FontFamilyOption from "./FontFamilyOption";
-import { IconButton } from "@mui/material";
 import { useThemeDesignTheme } from "../../../Design";
 import TypographyOptionGroup from "../TypographyOptionGroup";
 
@@ -9,10 +7,6 @@ function FontFamilyTypography() {
   
   return (
     <TypographyOptionGroup title="Font Family">
-      <IconButton size="small" style={{ float: "right", marginTop: -28 }}>
-        <AddRounded sx={{ fontSize: "h6.fontSize", lineHeight: 1 }} />
-      </IconButton>
-
       <FontFamilyOption
         name="Body & Captions"
         path="typography.fontFamily"
