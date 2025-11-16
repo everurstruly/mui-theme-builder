@@ -10,10 +10,10 @@ export default function useEditWithVisualTool(path: string) {
   const getDesignToolEdit = useDesignStore((s) => s.getDesignToolEdit);
   
   const codeValue = codeFlattened[path];
-  const resolvedValue = getNestedValue(theme as Record<string, any>, path);
+  const autoResolvedValue = getNestedValue(theme as Record<string, any>, path);
   const editValue = getDesignToolEdit(path);
 
-  const value = codeValue ?? editValue ?? resolvedValue;
+  const value = codeValue ?? editValue ?? autoResolvedValue;
   const hasVisualEdit = !!editValue;
   const hasCodeOverride = path in codeFlattened;
 
@@ -23,7 +23,7 @@ export default function useEditWithVisualTool(path: string) {
   return useMemo(
     () => ({
       value,
-      resolvedValue,
+      resolvedValue: autoResolvedValue,
       hasCodeOverride,
       hasVisualEdit,
       isModified: hasCodeOverride || hasVisualEdit,
@@ -32,7 +32,7 @@ export default function useEditWithVisualTool(path: string) {
     }),
     [
       value,
-      resolvedValue,
+      autoResolvedValue,
       hasCodeOverride,
       hasVisualEdit,
       setVisualEdit,

@@ -14,41 +14,32 @@ type FontFamilyOptionInputProps = {
   path: string;
 };
 
+const headingPaths = [
+  "typography.h1.fontFamily",
+  "typography.h2.fontFamily",
+  "typography.h3.fontFamily",
+  "typography.h4.fontFamily",
+  "typography.h5.fontFamily",
+  "typography.h6.fontFamily",
+];
+
 export default function FontFamilyOptionInput(props: FontFamilyOptionInputProps) {
-  const { setValue } = useThemeDesignEditValue(props.path);
-  const setVisualEdit = useThemeDesignStore((s) => s.addDesignToolEdit);
-
-  // Extract primary font from full fontFamily string (e.g., "Roboto", "Helvetica", "Arial", sans-serif -> Roboto)
-  const extractPrimaryFont = (fontFamily: string): string => {
-    const match = fontFamily.match(/^['"]?([^'",]+)['"]?/);
-    return match ? match[1].trim() : fontFamily;
-  };
-
   const primaryFont = extractPrimaryFont(props.value);
+  const setVisualEdit = useThemeDesignStore((s) => s.addDesignToolEdit);
+  const { setValue } = useThemeDesignEditValue(props.path);
 
   const handleChange = (event: SelectChangeEvent) => {
     const selectedFont = event.target.value;
     // Build proper CSS font-family value with fallbacks
-    const fontFamilyValue = selectedFont.includes(' ') 
+    const fontFamilyValue = selectedFont.includes(" ")
       ? `"${selectedFont}", sans-serif`
       : `${selectedFont}, sans-serif`;
-    // If this input was wired to the H1 path for "Headings", also apply
-    // the same font-family to all heading variants H1..H6 so the control
-    // acts as a single "Headings" font selector.
-    if (props.path === 'typography.h1.fontFamily') {
-      const headingPaths = [
-        'typography.h1.fontFamily',
-        'typography.h2.fontFamily',
-        'typography.h3.fontFamily',
-        'typography.h4.fontFamily',
-        'typography.h5.fontFamily',
-        'typography.h6.fontFamily',
-      ];
-      headingPaths.forEach((p) => setVisualEdit(p, fontFamilyValue));
-      return;
-    }
 
-    setValue(fontFamilyValue);
+    if (props.path === "typography.h1.fontFamily") {
+      headingPaths.forEach((p) => setVisualEdit(p, fontFamilyValue));
+    } else {
+      setValue(fontFamilyValue);
+    }
   };
 
   return (
@@ -61,7 +52,7 @@ export default function FontFamilyOptionInput(props: FontFamilyOptionInputProps)
         onChange={handleChange}
         sx={{
           fontSize: 12,
-          paddingLeft: .5,
+          paddingLeft: 0.5,
 
           "& .MuiSelect-select": {
             padding: 0.875,
@@ -78,3 +69,8 @@ export default function FontFamilyOptionInput(props: FontFamilyOptionInputProps)
   );
 }
 
+// Extract primary font from full fontFamily string (e.g., "Roboto", "Helvetica", "Arial", sans-serif -> Roboto)
+function extractPrimaryFont(fontFamily: string): string {
+  const match = fontFamily.match(/^['"]?([^'",]+)['"]?/);
+  return match ? match[1].trim() : fontFamily;
+}

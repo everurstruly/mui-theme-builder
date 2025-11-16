@@ -1,64 +1,33 @@
 import { ListItem, Typography, Stack } from "@mui/material";
 import FontFamilyOptionInput from "./FontFamilyOptionInput";
-import { useThemeDesignEditValue, useThemeDesignStore } from "../../../Design";
+import { useThemeDesignEditValue } from "../../../Design";
 import OptionListItemResetButton from "../../OptionListItemResetButton";
+import useDesignCreatedTheme from "../../../Design/useDesignCreatedTheme";
 
 export type FontFamilyOptionProps = {
-  name: string;
+  title: string;
   path: string;
-  templateValue: string;
   disabled?: boolean;
 };
 
-export default function FontFamilyOption(props: FontFamilyOptionProps) {
-  const { value, hasVisualEdit, hasCodeOverride, reset } = 
-    useThemeDesignEditValue(props.path);
-  const store = useThemeDesignStore();
+export default function FontFamilyOption({
+  path,
+  title,
+  disabled,
+}: FontFamilyOptionProps) {
+  const {
+    typography: { fontFamily },
+  } = useDesignCreatedTheme();
 
-  // Detect if this is the headings control (path = typography.h1.fontFamily)
-  const isHeadingsControl = props.path === 'typography.h1.fontFamily';
+  const { value, hasVisualEdit, hasCodeOverride, reset } =
+    useThemeDesignEditValue(path);
 
-  // For headings: check if ANY h1-h6 has a visual edit
-  const hasAnyHeadingEdit = isHeadingsControl && [
-    'typography.h1.fontFamily',
-    'typography.h2.fontFamily',
-    'typography.h3.fontFamily',
-    'typography.h4.fontFamily',
-    'typography.h5.fontFamily',
-    'typography.h6.fontFamily',
-  ].some(p => {
-    return p in store.colorSchemeIndependentDesignToolEdits ;
-  });
-
-  // Auto-inherit: when headings control has no edits, derive from base fontFamily
-  const isAutoInheriting = isHeadingsControl && !hasAnyHeadingEdit && !hasCodeOverride;
-  const baseFontFamily = store.colorSchemeIndependentDesignToolEdits['typography.fontFamily'] as string | undefined;
-
-  // Current value priority: user edit > auto-inherit (base) > template default
-  const currentValue = isAutoInheriting && baseFontFamily
-    ? baseFontFamily
-    : ((value as string) ?? props.templateValue);
-
-  const canResetValue = (isHeadingsControl ? hasAnyHeadingEdit : hasVisualEdit) || hasCodeOverride;
-
-  // Custom reset handler: for headings control, remove all h1-h6 visual edits
-  const handleReset = () => {
-    if (isHeadingsControl) {
-      [
-        'typography.h1.fontFamily',
-        'typography.h2.fontFamily',
-        'typography.h3.fontFamily',
-        'typography.h4.fontFamily',
-        'typography.h5.fontFamily',
-        'typography.h6.fontFamily',
-      ].forEach(p => store.removeDesignToolEdit(p));
-    } else {
-      reset();
-    }
-  };
+  const autoResolvedValue = fontFamily;
+  const resolvedValue = value ?? autoResolvedValue;
+  const canResetValue = hasVisualEdit || hasCodeOverride;
 
   function getColor() {
-    if (props.disabled) {
+    if (disabled) {
       return "text.disabled";
     }
 
@@ -81,7 +50,7 @@ export default function FontFamilyOption(props: FontFamilyOptionProps) {
       <Stack direction="row" alignItems="center" spacing={0.75}>
         <OptionListItemResetButton
           canResetValue={canResetValue}
-          resetValue={handleReset}
+          resetValue={reset}
           label={"Default"}
         />
 
@@ -93,17 +62,16 @@ export default function FontFamilyOption(props: FontFamilyOptionProps) {
             color: getColor(),
           }}
         >
-          {props.name}
+          {title}
         </Typography>
       </Stack>
 
       <FontFamilyOptionInput
-        id={`font-family-select-${props.name}`}
-        value={currentValue}
-        disabled={props.disabled || hasCodeOverride}
-        path={props.path}
+        id={`font-family-select-${title}`}
+        value={resolvedValue}
+        disabled={disabled || hasCodeOverride}
+        path={path}
       />
     </ListItem>
   );
 }
-

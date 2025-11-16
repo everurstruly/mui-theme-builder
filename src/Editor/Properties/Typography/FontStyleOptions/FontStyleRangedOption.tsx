@@ -3,21 +3,25 @@ import SliderInput from "../../SliderInput";
 import { useThemeDesignEditValue } from "../../../Design";
 import { useState, useEffect } from "react";
 import OptionListItemResetButton from "../../OptionListItemResetButton";
+import useDesignCreatedTheme from "../../../Design/useDesignCreatedTheme";
+import { getNestedValue } from "../../../Design/shared";
 
 export type FontStyleRangedOptionProps = {
   name: string;
   path: string;
-  templateValue: string | number;
   orientation?: "horizontal" | "vertical";
 };
 
 export default function FontStyleRangedOption(props: FontStyleRangedOptionProps) {
-  const { value, hasVisualEdit, hasCodeOverride, setValue, reset } = 
+  const theme = useDesignCreatedTheme();
+  const autoResolvedValue = getNestedValue(theme, props.path);
+
+  const { value, hasVisualEdit, hasCodeOverride, setValue, reset } =
     useThemeDesignEditValue(props.path);
 
-  const currentValue = value ?? props.templateValue;
+  const currentValue = value ?? autoResolvedValue;
   const canResetValue = hasVisualEdit || hasCodeOverride;
-  
+
   const [inputValue, setInputValue] = useState(String(currentValue));
 
   // Sync input value when currentValue changes
@@ -102,4 +106,3 @@ export default function FontStyleRangedOption(props: FontStyleRangedOptionProps)
     </ListItem>
   );
 }
-

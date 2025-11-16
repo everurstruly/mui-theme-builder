@@ -10,9 +10,8 @@ function ButtonTypography() {
   return (
     <TypographyOptionGroup title="Button">
       <FontFamilyOption
-        name={"Font family"}
+        title={"Font family"}
         path="typography.button.fontFamily"
-        templateValue={(theme.typography.button.fontFamily || theme.typography.fontFamily) as string}
       />
 
       <FontStyleFieldOption
