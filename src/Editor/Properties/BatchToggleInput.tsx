@@ -1,8 +1,8 @@
-import { ListItemButton, Switch, Tooltip } from "@mui/material";
+import { Box, ListItemButton, Tooltip } from "@mui/material";
 import ListItemText from "@mui/material/ListItemText";
 import { useThemeDesignStore, type SerializableValue } from "../Design";
 import { useMemo } from "react";
-import { InfoOutline } from "@mui/icons-material";
+import { AddOutlined, InfoOutline, RemoveOutlined } from "@mui/icons-material";
 
 export type BatchToggleInputProps = {
   label: string;
@@ -21,7 +21,9 @@ export type BatchToggleInputProps = {
 export default function BatchToggleInput(props: BatchToggleInputProps) {
   const setVisualEdit = useThemeDesignStore((s) => s.addDesignToolEdit);
   const removeVisualEdit = useThemeDesignStore((s) => s.removeDesignToolEdit);
-  const baseVisualEdits = useThemeDesignStore((s) => s.colorSchemeIndependentDesignToolEdits);
+  const baseVisualEdits = useThemeDesignStore(
+    (s) => s.colorSchemeIndependentDesignToolEdits
+  );
   const lightMode = useThemeDesignStore((s) => s.light);
   const darkMode = useThemeDesignStore((s) => s.dark);
   const activeColorScheme = useThemeDesignStore((s) => s.activeColorScheme);
@@ -58,30 +60,39 @@ export default function BatchToggleInput(props: BatchToggleInputProps) {
     <ListItemButton
       onClick={handleToggle}
       sx={{
-        px: 0,
-        backgroundColor: isEnabled ? "action.selected" : "inherit",
+        px: 2,
+        columnGap: 1.5,
+        color: isEnabled ? "text.secondary" : "text.primary",
+        backgroundColor: isEnabled ? "action.disabledBackgrond" : "action",
       }}
     >
-      <Switch
-        size="small"
-        checked={isEnabled}
-        disableRipple
-        sx={{ pointerEvents: "none" }}
-      />
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          marginInlineStart: isEnabled ? 2.5 : 0,
+        }}
+      >
+        {isEnabled ? (
+          <RemoveOutlined fontSize="small" />
+        ) : (
+          <AddOutlined fontSize="small" />
+        )}
+      </Box>
 
       <ListItemText
         primary={props.label}
         slotProps={{
           primary: {
             sx: {
-              fontSize: "body2.fontSize",
+              fontSize: "caption.fontSize",
             },
           },
         }}
       />
 
       <Tooltip title={props.description} placement="left-start">
-        <InfoOutline fontSize="small" sx={{ mx: 0.5 }} />
+        <InfoOutline fontSize="small" sx={{ mx: 0.5, color: "action.disabled" }} />
       </Tooltip>
     </ListItemButton>
   );

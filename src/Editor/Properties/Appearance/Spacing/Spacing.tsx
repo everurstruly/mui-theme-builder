@@ -48,20 +48,19 @@ const DENSITY_BATCH_EDITS = [
   },
 ] as const;
 
-type SpaceAppearanceProps = {
+type SpacingAppearanceProps = {
   title?: string;
 };
 
-export default function SpaceAppearance(props: SpaceAppearanceProps) {
+export default function SpacingAppearance(props: SpacingAppearanceProps) {
   return (
     <div>
       <Typography
         variant="subtitle2"
         component={"h6"}
         marginTop={5}
-        paddingBlock={1}
+        paddingBlock={1.5}
         fontWeight={500}
-        paddingInlineStart={0.35} // aesthetics alignment with list items badge
       >
         {props.title}
       </Typography>
@@ -71,8 +70,9 @@ export default function SpaceAppearance(props: SpaceAppearanceProps) {
       <Stack
         divider={<Divider />}
         sx={{
-          mt: 3,
+          mt: 2,
           px: 0,
+          mx: -2,
         }}
       >
         {DENSITY_BATCH_EDITS.map((option) => (

@@ -12,9 +12,8 @@ export default function StylesAppearance(props: StylesAppearanceProps) {
         variant="subtitle2"
         component={"h6"}
         marginTop={5}
-        paddingBlock={1}
+        paddingBlock={1.5}
         fontWeight={500}
-        paddingInlineStart={0.35} // aesthetics alignment with list items badge
       >
         {props.title}{" "}
         {/* <Typography

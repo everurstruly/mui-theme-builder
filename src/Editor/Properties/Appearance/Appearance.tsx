@@ -1,11 +1,11 @@
 import StylesAppearance from "./Styles/Styles";
-import SpaceAppearance from "./Space/Space";
+import SpacingAppearance from "./Spacing/Spacing";
 
 function AppearanceProperty() {
   return (
     <>
-      <StylesAppearance title="Styles" />
-      <SpaceAppearance title="Spacing" />
+      <StylesAppearance title="Shape" />
+      <SpacingAppearance title="Spacing" />
     </>
   );
 }
