@@ -1,15 +1,11 @@
-import useWorkfileStore from "./useWorkfileStore";
-
+// Removed: deprecated helper that used zundo/temporal
+// This file is retained for history but its temporal usage was removed.
 export default function useWorkfile() {
-  const temporalState = useWorkfileStore.temporal.getState();
-  const canUndo = temporalState.pastStates.length > 0;
-  const canRedo = temporalState.futureStates.length > 0;
-
   return {
-    undo: temporalState.undo,
-    redo: temporalState.redo,
-    clearHistory: temporalState.clear,
-    canUndo,
-    canRedo,
+    undo: () => undefined,
+    redo: () => undefined,
+    clearHistory: () => undefined,
+    canUndo: false,
+    canRedo: false,
   };
 }
