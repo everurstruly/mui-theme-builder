@@ -4,8 +4,8 @@ import ChangeHistoryActions from "./DesignChangeHistoryButtons";
 import MenuItem from "@mui/material/MenuItem";
 import {
   ContentCopy,
-  MenuRounded,
   RedoOutlined,
+  SaveAsRounded,
   SaveOutlined,
   UndoOutlined,
 } from "@mui/icons-material";
@@ -63,7 +63,7 @@ export default function MobileActionGroup() {
         onClick={handleClickMenuItem}
         sx={{ minWidth: 0 }}
       >
-        <MenuRounded />
+        <SaveAsRounded />
       </IconButton>
 
       <Menu
