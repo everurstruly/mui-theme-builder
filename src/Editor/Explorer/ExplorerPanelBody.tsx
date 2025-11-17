@@ -8,7 +8,7 @@ export default function ExplorerPanelBody() {
       <Typography variant="button" component="h6" sx={{ py: 2, mx: 1.5 }}>
         List of Previews
       </Typography>
-      <SampleCanvasObjectsTree />;
+      <SampleCanvasObjectsTree />
     </>
   );
 }
