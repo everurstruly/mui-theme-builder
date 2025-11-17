@@ -1,4 +1,4 @@
-import { Button, ButtonGroup } from "@mui/material";
+import { Button, ButtonGroup, Stack } from "@mui/material";
 import { RedoRounded, UndoRounded } from "@mui/icons-material";
 import { useThemeDesignStore } from "../Design";
 
@@ -22,11 +22,13 @@ export default function DesignChangeHistoryButtons() {
   const canRedo = isCodeExperience ? canRedoCode : canRedoVisual;
 
   const handleUndo = () => {
-    if (isCodeExperience) undoCode(); else undoVisual();
+    if (isCodeExperience) undoCode();
+    else undoVisual();
   };
 
   const handleRedo = () => {
-    if (isCodeExperience) redoCode(); else redoVisual();
+    if (isCodeExperience) redoCode();
+    else redoVisual();
   };
 
   return (
@@ -36,12 +38,14 @@ export default function DesignChangeHistoryButtons() {
         aria-label="undo"
         disabled={!canUndo}
         onClick={handleUndo}
+        // variant="outlined"
         sx={{
+          minWidth: 0,
           borderRadius: 2,
           px: 1,
         }}
       >
-        <UndoRounded sx={{ fontSize: 18 }} />
+        <UndoRounded />
       </Button>
 
       <Button
@@ -49,12 +53,14 @@ export default function DesignChangeHistoryButtons() {
         aria-label="redo"
         disabled={!canRedo}
         onClick={handleRedo}
+        // variant="outlined"
         sx={{
+          minWidth: 0,
           borderRadius: 2,
           px: 1,
         }}
       >
-        <RedoRounded sx={{ fontSize: 18 }} />
+        <RedoRounded />
       </Button>
     </ButtonGroup>
   );

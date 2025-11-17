@@ -1,4 +1,8 @@
-import { AddCircleOutlineRounded, ArrowRightAltOutlined } from "@mui/icons-material";
+import {
+  AddCircleOutlineRounded,
+  ArrowRightAltOutlined,
+  MoreVertOutlined,
+} from "@mui/icons-material";
 import {
   alpha,
   Button,
@@ -94,20 +98,19 @@ function CurrentThemeDesignStatus() {
           justifyContent: "space-between",
           textAlign: "start",
           flexGrow: 1,
-          px: 0
+          px: 0,
         }}
         id="basic-button"
         aria-controls={open ? "basic-menu" : undefined}
         aria-haspopup="true"
         aria-expanded={open ? "true" : undefined}
         onClick={handleClick}
-        // endIcon={<MoreVertOutlined color="action" />}
+        // endIcon={<MoreVertOutlined color="action" sx={{ mr: 1.5 }} />}
       >
         <Stack
-          direction={"row"}
-          columnGap={0.5}
-          alignItems={"center"}
-          sx={{ overflow: "hidden", }}
+          // direction={"row"}
+          // alignItems={"center"}
+          sx={{ overflow: "hidden" }}
         >
           <Typography
             variant="caption"
@@ -127,7 +130,7 @@ function CurrentThemeDesignStatus() {
               overflow: "hidden",
             }}
           >
-            / Renna Games Dashboardslsjljsdf
+            Renna Games Dashboardslsjljsdf
           </Typography>
         </Stack>
       </Button>

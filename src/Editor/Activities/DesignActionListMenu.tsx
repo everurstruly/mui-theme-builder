@@ -4,7 +4,7 @@ import CreateNewThemeDesign from "./CreateNewThemeDesign";
 
 export default function DesignActionListMenu() {
   return (
-    <Stack direction={"row"} spacing={2} sx={{ px: 1}}>
+    <Stack direction={"row"} columnGap={3}>
       <OpenLibraryButton />
       <CreateNewThemeDesign />
     </Stack>

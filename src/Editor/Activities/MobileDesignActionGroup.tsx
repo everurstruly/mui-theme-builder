@@ -43,7 +43,7 @@ export default function MobileActionGroup() {
         flexShrink={0}
         columnGap={1.5}
         sx={{
-          marginInlineStart: 2,
+          mx: 1.5,
         }}
       >
         <ChangeHistoryActions />

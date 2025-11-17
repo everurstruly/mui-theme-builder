@@ -43,17 +43,22 @@ function DesktopToolbarContent() {
         <CurrentDesignStatus />
       </Stack>
 
+      {/* <Divider
+        flexItem
+        orientation="vertical"
+        sx={{ display: { xs: "none", lg: "block" } }}
+      /> */}
+
       <Stack
         flexGrow={1}
         alignItems={"center"}
         direction={"row"}
         marginInline={"auto"}
-        justifyContent={"space-between"}
+        columnGap={1.5}
         px={{ md: 1.5 }}
       >
         <DesignActionListMenu />
-
-        <Stack direction={"row"} alignItems={"inherit"} columnGap={1.5}>
+        <Stack direction={"row"} alignItems={"inherit"} columnGap={1.5} ml={"auto"}>
           <DesignSaveButton />
           <DesignChangeHistoryButtons />
           <DesignExportButton />
@@ -92,7 +97,7 @@ function MobileToolbarContent() {
       display={{ md: "none" }}
       direction="row"
       alignItems={"center"}
-      paddingInline={{ sm: 2.5 }}
+      paddingInline={{ sm: "12px" }}
     >
       <DesignTemplateSelectMenu />
       <MobileActionGroup />

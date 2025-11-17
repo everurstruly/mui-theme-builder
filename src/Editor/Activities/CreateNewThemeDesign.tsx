@@ -22,16 +22,15 @@ export default function CreateNewThemeDesign() {
   return (
     <>
       <Button
-        size="small"
         // variant="outlined"
         startIcon={<AddCircleOutline sx={{ fontSize: "1rem !important"}} />}
         aria-label="Copy and Implement Selected Theme"
         sx={{
-          px: 1,
+          // px: 1,
           borderRadius: 2,
           "& .MuiButton-startIcon": {
-            marginInlineEnd: 0.5,
-            marginBottom: 0.25, // fix: ensure text alignement with icons
+            // marginInlineEnd: 0.5,
+            // marginBottom: 0.25, // fix: ensure text alignement with icons
           },
         }}
         onClick={() => handleClickOpen()}

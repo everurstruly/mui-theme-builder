@@ -35,6 +35,7 @@ function QuickPreviewBar() {
         borderBottomColor: "divider",
         px: { md: 1, lg: 1 },
         overflowX: "auto",
+        // pt: 1,
         // display: { xs: "none", md: "flex"}
       }}
     >
@@ -122,11 +123,10 @@ function QuickPreviewBar() {
           </Typography>
         }
         sx={{
-          px: 2.5,
-          columnGap: 1,
           alignItems: "center",
           borderLeftColor: "divider",
           backgroundColor: "transparent",
+          color: "text.secondary",
           // overflowX: "auto",
           // animation/visual cue when navigating up: translate + fade briefly
           transition:
@@ -147,7 +147,7 @@ function QuickPreviewBar() {
                 component="button"
                 underline="none"
                 color="inherit"
-                sx={{ whiteSpace: "nowrap", px: 1.5, py: 1.5 }}
+                sx={{ whiteSpace: "nowrap", px: 1.5, py: 1.5, fontWeight: 500 }}
                 onClick={() =>
                   setActiveFolderChain([...(activeFolderChain || []), key])
                 }
@@ -163,8 +163,8 @@ function QuickPreviewBar() {
               variant="caption"
               component="button"
               underline="none"
-              sx={{ whiteSpace: "nowrap", px: 1.5, py: 1.5 }}
               color={node.id === activePreviewId ? "primary" : "inherit"}
+              sx={{ whiteSpace: "nowrap", px: 1.5, py: 1.5, fontWeight: 500 }}
               onClick={() => selectPreview(node.id as string)}
             >
               {node.label}
