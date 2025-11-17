@@ -1,4 +1,4 @@
-import { Button, ButtonGroup, Stack } from "@mui/material";
+import { Button, ButtonGroup } from "@mui/material";
 import { RedoRounded, UndoRounded } from "@mui/icons-material";
 import { useThemeDesignStore } from "../Design";
 
