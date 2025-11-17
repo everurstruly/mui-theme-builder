@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { isColorSchemePath } from "./shared";
 import { transformCodeToDsl } from "./domainSpecificLanguage/themeOptionsToDslTransformer";
+import { validateCodeBeforeEvaluation } from "./domainSpecificLanguage/dslValidator";
 import { devtools } from "zustand/middleware";
 import type { EditorExperienceId } from "./designExperience";
 import type { ThemeDsl } from "./domainSpecificLanguage/types";
@@ -167,6 +168,23 @@ export const useDesignStore = create<ThemeDesignStore>()(
     },
 
     applyCodeOverrides: (unsafeThemeAsCode: string) => {
+      // Pre-validate code before attempting transformation/evaluation to
+      // prevent invalid ThemeOptions from reaching runtime and crashing
+      // createTheme. This is a defensive store-level guard in case code is
+      // applied from anywhere other than the editor UI.
+      const validation = validateCodeBeforeEvaluation(unsafeThemeAsCode);
+      if (!validation.valid) {
+        set({
+          codeOverridesSource: unsafeThemeAsCode,
+          codeOverridesDsl: {},
+          codeOverridesResolved: {},
+          codeOverridesFlattened: {},
+          codeOverridesError: validation.errors.map(e => e.message).join('\n'),
+          hasUnsavedChanges: true,
+        });
+        return;
+      }
+
       const result = transformCodeToDsl(unsafeThemeAsCode);
 
       // If transform failed, store error and clear DSL

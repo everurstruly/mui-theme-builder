@@ -181,70 +181,327 @@ export function validateCodeBeforeEvaluation(source: string): ValidationResult {
   }
 
   // Step 4: Additional checks for problematic patterns
-  // Check for function calls (which might be dangerous)
-  const hasCallExpressions = checkForCallExpressions(objectExpression as unknown as Record<string, unknown>);
-  if (hasCallExpressions.found) {
-    warnings.push({
-      message:
-        'Function calls detected. Only use MUI helper functions (alpha, darken, lighten, etc.)',
-      line: hasCallExpressions.line,
-      column: hasCallExpressions.column,
-      severity: 'warning',
-    });
+  // - Enforce strict rules for `components.*.styleOverrides.*` and
+  //   `components.*.variants[*].style` functions: only concise arrow
+  //   functions of the exact shape `({ theme }) => ({ ... })` are allowed.
+  // - Disallow spread elements, computed property keys in these override
+  //   objects. Treat violations as errors (block applying).
+
+  const nodeLimits = { maxDepth: 12, maxNodes: 5000 };
+  let nodesVisited = 0;
+
+  function tooComplex() {
+    return nodesVisited > nodeLimits.maxNodes;
+  }
+
+  const HELPER_WHITELIST = new Set([
+    'alpha',
+    'darken',
+    'lighten',
+    'applyStyles',
+    'toRuntimeSource',
+  ]);
+
+  function getLoc(n: any) {
+    return { line: n?.loc?.start?.line, column: n?.loc?.start?.column };
+  }
+
+  function getKeyName(key: any) {
+    if (!key) return 'unknown';
+    if (key.type === 'Identifier') return key.name;
+    if (key.type === 'Literal') return String((key as any).value);
+    return 'unknown';
+  }
+
+  function isThemeMemberExpression(node: any): boolean {
+    // Walk MemberExpression chain; accept if any Identifier named `theme` appears
+    try {
+      if (!node) return false;
+      if (node.type === 'MemberExpression') {
+        let cur: any = node;
+        while (cur) {
+          if (cur.type === 'Identifier' && cur.name === 'theme') return true;
+          if (cur.object) cur = cur.object; else break;
+        }
+      }
+      if (node.type === 'Identifier' && node.name === 'theme') return true;
+    } catch {
+      return false;
+    }
+    return false;
+  }
+
+  function isAllowedCallExpression(node: any): boolean {
+    if (!node || node.type !== 'CallExpression') return false;
+    const callee = node.callee;
+    if (!callee) return false;
+    if (callee.type === 'Identifier' && HELPER_WHITELIST.has(callee.name)) return true;
+    if (callee.type === 'MemberExpression' && isThemeMemberExpression(callee)) return true;
+    return false;
+  }
+
+  function isConciseThemeArrowFunction(node: any): boolean {
+    // Must be ArrowFunctionExpression, single param which is an ObjectPattern
+    // with exactly one property named `theme`, and concise body that is
+    // directly an ObjectExpression (no BlockStatement / return)
+    if (!node) return false;
+    if (node.type !== 'ArrowFunctionExpression') return false;
+    if (!node.params || node.params.length !== 1) return false;
+    const p = node.params[0];
+    if (p.type === 'ObjectPattern') {
+      if (!p.properties || p.properties.length !== 1) return false;
+      const prop = p.properties[0];
+      // support both Identifier and Property nodes
+      const keyName = prop.key?.name || (prop.key && prop.key.value);
+      if (keyName !== 'theme') return false;
+    } else {
+      // we do not accept `theme` as identifier param — require destructuring
+      return false;
+    }
+
+    // Body must be an ObjectExpression (concise body)
+    if (!node.body || node.body.type !== 'ObjectExpression') return false;
+    return true;
+  }
+
+  function checkValueNode(node: any, path: string[]) {
+    // Basic performance guard
+    nodesVisited++;
+    if (tooComplex()) return;
+
+    if (!node) return;
+
+    switch (node.type) {
+      case 'Literal':
+        // Literals are allowed generally, but when they appear in color-related
+        // paths (palette.* or keys containing 'color' or color role keys like
+        // 'main','light','dark','contrastText') we must ensure they are a
+        // supported color format. MUI only accepts #hex, rgb/rgba, hsl/hsla,
+        // or color() not named CSS keywords like 'red'.
+        if (typeof node.value === 'string') {
+          const lastKey = path[path.length - 1] || '';
+          const isColorPath = path.includes('palette') || /color/i.test(lastKey) || ['main','light','dark','contrastText'].includes(lastKey);
+          if (isColorPath) {
+            const v = node.value as string;
+            const colorRegex = /^(#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})|(rgb|rgba|hsl|hsla)\([^)]*\)|color\([^)]*\))/;
+            if (!colorRegex.test(v.trim())) {
+              const loc = getLoc(node);
+              errors.push({
+                message: `Unsupported color format "${v}" at ${path.join('.')}. Use #hex, rgb(), rgba(), hsl(), hsla(), or color() instead of named colors.`,
+                line: loc.line,
+                column: loc.column,
+                severity: 'error',
+              });
+            }
+          }
+        }
+        return;
+      case 'TemplateElement':
+        return; // allowed
+      case 'ObjectExpression':
+        for (const p of node.properties || []) {
+          if (p.type === 'SpreadElement') {
+            const loc = getLoc(p);
+            errors.push({
+              message: `Spread syntax is not allowed inside style override objects (at ${path.join('.')})`,
+              line: loc.line,
+              column: loc.column,
+              severity: 'error',
+            });
+            continue;
+          }
+          if (p.computed) {
+            const loc = getLoc(p);
+            errors.push({
+              message: `Computed property keys are not allowed (at ${path.join('.')})`,
+              line: loc.line,
+              column: loc.column,
+              severity: 'error',
+            });
+          }
+          const val = p.value || p.argument;
+          checkValueNode(val, path.concat([String(p.key?.name || p.key?.value || 'unknown')]));
+        }
+        return;
+      case 'ArrayExpression':
+        for (const el of node.elements || []) {
+          checkValueNode(el, path.concat(['[]']));
+        }
+        return;
+      case 'Identifier':
+        // Bare identifiers as values are disallowed in override objects
+        if (node.name !== 'undefined' && node.name !== 'null') {
+          const loc = getLoc(node);
+          errors.push({
+            message: `Unquoted identifier "${node.name}" is not allowed as a value (use a string or literal) at ${path.join('.')}`,
+            line: loc.line,
+            column: loc.column,
+            severity: 'error',
+          });
+        }
+        return;
+      case 'CallExpression':
+        if (!isAllowedCallExpression(node)) {
+          const loc = getLoc(node);
+          errors.push({
+            message: `Call expression is not allowed here (only known helpers or theme member calls) at ${path.join('.')}`,
+            line: loc.line,
+            column: loc.column,
+            severity: 'error',
+          });
+        } else {
+          // Check arguments recursively
+          for (const a of node.arguments || []) checkValueNode(a, path.concat(['()']));
+        }
+        return;
+      case 'MemberExpression':
+        // Member expressions are allowed only when they reference `theme`
+        if (!isThemeMemberExpression(node)) {
+          const loc = getLoc(node);
+          errors.push({
+            message: `Member expression not referencing theme is not allowed at ${path.join('.')}`,
+            line: loc.line,
+            column: loc.column,
+            severity: 'error',
+          });
+        }
+        return;
+      case 'ArrowFunctionExpression':
+      case 'FunctionExpression':
+        // Functions are allowed only in the strict concise pattern; otherwise error
+        if (!isConciseThemeArrowFunction(node)) {
+          const loc = getLoc(node);
+          errors.push({
+            message: `Only concise arrow functions of the form ({ theme }) => ({ ... }) are allowed in style overrides at ${path.join('.')}`,
+            line: loc.line,
+            column: loc.column,
+            severity: 'error',
+          });
+        } else {
+          // If it is the allowed concise function, validate its returned object
+          checkValueNode(node.body, path.concat(['<fn>']));
+        }
+        return;
+      case 'TemplateLiteral':
+        // Ensure expressions inside templates are safe
+        for (const expr of node.expressions || []) {
+          if (expr.type === 'Literal') continue;
+          if (expr.type === 'MemberExpression' && isThemeMemberExpression(expr)) continue;
+          const loc = getLoc(expr);
+          errors.push({
+            message: `Unsafe expression in template literal at ${path.join('.')}`,
+            line: loc.line,
+            column: loc.column,
+            severity: 'error',
+          });
+        }
+        return;
+      default: {
+        // Unknown node types are rejected
+        const loc = getLoc(node);
+        errors.push({
+          message: `Unsupported expression type ${node.type} at ${path.join('.')}`,
+          line: loc.line,
+          column: loc.column,
+          severity: 'error',
+        });
+        return;
+      }
+    }
+  }
+
+  // Walk `components` subtree and apply strict rules
+  for (const prop of objectExpression.properties) {
+    if (prop.type !== 'Property') continue;
+    const keyName = prop.key.type === 'Identifier' ? prop.key.name : getKeyName(prop.key);
+    if (keyName !== 'components') continue;
+    const compVal = (prop.value as any);
+    if (!compVal || compVal.type !== 'ObjectExpression') continue;
+
+    // components.<ComponentName> -> ObjectExpression
+    for (const compProp of compVal.properties || []) {
+      if (compProp.type !== 'Property') continue;
+      const compName = compProp.key.type === 'Identifier' ? compProp.key.name : getKeyName(compProp.key);
+      const compDef = compProp.value;
+      if (!compDef || compDef.type !== 'ObjectExpression') continue;
+
+      // Look for styleOverrides and variants keys inside compDef
+      for (const inner of compDef.properties || []) {
+        if (inner.type !== 'Property') continue;
+        const innerKey = inner.key.type === 'Identifier' ? inner.key.name : String(inner.key.value);
+        if (innerKey === 'styleOverrides') {
+          const so = inner.value;
+          if (!so) continue;
+          if (so.type === 'ObjectExpression') {
+            for (const soProp of so.properties || []) {
+              if (soProp.type !== 'Property') continue;
+              if (soProp.computed) {
+                const loc = getLoc(soProp);
+                errors.push({ message: `Computed keys in styleOverrides are not allowed for ${compName}`, line: loc.line, column: loc.column, severity: 'error' });
+                continue;
+              }
+              const soVal = soProp.value || soProp.argument;
+              checkValueNode(soVal, ['components', compName, 'styleOverrides', getKeyName(soProp.key)]);
+            }
+          }
+        } else if (innerKey === 'variants') {
+          const variants = inner.value;
+          if (!variants || variants.type !== 'ArrayExpression') continue;
+          for (const v of variants.elements || []) {
+            if (!v || v.type !== 'ObjectExpression') continue;
+            for (const vp of v.properties || []) {
+              if (vp.type !== 'Property') continue;
+              const vKey = vp.key.type === 'Identifier' ? vp.key.name : getKeyName(vp.key);
+              if (vKey === 'style') {
+                checkValueNode(vp.value, ['components', compName, 'variants', 'style']);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Also validate `palette` subtree to catch unquoted identifiers (e.g., `red`)
+  for (const prop of objectExpression.properties) {
+    if (prop.type !== 'Property') continue;
+    const keyName = prop.key.type === 'Identifier' ? prop.key.name : getKeyName(prop.key);
+    if (keyName !== 'palette') continue;
+    const pal = prop.value as any;
+    if (!pal || pal.type !== 'ObjectExpression') continue;
+    checkValueNode(pal, ['palette']);
+  }
+
+  // Validate other top-level theme keys that may contain user-provided values
+  const TOPLEVEL_KEYS_TO_VALIDATE = new Set([
+    'typography',
+    'spacing',
+    'shadows',
+    'shape',
+    'transitions',
+    'breakpoints',
+    'mixins',
+    'zIndex',
+    'unstable_sx',
+    'unstable_sxConfig',
+    'containerQueries',
+    'direction',
+  ]);
+
+  for (const prop of objectExpression.properties) {
+    if (prop.type !== 'Property') continue;
+    const keyName = prop.key.type === 'Identifier' ? prop.key.name : getKeyName(prop.key);
+    if (!TOPLEVEL_KEYS_TO_VALIDATE.has(keyName)) continue;
+    const val = prop.value as any;
+    if (!val) continue;
+    checkValueNode(val, [keyName]);
   }
 
   const valid = errors.length === 0;
   return { valid, errors, warnings };
 }
 
-/**
- * Recursively checks if an AST node contains CallExpression nodes.
- * Used to warn about potentially dangerous function calls.
- */
-function checkForCallExpressions(
-  node: Record<string, unknown>,
-  depth: number = 0
-): { found: boolean; line?: number; column?: number } {
-  // Limit recursion depth to avoid performance issues
-  if (depth > 20) {
-    return { found: false };
-  }
 
-  if (!node || typeof node !== 'object') {
-    return { found: false };
-  }
-
-  // Found a call expression
-  if (node.type === 'CallExpression') {
-    const loc = node.loc as { start?: { line?: number; column?: number } } | undefined;
-    return {
-      found: true,
-      line: loc?.start?.line,
-      column: loc?.start?.column,
-    };
-  }
-
-  // Recursively check child nodes
-  for (const key of Object.keys(node)) {
-    const value = node[key];
-
-    if (Array.isArray(value)) {
-      for (const item of value) {
-        const result = checkForCallExpressions(item, depth + 1);
-        if (result.found) {
-          return result;
-        }
-      }
-    } else if (value && typeof value === 'object') {
-      const result = checkForCallExpressions(value as Record<string, unknown>, depth + 1);
-      if (result.found) {
-        return result;
-      }
-    }
-  }
-
-  return { found: false };
-}
 
 /**
  * Hook for code editor validation.
