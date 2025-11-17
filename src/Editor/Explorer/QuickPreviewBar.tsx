@@ -27,23 +27,32 @@ function QuickPreviewBar() {
   return (
     <Stack
       direction={"row"}
-      alignItems={"center"}
       sx={{
         alignItems: "center",
-        backdropFilter: "blur(40px)",
+        backdropFilter: "blur(2px)",
         backgroundColor: (theme) => theme.palette.background.paper,
         borderBottom: 1,
         borderBottomColor: "divider",
+        px: { md: 1, lg: 1 },
+        overflowX: "auto",
+        // display: { xs: "none", md: "flex"}
       }}
     >
       <Breadcrumbs
         aria-label="quick-previews-breadcrumbs"
-        separator={<DoubleArrowOutlined sx={{ fontSize: ".8625rem" }} />}
+        separator={
+          <DoubleArrowOutlined sx={{ fontSize: ".8625rem", lineHeight: 1 }} />
+        }
         sx={{
           px: 1.5,
-          fontSize: "body2.fontSize",
+          fontSize: "caption.fontSize",
+          fontWeight: "medium",
           alignItems: "center !important",
           backgroundColor: (theme) => theme.palette.background.paper,
+
+          "& .MuiBreadcrumbs-ol": {
+            flexWrap: "nowrap",
+          },
         }}
       >
         <Link
@@ -53,9 +62,6 @@ function QuickPreviewBar() {
           sx={{
             whiteSpace: "nowrap",
             py: 1,
-            // display: "flex",
-            // alignItems: "center",
-            // columnGap: 0.5,
           }}
           onClick={() => {
             // Clicking 'Previews' -> focus root folder
@@ -96,7 +102,9 @@ function QuickPreviewBar() {
           : null}
 
         <Box sx={{ display: "flex", ml: -1.7 }}>
-          <DoubleArrowOutlined sx={{ fontSize: ".8625rem" }} />
+          <DoubleArrowOutlined
+            sx={{ color: "action.disabled", fontSize: ".8625rem" }}
+          />
         </Box>
       </Breadcrumbs>
 
@@ -110,15 +118,16 @@ function QuickPreviewBar() {
             color="action.disabled"
             sx={{ userSelect: "none", fontWeight: 400 }}
           >
-            {"//"}
+            {"/"}
           </Typography>
         }
         sx={{
+          px: 2.5,
           columnGap: 1,
           alignItems: "center",
           borderLeftColor: "divider",
           backgroundColor: "transparent",
-          overflowX: "auto",
+          // overflowX: "auto",
           // animation/visual cue when navigating up: translate + fade briefly
           transition:
             "transform 220ms ease, opacity 220ms ease, box-shadow 220ms ease",
@@ -134,7 +143,7 @@ function QuickPreviewBar() {
             return (
               <Link
                 key={key}
-                variant="body2"
+                variant="caption"
                 component="button"
                 underline="none"
                 color="inherit"
@@ -151,7 +160,7 @@ function QuickPreviewBar() {
           return (
             <Link
               key={key}
-              variant="body2"
+              variant="caption"
               component="button"
               underline="none"
               sx={{ whiteSpace: "nowrap", px: 1.5, py: 1.5 }}

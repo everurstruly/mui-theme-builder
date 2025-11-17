@@ -1,13 +1,12 @@
 import DesignTemplateSelectMenu from "./DesignTemplateSelectMenu";
 import DesignExportButton from "./DesignExportButton";
-import ThemingExperienceTab from "./DesignExperienceTab";
 import DesignSaveButton from "./DesignSaveButton";
 import DesignChangeHistoryButtons from "./DesignChangeHistoryButtons";
-import MobileActionGroup from "./MobileActionGroup";
-import DesignColorSchemeToggle from "./DesignColorSchemeToggle";
+import MobileActionGroup from "./MobileDesignActionGroup";
 import DesignActionListMenu from "./DesignActionListMenu";
 import CurrentDesignStatus from "./CurrentDesignStatus";
-import { AppBar, Box, Stack, Divider, Toolbar, type SxProps } from "@mui/material";
+import { AppBar, Stack, Divider, Toolbar, type SxProps } from "@mui/material";
+import PropertiesPanelHeader from "../Properties/PropertiesPanelHeader";
 
 export default function EditorActivityBar() {
   return (
@@ -28,6 +27,7 @@ function DesktopToolbarContent() {
       borderColor={"divider"}
       display={{ xs: "none", md: "flex" }}
       sx={{
+        px: { md: 1, lg: "8px" },
         height: "var(--toolbar-height)",
         backgroundColor: (theme) => theme.palette.background.paper,
       }}
@@ -36,8 +36,9 @@ function DesktopToolbarContent() {
         direction="row"
         alignItems={"center"}
         justifyContent={"space-between"}
-        paddingInline={{ lg: 1.5 }}
-        width={"var(--explorer-panel-width)"}
+        maxWidth={"var(--explorer-panel-width)"}
+        width={"100%"}
+        px={{ md: 1.5 }}
       >
         <CurrentDesignStatus />
       </Stack>
@@ -47,37 +48,38 @@ function DesktopToolbarContent() {
         alignItems={"center"}
         direction={"row"}
         marginInline={"auto"}
-        paddingInline={{ lg: 1.5 }}
         justifyContent={"space-between"}
-        columnGap={1.5}
+        px={{ md: 1.5 }}
       >
         <DesignActionListMenu />
 
-        <Stack direction={"row"} columnGap={"inherit"}>
+        <Stack direction={"row"} alignItems={"inherit"} columnGap={1.5}>
           <DesignSaveButton />
           <DesignChangeHistoryButtons />
           <DesignExportButton />
         </Stack>
       </Stack>
 
-      <Divider flexItem orientation="vertical" />
+      <Divider
+        flexItem
+        orientation="vertical"
+        sx={{ display: { xs: "none", lg: "block" } }}
+      />
 
       <Stack
         direction="row"
         alignItems={"center"}
         justifyContent={"space-between"}
-        width={"var(--properties-panel-width)"}
-        paddingInline={{ lg: 1.5 }}
+        width={"100%"}
+        minWidth={"20vw"}
+        flexShrink={0}
+        maxWidth={"calc(var(--properties-panel-width) - 8px)"} // FIXME: sync static with dynamic px
+        paddingInline={{ md: 1.5 }}
         height={"100%"}
         columnGap={1.5}
+        display={{ xs: "none", lg: "flex" }}
       >
-        <Box display="inherit" columnGap={"inherit"}>
-          <DesignColorSchemeToggle />
-        </Box>
-
-        <Box display="inherit" columnGap={"inherit"}>
-          <ThemingExperienceTab />
-        </Box>
+        <PropertiesPanelHeader />
       </Stack>
     </Stack>
   );
@@ -85,17 +87,15 @@ function DesktopToolbarContent() {
 
 function MobileToolbarContent() {
   return (
-    <Stack flexGrow={1} display={{ md: "none" }}>
-      <Stack
-        direction="row"
-        alignItems={"center"}
-        columnGap={1}
-        paddingInline={{ xs: 1.5, sm: 2.5 }}
-      >
-        <DesignTemplateSelectMenu />
-        <MobileActionGroup />
-      </Stack>
-      {/* <EditorThemeExperienceTab centered /> */}
+    <Stack
+      flexGrow={1}
+      display={{ md: "none" }}
+      direction="row"
+      alignItems={"center"}
+      paddingInline={{ sm: 2.5 }}
+    >
+      <DesignTemplateSelectMenu />
+      <MobileActionGroup />
     </Stack>
   );
 }

@@ -94,8 +94,7 @@ function CurrentThemeDesignStatus() {
           justifyContent: "space-between",
           textAlign: "start",
           flexGrow: 1,
-          mx: -1.5,
-          px: 1.5,
+          px: 0
         }}
         id="basic-button"
         aria-controls={open ? "basic-menu" : undefined}
@@ -108,13 +107,13 @@ function CurrentThemeDesignStatus() {
           direction={"row"}
           columnGap={0.5}
           alignItems={"center"}
-          sx={{ overflow: "hidden" }}
+          sx={{ overflow: "hidden", }}
         >
           <Typography
             variant="caption"
-            // color="primary"
+            color="primary"
             fontWeight={"semibold"}
-            sx={{ lineHeight: 1.2, whiteSpace: "nowrap" }}
+            sx={{ lineHeight: 1.2, whiteSpace: "nowrap", p: 0 }}
           >
             You're editing
           </Typography>

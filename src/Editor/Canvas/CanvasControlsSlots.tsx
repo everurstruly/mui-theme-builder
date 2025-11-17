@@ -22,7 +22,7 @@ export default function CanvasControlsSlots({
             top: "0.5rem",
             left: "50%",
             transform: "translateX(-50%)",
-            zIndex: 1400,
+            zIndex: 10,
             pointerEvents: "auto",
           }}
         >
@@ -52,7 +52,7 @@ export default function CanvasControlsSlots({
             position: "absolute",
             bottom: 2,
             right: 10,
-            zIndex: 1400,
+            zIndex: 10,
             pointerEvents: "auto",
           }}
         >

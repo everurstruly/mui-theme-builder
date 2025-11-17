@@ -4,7 +4,9 @@ import ChangeHistoryActions from "./DesignChangeHistoryButtons";
 import MenuItem from "@mui/material/MenuItem";
 import {
   ContentCopy,
-  EditDocument,
+  EditOutlined,
+  MenuOutlined,
+  MenuRounded,
   RedoOutlined,
   SaveOutlined,
   UndoOutlined,
@@ -19,6 +21,7 @@ import {
   useTheme,
   Menu,
   Stack,
+  Button,
 } from "@mui/material";
 
 export default function MobileActionGroup() {
@@ -61,11 +64,9 @@ export default function MobileActionGroup() {
         aria-haspopup="true"
         aria-expanded={isPopoverMenuOpened ? "true" : undefined}
         onClick={handleClickMenuItem}
-        sx={{
-          marginRight: -1, // size of button padding
-        }}
+        sx={{ minWidth: 0 }}
       >
-        <EditDocument />
+        <MenuRounded />
       </IconButton>
 
       <Menu

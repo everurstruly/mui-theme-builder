@@ -2,7 +2,8 @@ import Drawer from "@mui/material/Drawer";
 import useEditorUiStore from "../editorStore";
 import PropertiesPanelBody from "./PropertiesPanelBody";
 import { TuneOutlined } from "@mui/icons-material";
-import { Divider, Fab } from "@mui/material";
+import { Divider, Fab, Stack } from "@mui/material";
+import PropertiesPanelHeader from "./PropertiesPanelHeader";
 
 export default function EditorPropertiesPanel() {
   return (
@@ -63,7 +64,7 @@ function DesktopPanelDrawer() {
 }
 
 function MobilePanelDrawer() {
-  const display = { sm: "none" };
+  const display = { lg: "none" };
 
   const withHidePanel = useEditorUiStore((state) => state.hidePanel);
   const hidePanel = () => withHidePanel("properties.mobile");
@@ -96,25 +97,50 @@ function MobilePanelDrawer() {
           },
 
           "& .MuiDrawer-paper": {
-            width: "min(380px, 70vw)",
+            width: "min(380px, 85vw)",
             border: "none",
           },
         })}
       >
+        <Stack
+          direction="row"
+          alignItems={"center"}
+          justifyContent={"space-between"}
+          gap={1}
+          px={1.5}
+          my={2}
+        >
+          <PropertiesPanelHeader />
+        </Stack>
+
+        <Divider />
         <PropertiesPanelBody />
       </Drawer>
 
       <Fab
         color="primary"
         aria-label="edit"
+        variant="extended"
         onClick={() => showPanel()}
         sx={() => ({
           display,
           zIndex: (theme) => theme.zIndex.drawer - 1,
 
           position: "fixed",
-          right: (theme) => theme.spacing(2), // match right padding of page content
-          bottom: (theme) => theme.spacing(7), // above bottom nav (or canvas bottom actions)
+          // match right padding of page content
+          right: {
+            xs: "8px",
+            sm: "20px",
+          },
+          // above bottom nav (or canvas bottom actions)
+          bottom: {
+            xs: "calc(var(--toolbar-height) + (var(--toolbar-height) / 4))",
+            sm: "unset",
+          },
+          // ontop of the canvas
+          top: {
+            sm: "calc(var(--header-height, 52px) + var(--toolbar-height, 52px) + var(--toolbar-height, 48px) + .5rem)",
+          },
         })}
       >
         <TuneOutlined />

@@ -11,26 +11,18 @@ export default function Editor() {
       <GlobalStyles
         styles={(theme) => ({
           ":root": {
-            "--header-height": "44px",
+            "--header-height": "42px",
             "--toolbar-height": "52px",
-            "--explorer-panel-width": "auto",
-            "--properties-panel-width": "auto",
+            "--explorer-panel-width": "300px",
+            "--properties-panel-width": "360px",
             "--canvas-max-width": "auto",
-            // "--editor-tools-unit-bgColor": "rgba(60, 60, 67, 0.01)",
-          },
-
-          [theme.breakpoints.up("sm")]: {
-            ":root": {
-              "--explorer-panel-width": "300px",
-              "--properties-panel-width": "360px",
-            },
           },
 
           [theme.breakpoints.up("lg")]: {
             ":root": {
               "--activity-bar-height": "56px",
               "--explorer-panel-width": "20vw",
-              "--properties-panel-width": "24vw",
+              "--properties-panel-width": "25vw",
             },
           },
         })}

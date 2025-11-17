@@ -50,8 +50,8 @@ export default function PrimitiesPropertiesPanelBody() {
           zIndex: 1,
           borderBottom: 1,
           borderColor: "divider",
-          backdropFilter: "blur(20px)",
-          backgroundColor: (theme) => alpha(theme.palette.background.paper, 0.8),
+          // backdropFilter: "blur(4px)",
+          backgroundColor: (theme) => alpha(theme.palette.background.paper, .9),
 
           "& .MuiTabs-indicator": {
             // backgroundColor: "text.primary",

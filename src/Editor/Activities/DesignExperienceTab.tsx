@@ -6,7 +6,7 @@ import {
   editorExperiences,
   type EditorExperienceId,
 } from "../Design/designExperience";
-import { type SxProps } from "@mui/material";
+import { alpha, type SxProps } from "@mui/material";
 
 type EditorThemingExperienceTabProps = {
   sx?: SxProps;
@@ -37,13 +37,13 @@ export default function ThemingExperienceTab({
       sx={{
         // fix vertical responsiveness issue
         alignItems: "center",
-        minHeight: { lg: "auto" },
+        minHeight: "auto",
         flexGrow: 1,
 
         borderRadius: 2,
         border: "1px solid",
         borderColor: "divider",
-        // backgroundColor: (theme) => alpha(theme.palette.common.black, 0.0125),
+        overflow: "hidden",
 
         "& .MuiTab-root": {
           minHeight: "auto", // fix vertical responsiveness issue
@@ -54,18 +54,18 @@ export default function ThemingExperienceTab({
           zIndex: 1,
 
           fontSize: 12,
-          // fontWeight: 600,
+          fontWeight: 400,
 
           textTransform: "none",
           paddingInline: { xs: 1.75 },
-          paddingBlock: { xs: 1.25 },
+          paddingBlock: { xs: 1.15 },
 
           // ":first-of-type": {
           //   paddingInlineStart: { lg: 0 },
           // },
 
           "&.Mui-selected": {
-            color: (theme) => theme.palette.text.primary,
+            color: (theme) => theme.palette.primary.main,
             zIndex: 2,
           },
         },
@@ -74,10 +74,8 @@ export default function ThemingExperienceTab({
           borderRadius: 2,
           transform: "translateY(-50%)",
           top: "50%",
-          height: "99%",
-          border: "1px solid",
-          borderColor: "divider",
-          backgroundColor: (theme) => theme.palette.background.paper,
+          height: "100%",
+          backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.05),
         },
 
         ...rest.sx,

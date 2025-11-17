@@ -13,6 +13,7 @@ function OpenLibraryButton() {
       sx={{
         px: 1,
         borderRadius: 2,
+        whiteSpace: "nowrap",
         "& .MuiButton-startIcon": {
           marginInlineEnd: 0.5,
           marginBottom: 0.25, // fix: ensure text alignement with icons

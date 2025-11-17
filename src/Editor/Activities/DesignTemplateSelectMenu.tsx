@@ -26,7 +26,7 @@ export default function DesignTemplateSelectMenu() {
 
   return (
     <FormControl
-      sx={{ m: 0, width: "100%", maxWidth: { lg: "22ch" } }}
+      sx={{ mx: 1.25, width: "100%", maxWidth: { lg: "22ch" } }}
       size="small"
       color="primary"
     >
@@ -34,9 +34,6 @@ export default function DesignTemplateSelectMenu() {
         labelId="theme-select-label"
         id="theme-select"
         value={selectedThemeTemplateId}
-        startAdornment={
-          <PreviewRounded sx={{ marginRight: 1.25, color: "primary.main" }} />
-        }
         onChange={handleChange}
         sx={{
           borderRadius: 2,

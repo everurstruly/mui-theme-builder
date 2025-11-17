@@ -30,7 +30,7 @@ export const editorExperiences = {
   components: {
     icon: GridViewOutlined,
     id: "components",
-    title: "MUI Override",
+    title: "Override",
 
     navigationPanelTitle: "MUI Components",
     renderNavigationPanel: () => <MuiComponentsTree />,

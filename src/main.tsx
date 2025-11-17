@@ -37,8 +37,9 @@ createRoot(document.getElementById("root")!).render(
             },
           },
           typography: {
-            htmlFontSize: 16,
-
+            body2: {
+              fontSize: 14
+            },
             button: {
               textTransform: "none",
               fontSize: ".75rem !important",

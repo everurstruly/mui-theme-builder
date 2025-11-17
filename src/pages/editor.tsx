@@ -35,20 +35,21 @@ export default function EditorPage() {
             }),
         ]}
       >
-        <StyledToolbar sx={{ px: { lg: 1.5 } }}>
+        <StyledToolbar sx={{ px: { xs: 0, sm: 1.5 } }}>
           <Typography
             noWrap
             variant="subtitle1"
-            fontWeight="bold"
+            fontWeight="semibold"
             sx={{
               display: "flex",
               alignItems: "center",
               columnGap: 0.5,
+              px: (theme) => theme.spacing(1), // mimic padding of buttons
             }}
           >
-            <LogoDevRounded />
-            {/* MUI Theme Builder @^6 */}
-            MUI Theme Editor
+            <LogoDevRounded fontSize="small" />
+            MUI Theme Builder v6+
+            {/* MUI Theme Editor */}
           </Typography>
 
           <Stack
@@ -57,15 +58,14 @@ export default function EditorPage() {
             columnGap={0.5}
             marginLeft="auto"
           >
+            <ColorSchemeToggle />
             <Button
               href="https://github.com/everurstruly/mui-theme-builder"
               color="inherit"
-              sx={{ px: 1, minWidth: 0 }}
+              sx={{ minWidth: 0 }}
             >
               <GitHub />
             </Button>
-
-            <ColorSchemeToggle />
           </Stack>
         </StyledToolbar>
       </AppBar>

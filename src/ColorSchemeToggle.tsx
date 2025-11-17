@@ -14,7 +14,7 @@ function ColorSchemeToggle() {
       value="color-scheme-mode"
       size="small"
       color="inherit"
-      sx={[() => ({ minWidth: 0, px: 1 })]}
+      sx={[() => ({ minWidth: 0 })]}
       onClick={() => {
         const currentIndex = modeCycleOrder.indexOf(mode);
         const nextIndex = (currentIndex + 1) % modeCycleOrder.length;

@@ -146,6 +146,7 @@ export default theme;`;
         // startIcon={<FileCopyRounded />}
         sx={{
           borderRadius: 2.5,
+          whiteSpace: "nowrap",
 
           "& .MuiSvgIcon-root": {
             fontSize: "1rem", // FIXME: match font size (not literialy 13px)
