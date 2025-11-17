@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Box, Button, FormControl, MenuItem, Select, Typography, FormControlLabel, Switch } from "@mui/material";
+import { Box, Button, FormControl, MenuItem, Select, FormControlLabel, Switch } from "@mui/material";
 import {
   useThemeDesignStore,
   listThemeTemplateIds,
@@ -20,7 +20,7 @@ export default function TemplateOption({ onClose }: { onClose: () => void }) {
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
       <FormControl size="small">
-        <Select value={selected} onChange={(e) => {
+        <Select value={selected} onChange={() => {
           /* delegate to store via switchTemplate when creating */
         }}>
           {listThemeTemplateIds().map((id) => (
