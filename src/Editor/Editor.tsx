@@ -11,7 +11,7 @@ export default function Editor() {
       <GlobalStyles
         styles={(theme) => ({
           ":root": {
-            "--header-height": "42px",
+            "--header-height": "48px",
             "--toolbar-height": "52px",
             "--explorer-panel-width": "300px",
             "--properties-panel-width": "360px",
