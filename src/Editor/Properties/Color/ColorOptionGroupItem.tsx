@@ -107,7 +107,7 @@ export default function ColorOptionGroupItem(props: ColorOptionGroupItemProps) {
           sx={{
             width: 32,
             height: 20,
-            bgcolor: tempColor || value || resolvedValue,
+            bgcolor: String(tempColor || value || resolvedValue),
             borderRadius: 1,
             border: 2,
             borderColor: "divider",

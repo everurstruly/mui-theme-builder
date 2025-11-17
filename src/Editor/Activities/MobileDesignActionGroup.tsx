@@ -4,8 +4,6 @@ import ChangeHistoryActions from "./DesignChangeHistoryButtons";
 import MenuItem from "@mui/material/MenuItem";
 import {
   ContentCopy,
-  EditOutlined,
-  MenuOutlined,
   MenuRounded,
   RedoOutlined,
   SaveOutlined,
@@ -21,7 +19,6 @@ import {
   useTheme,
   Menu,
   Stack,
-  Button,
 } from "@mui/material";
 
 export default function MobileActionGroup() {
