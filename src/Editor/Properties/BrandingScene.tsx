@@ -1,6 +1,8 @@
 import ColorProperty from "./Color/Color";
 import TypographyProperty from "./Typography/Typography";
 import AppearanceProperty from "./Appearance/Appearance";
+// import TemplateSelectBox from "./TemplateSelectBox";
+// import { Tabs, Tab, Box, Typography, alpha, Paper, Divider } from "@mui/material";
 import { Tabs, Tab, Box, Typography, alpha, Paper } from "@mui/material";
 import { useState } from "react";
 
@@ -36,6 +38,11 @@ export default function PrimitiesPropertiesPanelBody() {
 
   return (
     <Paper sx={{ height: "100%", overflow: "auto", ...thinScrollbar }} elevation={0}>
+      {/* <Box sx={{ py: 1 }}>
+        <TemplateSelectBox />
+      </Box>
+      <Divider /> */}
+
       <Tabs
         aria-label="Editor Theme Design File Properties Panel Tabs"
         variant="fullWidth"
@@ -51,7 +58,7 @@ export default function PrimitiesPropertiesPanelBody() {
           borderBottom: 1,
           borderColor: "divider",
           // backdropFilter: "blur(4px)",
-          backgroundColor: (theme) => alpha(theme.palette.background.paper, .9),
+          backgroundColor: (theme) => alpha(theme.palette.background.paper, 0.9),
 
           "& .MuiTabs-indicator": {
             // backgroundColor: "text.primary",
@@ -97,27 +104,28 @@ export default function PrimitiesPropertiesPanelBody() {
         -- You've reached the end --
       </Typography>
 
-      {/* <Typography
-        variant="caption"
+      {/* <Box
         sx={{
-          position: "absolute",
+          position: "sticky",
           bottom: 0,
-          left: 0,
-          width: "100%",
-
-          py: 1,
-          px: 1.5,
-          pt: 1.5,
-          background: "rgba(255, 255, 255, .2)",
-          backdropFilter: "blur(30px)",
-          color: "text.secondary",
-          textTransform: "capitalize",
+          zIndex: 1,
           borderTop: 1,
           borderColor: "divider",
+          backdropFilter: "blur(4px)",
+          p: panelPaddingInline,
+          backgroundColor: (theme) => alpha(theme.palette.background.paper, 0.9),
+
+          "& .MuiTabs-indicator": {
+            // backgroundColor: "text.primary",
+            // borderInline: "12px solid",
+            // borderColor: "white",
+          },
         }}
       >
-        Colors: primary, secondary, success, warning, error, info, gray.
-      </Typography> */}
+        <Typography color="primary" variant="body2">
+          Template
+        </Typography>
+      </Box> */}
     </Paper>
   );
 }

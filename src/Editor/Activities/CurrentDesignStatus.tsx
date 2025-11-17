@@ -1,7 +1,7 @@
 import {
   AddCircleOutlineRounded,
+  ArrowDropDownRounded,
   ArrowRightAltOutlined,
-  // MoreVertOutlined,
 } from "@mui/icons-material";
 import {
   alpha,
@@ -105,34 +105,45 @@ function CurrentThemeDesignStatus() {
         aria-haspopup="true"
         aria-expanded={open ? "true" : undefined}
         onClick={handleClick}
-        // endIcon={<MoreVertOutlined color="action" sx={{ mr: 1.5 }} />}
       >
-        <Stack
-          // direction={"row"}
-          // alignItems={"center"}
-          sx={{ overflow: "hidden" }}
-        >
+        <Stack sx={{ overflow: "hidden" }}>
+          <div>
+            <Typography
+              variant="caption"
+              fontWeight={"bold"}
+              sx={{ lineHeight: 1.2, whiteSpace: "nowrap", p: 0 }}
+            >
+              You're Editing
+            </Typography>{" "}
+            —{" "}
+            <Typography
+              variant="caption"
+              color="green"
+              sx={{
+                lineHeight: 1,
+                whiteSpace: "nowrap",
+                p: 0,
+                textTransform: "lowercase",
+              }}
+            >
+              Saved
+            </Typography>
+          </div>
           <Typography
-            variant="caption"
-            color="primary"
-            fontWeight={"semibold"}
-            sx={{ lineHeight: 1.2, whiteSpace: "nowrap", p: 0 }}
-          >
-            You're editing
-          </Typography>
-          <Typography
-            variant="caption"
-            color="action.medium"
-            fontWeight={"semibold"}
+            variant="body2"
+            fontWeight={"light"}
             sx={{
               whiteSpace: "nowrap",
               textOverflow: "ellipsis",
+              lineHeight: 1,
               overflow: "hidden",
             }}
           >
             Renna Games Dashboardslsjljsdf
           </Typography>
         </Stack>
+
+        <ArrowDropDownRounded color="action" />
       </Button>
 
       <StyledMenu

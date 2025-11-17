@@ -6,10 +6,9 @@ import DialogContent from "@mui/material/DialogContent";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { Stack, Typography } from "@mui/material";
-import { AddCircleOutline } from "@mui/icons-material";
-import NewDesignDialogContent from "./NewDesignDialogContent";
+import { StarOutline } from "@mui/icons-material";
 
-export default function CreateNewThemeDesign() {
+export default function LoadTemplateButton() {
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
@@ -24,7 +23,7 @@ export default function CreateNewThemeDesign() {
     <>
       <Button
         // variant="outlined"
-        startIcon={<AddCircleOutline sx={{ fontSize: "1rem !important" }} />}
+        startIcon={<StarOutline sx={{ fontSize: "1rem !important"}} />}
         aria-label="Copy and Implement Selected Theme"
         sx={{
           // px: 1,
@@ -36,7 +35,7 @@ export default function CreateNewThemeDesign() {
         }}
         onClick={() => handleClickOpen()}
       >
-        Create
+        Templates
       </Button>
 
       <Dialog
@@ -89,8 +88,7 @@ export default function CreateNewThemeDesign() {
             },
           }}
         >
-          {/* New design creation scaffold (tabs + panels) */}
-          <NewDesignDialogContent onClose={handleClose} />
+          Hello
         </DialogContent>
       </Dialog>
     </>
