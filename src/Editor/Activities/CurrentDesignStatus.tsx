@@ -1,7 +1,7 @@
 import {
-  AddCircleOutlineRounded,
   ArrowDropDownRounded,
-  ArrowRightAltOutlined,
+  ArrowDropUpRounded,
+  FormatColorFillRounded,
 } from "@mui/icons-material";
 import {
   alpha,
@@ -17,7 +17,6 @@ import {
   Tabs,
   Typography,
   type MenuProps,
-  ListItemIcon,
 } from "@mui/material";
 import React from "react";
 
@@ -36,7 +35,7 @@ const StyledMenu = styled((props: MenuProps) => (
   />
 ))(({ theme }) => ({
   "& .MuiPaper-root": {
-    left: "0px !important",
+    left: "1px !important",
     width: "var(--explorer-panel-width)",
     overflow: "hidden",
     minWidth: 180,
@@ -44,10 +43,10 @@ const StyledMenu = styled((props: MenuProps) => (
     borderTopLeftRadius: 0,
     borderTopRightRadius: 0,
     borderColor: theme.palette.divider,
-    marginTop: theme.spacing(1),
+    marginTop: theme.spacing(0.5),
     backdropFilter: "blur(20px)",
-    boxShadow:
-      "rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px",
+    border: `1px solid ${theme.palette.divider}`,
+    boxShadow: theme.shadows[16],
 
     "& .MuiMenu-list": {
       padding: "4px 0",
@@ -99,36 +98,31 @@ function CurrentThemeDesignStatus() {
           textAlign: "start",
           flexGrow: 1,
           px: 0,
+          pt: 0,
         }}
         id="basic-button"
-        aria-controls={open ? "basic-menu" : undefined}
+        aria-controls={open ? "some-menu" : undefined}
         aria-haspopup="true"
         aria-expanded={open ? "true" : undefined}
         onClick={handleClick}
       >
         <Stack sx={{ overflow: "hidden" }}>
-          <div>
+          <Box sx={{ display: "flex", alignItems: "center" }}>
             <Typography
               variant="caption"
               fontWeight={"bold"}
+              color="primary"
               sx={{ lineHeight: 1.2, whiteSpace: "nowrap", p: 0 }}
             >
-              You're Editing
-            </Typography>{" "}
-            —{" "}
-            <Typography
-              variant="caption"
-              color="green"
-              sx={{
-                lineHeight: 1,
-                whiteSpace: "nowrap",
-                p: 0,
-                textTransform: "lowercase",
-              }}
-            >
-              Saved
+              You're editing
             </Typography>
-          </div>
+            {open ? (
+              <ArrowDropUpRounded sx={{ color: "primary.main" }} />
+            ) : (
+              <ArrowDropDownRounded sx={{ color: "primary.main" }} />
+            )}
+          </Box>
+
           <Typography
             variant="body2"
             fontWeight={"light"}
@@ -137,58 +131,37 @@ function CurrentThemeDesignStatus() {
               textOverflow: "ellipsis",
               lineHeight: 1,
               overflow: "hidden",
+              color: open ? "text.disabled" : "text.primary",
             }}
           >
             Renna Games Dashboardslsjljsdf
           </Typography>
         </Stack>
-
-        <ArrowDropDownRounded color="action" />
       </Button>
 
       <StyledMenu
-        id="basic-menu"
+        id="some-menu"
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}
         slotProps={{
-          // list: {
-          //   "aria-labelledby": "basic-button",
-          // },
+          list: {
+            "aria-labelledby": "basic-button",
+          },
           paper: {
             sx: {
-              // width: "var(--explorer-panel-width)",
-              // borderTopLeftRadius: 0,
-              // borderTopRightRadius: 0,
-              // mt: (theme) => theme.spacing(0.5),
               overflow: "hidden",
             },
           },
         }}
       >
-        {/* <Divider sx={{ my: 2 }} /> */}
-
-        <MenuItem>
-          <ListItemIcon>
-            <AddCircleOutlineRounded />
-          </ListItemIcon>
-          <ListItemText
-            slotProps={{ primary: { sx: { fontSize: "body2.fontSize" } } }}
-          >
-            Create New Theme
-          </ListItemText>{" "}
-        </MenuItem>
-
-        <Divider />
-
-        {/* <Divider /> */}
-        <Tabs variant="fullWidth" value="discover">
-          <Tab value="discover" label="Templates" />
+        <Tabs variant="fullWidth" value="saves">
           <Tab value="saves" label="My Saves" />
+          <Tab value="discover" label="Templates" />
         </Tabs>
         <Divider sx={{ mb: 2 }} />
 
-        <MenuItem sx={{ lineHeight: 1, columnGap: 1, px: 1 }}>
+        <MenuItem>
           <Stack direction="row" spacing={0.25}>
             {new Array(4).fill(0).map(() => {
               return (
@@ -203,10 +176,10 @@ function CurrentThemeDesignStatus() {
               );
             })}
           </Stack>
-          <ListItemText>Shadcn UI</ListItemText>
-          <ListItemIcon sx={{ alignSelf: "flex-end" }}>
-            <ArrowRightAltOutlined />
-          </ListItemIcon>
+          <ListItemText sx={{ mx: 2, overflow: "hidden", textOverflow: "ellipsis" }}>
+            Material Design 3
+          </ListItemText>
+          <FormatColorFillRounded />
         </MenuItem>
       </StyledMenu>
     </>
