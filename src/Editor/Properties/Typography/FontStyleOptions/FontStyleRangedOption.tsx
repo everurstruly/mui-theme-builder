@@ -68,7 +68,7 @@ export default function FontStyleRangedOption(props: FontStyleRangedOptionProps)
           label={"Default"}
         />
 
-        <Typography variant="caption" sx={{ fontStyle: 400, fontSize: 12 }}>
+        <Typography variant="caption" sx={{ fontStyle: 400, fontSize: 12, whiteSpace: "nowrap" }}>
           {props.name}
         </Typography>
       </Stack>
