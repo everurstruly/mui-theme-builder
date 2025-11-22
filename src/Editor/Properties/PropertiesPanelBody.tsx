@@ -14,10 +14,16 @@ export default function PanelBody() {
   if (selectedExperience.renderPropsPanel) {
     return (
       <Box
-        height={"100%"}
-        overflow={"auto"}
         onMouseEnter={() => setMouseOverPropertiesPanel(true)}
         onMouseLeave={() => setMouseOverPropertiesPanel(false)}
+        sx={{
+          height: "100%",
+          overflow: "hidden",
+
+          // create content window
+          position: "relative",
+          transform: "translateX(0px)",
+        }}
       >
         {selectedExperience.renderPropsPanel()}
       </Box>

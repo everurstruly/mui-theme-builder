@@ -1,35 +1,20 @@
-import { Typography } from "@mui/material";
+import { Grid } from "@mui/material";
+import type { PaletteGroup } from "./Color";
+import OptionGroupCollapse from "../OptionGroupCollapse";
+import ColorOptionGroupItem from "./ColorOptionGroupItem";
 
-type ColorOptionGroupProps = {
-  title: string;
-  children: React.ReactNode;
-};
+type ColorOptionGroupProps = PaletteGroup;
 
 export default function ColorOptionGroup(props: ColorOptionGroupProps) {
   return (
-    <>
-      <Typography
-        variant="subtitle2"
-        component={"h6"}
-        marginTop={6}
-        paddingBottom={2}
-        fontWeight={600}
-      >
-        {props.title}{" "}
-        {/* <Typography
-          component="span"
-          fontSize={12}
-          color="success.main"
-          marginLeft={1}
-        >
-          Component
-        </Typography> */}
-      </Typography>
-
-      <ul>
-        {props.children}
-      </ul>
-    </>
+    <OptionGroupCollapse heading={props.title} defaultOpen={props.defaultOpen}>
+      <Grid container spacing={{ xs: 1.8, md: 2.5 }}>
+        {props.items.map((item) => (
+          <Grid size={6}>
+            <ColorOptionGroupItem key={item.fill} {...item} />
+          </Grid>
+        ))}
+      </Grid>
+    </OptionGroupCollapse>
   );
 }
-

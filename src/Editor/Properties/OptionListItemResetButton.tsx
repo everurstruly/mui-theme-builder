@@ -9,7 +9,9 @@ type OptionListItemResetButtonProps = {
 };
 
 const baseLabelSx = {
-  p: 0.5,
+  px: 0.75,
+  py: 0.5,
+  borderRadius: 2,
   fontSize: 10,
   lineHeight: 1,
   minWidth: "7ch", // matches previous visual width

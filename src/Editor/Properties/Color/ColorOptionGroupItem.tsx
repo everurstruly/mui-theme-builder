@@ -1,126 +1,113 @@
-import { ListItem, Typography, Box, Stack, Popover } from "@mui/material";
-import { useState, useRef, useEffect } from "react";
+import { Typography, Box, Stack, Popover, Card, Button } from "@mui/material";
 import { Sketch } from "@uiw/react-color";
-import { useDebouncyEffect } from "use-debouncy";
+import { useShadesDrawerStore } from "./ShadesDrawer/useShadesDrawerStore";
+import type { UseShadesDrawerState } from "./ShadesDrawer/useShadesDrawerStore";
 import OptionListItemResetButton from "../OptionListItemResetButton";
-import useEditWithVisualTool from "../../Design/useEditWithVisualTool";
+import useColorPickerEdit from "./useColorPickerEdit";
+import type { PaletteGroupItem } from "./Color";
+import {
+  PaletteOutlined,
+  PhotoSizeSelectActualOutlined,
+  ViewCompact,
+} from "@mui/icons-material";
 
-type ColorOptionGroupItemProps = {
-  title: string;
-  path: string;
-};
+type ColorOptionGroupItemProps = PaletteGroupItem;
 
 export default function ColorOptionGroupItem(props: ColorOptionGroupItemProps) {
-  const {
-    value,
-    resolvedValue,
-    setValue,
-    reset: resetValue,
-    hasVisualEdit: isCustomized,
-    hasCodeOverride: isControlledByFunction,
-  } = useEditWithVisualTool(props.path);
-
-  // Show Reset button only when the user has actually customized this value or it's code-controlled.
-  const canResetValue = isCustomized || isControlledByFunction;
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-  const [tempColor, setTempColor] = useState<string>("");
-  const colorBoxRef = useRef<HTMLDivElement>(null);
-  const lastAppliedColorRef = useRef<string>("");
-
-  // value, resolvedShadeValue and isResolved are provided by the hook
-
-  // Debounce the color updates - only applies to theme after 200ms of no changes
-  useDebouncyEffect(
-    () => {
-      if (tempColor && tempColor !== (value as string)) {
-        setValue(tempColor);
-        lastAppliedColorRef.current = tempColor;
-      }
-    },
-    165,
-    [tempColor, value]
+  const openShadesDrawer = useShadesDrawerStore(
+    (s: UseShadesDrawerState) => s.openFor
   );
+  const colorEdit = useColorPickerEdit(props.fill);
+  const foregroundEdit = useColorPickerEdit(props.foreground || "");
+  const canResetValue = colorEdit.canResetValue || foregroundEdit.canResetValue;
 
-  // Clear tempColor when value changes externally (e.g., from reset).
-  // Move into an effect so we don't call setState during render (fixes Hooks order errors).
-  useEffect(() => {
-    if (tempColor && (value as string) !== lastAppliedColorRef.current) {
-      setTempColor("");
-      lastAppliedColorRef.current = value as string;
-    }
-  }, [value, tempColor]);
-
-  const handleOpenPicker = () => {
-    if (!isControlledByFunction) {
-      // Record the currently displayed value so the picker doesn't immediately
-      // clear when opened and so it initializes to the visible swatch color.
-      lastAppliedColorRef.current = value as string;
-      setTempColor(value as string);
-      setAnchorEl(colorBoxRef.current);
-    }
-  };
-
-  const handleClosePicker = () => {
-    setAnchorEl(null);
-  };
-
-  const handleColorChange = (color: { hex: string }) => {
-    // Just update temp color, debounce hook will handle applying it
-    setTempColor(color.hex);
-  };
-
-  const open = Boolean(anchorEl);
+  function resetValue() {
+    colorEdit.reset();
+    foregroundEdit.reset();
+  }
 
   return (
-    <ListItem
-      sx={{
-        width: "auto",
-        paddingInline: 0,
-      }}
-    >
-      <Stack direction="row" alignItems="center" spacing={0.75}>
-        <OptionListItemResetButton
-          canResetValue={canResetValue}
-          resetValue={resetValue}
-          label={"Default"}
-        />
-
-        <Typography
-          variant="caption"
-          sx={{
-            textTransform: "capitalize",
-          }}
-        >
-          {props.title}
-        </Typography>
-      </Stack>
-
-      <Stack
-        direction="row"
-        marginInlineStart="auto"
-        alignItems="center"
-        spacing={1}
+    <Stack>
+      <Card
+        elevation={0}
+        sx={{
+          position: "relative",
+          width: "100%",
+          height: 114,
+          borderRadius: 4,
+          border: 4,
+          borderColor: colorEdit.borderColor,
+          backgroundColor: colorEdit.mainColor,
+        }}
       >
         <Box
-          ref={colorBoxRef}
-          onClick={handleOpenPicker}
+          ref={foregroundEdit.anchorRef}
+          onClick={foregroundEdit.openPicker}
+          component={Button}
+          color="primary"
           sx={{
-            width: 32,
-            height: 20,
-            bgcolor: String(tempColor || value || resolvedValue),
-            borderRadius: 1,
-            border: 2,
-            borderColor: "divider",
-            cursor: isControlledByFunction ? "not-allowed" : "pointer",
-            display: "inline-block",
-            opacity: isControlledByFunction ? 0.5 : 1,
+            display: props.foreground ?? "none",
+            cursor: foregroundEdit.isControlledByFunction
+              ? "not-allowed"
+              : "pointer",
+            opacity: foregroundEdit.isControlledByFunction ? 0.5 : 1,
+            position: "absolute",
+            top: 0,
+            left: 0,
+            columnGap: 0.5,
+            rowGap: 0.2,
+            color: foregroundEdit.mainColor,
+            // flexDirection: "column",
+            // alignItems: "flex-start",
           }}
-        />
+        >
+          <PhotoSizeSelectActualOutlined fontSize="small" />
+          <Typography variant="caption" fontWeight={"bold"} sx={{ mt: "4px" }}>
+            & Text
+          </Typography>
+        </Box>
+
+        <Box
+          ref={colorEdit.anchorRef}
+          onClick={colorEdit.openPicker}
+          component={Button}
+          color="primary"
+          sx={{
+            color: colorEdit.readableColor,
+            cursor: colorEdit.isControlledByFunction ? "not-allowed" : "pointer",
+            opacity: colorEdit.isControlledByFunction ? 0.5 : 1,
+            position: "absolute",
+            minWidth: "auto",
+            alignItems: "flex-end",
+            justifyContent: "center",
+            top: "50%",
+            bottom: 1,
+            right: 1,
+            pl: 2,
+          }}
+        >
+          <PaletteOutlined />
+        </Box>
+
+        <Button
+          onClick={() => openShadesDrawer(props.shades ?? [], undefined, props.name)}
+          sx={{
+            display: !props.shades || !props?.shades?.length ? "none" : undefined,
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            color: colorEdit.readableColor,
+          }}
+        >
+          <ViewCompact fontSize="small" sx={{ mb: "2px" }} />
+          States
+        </Button>
 
         <Popover
-          open={open}
-          anchorEl={anchorEl}
-          onClose={handleClosePicker}
+          open={foregroundEdit.open}
+          anchorEl={foregroundEdit.anchorEl}
+          onClose={foregroundEdit.closePicker}
+          sx={{ display: props.foreground ?? "none" }}
           anchorOrigin={{
             vertical: "bottom",
             horizontal: "left",
@@ -131,12 +118,60 @@ export default function ColorOptionGroupItem(props: ColorOptionGroupItemProps) {
           }}
         >
           <Sketch
-            color={(tempColor || (value as string)) as string}
-            onChange={handleColorChange}
+            color={
+              (foregroundEdit.tempColor ||
+                (foregroundEdit.value as string)) as string
+            }
+            onChange={foregroundEdit.onColorChange}
             disableAlpha={false}
           />
         </Popover>
+
+        <Popover
+          open={colorEdit.open}
+          anchorEl={colorEdit.anchorEl}
+          onClose={colorEdit.closePicker}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "left",
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "left",
+          }}
+        >
+          <Sketch
+            color={(colorEdit.tempColor || (colorEdit.value as string)) as string}
+            onChange={colorEdit.onColorChange}
+            disableAlpha={false}
+          />
+        </Popover>
+      </Card>
+
+      <Stack
+        direction="row-reverse"
+        justifyContent="space-between"
+        spacing={0.75}
+        px={0.2}
+        py={0.8}
+      >
+        <OptionListItemResetButton
+          canResetValue={canResetValue}
+          resetValue={resetValue}
+          label={"Default"}
+        />
+
+        <Typography
+          variant="caption"
+          color="textSecondary"
+          sx={{
+            paddingInlineStart: 0.6,
+            textTransform: "capitalize",
+          }}
+        >
+          {props.name}
+        </Typography>
       </Stack>
-    </ListItem>
+    </Stack>
   );
 }

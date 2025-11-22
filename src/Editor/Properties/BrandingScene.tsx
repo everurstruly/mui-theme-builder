@@ -31,18 +31,20 @@ const thinScrollbar = {
   scrollbarColor: "rgba(0,0,0,0.5) transparent",
 };
 
-const panelPaddingInline = 2;
+const panelPaddingInline = 2.5;
 
 export default function PrimitiesPropertiesPanelBody() {
   const [selectedPropTab, setSelectedPropTab] = useState("palette");
 
   return (
-    <Paper sx={{ height: "100%", overflow: "auto", ...thinScrollbar }} elevation={0}>
-      {/* <Box sx={{ py: 1 }}>
-        <TemplateSelectBox />
-      </Box>
-      <Divider /> */}
-
+    <Paper
+      elevation={0}
+      sx={{
+        height: "100%",
+        overflow: "auto",
+        ...thinScrollbar,
+      }}
+    >
       <Tabs
         aria-label="Editor Theme Design File Properties Panel Tabs"
         variant="fullWidth"
@@ -57,8 +59,8 @@ export default function PrimitiesPropertiesPanelBody() {
           zIndex: 1,
           borderBottom: 1,
           borderColor: "divider",
-          // backdropFilter: "blur(4px)",
-          backgroundColor: (theme) => alpha(theme.palette.background.paper, 0.9),
+          backdropFilter: "blur(2px)",
+          backgroundColor: (theme) => alpha(theme.palette.background.paper, 0.95),
 
           "& .MuiTabs-indicator": {
             // backgroundColor: "text.primary",
@@ -103,29 +105,6 @@ export default function PrimitiesPropertiesPanelBody() {
       >
         -- You've reached the end --
       </Typography>
-
-      {/* <Box
-        sx={{
-          position: "sticky",
-          bottom: 0,
-          zIndex: 1,
-          borderTop: 1,
-          borderColor: "divider",
-          backdropFilter: "blur(4px)",
-          p: panelPaddingInline,
-          backgroundColor: (theme) => alpha(theme.palette.background.paper, 0.9),
-
-          "& .MuiTabs-indicator": {
-            // backgroundColor: "text.primary",
-            // borderInline: "12px solid",
-            // borderColor: "white",
-          },
-        }}
-      >
-        <Typography color="primary" variant="body2">
-          Template
-        </Typography>
-      </Box> */}
     </Paper>
   );
 }

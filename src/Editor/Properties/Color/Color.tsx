@@ -1,118 +1,164 @@
-import List from "@mui/material/List";
 import ColorOptionGroup from "./ColorOptionGroup";
-import ColorOptionGroupItem from "./ColorOptionGroupItem";
-import { useMemo } from "react";
-import { useCreatedTheme } from "../../Design";
-import type { Theme } from "@mui/material";
+import ShadesDrawer from "./ShadesDrawer/ShadesDrawer";
+import { Box, Divider, Stack } from "@mui/material";
 
-export default function ColorProperty() {
-  const theme = useCreatedTheme();
-  
-  const paletteGroups = useMemo(() => {
-    return extractPaletteGroups(theme.palette);
-  }, [theme.palette]);
-
-  return (
-    <List
-      sx={{
-        position: "relative",
-        padding: 0,
-        "& ul": { padding: 0 },
-      }}
-    >
-      {paletteGroups.map((group: PaletteGroup) => (
-        <li key={group.title}>
-          <ColorOptionGroup title={group.title}>
-            {group.items.map((item: PaletteItem) => (
-              <ColorOptionGroupItem
-                key={item.path}
-                title={item.name}
-                path={item.path}
-              />
-            ))}
-          </ColorOptionGroup>
-        </li>
-      ))}
-    </List>
-  );
-}
-
-type PaletteItem = {
+export type PaletteGroupItemAttribute = {
   name: string;
   path: string;
 };
 
-type PaletteGroup = {
-  title: string;
-  items: PaletteItem[];
+export type PaletteGroupItem = {
+  name: string;
+  fill: PaletteGroupItemAttribute["path"];
+  foreground?: PaletteGroupItemAttribute["path"];
+  shades?: PaletteGroupItemAttribute[];
 };
 
-function extractPaletteGroups(palette: Theme['palette']): PaletteGroup[] {
-  const groups: PaletteGroup[] = [];
-  
-  // Define the order and nice names for palette sections
-  const sections = {
-    primary: "Primary",
-    secondary: "Secondary", 
-    error: "Error",
-    warning: "Warning",
-    info: "Info",
-    success: "Success",
-    text: "Text Content",
-    background: "Backgrounds",
-    common: "Common",
-  } as const;
-  
-  Object.entries(sections).forEach(([key, title]) => {
-    const section = (palette as unknown as Record<string, unknown>)[key];
-    if (!section) return;
-    
-    const items: PaletteItem[] = [];
-    
-    if (key === "grey") {
-      // Handle grey scale numbers
-      Object.entries(section as Record<string, unknown>).forEach(([shade, value]) => {
-        if (typeof value === "string") {
-          items.push({
-            name: shade,
-            path: `palette.grey.${shade}`,
-          });
-        }
-      });
-    } else if (typeof section === "string") {
-      // Handle direct string values like divider
-      items.push({
-        name: key,
-        path: `palette.${key}`,
-      });
-    } else if (typeof section === "object") {
-      // Handle nested objects like primary, secondary, etc.
-      Object.entries(section as Record<string, unknown>).forEach(([prop, value]) => {
-        if (typeof value === "string") {
-          items.push({
-            name: prop,
-            path: `palette.${key}.${prop}`,
-          });
-        }
-      });
-    }
-    
-    if (items.length > 0) {
-      groups.push({ title, items });
-    }
-  });
-  
-  // Handle divider separately if it exists
-  if (typeof palette.divider === "string") {
-    groups.push({
-      title: "Divider",
-      items: [{
-        name: "divider",
-        path: "palette.divider",
-      }]
-    });
-  }
-  
-  return groups;
-}
+export type PaletteGroup = {
+  title: string;
+  defaultOpen?: boolean;
+  items: PaletteGroupItem[];
+};
 
+const paletteGroupMap: PaletteGroup[] = [
+  {
+    title: "Brand Colors",
+    defaultOpen: true,
+    items: [
+      {
+        name: "Primary",
+        fill: "palette.primary.main",
+        foreground: "palette.primary.contrastText",
+        shades: [
+          { name: "Main", path: "palette.primary.main" },
+          { name: "Light", path: "palette.primary.light" },
+          { name: "Dark", path: "palette.primary.dark" },
+          { name: "Contrast Text", path: "palette.primary.contrastText" },
+        ],
+      },
+      {
+        name: "Secondary",
+        fill: "palette.secondary.main",
+        foreground: "palette.secondary.contrastText",
+        shades: [
+          { name: "Main", path: "palette.secondary.main" },
+          { name: "Light", path: "palette.secondary.light" },
+          { name: "Dark", path: "palette.secondary.dark" },
+          { name: "Contrast Text", path: "palette.secondary.contrastText" },
+        ],
+      },
+    ],
+  },
+  {
+    title: "Text Colors",
+    defaultOpen: true,
+    items: [
+      { name: "Primary", fill: "palette.text.primary" },
+      { name: "Secondary", fill: "palette.text.secondary" },
+      { name: "Disabled", fill: "palette.text.disabled" },
+    ],
+  },
+  {
+    title: "Surface Colors",
+    items: [
+      { name: "Default", fill: "palette.background.default" },
+      { name: "Paper", fill: "palette.background.paper" },
+      { name: "Divider", fill: "palette.divider" },
+    ],
+  },
+  {
+    title: "Feedback Colors",
+    items: [
+      {
+        name: "Actions",
+        fill: "palette.action.active",
+        shades: [
+          { name: "Active", path: "palette.action.active" },
+          { name: "Hover", path: "palette.action.hover" },
+          { name: "Selected", path: "palette.action.selected" },
+          { name: "Disabled", path: "palette.action.disabled" },
+          { name: "Disabled Background", path: "palette.action.disabledBackground" },
+        ],
+      },
+      {
+        name: "Error",
+        fill: "palette.error.main",
+        shades: [
+          { name: "Main", path: "palette.error.main" },
+          { name: "Light", path: "palette.error.light" },
+          { name: "Dark", path: "palette.error.dark" },
+        ],
+      },
+      {
+        name: "Warning",
+        fill: "palette.warning.main",
+        shades: [
+          { name: "Main", path: "palette.warning.main" },
+          { name: "Light", path: "palette.warning.light" },
+          { name: "Dark", path: "palette.warning.dark" },
+        ],
+      },
+      {
+        name: "Success",
+        fill: "palette.success.main",
+        shades: [
+          { name: "Main", path: "palette.success.main" },
+          { name: "Light", path: "palette.success.light" },
+          { name: "Dark", path: "palette.success.dark" },
+        ],
+      },
+      {
+        name: "Info",
+        fill: "palette.info.main",
+        shades: [
+          { name: "Main", path: "palette.info.main" },
+          { name: "Light", path: "palette.info.light" },
+          { name: "Dark", path: "palette.info.dark" },
+        ],
+      },
+    ],
+  },
+  {
+    title: "Neutral Colors",
+    items: [
+      { name: "Black", fill: "palette.common.black" },
+      { name: "White", fill: "palette.common.white" },
+      {
+        name: "Grey",
+        fill: "palette.grey.500",
+        foreground: "palette.getContrastText(palette.grey.500)",
+        shades: [
+          { name: "50", path: "palette.grey.50" },
+          { name: "100", path: "palette.grey.100" },
+          { name: "200", path: "palette.grey.200" },
+          { name: "300", path: "palette.grey.300" },
+          { name: "400", path: "palette.grey.400" },
+          { name: "500", path: "palette.grey.500" },
+          { name: "600", path: "palette.grey.600" },
+          { name: "700", path: "palette.grey.700" },
+          { name: "800", path: "palette.grey.800" },
+          { name: "900", path: "palette.grey.900" },
+        ],
+      },
+    ],
+  },
+];
+
+export default function ColorProperty() {
+  return (
+    <>
+      <Stack divider={<Divider />}>
+        {paletteGroupMap.map((group) => (
+          <Box key={group.title}>
+            <ColorOptionGroup
+              title={group.title}
+              defaultOpen={group.defaultOpen}
+              items={group.items}
+            />
+          </Box>
+        ))}
+      </Stack>
+      <ShadesDrawer />
+    </>
+  );
+}
