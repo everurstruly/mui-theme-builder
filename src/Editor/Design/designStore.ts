@@ -10,7 +10,7 @@ import type { ThemeOptions } from "@mui/material";
 export const useDesignStore = create<ThemeDesignStore>()(
   devtools((set, get) => ({
     selectedExperienceId: "primitives",
-    activePreviewId: "DashboardExample",
+    activePreviewId: "DevSandbox",
 
     activeColorScheme: "light",
     light: createInitialColorSchemeEdits(),
