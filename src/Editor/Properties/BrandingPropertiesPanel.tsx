@@ -64,20 +64,6 @@ type PropertyTabValue = (typeof properties)[number]["value"];
 // };
 
 const thinScrollbar = {
-  "&::-webkit-scrollbar": {
-    width: 4,
-    height: 4,
-  },
-  "&::-webkit-scrollbar-thumb": {
-    backgroundColor: "rgba(0,0,0,0.2)",
-    borderRadius: 4,
-  },
-  "&::-webkit-scrollbar-thumb:hover": {
-    backgroundColor: "rgba(0,0,0,0.4)",
-  },
-  "&::-webkit-scrollbar-track": {
-    backgroundColor: "transparent",
-  },
   scrollbarWidth: "thin",
   scrollbarColor: "rgba(0,0,0,0.5) transparent",
 };
