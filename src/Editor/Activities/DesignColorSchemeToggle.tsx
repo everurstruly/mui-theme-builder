@@ -36,6 +36,11 @@ export default function DesignColorSchemeToggle() {
       value={colorScheme}
       onChange={handleChange}
       aria-label="Theme color mode toggle"
+      sx={(theme) => ({
+        ...theme.applyStyles("light", {
+          backgroundColor: "white",
+        }),
+      })}
     >
       {options.map((option) => {
         return (

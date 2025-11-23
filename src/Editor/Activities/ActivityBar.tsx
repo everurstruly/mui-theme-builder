@@ -7,7 +7,6 @@ import DesignActionListMenu from "./DesignActionListMenu";
 import CurrentDesignStatus from "./CurrentDesignStatus";
 import { AppBar, Stack, Divider, Toolbar, type SxProps } from "@mui/material";
 import PropertiesPanelHeader from "../Properties/PropertiesPanelHeader";
-import { panelPaddingInlineRem } from "../Properties/BrandingPropertiesPanel";
 
 export default function EditorActivityBar() {
   return (
@@ -72,7 +71,7 @@ function DesktopToolbarContent() {
         justifyContent={"space-between"}
         flexShrink={0}
         width={{ lg: "var(--properties-panel-width)" }}
-        paddingInline={{ md: panelPaddingInlineRem }}
+        paddingInline={{ md: 1.5 }}
         height={"100%"}
         columnGap={1.5}
         display={{ xs: "none", lg: "flex" }}

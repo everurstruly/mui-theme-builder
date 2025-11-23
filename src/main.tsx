@@ -28,7 +28,7 @@ createRoot(document.getElementById("root")!).render(
             light: {
               palette: {
                 background: {
-                  paper: "#f5f5f5",
+                  paper: "#f8f8f8",
                 },
               },
             },
