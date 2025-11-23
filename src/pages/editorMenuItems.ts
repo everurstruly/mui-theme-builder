@@ -9,7 +9,7 @@ export const EDITOR_MENU_ITEMS: EditorMenuItem[] = [
   {
     key: "human",
     label: "Human",
-    href: "https://everurstruly.com",
+    href: "https://everurstruly.netlify.app",
     target: "__blank",
   },
   {
