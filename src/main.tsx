@@ -27,18 +27,15 @@ createRoot(document.getElementById("root")!).render(
             dark: true,
             light: {
               palette: {
-                text: {
-                  primary: "#444",
-                },
                 background: {
                   paper: "#f5f5f5",
-                }
-              }
+                },
+              },
             },
           },
           typography: {
             body2: {
-              fontSize: 14
+              fontSize: 14,
             },
             button: {
               textTransform: "none",

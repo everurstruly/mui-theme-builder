@@ -3,7 +3,7 @@ import { isColorSchemePath } from "./shared";
 import { transformCodeToDsl } from "./domainSpecificLanguage/themeOptionsToDslTransformer";
 import { validateCodeBeforeEvaluation } from "./domainSpecificLanguage/dslValidator";
 import { devtools } from "zustand/middleware";
-import type { EditorExperienceId } from "./designExperience";
+import type { EditorDesignExperienceId } from "../editorDesignExperience";
 import type { ThemeDsl } from "./domainSpecificLanguage/types";
 import type { ThemeOptions } from "@mui/material";
 
@@ -376,7 +376,7 @@ export const useDesignStore = create<ThemeDesignStore>()(
       set({ activePreviewId: previewId });
     },
 
-    selectExperience: (experienceId: EditorExperienceId) => {
+    selectExperience: (experienceId: EditorDesignExperienceId) => {
       set({ selectedExperienceId: experienceId });
     },
   }), { trace: true })
@@ -411,7 +411,7 @@ export interface ColorSchemeEdits {
  * Separates base layer (color-independent) from color schemes (palette/shadows only).
  */
 export interface ThemeDesignState {
-  selectedExperienceId: EditorExperienceId;
+  selectedExperienceId: EditorDesignExperienceId;
 
   // === Base Layer ===
   /** Currently selected base template */
@@ -483,7 +483,7 @@ export interface ThemeDesignState {
  * Actions available on the Theme Design store.
  */
 export interface ThemeDesignActions {
-  selectExperience: (experienceId: EditorExperienceId) => void;
+  selectExperience: (experienceId: EditorDesignExperienceId) => void;
 
   // === Template Management ===
   /**

@@ -7,19 +7,9 @@ export type EditorMenuItem = {
 
 export const EDITOR_MENU_ITEMS: EditorMenuItem[] = [
   {
-    key: "theme-editor",
-    label: "Legacy (pre v6)",
+    key: "legacy-theme-editor",
+    label: "Legacy Version",
     href: "https://zenoo.github.io/mui-theme-creator/",
     target: "__blank",
-  },
-  {
-    key: "color-generator",
-    label: "Color Generator",
-    href: "https://m2.material.io/inline-tools/color/",
-    target: "__blank",
-  },
-  {
-    key: "theme-migration",
-    label: "Theme Migration Tool",
   },
 ];
