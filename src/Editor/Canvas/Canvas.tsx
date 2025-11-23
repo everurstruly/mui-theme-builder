@@ -1,85 +1,52 @@
-import QuickPreviewBar from "../Explorer/QuickPreviewBar";
-import useEditorUiStore from "../editorStore";
-import BoardSurface from "./BoardSurface/BoardSurface";
-import CanvasControlsSlots from "./CanvasControlsSlots";
-import FullscreenPreviewButton from "./BoardSurface/Controls/FullscreenPreviewButton";
-import { alpha, Box, Stack } from "@mui/material";
-import { useRef } from "react";
+import PlainSurface from "./PlainSurface/PlainSurface";
+import FullscreenPreviewButton from "./PlainSurface/Controls/FullscreenPreviewButton";
 import ExplorerPanelVisibilityToggle from "../Activities/ExplorerPanelVisibilityToggle";
-import { BreakpointSimulationToggles } from "./BoardSurface/BreakpointSimulation";
+import CanvasFrame from "./CanvasFrame";
+import { alpha, Stack } from "@mui/material";
+import { useRef } from "react";
+import { BreakpointSimulationToggles } from "./PlainSurface/BreakpointSimulation";
 
 export default function EditorCanvas() {
-  const setMouseOverCanvas = useEditorUiStore((state) => state.setMouseOverCanvas);
   const previewDivWrapperRef = useRef<HTMLDivElement>(null);
 
   return (
-    <Box
-      sx={(t) => ({
-        position: "relative", // acts as the board/wrapper for surfaces
-        flexGrow: 1,
-        minWidth: 0, // <-- ensure this flex child can shrink
-        overflow: "hidden", // <-- contain expansion, create clip/scroll context
-        height: "100%",
-        maxWidth: "var(--canvas-max-width)",
-        border: "1px solid",
-        borderColor: t.palette.divider,
-        // borderRightColor: mouseOverPropertiesPanel ? "text.secondary" : "divider",
-        // backgroundColor: "#f5f5f5",
-        // backgroundColor: mouseOverPropertiesPanel ? "#eee" : "#f5f5f5",
-        backgroundColor: t.palette.background.default,
-        backgroundImage: `
-            radial-gradient(circle at center, ${
-              t.palette.mode === "dark"
-                ? "rgba(255,255,255,0.06)"
-                : "rgba(0,0,0,0.06)"
-            } 1px, transparent 1px)
-          `,
-        backgroundSize: "12px 12px",
-        backgroundPosition: "0 0",
-        transition: "border-color 500ms ease",
-      })}
-      onMouseEnter={() => setMouseOverCanvas(true)}
-      onMouseLeave={() => setMouseOverCanvas(false)}
-    >
-      <QuickPreviewBar />
-      <BoardSurface containerRef={previewDivWrapperRef} />
-      <CanvasControlsSlots
-        bottomLeft={
+    <CanvasFrame
+      controls={{
+        bottomLeft: (
           <Stack
             direction="row"
             sx={{
+              alignItems: "center",
+              backdropFilter: "blur(12px)",
+              borderRadius: 2,
+              backgroundColor: (theme) => alpha(theme.palette.background.paper, 0.8),
               columnGap: 1,
-              px: 1,
-              py: 0.5,
-              borderRadius: 2.5,
-              minWidth: 0,
-              backdropFilter: "blur(40px)",
-              boxShadow: 1,
-              backgroundColor: (theme) => alpha(theme.palette.background.paper, 1),
+              px: 0.25,
             }}
           >
             <ExplorerPanelVisibilityToggle />
-            <BreakpointSimulationToggles mouseOverPreview={true} />
           </Stack>
-        }
-        bottomRight={
+        ),
+
+        bottomRight: (
           <Stack
             direction="row"
             sx={{
+              alignItems: "center",
+              backdropFilter: "blur(12px)",
+              borderRadius: 2,
+              backgroundColor: (theme) => alpha(theme.palette.background.paper, 0.8),
               columnGap: 1,
-              px: 1,
-              py: 0.5,
-              borderRadius: 2.5,
-              minWidth: 0,
-              backdropFilter: "blur(40px)",
-              boxShadow: 1,
-              backgroundColor: (theme) => alpha(theme.palette.background.paper, 1),
+              px: 0.25,
             }}
           >
+            <BreakpointSimulationToggles />
             <FullscreenPreviewButton containerRef={previewDivWrapperRef} />
           </Stack>
-        }
-      />
-    </Box>
+        ),
+      }}
+    >
+      <PlainSurface containerRef={previewDivWrapperRef} />
+    </CanvasFrame>
   );
 }

@@ -46,25 +46,13 @@ export default function FullscreenPreviewButton({
   }, [containerRef]);
 
   return (
-    <Tooltip
-      title={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
-      // placement="auto-start"
-    >
+    <Tooltip title={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}>
       <IconButton
         onClick={handleFullscreen}
-        size="small"
         sx={[
           {
             transition: "opacity 300ms ease",
-            fontSize: "0.75rem",
             textTransform: "none",
-            backgroundColor: "transparent",
-
-            // backgroundColor: "rgba(255, 255, 255, 0.7)",
-            // backdropFilter: "blur(10px)",
-            // "&:hover": {
-            //   backgroundColor: "rgba(255, 255, 255, 0.9)",
-            // },
           },
         ]}
       >

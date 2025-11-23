@@ -27,12 +27,8 @@ function ExplorerPanelVisibilityToggle() {
 
   return (
     <IconButton
-      // color="inherit"
-      // variant="contained"
-      // sx={{ minWidth: 0, px: 1, borderRadius: 2 }}
-      size="small"
       onClick={handleToggleClick}
-      sx={{ backgroundColor: "transparent" }}
+      sx={{ backgroundColor: "transparent", fontSize: 20 }}
     >
       {isExplorerPanelHidden() ? (
         <ViewSidebarOutlined />

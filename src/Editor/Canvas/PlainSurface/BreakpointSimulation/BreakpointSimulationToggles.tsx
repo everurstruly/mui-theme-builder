@@ -59,13 +59,7 @@ const breakpointConfig: Array<{
   },
 ];
 
-type BreakpointSimulationTogglesProps = {
-  mouseOverPreview: boolean;
-};
-
-export default function BreakpointSimulationToggles({
-  mouseOverPreview,
-}: BreakpointSimulationTogglesProps) {
+export default function BreakpointSimulationToggles() {
   const { simulatedBreakpoint, setSimulatedBreakpoint } = useBreakpointSimulation();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -90,30 +84,8 @@ export default function BreakpointSimulationToggles({
   return (
     <>
       <Tooltip title="Simulate Breakpoint">
-        <IconButton
-          onClick={handleClick}
-          size="small"
-          sx={{
-            color: simulatedBreakpoint ? "primary.main" : "text.secondary",
-
-            opacity: mouseOverPreview ? 1 : 0.2,
-            transition: "opacity 300ms ease",
-            border: 1,
-            borderRadius: 1,
-            fontSize: "0.75rem",
-            textTransform: "none",
-            borderColor: "divider",
-            backgroundColor: "rgba(255, 255, 255, 0.7)",
-            backdropFilter: "blur(10px)",
-            "&:hover": {
-              backgroundColor: "rgba(255, 255, 255, 0.9)",
-            },
-          }}
-          aria-controls={open ? "breakpoint-menu" : undefined}
-          aria-haspopup="true"
-          aria-expanded={open ? "true" : undefined}
-        >
-          {currentConfig?.icon || <DevicesIcon sx={{ fontSize: 16 }} />}
+        <IconButton onClick={handleClick}>
+          {currentConfig?.icon || <DevicesIcon sx={{ fontSize: 20 }} />}
         </IconButton>
       </Tooltip>
 
@@ -188,4 +160,3 @@ export default function BreakpointSimulationToggles({
     </>
   );
 }
-
