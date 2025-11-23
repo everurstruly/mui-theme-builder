@@ -2,9 +2,9 @@ import ColorProperty from "./Color/Color";
 import TypographyProperty from "./Typography/Typography";
 import AppearanceProperty from "./Appearance/Appearance";
 import { Tabs, Tab, Box, Typography, Paper } from "@mui/material";
-import { type DynamicResourceGeneratorFabData } from "./DynamicResourceGenerator";
 import { useState } from "react";
-import { AutoAwesome } from "@mui/icons-material";
+// import { type DynamicResourceGeneratorFabData } from "./DynamicResourceGenerator";
+// import { AutoAwesome } from "@mui/icons-material";
 
 const properties = [
   { label: "Color", value: "palette" },
@@ -16,52 +16,52 @@ const properties = [
 ] as const;
 
 type PropertyTabValue = (typeof properties)[number]["value"];
-type ResourceGeneratorMap = Partial<
-  Record<PropertyTabValue, DynamicResourceGeneratorFabData>
->;
+// type ResourceGeneratorMap = Partial<
+//   Record<PropertyTabValue, DynamicResourceGeneratorFabData>
+// >;
 
-const propertyToResourceGeneratorMap: ResourceGeneratorMap = {
-  palette: {
-    color: "info",
-    sx: (theme: any) => ({
-      backgroundImage: `linear-gradient(135deg, ${theme.palette.info.main}, ${theme.palette.primary.main})`,
-      color: theme.palette.getContrastText(theme.palette.primary.main),
-      boxShadow: `0 6px 18px rgba(0,0,0,0.12)`,
-      "&:hover": { filter: "brightness(0.95)" },
-    }),
-    icon: <AutoAwesome />,
-    label: "Generate Colors",
-    variant: "extended",
-  },
+// const propertyToResourceGeneratorMap: ResourceGeneratorMap = {
+//   palette: {
+//     color: "info",
+//     sx: (theme: any) => ({
+//       backgroundImage: `linear-gradient(135deg, ${theme.palette.info.main}, ${theme.palette.primary.main})`,
+//       color: theme.palette.getContrastText(theme.palette.primary.main),
+//       boxShadow: `0 6px 18px rgba(0,0,0,0.12)`,
+//       "&:hover": { filter: "brightness(0.95)" },
+//     }),
+//     icon: <AutoAwesome />,
+//     label: "Generate Colors",
+//     variant: "extended",
+//   },
 
-  typography: {
-    color: "primary",
-    sx: (theme: any) => ({
-      backgroundImage: `linear-gradient(135deg, ${theme.palette.primary.main}, ${
-        theme.palette.secondary?.main ?? theme.palette.info.main
-      })`,
-      color: theme.palette.getContrastText(theme.palette.primary.main),
-      boxShadow: `0 6px 18px rgba(0,0,0,0.12)`,
-      "&:hover": { filter: "brightness(0.95)" },
-    }),
-    icon: <AutoAwesome />,
-    label: "Generate Typography",
-    variant: "extended",
-  },
+//   typography: {
+//     color: "primary",
+//     sx: (theme: any) => ({
+//       backgroundImage: `linear-gradient(135deg, ${theme.palette.primary.main}, ${
+//         theme.palette.secondary?.main ?? theme.palette.info.main
+//       })`,
+//       color: theme.palette.getContrastText(theme.palette.primary.main),
+//       boxShadow: `0 6px 18px rgba(0,0,0,0.12)`,
+//       "&:hover": { filter: "brightness(0.95)" },
+//     }),
+//     icon: <AutoAwesome />,
+//     label: "Generate Typography",
+//     variant: "extended",
+//   },
 
-  appearance: {
-    color: "success",
-    sx: (theme: any) => ({
-      backgroundImage: `linear-gradient(135deg, ${theme.palette.success.main}, ${theme.palette.primary.main})`,
-      color: theme.palette.getContrastText(theme.palette.success.main),
-      boxShadow: `0 6px 18px rgba(0,0,0,0.12)`,
-      "&:hover": { filter: "brightness(0.95)" },
-    }),
-    icon: <AutoAwesome />,
-    label: "Generate Appearance",
-    variant: "extended",
-  },
-};
+//   appearance: {
+//     color: "success",
+//     sx: (theme: any) => ({
+//       backgroundImage: `linear-gradient(135deg, ${theme.palette.success.main}, ${theme.palette.primary.main})`,
+//       color: theme.palette.getContrastText(theme.palette.success.main),
+//       boxShadow: `0 6px 18px rgba(0,0,0,0.12)`,
+//       "&:hover": { filter: "brightness(0.95)" },
+//     }),
+//     icon: <AutoAwesome />,
+//     label: "Generate Appearance",
+//     variant: "extended",
+//   },
+// };
 
 const thinScrollbar = {
   "&::-webkit-scrollbar": {
