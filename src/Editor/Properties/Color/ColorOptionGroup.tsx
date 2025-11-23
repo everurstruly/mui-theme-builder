@@ -10,8 +10,8 @@ export default function ColorOptionGroup(props: ColorOptionGroupProps) {
     <OptionGroupCollapse heading={props.title} defaultOpen={props.defaultOpen}>
       <Grid container spacing={{ xs: 1.8, md: 2.5 }}>
         {props.items.map((item) => (
-          <Grid size={6}>
-            <ColorOptionGroupItem key={item.fill} {...item} />
+          <Grid key={item.name ?? item.fill} size={6}>
+            <ColorOptionGroupItem {...item} />
           </Grid>
         ))}
       </Grid>
