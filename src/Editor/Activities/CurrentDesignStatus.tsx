@@ -80,6 +80,7 @@ const StyledMenu = styled((props: MenuProps) => (
 function CurrentThemeDesignStatus() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -97,7 +98,7 @@ function CurrentThemeDesignStatus() {
           justifyContent: "space-between",
           textAlign: "start",
           flexGrow: 1,
-          px: 0,
+          borderRadius: 2,
           pt: 0,
         }}
         id="basic-button"
@@ -112,7 +113,7 @@ function CurrentThemeDesignStatus() {
               variant="caption"
               fontWeight={"bold"}
               color="primary"
-              sx={{ lineHeight: 1.2, whiteSpace: "nowrap", p: 0 }}
+              sx={{ lineHeight: 1, whiteSpace: "nowrap", p: 0 }}
             >
               You're editing
             </Typography>
@@ -125,11 +126,10 @@ function CurrentThemeDesignStatus() {
 
           <Typography
             variant="body2"
-            fontWeight={"light"}
             sx={{
               whiteSpace: "nowrap",
               textOverflow: "ellipsis",
-              lineHeight: 1,
+              lineHeight: 1.1,
               overflow: "hidden",
               color: open ? "text.disabled" : "text.primary",
             }}

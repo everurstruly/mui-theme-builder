@@ -3,9 +3,9 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import { useDesignStore } from "../Design/designStore";
 import {
-  editorExperiences,
-  type EditorExperienceId,
-} from "../Design/designExperience";
+  editorDesignExperiences,
+  type EditorDesignExperienceId,
+} from "../editorDesignExperience";
 import { alpha, type SxProps } from "@mui/material";
 
 type EditorThemingExperienceTabProps = {
@@ -22,7 +22,7 @@ export default function ThemingExperienceTab({
 
   const handleChange = (
     event: React.SyntheticEvent,
-    newValue: EditorExperienceId
+    newValue: EditorDesignExperienceId
   ) => {
     void event;
     setValue(newValue);
@@ -81,8 +81,8 @@ export default function ThemingExperienceTab({
         ...rest.sx,
       }}
     >
-      {Object.keys(editorExperiences).map((id) => {
-        const tab = editorExperiences[id as EditorExperienceId];
+      {Object.keys(editorDesignExperiences).map((id) => {
+        const tab = editorDesignExperiences[id as EditorDesignExperienceId];
         return (
           <Tab
             key={tab.id}

@@ -7,6 +7,7 @@ import DesignActionListMenu from "./DesignActionListMenu";
 import CurrentDesignStatus from "./CurrentDesignStatus";
 import { AppBar, Stack, Divider, Toolbar, type SxProps } from "@mui/material";
 import PropertiesPanelHeader from "../Properties/PropertiesPanelHeader";
+import { panelPaddingInlineRem } from "../Properties/BrandingPropertiesPanel";
 
 export default function EditorActivityBar() {
   return (
@@ -27,7 +28,7 @@ function DesktopToolbarContent() {
       borderColor={"divider"}
       display={{ xs: "none", md: "flex" }}
       sx={{
-        px: { md: 1, lg: "8px" },
+        px: { md: 1, lg: "0px" },
         height: "var(--toolbar-height)",
         backgroundColor: (theme) => theme.palette.background.paper,
       }}
@@ -43,22 +44,16 @@ function DesktopToolbarContent() {
         <CurrentDesignStatus />
       </Stack>
 
-      {/* <Divider
-        flexItem
-        orientation="vertical"
-        sx={{ display: { xs: "none", lg: "block" } }}
-      /> */}
-
       <Stack
         flexGrow={1}
         alignItems={"center"}
+        justifyContent={"space-between"}
         direction={"row"}
         marginInline={"auto"}
-        columnGap={1.5}
-        px={{ md: 1.5 }}
+        columnGap={2}
       >
-        <DesignActionListMenu />
-        <Stack direction={"row"} alignItems={"inherit"} columnGap={1.5} ml={"auto"}>
+        <DesignActionListMenu sx={{ columnGap: 2 }} />
+        <Stack direction={"row"} alignItems={"inherit"} columnGap={2} mx={2}>
           <DesignSaveButton />
           <DesignChangeHistoryButtons />
           <DesignExportButton />
@@ -75,14 +70,13 @@ function DesktopToolbarContent() {
         direction="row"
         alignItems={"center"}
         justifyContent={"space-between"}
-        width={"100%"}
-        minWidth={"20vw"}
         flexShrink={0}
-        maxWidth={"calc(var(--properties-panel-width) - 8px)"} // FIXME: sync static with dynamic px
-        paddingInline={{ md: 1.5 }}
+        width={{ lg: "var(--properties-panel-width)" }}
+        paddingInline={{ md: panelPaddingInlineRem }}
         height={"100%"}
         columnGap={1.5}
         display={{ xs: "none", lg: "flex" }}
+        paddingInlineEnd={{ lg: 2 }}
       >
         <PropertiesPanelHeader />
       </Stack>

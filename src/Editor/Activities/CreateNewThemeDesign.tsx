@@ -6,7 +6,7 @@ import DialogContent from "@mui/material/DialogContent";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { Stack, Typography } from "@mui/material";
-import { AddCircleOutline } from "@mui/icons-material";
+import { Add } from "@mui/icons-material";
 import NewDesignDialogContent from "./NewDesignDialogContent";
 
 export default function CreateNewThemeDesign() {
@@ -23,16 +23,10 @@ export default function CreateNewThemeDesign() {
   return (
     <>
       <Button
-        // variant="outlined"
-        startIcon={<AddCircleOutline sx={{ fontSize: "1rem !important" }} />}
+        startIcon={<Add sx={{ fontSize: "1rem !important" }} />}
         aria-label="Copy and Implement Selected Theme"
         sx={{
-          // px: 1,
           borderRadius: 2,
-          "& .MuiButton-startIcon": {
-            marginInlineEnd: 0.625,
-            // marginBottom: 0.25, // fix: ensure text alignement with icons
-          },
         }}
         onClick={() => handleClickOpen()}
       >
