@@ -1,6 +1,6 @@
 import ColorOptionGroup from "./ColorOptionGroup";
 import ShadesDrawer from "./ShadesDrawer/ShadesDrawer";
-import { Box, Divider, Stack } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 
 export type PaletteGroupItemAttribute = {
   name: string;
@@ -147,7 +147,7 @@ const paletteGroupMap: PaletteGroup[] = [
 export default function ColorProperty() {
   return (
     <>
-      <Stack divider={<Divider />}>
+      <Stack>
         {paletteGroupMap.map((group) => (
           <Box key={group.title}>
             <ColorOptionGroup

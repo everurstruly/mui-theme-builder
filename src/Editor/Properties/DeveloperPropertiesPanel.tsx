@@ -2,21 +2,21 @@ import { Box } from "@mui/material";
 import { PanelGroup, Panel, PanelResizeHandle } from "react-resizable-panels";
 import { CodeEditor, ThemePreview } from "./CodeEditor";
 
-export default function SystemPropertiesPanelBody() {
+export default function DeveloperPropertiesPanel() {
   return (
     <PanelGroup direction="vertical">
       <Panel defaultSize={80} minSize={30}>
         <CodeEditor />
       </Panel>
-      <CodingScenePanelWindowsResizeHandle />
-      <Panel minSize={18}>
+      <DeveloperPanelWindowsResizeHandle />
+      <Panel minSize={14}>
         <ThemePreview />
       </Panel>
     </PanelGroup>
   );
 }
 
-function CodingScenePanelWindowsResizeHandle() {
+function DeveloperPanelWindowsResizeHandle() {
   return (
     <Box
       role="separator"

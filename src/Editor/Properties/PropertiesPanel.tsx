@@ -57,7 +57,7 @@ function DesktopPanelDrawer() {
         },
       }}
     >
-      <Divider />
+      {/* <Divider /> */}
       <PropertiesPanelBody />
     </Drawer>
   );

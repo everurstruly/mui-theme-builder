@@ -51,7 +51,7 @@ export default function ShadesDrawer() {
           zIndex: 1500,
           transform: open ? "translateY(0%)" : "translateY(100%)",
           transition: "transform 320ms cubic-bezier(.2,.8,.2,1)",
-          height: "max(75vh, 60%)",
+          height: "max(70vh, 60%)",
           boxShadow: "0px -2px 10px rgba(0,0,0,0.5)",
           borderTopLeftRadius: 24,
           borderTopRightRadius: 24,
@@ -76,8 +76,6 @@ export default function ShadesDrawer() {
               flexGrow: 1,
               textAlign: "center",
               mx: "auto",
-              borderBottom: 1,
-              borderColor: "divider",
               py: 2,
             }}
           >

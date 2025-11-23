@@ -92,7 +92,7 @@ export default function OptionGroupCollapse({
             toggle();
           }}
           sx={{
-            color: "text.secondary",
+            color: "divider",
             paddingInlineEnd: 0,
             mt: 2,
           }}
