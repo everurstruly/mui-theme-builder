@@ -159,14 +159,14 @@ export default function Features() {
       <Box sx={{ width: { sm: "100%", md: "60%" } }}>
         <Typography
           component="h2"
-          variant="h4"
+          variant="h2"
           gutterBottom
           sx={{ color: "text.primary" }}
         >
           Product features
         </Typography>
         <Typography
-          variant="body1"
+          variant="subtitle2"
           sx={{ color: "text.secondary", mb: { xs: 2, sm: 4 } }}
         >
           Provide a brief overview of the key features of the product. For

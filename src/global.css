@@ -3,6 +3,9 @@
   line-height: 1.5;
   font-weight: 400;
 
+  /* Import a decorative script font used for the Hero "Design" word */
+  @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
+
   font-synthesis: none;
   text-rendering: optimizeLegibility;
 
@@ -18,6 +21,14 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Fancy script helper class (used by Hero) */
+.fancy {
+  font-family: 'Great Vibes', cursive;
+  font-style: normal;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
 }
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

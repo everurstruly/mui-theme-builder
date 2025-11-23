@@ -6,6 +6,7 @@ declare module "@mui/material/Paper" {
     highlighted: true;
   }
 }
+
 declare module "@mui/material/styles" {
   interface ColorRange {
     50: string;
@@ -28,7 +29,6 @@ declare module "@mui/material/styles" {
 }
 
 const defaultTheme = createTheme();
-
 const customShadows: Shadows = [...defaultTheme.shadows];
 
 export const brand = {
@@ -106,16 +106,7 @@ export const getDesignTokens = (mode: PaletteMode) => {
     palette: {
       mode,
       primary: {
-        light: brand[200],
         main: brand[400],
-        dark: brand[700],
-        contrastText: brand[50],
-        ...(mode === "dark" && {
-          contrastText: brand[50],
-          light: brand[300],
-          main: brand[400],
-          dark: brand[700],
-        }),
       },
       info: {
         light: brand[100],
@@ -398,7 +389,7 @@ export const typography = {
 };
 
 export const shape = {
-  borderRadius: 8,
+  borderRadius: 16,
 };
 
 // @ts-expect-error -- using a CSS variable for baseShadow that isn't representable in the Shadows type

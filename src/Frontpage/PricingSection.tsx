@@ -79,7 +79,7 @@ export default function Pricing() {
       >
         <Typography
           component="h2"
-          variant="h4"
+          variant="h2"
           gutterBottom
           sx={{ color: "text.primary" }}
         >
@@ -92,6 +92,7 @@ export default function Pricing() {
           customization.
         </Typography>
       </Box>
+
       <Grid
         container
         spacing={3}
