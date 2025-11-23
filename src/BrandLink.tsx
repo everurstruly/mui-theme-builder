@@ -1,14 +1,15 @@
 import { ArchitectureRounded } from "@mui/icons-material";
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, type SxProps } from "@mui/material";
 import { Link } from "react-router";
 
-export default function BrandLink() {
+export default function BrandLink({ sx }: { sx?: SxProps }) {
   return (
     <Box
       component={Link}
       to="/"
       sx={{
         mr: "auto",
+        ...sx,
       }}
     >
       <Typography

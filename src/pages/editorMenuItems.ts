@@ -7,9 +7,15 @@ export type EditorMenuItem = {
 
 export const EDITOR_MENU_ITEMS: EditorMenuItem[] = [
   {
-    key: "legacy-theme-editor",
-    label: "Legacy Version",
-    href: "https://zenoo.github.io/mui-theme-creator/",
+    key: "human",
+    label: "Human",
+    href: "https://everurstruly.com",
+    target: "__blank",
+  },
+  {
+    key: "github-repo",
+    label: "GitHub",
+    href: "https://github.com/everurstruly/mui-theme-builder",
     target: "__blank",
   },
 ];

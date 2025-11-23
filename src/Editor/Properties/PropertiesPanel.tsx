@@ -120,26 +120,21 @@ function MobilePanelDrawer() {
       <Fab
         color="primary"
         aria-label="edit"
-        variant="extended"
         onClick={() => showPanel()}
         sx={() => ({
           display,
           zIndex: (theme) => theme.zIndex.drawer - 1,
-
           position: "fixed",
-          // match right padding of page content
+
+          // FIXME: match right padding of page content
           right: {
             xs: "8px",
             sm: "20px",
           },
+
           // above bottom nav (or canvas bottom actions)
           bottom: {
             xs: "calc(var(--toolbar-height) + (var(--toolbar-height) / 4))",
-            sm: "unset",
-          },
-          // ontop of the canvas
-          top: {
-            sm: "calc(var(--header-height, 52px) + var(--toolbar-height, 52px) + var(--toolbar-height, 48px) + .5rem)",
           },
         })}
       >

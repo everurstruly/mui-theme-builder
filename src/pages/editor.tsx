@@ -1,14 +1,8 @@
 import Editor from "../Editor/Editor";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
 import ColorSchemeToggle from "../ColorSchemeToggle";
-import {
-  ArchitectureRounded,
-  ArrowRightAltRounded,
-  GitHub,
-  MenuRounded,
-} from "@mui/icons-material";
+import { ArrowRightAltRounded, MenuRounded } from "@mui/icons-material";
 import {
   Box,
   colors,
@@ -22,6 +16,7 @@ import {
 import { styled } from "@mui/material/styles";
 import { EDITOR_MENU_ITEMS } from "./editorMenuItems";
 import { useState } from "react";
+import BrandLink from "../BrandLink";
 
 const StyledToolbar = styled(Toolbar)(() => ({
   flexWrap: "wrap",
@@ -52,23 +47,7 @@ export default function EditorPage() {
         ]}
       >
         <StyledToolbar sx={{ px: { xs: 0, sm: 1.5 }, columnGap: { md: 4 } }}>
-          <Typography
-            noWrap
-            variant="subtitle1"
-            fontWeight="semibold"
-            sx={{
-              mr: "auto",
-              display: "flex",
-              alignItems: "center",
-              px: (theme) => theme.spacing(1), // mimic padding of buttons
-            }}
-          >
-            <ArchitectureRounded
-              fontSize="small"
-              sx={{ marginInlineStart: -0.5, mb: 0.2 }}
-            />
-            MUI Theme Editor
-          </Typography>
+          <BrandLink />
 
           <Stack
             direction="row"
@@ -82,6 +61,7 @@ export default function EditorPage() {
                 target={item.target}
                 fontSize={"small"}
                 color="text.secondary"
+                underline="none"
               >
                 {item.label}
               </Link>
@@ -94,14 +74,6 @@ export default function EditorPage() {
             justifyContent="end"
             columnGap={1}
           >
-            <IconButton
-              href="https://github.com/everurstruly/mui-theme-builder"
-              color="inherit"
-              sx={{ minWidth: 0 }}
-            >
-              <GitHub />
-            </IconButton>
-
             <ColorSchemeToggle />
 
             <Box sx={{ display: { md: "none" } }}>
