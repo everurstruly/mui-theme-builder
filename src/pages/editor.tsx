@@ -1,4 +1,5 @@
 import Editor from "../Editor/Editor";
+import { Helmet } from "react-helmet";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import ColorSchemeToggle from "../ColorSchemeToggle";
@@ -28,6 +29,25 @@ const StyledToolbar = styled(Toolbar)(() => ({
 export default function EditorPage() {
   return (
     <>
+      <Helmet>
+        <title>Editor · MUI Theme Builder</title>
+        <meta
+          name="description"
+          content="Design and preview Material UI themes in real time with MUI Theme Builder's editor."
+        />
+        <meta name="robots" content="index,follow" />
+        <link rel="canonical" href="/editor" />
+
+        {/* Open Graph */}
+        <meta property="og:title" content="MUI Theme Builder — Editor" />
+        <meta
+          property="og:description"
+          content="Design and preview Material UI themes in real time with the editor."
+        />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="/editor" />
+      </Helmet>
+
       <AppBar
         position="static"
         color="inherit"
@@ -86,6 +106,7 @@ export default function EditorPage() {
     </>
   );
 }
+
 function MobileMenuButton() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
