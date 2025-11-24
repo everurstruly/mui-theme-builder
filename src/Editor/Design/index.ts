@@ -39,7 +39,6 @@ export type {
   ThemeDesignActions,
   ThemeDesignStore,
   ColorSchemeEdits,
-  ThemeTemplateRef,
   SerializableValue,
 } from "./designStore";
 

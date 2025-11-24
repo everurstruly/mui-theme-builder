@@ -1,7 +1,8 @@
 import createThemeOptionsFromEdits from "./createThemeOptionsFromEdits";
 import { useDesignStore } from "./designStore";
+import { parseThemeCode } from "./codeParser";
 import { transformDslToThemeOptions } from "./domainSpecificLanguage/dslToThemeOptionsTransformer";
-import { getTemplateById, extractThemeOptionsForScheme } from "../Templates/registry";
+import { extractThemeOptionsForScheme } from "../Templates/registry";
 import { type ThemeOptions } from "@mui/material";
 import { useMemo } from "react";
 
@@ -17,7 +18,7 @@ export default function useCreatedThemeOption(
 ): ThemeOptions {
   // Subscribe to all relevant state slices with selectors
   const activeColorScheme = useDesignStore((s) => s.activeColorScheme);
-  const templateId = useDesignStore((s) => s.selectedTemplateId.id);
+  const baseThemeCode = useDesignStore((s) => s.baseThemeCode);
   const baseVisualToolEdits = useDesignStore(
     (s) => s.colorSchemeIndependentVisualToolEdits
   );
@@ -29,10 +30,15 @@ export default function useCreatedThemeOption(
   const { visualToolEdits } = targetScheme === "light" ? lightMode : darkMode;
 
   return useMemo(() => {
-    // Resolve template metadata and extract the concrete ThemeOptions for the target scheme
-    const meta = getTemplateById(templateId) || getTemplateById("material");
-    if (!meta) throw new Error("No theme templates available in registry");
-    const template = extractThemeOptionsForScheme(meta.themeOptions, targetScheme);
+    // Parse base theme code to ThemeOptions
+    const baseTheme = parseThemeCode(baseThemeCode);
+    if (!baseTheme) {
+      console.error("Failed to parse base theme code");
+      return {};
+    }
+
+    // Extract scheme-specific options if template uses colorSchemes
+    const template = extractThemeOptionsForScheme(baseTheme, targetScheme);
 
     // Resolve DSL to executable ThemeOptions (only if DSL exists)
     const codeOverrides =
@@ -53,7 +59,7 @@ export default function useCreatedThemeOption(
       colorScheme: targetScheme,
     });
   }, [
-    templateId,
+    baseThemeCode,
     baseVisualToolEdits,
     codeOverridesDsl,
     visualToolEdits,

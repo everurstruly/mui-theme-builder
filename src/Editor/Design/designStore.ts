@@ -6,17 +6,6 @@ import { devtools } from "zustand/middleware";
 import type { EditorDesignExperienceId } from "../editorDesignExperience";
 import type { ThemeDsl } from "./domainSpecificLanguage/types";
 import type { ThemeOptions } from "@mui/material";
-import templatesRegistry, {
-  type TemplateMetadata,
-  getTemplateById,
-  isTemplateIdValid,
-  buildTemplatesTree,
-  type TreeNode as TemplateTreeNode,
-} from "../Templates/registry";
-
-// Initial template reference and derived initial title (use `label` from registry)
-const initialTemplateRef: ThemeTemplateRef = { type: "builtin", id: "material" };
-const initialTitle = getTemplateById(initialTemplateRef.id)?.label ?? "Untitled";
 
 export const useDesignStore = create<ThemeDesignStore>()(
   devtools((set, get) => ({
@@ -27,14 +16,14 @@ export const useDesignStore = create<ThemeDesignStore>()(
     light: createInitialColorSchemeEdits(),
     dark: createInitialColorSchemeEdits(),
 
-    // Template reference and human-facing title
-    selectedTemplateId: initialTemplateRef,
-    title: initialTitle,
-    templateHistory: [],
-
-    // Template Registry Integration
-    templatesRegistry: templatesRegistry,
-    templatesTree: buildTemplatesTree(),
+    // Base theme and metadata
+    baseThemeCode: "",
+    title: "MUI Default",
+    baseThemeMetadata: {
+      sourceTemplateId: "",
+      createdAt: Date.now(),
+      lastModified: Date.now(),
+    },
 
     colorSchemeIndependentVisualToolEdits: {},
 
@@ -259,7 +248,7 @@ export const useDesignStore = create<ThemeDesignStore>()(
       });
     },
 
-    resetToTemplate: () => {
+    resetToBase: () => {
       // Snapshot visual and code before wiping
       set((state) => ({
         visualHistoryPast: [
@@ -286,9 +275,7 @@ export const useDesignStore = create<ThemeDesignStore>()(
         codeOverridesError: null,
         light: createInitialColorSchemeEdits(),
         dark: createInitialColorSchemeEdits(),
-        // Reset title to current template's label (or fallback)
-        title: getTemplateById(get().selectedTemplateId.id)?.label ?? "Untitled",
-        hasUnsavedChanges: true,
+        hasUnsavedChanges: false,
       });
     },
 
@@ -367,31 +354,20 @@ export const useDesignStore = create<ThemeDesignStore>()(
       }));
     },
 
-    switchTemplate: (templateId: ThemeTemplateRef, keepEdits: boolean) => {
-      const currentTemplateId = get().selectedTemplateId.id;
-
-      // Determine new title: preserve existing if keeping edits, otherwise use template title or fallback
-      const newTitle = keepEdits
-        ? get().title
-        : getTemplateById(templateId.id)?.label ?? "Untitled";
-
+    setBaseTheme: (themeCodeOrDsl: string | ThemeDsl, metadata?: { sourceTemplateId?: string; title?: string }) => {
+      // Normalize to JSON string
+      const codeString = typeof themeCodeOrDsl === 'string'
+        ? themeCodeOrDsl
+        : JSON.stringify(themeCodeOrDsl);
+      
       set({
-        selectedTemplateId: templateId,
-        templateHistory: [...get().templateHistory, currentTemplateId],
-        // Clear edits if not keeping them
-        ...(keepEdits
-          ? {}
-          : {
-              colorSchemeIndependentVisualToolEdits: {},
-              codeOverridesSource: "",
-              codeOverridesDsl: {},
-              codeOverridesResolved: {},
-              codeOverridesFlattened: {},
-              codeOverridesError: null,
-              light: createInitialColorSchemeEdits(),
-              dark: createInitialColorSchemeEdits(),
-            }),
-        title: newTitle,
+        baseThemeCode: codeString,
+        baseThemeMetadata: {
+          sourceTemplateId: metadata?.sourceTemplateId,
+          createdAt: get().baseThemeMetadata?.createdAt || Date.now(),
+          lastModified: Date.now(),
+        },
+        title: metadata?.title || get().title,
         hasUnsavedChanges: false,
       });
     },
@@ -407,38 +383,12 @@ export const useDesignStore = create<ThemeDesignStore>()(
     selectExperience: (experienceId: EditorDesignExperienceId) => {
       set({ selectedExperienceId: experienceId });
     },
-
-    getTemplateFromRegistry: (templateId: string): TemplateMetadata | undefined => {
-      return getTemplateById(templateId);
-    },
-
-    isTemplateAvailable: (templateId: string): boolean => {
-      return isTemplateIdValid(templateId);
-    },
-
-    getTemplatesTree: () => {
-      return get().templatesTree;
-    },
-
-    getAllTemplates: () => {
-      return Object.values(get().templatesRegistry);
-    },
   }), { trace: true })
 );
 
 function createInitialColorSchemeEdits(): ColorSchemeEdits {
   return { visualToolEdits: {} };
 }
-
-/**
- * Reference to a base theme template.
- */
-export type ThemeTemplateRef = {
-  /** 'builtin' for static templates, 'imported' for user-provided */
-  type: "builtin" | "imported";
-  /** Template identifier (e.g., 'material', 'fluent') */
-  id: string;
-};
 
 /**
  * Color-scheme-specific modifications (light or dark mode).
@@ -458,18 +408,15 @@ export interface ThemeDesignState {
   selectedExperienceId: EditorDesignExperienceId;
 
   // === Base Layer ===
-  /** Currently selected base template */
-  selectedTemplateId: ThemeTemplateRef;
+  /** Base theme as JSON string (DSL format, portable and self-contained) */
+  baseThemeCode: string;
 
-  /** History of previously selected templates (for comparison feature) */
-  templateHistory: string[];
-
-  // === Template Registry ===
-  /** Registry of available templates */
-  templatesRegistry: Record<string, TemplateMetadata>;
-
-  /** Tree structure of templates (for UI organization) */
-  templatesTree: Record<string, TemplateTreeNode>;
+  /** Optional metadata about the base theme source for provenance tracking */
+  baseThemeMetadata?: {
+    sourceTemplateId?: string;
+    createdAt: number;
+    lastModified: number;
+  };
 
   // === Base Modifications (Color-Independent) ===
   /** Base visual edits (typography, spacing, shape, breakpoints, component defaults, etc.) */
@@ -539,40 +486,13 @@ export interface ThemeDesignState {
 export interface ThemeDesignActions {
   selectExperience: (experienceId: EditorDesignExperienceId) => void;
 
-  // === Template Registry Management ===
+  // === Base Theme Management ===
   /**
-   * Get a template from the registry by ID
-   * @param templateId - Template identifier
-   * @returns Template metadata or undefined if not found
+   * Set the base theme from a template, imported code, or DSL object.
+   * @param themeCodeOrDsl - JSON string, DSL object, or JavaScript code
+   * @param metadata - Optional metadata (sourceTemplateId, title)
    */
-  getTemplateFromRegistry: (templateId: string) => TemplateMetadata | undefined;
-
-  /**
-   * Check if a template is available in the registry
-   * @param templateId - Template identifier
-   * @returns True if template exists
-   */
-  isTemplateAvailable: (templateId: string) => boolean;
-
-  /**
-   * Get the templates tree structure for UI organization
-   * @returns Tree structure of templates
-   */
-  getTemplatesTree: () => Record<string, TemplateTreeNode>;
-
-  /**
-   * Get all available templates
-   * @returns Array of all template metadata
-   */
-  getAllTemplates: () => TemplateMetadata[];
-
-  // === Template Management ===
-  /**
-   * Switch to a different base template.
-   * @param templateId - New template reference
-   * @param keepEdits - If true, preserve existing modifications
-   */
-  switchTemplate: (templateId: ThemeTemplateRef, keepEdits: boolean) => void;
+  setBaseTheme: (themeCodeOrDsl: string | ThemeDsl, metadata?: { sourceTemplateId?: string; title?: string }) => void;
 
   // === Visual Edits ===
   /**
@@ -614,7 +534,7 @@ export interface ThemeDesignActions {
   /**
    * Reset to template base (clear all modifications).
    */
-  resetToTemplate: () => void;
+  resetToBase: () => void;
 
   // === UI State ===
   /**

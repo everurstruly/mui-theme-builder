@@ -18,7 +18,7 @@ export default function useCodeOverridesActions() {
   const applyCodeOverrides = useDesignStore((s) => s.applyCodeOverrides);
   const clearCodeOverrides = useDesignStore((s) => s.removeAllCodeOverrides);
   const resetToVisual = useDesignStore((s) => s.removeAllCodeOverrides);
-  const resetToTemplate = useDesignStore((s) => s.resetToTemplate);
+  const resetToBase = useDesignStore((s) => s.resetToBase);
 
   return useMemo(
     () => ({
@@ -31,9 +31,9 @@ export default function useCodeOverridesActions() {
       /** Reset to visual edits only (clear all code overrides) */
       resetToVisual,
 
-      /** Reset to template base (clear all modifications) */
-      resetToTemplate,
+      /** Reset to base theme (clear all modifications) */
+      resetToBase,
     }),
-    [applyCodeOverrides, clearCodeOverrides, resetToVisual, resetToTemplate]
+    [applyCodeOverrides, clearCodeOverrides, resetToVisual, resetToBase]
   );
 }

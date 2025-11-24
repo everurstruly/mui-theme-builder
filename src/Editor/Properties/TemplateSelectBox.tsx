@@ -2,20 +2,31 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import type { SelectChangeEvent } from "@mui/material/Select";
-import { useThemeDesignStore, getTemplateIds, templatesRegistry } from "../Design";
+import { useThemeDesignStore } from "../Design";
+import { useTemplateStore } from "../Templates/useTemplateStore";
+import { serializeThemeOptions } from "../Design/codeParser";
 
 export default function TemplateSelectBox() {
-  const selectedThemeTemplateId = useThemeDesignStore((state) => {
-    return state.selectedTemplateId.id;
-  });
-  const switchTemplate = useThemeDesignStore((state) => {
-    return state.switchTemplate;
-  });
+  const baseThemeMetadata = useThemeDesignStore((state) => state.baseThemeMetadata);
+  const setBaseTheme = useThemeDesignStore((state) => state.setBaseTheme);
+  const { getAllTemplates, getTemplateById } = useTemplateStore();
+
+  const templates = getAllTemplates();
+  const selectedTemplateId = baseThemeMetadata?.sourceTemplateId ?? "material";
 
   const handleChange = (event: SelectChangeEvent<string>) => {
     const themeId = event.target.value as string;
-    // switchTemplate takes (templateId, keepEdits) - false to reset edits when switching
-    switchTemplate({ type: "builtin", id: themeId }, false);
+    const template = getTemplateById(themeId);
+    if (!template) return;
+
+    // Serialize template ThemeOptions to JSON string
+    const themeCode = serializeThemeOptions(template.themeOptions);
+    
+    // Set base theme with metadata (store will manage createdAt/lastModified)
+    setBaseTheme(themeCode, {
+      sourceTemplateId: themeId,
+      title: template.label,
+    });
   };
 
   return (
@@ -27,7 +38,7 @@ export default function TemplateSelectBox() {
       <Select
         labelId="theme-select-label"
         id="theme-select"
-        value={selectedThemeTemplateId}
+        value={selectedTemplateId}
         onChange={handleChange}
         sx={{
           borderRadius: 2,
@@ -41,9 +52,9 @@ export default function TemplateSelectBox() {
           },
         }}
       >
-        {getTemplateIds().map((themeId) => (
-          <MenuItem key={themeId} value={themeId}>
-            {templatesRegistry[themeId]?.label || themeId}
+        {templates.map((template) => (
+          <MenuItem key={template.id} value={template.id}>
+            {template.label}
           </MenuItem>
         ))}
       </Select>

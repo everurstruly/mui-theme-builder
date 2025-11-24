@@ -58,22 +58,26 @@ const VALID_THEME_PROPERTIES = new Set([
 ]);
 
 /**
+ * 🛑 DANGEROUS PROPERTY KEYS FOR PROTOTYPE POLLUTION 🛑
+ * These keys are strictly forbidden at any nesting level within the theme object.
+ */
+const DANGEROUS_KEYS = new Set([
+  '__proto__',
+  'constructor',
+  'prototype',
+]);
+
+/**
  * Validates code before evaluation to ensure it's safe and valid ThemeOptions.
- * 
+ *
  * Validation steps:
  * 1. Parse JavaScript/TypeScript AST to ensure it's syntactically valid
  * 2. Verify it's an object literal (not arbitrary code)
  * 3. Check that top-level properties are valid ThemeOptions keys
- * 4. Warn about potentially problematic values
- * 
+ * 4. Perform deep AST traversal to enforce strict blocklisting of dangerous expressions and keys.
+ *
  * @param source - JavaScript/TypeScript code string
  * @returns Validation result with errors/warnings
- * 
- * @example
- * const result = validateCodeBeforeEvaluation('{ palette: { primary: { main: "#ff0000" } } }');
- * if (!result.valid) {
- *   console.error(result.errors);
- * }
  */
 export function validateCodeBeforeEvaluation(source: string): ValidationResult {
   const errors: ValidationError[] = [];
@@ -85,9 +89,6 @@ export function validateCodeBeforeEvaluation(source: string): ValidationResult {
   }
 
   // Step 1: Parse AST to validate syntax
-  // Accept both full editor content (with header/footer) and raw object literals.
-  // If the source contains a `const theme = { ... };` wrapper, extract the inner object
-  // before parsing so comments/TS annotations don't make the wrapped expression invalid.
   const objectMatch = /const\s+theme(?:\s*:\s*[^=]+)?\s*=\s*\{([\s\S]*?)\};/m.exec(source);
   const parseSource = objectMatch ? `{${objectMatch[1]}}` : source;
 
@@ -166,6 +167,17 @@ export function validateCodeBeforeEvaluation(source: string): ValidationResult {
       });
       continue;
     }
+    
+    // 💥 NEW CHECK: Block dangerous keys at the top level
+    if (DANGEROUS_KEYS.has(keyName)) {
+       errors.push({
+         message: `Use of the reserved property key "${keyName}" is strictly forbidden for security reasons.`,
+         line: property.loc?.start.line,
+         column: property.loc?.start.column,
+         severity: 'error',
+       });
+       continue;
+    }
 
     // Check if property is a valid ThemeOptions key
     if (!VALID_THEME_PROPERTIES.has(keyName)) {
@@ -180,13 +192,7 @@ export function validateCodeBeforeEvaluation(source: string): ValidationResult {
     }
   }
 
-  // Step 4: Additional checks for problematic patterns
-  // - Enforce strict rules for `components.*.styleOverrides.*` and
-  //   `components.*.variants[*].style` functions: only concise arrow
-  //   functions of the exact shape `({ theme }) => ({ ... })` are allowed.
-  // - Disallow spread elements, computed property keys in these override
-  //   objects. Treat violations as errors (block applying).
-
+  // Step 4: Additional checks for problematic patterns via deep AST traversal
   const nodeLimits = { maxDepth: 12, maxNodes: 5000 };
   let nodesVisited = 0;
 
@@ -273,11 +279,7 @@ export function validateCodeBeforeEvaluation(source: string): ValidationResult {
 
     switch (node.type) {
       case 'Literal':
-        // Literals are allowed generally, but when they appear in color-related
-        // paths (palette.* or keys containing 'color' or color role keys like
-        // 'main','light','dark','contrastText') we must ensure they are a
-        // supported color format. MUI only accepts #hex, rgb/rgba, hsl/hsla,
-        // or color() not named CSS keywords like 'red'.
+        // ... existing color format validation logic ...
         if (typeof node.value === 'string') {
           const lastKey = path[path.length - 1] || '';
           const isColorPath = path.includes('palette') || /color/i.test(lastKey) || ['main','light','dark','contrastText'].includes(lastKey);
@@ -319,8 +321,24 @@ export function validateCodeBeforeEvaluation(source: string): ValidationResult {
               severity: 'error',
             });
           }
+          
+          // Get property key name for dangerous key check
+          const keyName = getKeyName(p.key);
+
+          // 💥 NEW CHECK: Block dangerous keys at deep levels
+          if (DANGEROUS_KEYS.has(keyName)) {
+             const loc = getLoc(p);
+             errors.push({
+               message: `Use of the reserved property key "${keyName}" is strictly forbidden for security reasons.`,
+               line: loc.line,
+               column: loc.column,
+               severity: 'error',
+             });
+             continue; // Skip processing the value if the key is bad
+          }
+
           const val = p.value || p.argument;
-          checkValueNode(val, path.concat([String(p.key?.name || p.key?.value || 'unknown')]));
+          checkValueNode(val, path.concat([keyName]));
         }
         return;
       case 'ArrayExpression':
@@ -440,6 +458,7 @@ export function validateCodeBeforeEvaluation(source: string): ValidationResult {
                 errors.push({ message: `Computed keys in styleOverrides are not allowed for ${compName}`, line: loc.line, column: loc.column, severity: 'error' });
                 continue;
               }
+              // The deep check for DANGEROUS_KEYS is already done in checkValueNode(soVal, ...)
               const soVal = soProp.value || soProp.argument;
               checkValueNode(soVal, ['components', compName, 'styleOverrides', getKeyName(soProp.key)]);
             }
@@ -453,6 +472,7 @@ export function validateCodeBeforeEvaluation(source: string): ValidationResult {
               if (vp.type !== 'Property') continue;
               const vKey = vp.key.type === 'Identifier' ? vp.key.name : getKeyName(vp.key);
               if (vKey === 'style') {
+                // The deep check for DANGEROUS_KEYS is already done in checkValueNode(vp.value, ...)
                 checkValueNode(vp.value, ['components', compName, 'variants', 'style']);
               }
             }
@@ -502,25 +522,24 @@ export function validateCodeBeforeEvaluation(source: string): ValidationResult {
 }
 
 
-
 /**
  * Hook for code editor validation.
  * Provides validation function and current validation state.
- * 
+ *
  * @returns Validation utilities
- * 
+ *
  * @example
  * function CodeEditor() {
- *   const { validate } = useCodeOverridesValidation();
- *   
- *   const handleApply = (code: string) => {
- *     const result = validate(code);
- *     if (!result.valid) {
- *       showErrors(result.errors);
- *       return;
- *     }
- *     applyChanges(code);
- *   };
+ * const { validate } = useCodeOverridesValidation();
+ *
+ * const handleApply = (code: string) => {
+ * const result = validate(code);
+ * if (!result.valid) {
+ * showErrors(result.errors);
+ * return;
+ * }
+ * applyChanges(code);
+ * };
  * }
  */
 export function useCodeOverridesValidation() {
