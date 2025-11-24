@@ -6,6 +6,13 @@ import { devtools } from "zustand/middleware";
 import type { EditorDesignExperienceId } from "../editorDesignExperience";
 import type { ThemeDsl } from "./domainSpecificLanguage/types";
 import type { ThemeOptions } from "@mui/material";
+import templatesRegistry, {
+  type TemplateMetadata,
+  getTemplateById,
+  isTemplateIdValid,
+  buildTemplatesTree,
+  type TreeNode as TemplateTreeNode,
+} from "../Templates/registry";
 
 export const useDesignStore = create<ThemeDesignStore>()(
   devtools((set, get) => ({
@@ -18,6 +25,10 @@ export const useDesignStore = create<ThemeDesignStore>()(
 
     selectedTemplateId: { type: "builtin", id: "material" },
     templateHistory: [],
+
+    // Template Registry Integration
+    templatesRegistry: templatesRegistry,
+    templatesTree: buildTemplatesTree(),
 
     colorSchemeIndependentVisualToolEdits: {},
 
@@ -379,6 +390,22 @@ export const useDesignStore = create<ThemeDesignStore>()(
     selectExperience: (experienceId: EditorDesignExperienceId) => {
       set({ selectedExperienceId: experienceId });
     },
+
+    getTemplateFromRegistry: (templateId: string): TemplateMetadata | undefined => {
+      return getTemplateById(templateId);
+    },
+
+    isTemplateAvailable: (templateId: string): boolean => {
+      return isTemplateIdValid(templateId);
+    },
+
+    getTemplatesTree: () => {
+      return get().templatesTree;
+    },
+
+    getAllTemplates: () => {
+      return Object.values(get().templatesRegistry);
+    },
   }), { trace: true })
 );
 
@@ -419,6 +446,13 @@ export interface ThemeDesignState {
 
   /** History of previously selected templates (for comparison feature) */
   templateHistory: string[];
+
+  // === Template Registry ===
+  /** Registry of available templates */
+  templatesRegistry: Record<string, TemplateMetadata>;
+
+  /** Tree structure of templates (for UI organization) */
+  templatesTree: Record<string, TemplateTreeNode>;
 
   // === Base Modifications (Color-Independent) ===
   /** Base visual edits (typography, spacing, shape, breakpoints, component defaults, etc.) */
@@ -484,6 +518,33 @@ export interface ThemeDesignState {
  */
 export interface ThemeDesignActions {
   selectExperience: (experienceId: EditorDesignExperienceId) => void;
+
+  // === Template Registry Management ===
+  /**
+   * Get a template from the registry by ID
+   * @param templateId - Template identifier
+   * @returns Template metadata or undefined if not found
+   */
+  getTemplateFromRegistry: (templateId: string) => TemplateMetadata | undefined;
+
+  /**
+   * Check if a template is available in the registry
+   * @param templateId - Template identifier
+   * @returns True if template exists
+   */
+  isTemplateAvailable: (templateId: string) => boolean;
+
+  /**
+   * Get the templates tree structure for UI organization
+   * @returns Tree structure of templates
+   */
+  getTemplatesTree: () => Record<string, TemplateTreeNode>;
+
+  /**
+   * Get all available templates
+   * @returns Array of all template metadata
+   */
+  getAllTemplates: () => TemplateMetadata[];
 
   // === Template Management ===
   /**

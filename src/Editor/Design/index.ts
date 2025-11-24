@@ -18,14 +18,21 @@ export { transformDslToThemeOptions } from "./domainSpecificLanguage/dslToThemeO
 
 // === Store ===
 export { useDesignStore as useThemeDesignStore } from "./designStore";
-
-// === Templates ===
+// === Template Registry (New) ===
 export {
-  getDesignTemplate as getThemeTemplate,
-  listDesignTemplateIds as listThemeTemplateIds,
-  THEME_TEMPLATE_METADATA,
-  type ThemeTemplateId,
-} from "./designTemplates";
+  templatesRegistry,
+  getTemplateIds,
+  buildTemplatesTree,
+  buildTemplatesIndex,
+  findFolderChain,
+  getFolderNodeByChain,
+  isTemplateIdValid,
+  getValidTemplateId,
+  getTemplateById,
+  registerTemplate,
+  type TemplateMetadata,
+  type TreeNode as TemplateTreeNode,
+} from "../Templates/registry";
 
 export type {
   ThemeDesignState,

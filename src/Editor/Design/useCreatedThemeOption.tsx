@@ -1,7 +1,7 @@
 import createThemeOptionsFromEdits from "./createThemeOptionsFromEdits";
 import { useDesignStore } from "./designStore";
 import { transformDslToThemeOptions } from "./domainSpecificLanguage/dslToThemeOptionsTransformer";
-import { getDesignTemplate } from "./designTemplates";
+import { getTemplateById, extractThemeOptionsForScheme } from "../Templates/registry";
 import { type ThemeOptions } from "@mui/material";
 import { useMemo } from "react";
 
@@ -29,8 +29,10 @@ export default function useCreatedThemeOption(
   const { visualToolEdits } = targetScheme === "light" ? lightMode : darkMode;
 
   return useMemo(() => {
-    // Get base template
-    const template = getDesignTemplate(templateId, targetScheme);
+    // Resolve template metadata and extract the concrete ThemeOptions for the target scheme
+    const meta = getTemplateById(templateId) || getTemplateById("material");
+    if (!meta) throw new Error("No theme templates available in registry");
+    const template = extractThemeOptionsForScheme(meta.themeOptions, targetScheme);
 
     // Resolve DSL to executable ThemeOptions (only if DSL exists)
     const codeOverrides =
