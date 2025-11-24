@@ -20,8 +20,6 @@ const useEditorUiStore = create(
         "explorer",
         "explorer.mobile",
       ] as EditorUiPanels[],
-      // Navigation state for folder browsing in the explorer (array of folder keys)
-      activeFolder: [] as string[],
     },
 
     (set) => ({
@@ -58,27 +56,6 @@ const useEditorUiStore = create(
       showPanel: (panel: EditorUiPanels) => {
         set((state) => ({
           hiddenPanels: state.hiddenPanels.filter((p) => p !== panel),
-        }));
-      },
-
-      // Folder navigation helpers
-      setActiveFolder: (chain: string[]) => {
-        set(() => ({ activeFolder: chain }));
-      },
-
-      clearActiveFolder: () => {
-        set(() => ({ activeFolder: [] }));
-      },
-
-      markUnsavedChanges: () => {
-        set(() => ({
-          hasSavedChanges: false,
-        }));
-      },
-
-      saveChanges: () => {
-        set(() => ({
-          hasSavedChanges: true,
         }));
       },
     })
