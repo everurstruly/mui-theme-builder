@@ -4,30 +4,20 @@ import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import IconButton from "@mui/material/IconButton";
-import CloseIcon from "@mui/icons-material/Close";
-import { ContentCopy } from "@mui/icons-material";
-import {
-  Stack,
-  Box,
-  MenuItem,
-  Select,
-  Chip,
-  Typography,
-} from "@mui/material";
+import { CancelOutlined, ContentCopyOutlined } from "@mui/icons-material";
+import { Stack, Box, Typography, Paper, Tabs, Tab } from "@mui/material";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { useCreatedThemeOption } from "../Design";
+import FlashStateContent from "../../lib/FlashStateButton";
 
 type ExportType = "themeOptions" | "themeObject";
 type ExportFormat = "js" | "ts" | "json";
-type FileType = "theme" | "package" | "install";
 
 export default function DesignExportButton() {
   const [open, setOpen] = React.useState(false);
-  const [packageManager] = React.useState<"npm" | "yarn" | "pnpm" | "bun">("npm");
   const [exportType, setExportType] = React.useState<ExportType>("themeOptions");
-  const [exportFormat, setExportFormat] = React.useState<ExportFormat>("ts");
-  const [activeFile, setActiveFile] = React.useState<FileType>("theme");
+  const [exportFormat] = React.useState<ExportFormat>("ts");
   const themeOptions = useCreatedThemeOption();
 
   const handleClickOpen = () => {
@@ -38,7 +28,7 @@ export default function DesignExportButton() {
     setOpen(false);
   };
 
-  const handleCopy = async (text: string) => {
+  const copyToClipboard = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
     } catch (err) {
@@ -46,96 +36,79 @@ export default function DesignExportButton() {
     }
   };
 
-  const getInstallCommand = () => {
-    const pkg = "@mui/material @emotion/react @emotion/styled";
-    switch (packageManager) {
-      case "npm":
-        return `npm install ${pkg}`;
-      case "yarn":
-        return `yarn add ${pkg}`;
-      case "pnpm":
-        return `pnpm add ${pkg}`;
-      case "bun":
-        return `bun add ${pkg}`;
-      default:
-        return `npm install ${pkg}`;
-    }
-  };
-
   const getThemeCode = () => {
-    if (!themeOptions) return "// No theme available";
+    const joinLines = (lines: string[]) => lines.join("\n");
+    const makeWithJson = (prefix: string, suffix = ";") => {
+      const out: string[] = [];
+      if (jsonLines.length === 0) return prefix + suffix;
+
+      // Attach first JSON line to the prefix so the assignment/header sits on the same line
+      out.push(prefix + jsonLines[0]);
+      for (let i = 1; i < jsonLines.length; i++) out.push(jsonLines[i]);
+      out[out.length - 1] = out[out.length - 1] + suffix;
+      return joinLines(out);
+    };
+
+    if (!themeOptions) {
+      return joinLines(["// No theme available"]);
+    }
 
     const themeJson = JSON.stringify(themeOptions, null, 2);
+    const jsonLines = themeJson.split("\n");
 
     // JSON format - just the raw theme options
     if (exportFormat === "json") {
-      return themeJson;
+      return joinLines(jsonLines);
     }
 
     // ThemeOptions only (config object)
     if (exportType === "themeOptions") {
       if (exportFormat === "js") {
-        return `export const themeOptions = ${themeJson};`;
+        return makeWithJson("export const themeOptions = ");
       } else {
         // TypeScript
-        return `import type { ThemeOptions } from '@mui/material/styles';
-
-export const themeOptions: ThemeOptions = ${themeJson};`;
+        const header = "import type { ThemeOptions } from '@mui/material/styles';";
+        const body = makeWithJson("export const themeOptions: ThemeOptions = ");
+        return joinLines([header, "", body, ""]);
       }
     }
 
     // Whole Theme object (with createTheme)
     if (exportFormat === "js") {
-      return `import { createTheme } from '@mui/material/styles';
-
-const themeOptions = ${themeJson};
-
-const theme = createTheme(themeOptions);
-
-export default theme;`;
+      const parts: string[] = [];
+      parts.push("import { createTheme } from '@mui/material/styles';");
+      parts.push("");
+      parts.push(makeWithJson("const themeOptions = ", ""));
+      parts.push("");
+      parts.push("const theme = createTheme(themeOptions);");
+      parts.push("");
+      parts.push("export default theme;");
+      parts.push("");
+      return joinLines(parts);
     } else {
       // TypeScript
-      return `import { createTheme, type ThemeOptions } from '@mui/material/styles';
-
-const themeOptions: ThemeOptions = ${themeJson};
-
-const theme = createTheme(themeOptions);
-
-export default theme;`;
+      const parts: string[] = [];
+      parts.push(
+        "import { createTheme, type ThemeOptions } from '@mui/material/styles';"
+      );
+      parts.push("");
+      parts.push(makeWithJson("const themeOptions: ThemeOptions = ", ""));
+      parts.push("");
+      parts.push("const theme = createTheme(themeOptions);");
+      parts.push("");
+      parts.push("export default theme;");
+      parts.push("");
+      return joinLines(parts);
     }
   };
 
-  const getPackageJson = () => {
-    return `{
-  "dependencies": {
-    "@mui/material": "^6.0.0",
-    "@emotion/react": "^11.13.0",
-    "@emotion/styled": "^11.13.0"
-  }
-}`;
-  };
-
   const getFileContent = () => {
-    if (activeFile === "install") return getInstallCommand();
-    if (activeFile === "package") return getPackageJson();
     return getThemeCode();
   };
 
-  const getLanguage = () => {
-    if (activeFile === "install") return "bash";
-    if (activeFile === "package") return "json";
-    if (exportFormat === "json") return "json";
-    return exportFormat === "js" ? "javascript" : "typescript";
-  };
-
-  const getFileName = () => {
-    if (activeFile === "install") return "install";
-    if (activeFile === "package") return "package.json";
-    
-    // Theme file name based on format
-    if (exportFormat === "json") return "theme.json";
-    return exportFormat === "js" ? "theme.js" : "theme.ts";
-  };
+  function handleCopyContent() {
+    copyToClipboard(getFileContent());
+  }
 
   return (
     <>
@@ -143,15 +116,6 @@ export default theme;`;
         variant="contained"
         aria-label="Copy and Implement Selected Theme"
         onClick={() => handleClickOpen()}
-        // startIcon={<FileCopyRounded />}
-        sx={{
-          borderRadius: 2.5,
-          whiteSpace: "nowrap",
-
-          "& .MuiSvgIcon-root": {
-            fontSize: "1rem", // FIXME: match font size (not literialy 13px)
-          },
-        }}
       >
         Copy Theme
       </Button>
@@ -160,8 +124,8 @@ export default theme;`;
         open={open}
         onClose={handleClose}
         aria-labelledby="export-context-dialog"
-        fullWidth
         maxWidth="sm"
+        fullWidth
         slotProps={{
           paper: {
             sx: {
@@ -171,147 +135,108 @@ export default theme;`;
         }}
       >
         <DialogTitle
-          id="export-context-dialog"
-          component={"div"}
           sx={{
             display: "flex",
             flexDirection: "column",
-            rowGap: 2,
-            m: 0,
-            pt: 2,
-            px: 3,
           }}
         >
-          <Stack direction="row" justifyContent="space-between" alignItems="center">
-            <Typography variant="subtitle2">Theme Export</Typography>
-
-            <IconButton
-              size="small"
-              aria-label="close"
-              onClick={handleClose}
-              sx={{ color: "text.secondary" }}
-            >
-              <CloseIcon />
-            </IconButton>
-          </Stack>
-
-          {/* <Tabs
-            value={packageManager}
-            onChange={(_, val) => setPackageManager(val)}
-            sx={{
-              minHeight: 36,
-              mb: 2,
-              "& .MuiTab-root": {
-                minHeight: 36,
-                py: 0.5,
-                px: 2,
-                minWidth: 60,
-                fontSize: "0.875rem",
-                textTransform: "lowercase",
-              },
-            }}
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+            sx={{ pt: 1, pb: 2 }}
           >
-            <Tab value="pnpm" label="pnpm" />
-            <Tab value="npm" label="npm" />
-            <Tab value="yarn" label="yarn" />
-            <Tab value="bun" label="bun" />
-          </Tabs> */}
+            <Typography variant="h6">MUI Theme Designed — Copy/Export</Typography>
 
-          <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
-            <Select
-              value={exportType}
-              onChange={(e) => setExportType(e.target.value as ExportType)}
-              size="small"
-              sx={{
-                minWidth: 140,
-                borderRadius: 2,
-                fontSize: "12px",
-              }}
-            >
-              <MenuItem value="themeOptions">ThemeOptions</MenuItem>
-              <MenuItem value="themeObject">Theme Object</MenuItem>
-            </Select>
-
-            <Select
-              value={exportFormat}
-              onChange={(e) => setExportFormat(e.target.value as ExportFormat)}
-              size="small"
-              sx={{
-                minWidth: 120,
-                borderRadius: 2,
-                fontSize: "12px",
-              }}
-            >
-              <MenuItem value="ts">TypeScript</MenuItem>
-              <MenuItem value="js">JavaScript</MenuItem>
-              <MenuItem value="json">JSON</MenuItem>
-            </Select>
-
-            <Chip
-              label="install"
-              size="small"
-              color={activeFile === "install" ? "primary" : "default"}
-              onClick={() => setActiveFile("install")}
-              sx={{ cursor: "pointer" }}
-            />
-            <Chip
-              label={getFileName()}
-              size="small"
-              color={activeFile === "theme" ? "primary" : "default"}
-              onClick={() => setActiveFile("theme")}
-              sx={{ cursor: "pointer" }}
-            />
-            <Chip
-              label="package.json"
-              size="small"
-              color={activeFile === "package" ? "primary" : "default"}
-              onClick={() => setActiveFile("package")}
-              sx={{ cursor: "pointer" }}
-            />
-
-            <IconButton
-              onClick={() => handleCopy(getFileContent())}
-              size="small"
-              sx={{
-                ml: "auto !important",
-              }}
-            >
-              <ContentCopy fontSize="small" />
+            <IconButton size="small" aria-label="close" onClick={handleClose}>
+              <CancelOutlined />
             </IconButton>
           </Stack>
         </DialogTitle>
 
-        <DialogContent
-          sx={{
-            p: 2,
-            mt: 0, // fix: remove annoying jittering
-            position: "relative",
-            "&::-webkit-scrollbar": {
-              width: "0px",
-            },
-          }}
-        >
-          <Box
-            component={SyntaxHighlighter}
-            language={getLanguage()}
-            style={vscDarkPlus}
-            showLineNumbers
-            sx={{
-              // bgcolor: (theme) =>
-              //   theme.palette.mode === "dark" ? "#1e1e1e" : "#f5f5f5",
-              px: 2.6,
-              mx: 2,
-              lineHeight: "1.5",
-              fontSize: "caption.fontSize",
-              borderRadius: 4,
-              overflow: "hidden",
-            }}
-          >
-            {getFileContent()}
-          </Box>
+        <DialogContent>
+          <Paper sx={{ position: "relative" }}>
+            <Box
+              component={SyntaxHighlighter}
+              language={"typescript"}
+              style={vscDarkPlus}
+              showLineNumbers
+              sx={{
+                scrollbarWidth: "none",
+                overflow: "auto",
+                height: "65vh",
+                margin: "0 !important",
+                paddingTop: "6rem !important",
+              }}
+            >
+              {getFileContent()}
+            </Box>
+
+            <Stack
+              direction={"row"}
+              sx={{
+                alignItems: "center",
+                justifyContent: "flex-end",
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                zIndex: 1,
+                color: "common.white",
+                backdropFilter: "blur(20px)",
+                borderBottom: 1,
+                borderBottomColor: "#333",
+              }}
+            >
+              <Tabs
+                sx={{
+                  px: 2,
+                  marginInlineEnd: "auto",
+                }}
+              >
+                <Tab
+                  label="Theme Options"
+                  value="themeOptions"
+                  sx={{
+                    py: 3,
+                    color:
+                      exportType === "themeOptions"
+                        ? "primary.light"
+                        : "common.white",
+                  }}
+                  onClick={() => setExportType("themeOptions")}
+                />
+                {/* <Tab
+                  label="Colors (Light)"
+                  sx={{
+                    py: 3,
+                    color: "common.white",
+                  }}
+                />
+                <Tab
+                  label="Colors (Dark)"
+                  sx={{
+                    py: 3,
+                    color: "common.white",
+                  }}
+                /> */}
+              </Tabs>
+
+              <FlashStateContent
+                flash="Copied!"
+                flashDurationMs={1200}
+                onClick={() => handleCopyContent()}
+                sx={{ mr: 1 }}
+              >
+                <ContentCopyOutlined
+                  fontSize="small"
+                  sx={{ color: "common.white" }}
+                />
+              </FlashStateContent>
+            </Stack>
+          </Paper>
         </DialogContent>
       </Dialog>
     </>
   );
 }
-
