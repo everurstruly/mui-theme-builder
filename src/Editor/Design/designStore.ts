@@ -392,7 +392,7 @@ export const useDesignStore = create<ThemeDesignStore>()(
               dark: createInitialColorSchemeEdits(),
             }),
         title: newTitle,
-        hasUnsavedChanges: true,
+        hasUnsavedChanges: false,
       });
     },
 
