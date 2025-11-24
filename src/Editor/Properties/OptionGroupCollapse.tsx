@@ -71,8 +71,8 @@ export default function OptionGroupCollapse({
             sx={{
               userSelect: "none",
               cursor: "pointer",
-              pt: 6,
-              pb: 3,
+              pt: 4.6,
+              pb: 2.6,
             }}
             onClick={(e) => {
               e.stopPropagation();
