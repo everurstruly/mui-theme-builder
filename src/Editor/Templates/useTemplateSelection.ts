@@ -23,7 +23,7 @@ export default function useTemplateSelection(options?: UseTemplateSelectionOptio
   );
 
   const hasUnsavedChanges = useThemeDesignStore((s) => s.hasUnsavedChanges);
-  const setBaseTheme = useThemeDesignStore((s) => s.setBaseTheme);
+  const loadNew = useThemeDesignStore((s) => s.loadNew);
 
   const [pendingChange, setPendingChange] = useState<PendingChange>(null);
   const [shouldKeepUnsavedChanges, setShouldKeepUnsavedChanges] = useState<
@@ -41,13 +41,13 @@ export default function useTemplateSelection(options?: UseTemplateSelectionOptio
       if (!template) return;
 
       const themeCode = serializeThemeOptions(template.themeOptions);
-      setBaseTheme(themeCode, { sourceTemplateId: templateId, title: template.label });
+      loadNew(themeCode, { sourceTemplateId: templateId, title: template.label });
 
       // clear pending state
       setPendingChange(null);
       setShouldKeepUnsavedChanges(false);
     },
-    [getTemplateById, setBaseTheme]
+    [getTemplateById, loadNew]
   );
 
   const applyKeepingUnsaved = useCallback(() => {
