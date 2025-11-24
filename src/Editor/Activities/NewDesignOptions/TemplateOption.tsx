@@ -10,65 +10,33 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import { useThemeDesignStore, type TemplateMetadata } from "../../Design";
 import { AdsClickOutlined, ShuffleOutlined } from "@mui/icons-material";
-import { useState } from "react";
-import { useTemplateStore } from "../../Templates/useTemplateStore";
-import { serializeThemeOptions } from "../../Design/codeParser";
+import useTemplateSelection from "../../Templates/useTemplateSelection";
 import DesignColorSchemeToggle from "../DesignColorSchemeToggle";
 
 export default function TemplateOption({ onClose }: { onClose: () => void }) {
-  const [displayChangeConfirmation, setDisplayChangeConfirmation] = useState({
-    state: false,
-    templateId: "",
-  });
-  const hasUnsavedChanges = useThemeDesignStore((s) => s.hasUnsavedChanges);
-  const [shouldKeepUnsavedChanges, setShouldKeepUnsavedChanges] = useState(
-    hasUnsavedChanges ? null : true
-  );
-  const baseThemeMetadata = useThemeDesignStore((s) => s.baseThemeMetadata);
-  const setBaseTheme = useThemeDesignStore((s) => s.setBaseTheme);
-  const { getAllTemplates, getTemplateById } = useTemplateStore();
-
-  const allTemplates = getAllTemplates();
-  const selectedTemplateId = baseThemeMetadata?.sourceTemplateId;
+  const {
+    templates: allTemplates,
+    selectedTemplateId,
+    pendingChange,
+    selectTemplate,
+    confirmSwitch,
+    selectRandomTemplate,
+    getColorSamples,
+    clearPending,
+  } = useTemplateSelection({ autoConfirm: false });
 
   function cancelChangeOperation() {
-    setDisplayChangeConfirmation({ state: false, templateId: "" });
+    clearPending();
     onClose();
   }
 
-  function discardUnsavedChanges(templateId: string) {
-    setDisplayChangeConfirmation({ state: false, templateId: "" });
-    setShouldKeepUnsavedChanges(false);
-
-    const template = getTemplateById(templateId);
-    if (!template) return;
-
-    const themeCode = serializeThemeOptions(template.themeOptions);
-    setBaseTheme(themeCode, { sourceTemplateId: templateId, title: template.label });
-  }
-
   function selectRandom() {
-    if (!allTemplates || allTemplates.length === 0) return;
-
-    let candidates = allTemplates.map((t) => t.id);
-    if (candidates.length > 1) {
-      candidates = candidates.filter((id) => id !== selectedTemplateId);
-    }
-
-    const idx = Math.floor(Math.random() * candidates.length);
-    const chosen = candidates[idx];
-    handleSelectTemplate(chosen);
+    selectRandomTemplate();
   }
 
   const handleSelectTemplate = (templateId: string) => {
-    if (shouldKeepUnsavedChanges === null) {
-      setDisplayChangeConfirmation({ state: true, templateId });
-      return;
-    }
-
-    discardUnsavedChanges(templateId);
+    selectTemplate(templateId);
   };
 
   return (
@@ -92,7 +60,7 @@ export default function TemplateOption({ onClose }: { onClose: () => void }) {
       <List component={Stack} sx={{ gap: 1 }}>
         {allTemplates.map((template) => {
           const isSelected = selectedTemplateId === template.id;
-          const colorSamples = extractColorSamples(template);
+          const colorSamples = getColorSamples(template);
 
           return (
             <ListItemButton
@@ -146,7 +114,7 @@ export default function TemplateOption({ onClose }: { onClose: () => void }) {
       </List>
 
       <Dialog
-        open={displayChangeConfirmation.state}
+        open={Boolean(pendingChange)}
         onClose={() => cancelChangeOperation()}
         sx={{ top: "-20%" }}
         slotProps={{
@@ -175,16 +143,18 @@ export default function TemplateOption({ onClose }: { onClose: () => void }) {
             spacing={3}
             sx={{ justifyContent: "center", mb: 1 }}
           >
-            <Button
-              color="warning"
-              onClick={() =>
-                discardUnsavedChanges(displayChangeConfirmation.templateId)
-              }
-            >
+            <Button color="warning" onClick={() => confirmSwitch(false)}>
               Discard all & Switch
             </Button>
 
-            <Button onClick={() => cancelChangeOperation()}>Keep them & Stay</Button>
+            <Button
+              onClick={() => {
+                confirmSwitch(true);
+                cancelChangeOperation();
+              }}
+            >
+              Keep them & Stay
+            </Button>
           </Stack>
         </DialogContent>
       </Dialog>
@@ -192,58 +162,4 @@ export default function TemplateOption({ onClose }: { onClose: () => void }) {
   );
 }
 
-/**
- * Extract color samples from a template's ThemeOptions
- * Returns an array of colors to display as preview swatches
- */
-function extractColorSamples(template: TemplateMetadata): string[] {
-  const themeOptions = template.themeOptions;
-  const colors: string[] = [];
-
-  // Try to get colors from colorSchemes.light.palette
-  if (
-    themeOptions.colorSchemes &&
-    typeof themeOptions.colorSchemes === "object" &&
-    "light" in themeOptions.colorSchemes &&
-    themeOptions.colorSchemes.light &&
-    typeof themeOptions.colorSchemes.light === "object" &&
-    "palette" in themeOptions.colorSchemes.light
-  ) {
-    const palette = themeOptions.colorSchemes.light.palette as Record<
-      string,
-      unknown
-    >;
-
-    // Extract main colors from primary, secondary, error, warning, info, success
-    const colorKeys = ["primary", "secondary", "error", "warning", "info"] as const;
-
-    for (const key of colorKeys) {
-      const color = palette[key];
-      if (color && typeof color === "object" && "main" in color) {
-        colors.push(color.main as string);
-        if (colors.length >= 6) break;
-      }
-    }
-  }
-
-  // If we don't have enough colors, try the old palette format
-  if (colors.length < 3 && themeOptions.palette) {
-    const palette = themeOptions.palette;
-    const colorKeys = ["primary", "secondary", "error"] as const;
-
-    for (const key of colorKeys) {
-      const color = palette[key];
-      if (color && typeof color === "object" && "main" in color) {
-        colors.push(color.main as string);
-        if (colors.length >= 6) break;
-      }
-    }
-  }
-
-  // Ensure we have at least some colors (fallback)
-  if (colors.length === 0) {
-    colors.push("#1976d2", "#dc004e", "#ff9800");
-  }
-
-  return colors.slice(0, 6);
-}
+// color sample extraction moved into the hook (getColorSamples)
