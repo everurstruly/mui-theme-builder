@@ -47,14 +47,13 @@ createRoot(document.getElementById("root")!).render(
               styleOverrides: {
                 root: {
                   boxShadow: "none",
-                  borderRadius: 2,
+                  borderRadius: "10px",
                   variants: [
                     {
                       props: { variant: "outlined" },
                       style: {
-                        // FIXME: OVERRIDE NOT APPLIED
                         "& .MuiSvgIcon-root": {
-                          fontSize: 18,
+                          fontSize: "18px",
                         },
                       },
                     },
@@ -73,13 +72,13 @@ createRoot(document.getElementById("root")!).render(
       )}
     >
       <CssBaseline />
-      {/* Global keyboard shortcuts */}
       <EditorGlobalKeyboardShortcuts />
       <BrowserRouter>
         <Routes>
           <Route index element={<HomePage />} />
           <Route path="/editor/viewport" element={<ViewportPage />} />
           <Route path="/editor" element={<EditorPage />} />
+          <Route path="*" element={<EditorPage />} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>
