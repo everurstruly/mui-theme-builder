@@ -12,7 +12,9 @@ import {
 } from "@mui/material";
 import { useThemeDesignStore, type TemplateMetadata } from "../../Design";
 import { AdsClickOutlined, ShuffleOutlined } from "@mui/icons-material";
-import { useMemo, useState } from "react";
+import { useState } from "react";
+import { useTemplateStore } from "../../Templates/useTemplateStore";
+import { serializeThemeOptions } from "../../Design/codeParser";
 import DesignColorSchemeToggle from "../DesignColorSchemeToggle";
 
 export default function TemplateOption({ onClose }: { onClose: () => void }) {
@@ -24,14 +26,12 @@ export default function TemplateOption({ onClose }: { onClose: () => void }) {
   const [shouldKeepUnsavedChanges, setShouldKeepUnsavedChanges] = useState(
     hasUnsavedChanges ? null : true
   );
-  const selectedTemplateId = useThemeDesignStore((s) => s.selectedTemplateId.id);
-  const switchTemplate = useThemeDesignStore((s) => s.switchTemplate);
-  const templatesRegistry = useThemeDesignStore((s) => s.templatesRegistry);
+  const baseThemeMetadata = useThemeDesignStore((s) => s.baseThemeMetadata);
+  const setBaseTheme = useThemeDesignStore((s) => s.setBaseTheme);
+  const { getAllTemplates, getTemplateById } = useTemplateStore();
 
-  const allTemplates = useMemo(
-    () => Object.values(templatesRegistry),
-    [templatesRegistry]
-  );
+  const allTemplates = getAllTemplates();
+  const selectedTemplateId = baseThemeMetadata?.sourceTemplateId;
 
   function cancelChangeOperation() {
     setDisplayChangeConfirmation({ state: false, templateId: "" });
@@ -41,7 +41,12 @@ export default function TemplateOption({ onClose }: { onClose: () => void }) {
   function discardUnsavedChanges(templateId: string) {
     setDisplayChangeConfirmation({ state: false, templateId: "" });
     setShouldKeepUnsavedChanges(false);
-    switchTemplate({ type: "builtin", id: templateId }, false);
+
+    const template = getTemplateById(templateId);
+    if (!template) return;
+
+    const themeCode = serializeThemeOptions(template.themeOptions);
+    setBaseTheme(themeCode, { sourceTemplateId: templateId, title: template.label });
   }
 
   function selectRandom() {
