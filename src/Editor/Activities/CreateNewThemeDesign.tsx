@@ -18,13 +18,13 @@ export default function CreateNewThemeDesign() {
   return (
     <>
       <Button
-        startIcon={<Add sx={{ fontSize: "1rem !important" }} />}
         aria-label="Create new theme"
-        sx={{
-          borderRadius: 2,
-        }}
         onClick={handleClickOpen}
+        sx={{
+          columnGap: 0.5,
+        }}
       >
+        <Add sx={{ fontSize: "1rem !important" }} />
         Create
       </Button>
 

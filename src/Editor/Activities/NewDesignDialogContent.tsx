@@ -20,7 +20,8 @@ export default function NewDesignDialogContent({
         position: "relative",
         maxHeight: "50vh",
         overflow: "auto",
-        scrollbarWidth: "thin",
+        scrollbarWidth: "none",
+        scrollbarColor: "rgba(0,0,0,0.5) transparent",
       }}
     >
       <Box
