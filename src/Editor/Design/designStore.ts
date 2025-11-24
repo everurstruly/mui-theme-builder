@@ -372,6 +372,52 @@ export const useDesignStore = create<ThemeDesignStore>()(
       });
     },
 
+    /**
+     * Load a completely new design into the editor, resetting edits, histories
+     * and code overrides. Optionally accepts a base theme (string or DSL)
+     * and metadata (sourceTemplateId/title).
+     */
+    loadNew: (themeCodeOrDsl?: string | ThemeDsl, metadata?: { sourceTemplateId?: string; title?: string }, opts?: { keepHistory?: boolean }) => {
+      const keepHistory = opts?.keepHistory ?? false;
+      const codeString = themeCodeOrDsl
+        ? (typeof themeCodeOrDsl === 'string' ? themeCodeOrDsl : JSON.stringify(themeCodeOrDsl))
+        : "";
+
+      const update: any = {
+        // Base theme
+        baseThemeCode: codeString,
+        baseThemeMetadata: {
+          sourceTemplateId: metadata?.sourceTemplateId,
+          createdAt: Date.now(),
+          lastModified: Date.now(),
+        },
+        title: metadata?.title || get().title,
+
+        // Clear visual edits and code overrides
+        colorSchemeIndependentVisualToolEdits: {},
+        codeOverridesSource: "",
+        codeOverridesDsl: {},
+        codeOverridesResolved: {},
+        codeOverridesFlattened: {},
+        codeOverridesError: null,
+
+        // Reset color-scheme edits
+        light: createInitialColorSchemeEdits(),
+        dark: createInitialColorSchemeEdits(),
+
+        hasUnsavedChanges: false,
+      };
+
+      if (!keepHistory) {
+        update.visualHistoryPast = [];
+        update.visualHistoryFuture = [];
+        update.codeHistoryPast = [];
+        update.codeHistoryFuture = [];
+      }
+
+      set(update);
+    },
+
     setActiveColorScheme: (scheme: "light" | "dark") => {
       set({ activeColorScheme: scheme });
     },
@@ -493,6 +539,13 @@ export interface ThemeDesignActions {
    * @param metadata - Optional metadata (sourceTemplateId, title)
    */
   setBaseTheme: (themeCodeOrDsl: string | ThemeDsl, metadata?: { sourceTemplateId?: string; title?: string }) => void;
+
+  /**
+   * Load a completely new design into the editor, resetting edits and histories.
+   * @param themeCodeOrDsl - Optional base theme (string or DSL). If omitted, clears base theme.
+   * @param metadata - Optional metadata (sourceTemplateId, title)
+   */
+  loadNew: (themeCodeOrDsl?: string | ThemeDsl, metadata?: { sourceTemplateId?: string; title?: string }, opts?: { keepHistory?: boolean }) => void;
 
   // === Visual Edits ===
   /**
