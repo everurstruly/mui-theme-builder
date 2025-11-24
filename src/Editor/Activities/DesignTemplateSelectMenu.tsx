@@ -2,12 +2,7 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import type { SelectChangeEvent } from "@mui/material/Select";
-import {
-  useThemeDesignStore,
-  listThemeTemplateIds,
-  THEME_TEMPLATE_METADATA,
-  type ThemeTemplateId,
-} from "../Design";
+import { useThemeDesignStore, getTemplateIds, templatesRegistry } from "../Design";
 
 export default function DesignTemplateSelectMenu() {
   const selectedThemeTemplateId = useThemeDesignStore((state) => {
@@ -17,8 +12,8 @@ export default function DesignTemplateSelectMenu() {
     return state.switchTemplate;
   });
 
-  const handleChange = (event: SelectChangeEvent<ThemeTemplateId>) => {
-    const themeId = event.target.value as ThemeTemplateId;
+  const handleChange = (event: SelectChangeEvent<string>) => {
+    const themeId = event.target.value as string;
     // switchTemplate takes (templateId, keepEdits) - false to reset edits when switching
     switchTemplate({ type: 'builtin', id: themeId }, false);
   };
@@ -46,9 +41,9 @@ export default function DesignTemplateSelectMenu() {
           },
         }}
       >
-        {listThemeTemplateIds().map((themeId) => (
+        {getTemplateIds().map((themeId) => (
           <MenuItem key={themeId} value={themeId}>
-            {THEME_TEMPLATE_METADATA[themeId]?.label || themeId}
+            {templatesRegistry[themeId]?.label || themeId}
           </MenuItem>
         ))}
       </Select>

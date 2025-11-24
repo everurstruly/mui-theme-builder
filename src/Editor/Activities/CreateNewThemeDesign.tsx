@@ -1,92 +1,47 @@
 import * as React from "react";
 import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogTitle from "@mui/material/DialogTitle";
-import DialogContent from "@mui/material/DialogContent";
-import IconButton from "@mui/material/IconButton";
-import CloseIcon from "@mui/icons-material/Close";
-import { Stack, Typography } from "@mui/material";
-import { Add } from "@mui/icons-material";
 import NewDesignDialogContent from "./NewDesignDialogContent";
+import { Popover } from "@mui/material";
+import { Add } from "@mui/icons-material";
 
 export default function CreateNewThemeDesign() {
-  const [open, setOpen] = React.useState(false);
+  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
 
-  const handleClickOpen = () => {
-    setOpen(true);
+  const handleClickOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget as HTMLElement);
   };
 
   const handleClose = () => {
-    setOpen(false);
+    setAnchorEl(null);
   };
 
   return (
     <>
       <Button
         startIcon={<Add sx={{ fontSize: "1rem !important" }} />}
-        aria-label="Copy and Implement Selected Theme"
+        aria-label="Create new theme"
         sx={{
           borderRadius: 2,
         }}
-        onClick={() => handleClickOpen()}
+        onClick={handleClickOpen}
       >
         Create
       </Button>
 
-      <Dialog
-        open={open}
+      <Popover
+        open={Boolean(anchorEl)}
+        anchorEl={anchorEl}
         onClose={handleClose}
-        aria-labelledby="export-context-dialog"
-        fullWidth
-        maxWidth="sm"
+        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+        transformOrigin={{ vertical: "top", horizontal: "left" }}
         slotProps={{
           paper: {
-            sx: {
-              borderRadius: 4,
-            },
+            sx: { width: 320, borderRadius: 4 },
           },
         }}
       >
-        <DialogTitle
-          id="new-context-dialog"
-          component={"div"}
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            rowGap: 2,
-            m: 0,
-            pt: 2,
-            px: 3,
-          }}
-        >
-          <Stack direction="row" justifyContent="space-between" alignItems="center">
-            <Typography variant="subtitle2">Theme Export</Typography>
-
-            <IconButton
-              size="small"
-              aria-label="close"
-              onClick={handleClose}
-              sx={{ color: "text.secondary" }}
-            >
-              <CloseIcon />
-            </IconButton>
-          </Stack>
-        </DialogTitle>
-
-        <DialogContent
-          sx={{
-            p: 2,
-            mt: 0, // fix: remove annoying jittering
-            position: "relative",
-            "&::-webkit-scrollbar": {
-              width: "0px",
-            },
-          }}
-        >
-          {/* New design creation scaffold (tabs + panels) */}
-          <NewDesignDialogContent onClose={handleClose} />
-        </DialogContent>
-      </Dialog>
+        <NewDesignDialogContent onClose={handleClose} />
+      </Popover>
     </>
   );
 }
