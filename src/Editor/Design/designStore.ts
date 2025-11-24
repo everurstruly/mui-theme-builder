@@ -14,6 +14,10 @@ import templatesRegistry, {
   type TreeNode as TemplateTreeNode,
 } from "../Templates/registry";
 
+// Initial template reference and derived initial title (use `label` from registry)
+const initialTemplateRef: ThemeTemplateRef = { type: "builtin", id: "material" };
+const initialTitle = getTemplateById(initialTemplateRef.id)?.label ?? "Untitled";
+
 export const useDesignStore = create<ThemeDesignStore>()(
   devtools((set, get) => ({
     selectedExperienceId: "primitives",
@@ -23,7 +27,9 @@ export const useDesignStore = create<ThemeDesignStore>()(
     light: createInitialColorSchemeEdits(),
     dark: createInitialColorSchemeEdits(),
 
-    selectedTemplateId: { type: "builtin", id: "material" },
+    // Template reference and human-facing title
+    selectedTemplateId: initialTemplateRef,
+    title: initialTitle,
     templateHistory: [],
 
     // Template Registry Integration
@@ -231,6 +237,9 @@ export const useDesignStore = create<ThemeDesignStore>()(
       });
     },
 
+    /** Set or rename the design title (user editable). */
+    setTitle: (t: string) => set({ title: t, hasUnsavedChanges: true }),
+
     removeAllCodeOverrides: () => {
       // Push current source to code history so clear is undoable
       set((state) => ({
@@ -277,6 +286,8 @@ export const useDesignStore = create<ThemeDesignStore>()(
         codeOverridesError: null,
         light: createInitialColorSchemeEdits(),
         dark: createInitialColorSchemeEdits(),
+        // Reset title to current template's label (or fallback)
+        title: getTemplateById(get().selectedTemplateId.id)?.label ?? "Untitled",
         hasUnsavedChanges: true,
       });
     },
@@ -359,6 +370,11 @@ export const useDesignStore = create<ThemeDesignStore>()(
     switchTemplate: (templateId: ThemeTemplateRef, keepEdits: boolean) => {
       const currentTemplateId = get().selectedTemplateId.id;
 
+      // Determine new title: preserve existing if keeping edits, otherwise use template title or fallback
+      const newTitle = keepEdits
+        ? get().title
+        : getTemplateById(templateId.id)?.label ?? "Untitled";
+
       set({
         selectedTemplateId: templateId,
         templateHistory: [...get().templateHistory, currentTemplateId],
@@ -375,6 +391,7 @@ export const useDesignStore = create<ThemeDesignStore>()(
               light: createInitialColorSchemeEdits(),
               dark: createInitialColorSchemeEdits(),
             }),
+        title: newTitle,
         hasUnsavedChanges: true,
       });
     },
@@ -490,6 +507,9 @@ export interface ThemeDesignState {
 
   /** Dirty flag for unsaved changes */
   hasUnsavedChanges: boolean;
+
+  /** Human-facing title for this design (template title, 'Untitled', or user-renamed) */
+  title: string;
 
   // === Per-experience history (non-persistent) ===
   /** Visual edits history (past snapshots) */
@@ -608,6 +628,9 @@ export interface ThemeDesignActions {
    * @param previewId - Preview component identifier
    */
   selectPreview: (previewId: string) => void;
+
+  /** Set or rename the design title (user editable) */
+  setTitle: (title: string) => void;
 
   // === Scoped undo/redo (per-experience) ===
   /** Undo last visual edit (affects baseVisualToolEdits/lightMode/darkMode) */

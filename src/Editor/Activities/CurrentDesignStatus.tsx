@@ -19,6 +19,7 @@ import {
   type MenuProps,
 } from "@mui/material";
 import React from "react";
+import { useDesignStore } from "../Design/designStore";
 
 const StyledMenu = styled((props: MenuProps) => (
   <Menu
@@ -79,11 +80,13 @@ const StyledMenu = styled((props: MenuProps) => (
 
 function CurrentThemeDesignStatus() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const title = useDesignStore((s) => s.title);
   const open = Boolean(anchorEl);
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
+  // const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  //   setAnchorEl(event.currentTarget);
+  // };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -92,6 +95,7 @@ function CurrentThemeDesignStatus() {
     <>
       <Button
         color="inherit"
+        disabled
         sx={{
           display: "flex",
           alignItems: "center",
@@ -105,7 +109,7 @@ function CurrentThemeDesignStatus() {
         aria-controls={open ? "some-menu" : undefined}
         aria-haspopup="true"
         aria-expanded={open ? "true" : undefined}
-        onClick={handleClick}
+        // onClick={handleClick}
       >
         <Stack sx={{ overflow: "hidden" }}>
           <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -118,9 +122,13 @@ function CurrentThemeDesignStatus() {
               You're editing
             </Typography>
             {open ? (
-              <ArrowDropUpRounded sx={{ color: "primary.main" }} />
+              <ArrowDropUpRounded
+                sx={{ opacity: 0, pointerEvents: "none", color: "primary.main" }}
+              />
             ) : (
-              <ArrowDropDownRounded sx={{ color: "primary.main" }} />
+              <ArrowDropDownRounded
+                sx={{ opacity: 0, pointerEvents: "none", color: "primary.main" }}
+              />
             )}
           </Box>
 
@@ -129,12 +137,13 @@ function CurrentThemeDesignStatus() {
             sx={{
               whiteSpace: "nowrap",
               textOverflow: "ellipsis",
-              lineHeight: 1.1,
+              lineHeight: 1,
+              mb: "3px",
               overflow: "hidden",
               color: open ? "text.disabled" : "text.primary",
             }}
           >
-            Renna Games Dashboardslsjljsdf
+            {title}
           </Typography>
         </Stack>
       </Button>

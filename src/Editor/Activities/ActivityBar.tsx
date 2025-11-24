@@ -1,6 +1,5 @@
 import DesignTemplateSelectMenu from "./DesignTemplateSelectMenu";
 import DesignExportButton from "./DesignExportButton";
-import DesignSaveButton from "./DesignSaveButton";
 import DesignChangeHistoryButtons from "./DesignChangeHistoryButtons";
 import MobileActionGroup from "./MobileDesignActionGroup";
 import DesignActionListMenu from "./DesignActionListMenu";
@@ -49,11 +48,12 @@ function DesktopToolbarContent() {
         justifyContent={"space-between"}
         direction={"row"}
         marginInline={"auto"}
+        paddingInline={1.5}
         columnGap={2}
       >
         <DesignActionListMenu sx={{ columnGap: 2 }} />
+
         <Stack direction={"row"} alignItems={"inherit"} columnGap={2} mx={2}>
-          <DesignSaveButton />
           <DesignChangeHistoryButtons />
           <DesignExportButton />
         </Stack>
