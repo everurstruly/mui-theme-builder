@@ -1,18 +1,21 @@
 import * as React from "react";
 import TemplateOption from "./NewDesignOptions/TemplateOption";
-import PasteOption from "./NewDesignOptions/PasteOption";
-import LinkOption from "./NewDesignOptions/LinkOption";
-import BlankOption from "./NewDesignOptions/BlankOption";
 import { Box, Tabs, Tab } from "@mui/material";
+import PasteOption from "./NewDesignOptions/PasteOption";
 
-type Mode = "template" | "paste" | "link" | "blank";
+const modes = [
+  { value: "template", label: "Template", Component: TemplateOption },
+  { value: "paste", label: "Paste Code", Component: PasteOption },
+];
+
+type ModeValue = (typeof modes)[number]["value"];
 
 export default function NewDesignDialogContent({
   onClose,
 }: {
   onClose: () => void;
 }) {
-  const [mode, setMode] = React.useState<Mode>("template");
+  const [mode, setMode] = React.useState<ModeValue>("template");
 
   return (
     <Box
@@ -38,21 +41,26 @@ export default function NewDesignDialogContent({
           aria-label="New design creation method"
           sx={{
             px: 2.6,
-            pt: 1.6,
+            pt: 1.2,
             backgroundColor: (theme) => theme.palette.background.paper,
           }}
         >
-          <Tab label="Template" value="template" sx={{ py: 2.4 }} />
-          <Tab label="Paste" value="paste" sx={{ py: 2.4 }} />
-          <Tab label="Blank" value="blank" sx={{ py: 2.4 }} />
+          {modes.map((modeOption) => (
+            <Tab
+              key={modeOption.value}
+              label={modeOption.label}
+              value={modeOption.value}
+              sx={{ py: 2.4 }}
+            />
+          ))}
         </Tabs>
       </Box>
 
       <Box role="region" sx={{ p: 2 }}>
-        {mode === "template" && <TemplateOption onClose={onClose} />}
-        {mode === "paste" && <PasteOption onClose={onClose} />}
-        {mode === "link" && <LinkOption onClose={onClose} />}
-        {mode === "blank" && <BlankOption onClose={onClose} />}
+        {modes.map(
+          ({ value, Component }) =>
+            mode === value && <Component key={value} onClose={onClose} />
+        )}
       </Box>
     </Box>
   );
