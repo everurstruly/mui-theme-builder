@@ -35,6 +35,9 @@ export default function CreateNewThemeDesign() {
         anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
         transformOrigin={{ vertical: "top", horizontal: "left" }}
         slotProps={{
+          root: {
+            sx: { mt: 2 }
+          },
           paper: {
             sx: { width: 320, borderRadius: 4 },
           },

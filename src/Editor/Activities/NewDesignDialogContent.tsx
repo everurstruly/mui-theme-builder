@@ -1,10 +1,10 @@
 import * as React from "react";
 import TemplateOption from "./NewDesignOptions/TemplateOption";
-import { Box, Tabs, Tab } from "@mui/material";
+import { Box, Tabs, Tab, Stack } from "@mui/material";
 import PasteOption from "./NewDesignOptions/PasteOption";
 
 const modes = [
-  { value: "template", label: "Template", Component: TemplateOption },
+  { value: "template", label: "Built-in Templates", Component: TemplateOption },
   { value: "paste", label: "Paste Code", Component: PasteOption },
 ];
 
@@ -20,6 +20,8 @@ export default function NewDesignDialogContent({
   return (
     <Box
       sx={{
+        display: "flex",
+        flexDirection: "column",
         position: "relative",
         maxHeight: "50vh",
         overflow: "auto",
@@ -27,11 +29,13 @@ export default function NewDesignDialogContent({
         scrollbarColor: "rgba(0,0,0,0.5) transparent",
       }}
     >
-      <Box
+      <Stack
         sx={{
           position: "sticky",
           top: 0,
           zIndex: 1,
+          borderBottom: 1,
+          borderColor: "divider",
         }}
       >
         <Tabs
@@ -40,8 +44,6 @@ export default function NewDesignDialogContent({
           variant="fullWidth"
           aria-label="New design creation method"
           sx={{
-            px: 2.6,
-            pt: 1.2,
             backgroundColor: (theme) => theme.palette.background.paper,
           }}
         >
@@ -54,7 +56,7 @@ export default function NewDesignDialogContent({
             />
           ))}
         </Tabs>
-      </Box>
+      </Stack>
 
       <Box role="region" sx={{ p: 2 }}>
         {modes.map(
