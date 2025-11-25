@@ -1,7 +1,7 @@
-import DesignTemplateSelectMenu from "../Design/Current/DesignTemplateSelectMenu";
+import DesignTemplateSelectMenu from "../Design/Creation/DesignTemplateSelectMenu";
 import DesignExportButton from "../Design/Current/DesignExportButton";
 import DesignChangeHistoryButtons from "../Design/Current/DesignChangeHistoryButtons";
-import MobileActionGroup from "../Design/Current/MobileDesignActionGroup";
+import MobileActionGroup from "./MobileDesignActionGroup";
 import DesignActionListMenu from "./DesignActionListMenu";
 import CurrentDesignStatus from "../Design/Current/CurrentDesignStatus";
 import { AppBar, Stack, Divider, Toolbar, type SxProps } from "@mui/material";
