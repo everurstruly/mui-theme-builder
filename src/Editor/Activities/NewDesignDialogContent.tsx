@@ -1,11 +1,11 @@
 import * as React from "react";
 import TemplateOption from "./NewDesignOptions/TemplateOption";
 import { Box, Tabs, Tab, Stack } from "@mui/material";
-import PasteOption from "./NewDesignOptions/PasteOption";
+// import PasteOption from "./NewDesignOptions/PasteOption";
 
 const modes = [
   { value: "template", label: "Built-in Templates", Component: TemplateOption },
-  { value: "paste", label: "Paste Code", Component: PasteOption },
+  // { value: "paste", label: "Paste Code", Component: PasteOption },
 ];
 
 type ModeValue = (typeof modes)[number]["value"];
@@ -39,7 +39,7 @@ export default function NewDesignDialogContent({
         }}
       >
         <Tabs
-          value={mode}
+          // value={mode}
           onChange={(_, value) => setMode(value)}
           variant="fullWidth"
           aria-label="New design creation method"
