@@ -1,4 +1,4 @@
-import { Typography, Box, Stack, Popover, Card, Button } from "@mui/material";
+import { Typography, Box, Stack, Popover, Card, Button, alpha } from "@mui/material";
 import { Sketch } from "@uiw/react-color";
 import { useShadesDrawerStore } from "./ShadesDrawer/useShadesDrawerStore";
 import type { UseShadesDrawerState } from "./ShadesDrawer/useShadesDrawerStore";
@@ -57,6 +57,8 @@ export default function ColorOptionGroupItem(props: ColorOptionGroupItemProps) {
             columnGap: 0.5,
             rowGap: 0.2,
             color: foregroundEdit.mainColor,
+            backgroundColor: alpha(colorEdit.readableColor, 0.05),
+
             // flexDirection: "column",
             // alignItems: "flex-start",
           }}
@@ -76,14 +78,15 @@ export default function ColorOptionGroupItem(props: ColorOptionGroupItemProps) {
             color: colorEdit.readableColor,
             cursor: colorEdit.isControlledByFunction ? "not-allowed" : "pointer",
             opacity: colorEdit.isControlledByFunction ? 0.5 : 1,
+            backgroundColor: alpha(colorEdit.readableColor, 0.05),
             position: "absolute",
             minWidth: "auto",
             alignItems: "flex-end",
             justifyContent: "center",
             top: "50%",
-            bottom: 1,
-            right: 1,
-            pl: 2,
+            bottom: 0,
+            right: 0,
+            pl: 1.4,
           }}
         >
           <PaletteOutlined />
@@ -97,6 +100,7 @@ export default function ColorOptionGroupItem(props: ColorOptionGroupItemProps) {
             bottom: 0,
             left: 0,
             color: colorEdit.readableColor,
+            backgroundColor: alpha(colorEdit.readableColor, 0.05),
           }}
         >
           <ViewCompact fontSize="small" sx={{ mb: "2px" }} />
