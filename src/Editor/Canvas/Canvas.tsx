@@ -5,6 +5,7 @@ import CanvasFrame from "./CanvasFrame";
 import { alpha, Stack } from "@mui/material";
 import { useRef } from "react";
 import { BreakpointSimulationToggles } from "./PlainSurface/BreakpointSimulation";
+import QuickPreviewBar from "../Explorer/QuickPreviewBar";
 
 export default function EditorCanvas() {
   const previewDivWrapperRef = useRef<HTMLDivElement>(null);
@@ -31,6 +32,7 @@ export default function EditorCanvas() {
         ),
       }}
     >
+      <QuickPreviewBar />
       <PlainSurface containerRef={previewDivWrapperRef} />
     </CanvasFrame>
   );
