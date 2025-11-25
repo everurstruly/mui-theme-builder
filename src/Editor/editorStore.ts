@@ -1,12 +1,15 @@
 import { create } from "zustand";
 import { combine } from "zustand/middleware";
 
-export type EditorUiPanels =
-  | "library"
-  | "properties"
-  | "explorer"
-  | "properties.mobile"
-  | "explorer.mobile";
+const panels = [
+  "library",
+  "properties",
+  "explorer",
+  "properties.mobile",
+  "explorer.mobile",
+];
+
+export type EditorUiPanels = (typeof panels)[number];
 
 const useEditorUiStore = create(
   combine(
@@ -43,13 +46,13 @@ const useEditorUiStore = create(
 
       hideAllPanels: () => {
         set(() => ({
-          hiddenPanels: ["properties", "explorer"],
+          hiddenPanels: [...panels],
         }));
       },
 
       showAllPanels: () => {
         set(() => ({
-          hiddenPanels: [],
+          hiddenPanels: [...panels],
         }));
       },
 
