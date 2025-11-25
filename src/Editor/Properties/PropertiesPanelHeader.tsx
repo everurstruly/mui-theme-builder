@@ -1,5 +1,5 @@
 import DesignColorSchemeToggle from "../Design/Current/DesignColorSchemeToggle";
-import ThemingExperienceTab from "../Activities/DesignExperienceTab";
+import ThemingExperienceTab from "../Toolsbar/DesignExperienceTab";
 import { Box } from "@mui/material";
 
 export default function PropertiesPanelHeader() {

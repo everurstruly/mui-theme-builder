@@ -1,5 +1,5 @@
 import EditorCanvas from "./Canvas/Canvas";
-import EditorActivityBar from "./Activities/ActivityBar";
+import EditorToolsbar from "./Toolsbar/Toolsbar";
 import EditorPropertiesPanel from "./Properties/PropertiesPanel";
 import EditorExplorerPanel from "./Explorer/ExplorerPanel";
 import { GlobalStyles, Paper, Stack } from "@mui/material";
@@ -34,7 +34,7 @@ export default function Editor() {
         overflow={"hidden"}
       >
         <Paper component="main" sx={{ flexGrow: 1, minWidth: 0 }}>
-          <EditorActivityBar />
+          <EditorToolsbar />
           <Stack
             minWidth={0}
             flexGrow={1}

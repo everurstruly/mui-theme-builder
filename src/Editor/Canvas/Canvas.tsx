@@ -1,5 +1,5 @@
 import PlainSurface from "./PlainSurface/PlainSurface";
-import ExplorerPanelVisibilityToggle from "../Activities/ExplorerPanelVisibilityToggle";
+import ExplorerPanelVisibilityToggle from "../Toolsbar/ExplorerPanelVisibilityToggle";
 import FullpagePreviewButton from "./PlainSurface/Controls/FullpagePreviewButton";
 import CanvasFrame from "./CanvasFrame";
 import { alpha, Stack } from "@mui/material";

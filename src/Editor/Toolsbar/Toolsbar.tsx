@@ -8,7 +8,7 @@ import { AppBar, Stack, Divider, Toolbar, type SxProps } from "@mui/material";
 import PropertiesPanelHeader from "../Properties/PropertiesPanelHeader";
 import SaveDesignButton from "../Design/Storage/StoreDesignButton";
 
-export default function EditorActivityBar() {
+export default function EditorToolsbar() {
   return (
     <SectionLayout>
       <MobileToolbarContent />
