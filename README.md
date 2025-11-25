@@ -10,20 +10,31 @@ This isn't about replacing what's out there - those projects are solid, senior-l
 
 What nakes this different?
 
+
 ### 1. Simultaneous Light & Dark Mode
+
 Design and preview both color schemes side-by-side
 
 ### 2. Export Flexibility
+
 - **ThemeOptions only** or **full Theme object**
 - **TypeScript**, **JavaScript**, or **JSON**
 - Clean, copy-paste ready code
 
+
 ### 3. Code Editor Integration
+
 Direct access to the theme object. Write custom overrides in TypeScript with full autocomplete, doc and diff view. No more guessing at deeply nested paths.
 
-### 4. Design Presets You'd Love. **Material Design**, **iOS Design** and more (Submission are encouraged via pull request)
 
-### 5. Modern, Intuitive Interface and elegant UX. Prove that MUI can be used to build beautiful apps and tools, not just boring enterprise dashboards.
+### 4. Design Presets You'd Love. 
+
+Material Design, Minimalism, IOS Designs and more **(Submission are encouraged via pull request)**
+
+
+### 5. Modern, Intuitive Interfacs. 
+
+Prove that MUI can be used to build elegant apps and tools, not just boring enterprise dashboards.
 
 
 ## Credits & Inspiration
