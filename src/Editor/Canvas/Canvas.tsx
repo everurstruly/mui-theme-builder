@@ -12,7 +12,7 @@ export default function EditorCanvas() {
   return (
     <CanvasFrame
       controls={{
-        bottomLeft: (
+        bottomCenter: (
           <Stack
             direction="row"
             sx={{
@@ -25,21 +25,6 @@ export default function EditorCanvas() {
             }}
           >
             <ExplorerPanelVisibilityToggle />
-          </Stack>
-        ),
-
-        bottomRight: (
-          <Stack
-            direction="row"
-            sx={{
-              alignItems: "center",
-              backdropFilter: "blur(12px)",
-              borderRadius: 2,
-              backgroundColor: (theme) => alpha(theme.palette.background.paper, 0.8),
-              columnGap: 1,
-              px: 0.25,
-            }}
-          >
             <BreakpointSimulationToggles />
             <FullpagePreviewButton />
           </Stack>

@@ -5,6 +5,7 @@ type CanvasFrameProps = {
   controls?: {
     bottomLeft?: React.ReactNode;
     bottomRight?: React.ReactNode;
+    bottomCenter?: React.ReactNode;
     stretchedTop?: React.ReactNode;
   };
   children: React.ReactNode;
@@ -78,6 +79,22 @@ export default function CanvasFrame({ controls = {}, children }: CanvasFrameProp
           }}
         >
           {controls.bottomLeft}
+        </Box>
+      )}
+
+      
+      {controls.bottomCenter && (
+        <Box
+          sx={{
+            position: "absolute",
+            bottom: defaultControlsPosition.bottom,
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: controlsZIndex,
+            pointerEvents: "auto",
+          }}
+        >
+          {controls.bottomCenter}
         </Box>
       )}
 
