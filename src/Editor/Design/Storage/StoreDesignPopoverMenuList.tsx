@@ -56,13 +56,11 @@ function SavedDesignPopoverMenuList({ onClose }: SavedDesignPopoverMenuListProps
   };
 
   const handleDuplicate = async (id: string): Promise<void> => {
-    const duplicateId = await duplicateSaved(id);
-
-    if (duplicateId) {
-      const ok = await loadSaved(duplicateId);
-      if (ok && onClose) onClose();
-    } else {
-      // FIXME(ux): swallow for now
+    // Minimal UX: create a copy but do not auto-open it
+    try {
+      await duplicateSaved(id);
+    } catch {
+      // swallow UX errors for now
     }
   };
   return (
