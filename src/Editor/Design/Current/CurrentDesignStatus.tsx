@@ -97,7 +97,7 @@ function CurrentThemeDesignStatus() {
           aria-controls={menuOpen ? "design-menu" : undefined}
           aria-haspopup="true"
         >
-          <MoreVertOutlined />
+          <MoreVertOutlined fontSize="small" />
         </IconButton>
       </Stack>
 

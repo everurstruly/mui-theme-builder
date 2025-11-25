@@ -4,7 +4,7 @@ import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import IconButton from "@mui/material/IconButton";
-import { CancelOutlined, ContentCopyOutlined } from "@mui/icons-material";
+import { Close, ContentCopyOutlined, X } from "@mui/icons-material";
 import { Stack, Box, Typography, Paper, Tabs, Tab } from "@mui/material";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
@@ -117,7 +117,7 @@ export default function DesignExportButton() {
         aria-label="Copy and Implement Selected Theme"
         onClick={() => handleClickOpen()}
       >
-        Copy Theme
+        Export Design
       </Button>
 
       <Dialog
@@ -149,13 +149,13 @@ export default function DesignExportButton() {
             <Typography variant="h6">MUI Theme Designed — Copy/Export</Typography>
 
             <IconButton size="small" aria-label="close" onClick={handleClose}>
-              <CancelOutlined />
+              <Close />
             </IconButton>
           </Stack>
         </DialogTitle>
 
-        <DialogContent>
-          <Paper sx={{ position: "relative" }}>
+        <DialogContent sx={{ p: 4 }}>
+          <Paper sx={{ position: "relative", borderRadius: 3, overflow: "hidden" }}>
             <Box
               component={SyntaxHighlighter}
               language={"typescript"}

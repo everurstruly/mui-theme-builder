@@ -12,8 +12,8 @@ import {
   Typography,
 } from "@mui/material";
 import {
-  AddCircleOutline,
   AdsClickOutlined,
+  KeyboardArrowRight,
   ShuffleOutlined,
 } from "@mui/icons-material";
 import useTemplateSelection from "./useTemplateSelection";
@@ -56,11 +56,12 @@ export default function TemplateOption({ onClose }: { onClose: () => void }) {
         variant="dense"
         sx={{
           position: "sticky",
-          top: "56px",
+          top: "52px",
           zIndex: 1,
+          mx: -3, // FIXME: Sync with parent padding
           justifyContent: "space-between",
-          px: "0px !important",
           columnGap: 1,
+          borderRadius: 3,
           mb: 1,
           backgroundColor: (theme) => theme.palette.background.paper,
         }}
@@ -75,11 +76,16 @@ export default function TemplateOption({ onClose }: { onClose: () => void }) {
       <List component={Stack} sx={{ gap: 1 }}>
         <ListItemButton
           dense
-          sx={{ borderRadius: 2, mb: 1, columnGap: 1 }}
+          sx={{
+            borderRadius: 2,
+            mb: 1,
+            columnGap: 1,
+            backgroundColor: "background.default",
+          }}
           onClick={handleWithoutTemplate}
         >
           <ListItemText>Create without a template</ListItemText>
-          <AddCircleOutline color="action" fontSize="small" />
+          <KeyboardArrowRight color="action" fontSize="small" />
         </ListItemButton>
 
         {allTemplates.map((template) => {

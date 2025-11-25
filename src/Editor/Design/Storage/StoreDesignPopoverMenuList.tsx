@@ -86,6 +86,7 @@ function SavedDesignPopoverMenuList({ onClose }: SavedDesignPopoverMenuListProps
 
       {savedDesigns.length === 0 ? (
         <Card
+          elevation={0}
           sx={{
             flexGrow: 1,
             display: "flex",
@@ -93,13 +94,15 @@ function SavedDesignPopoverMenuList({ onClose }: SavedDesignPopoverMenuListProps
             alignItems: "center",
             justifyContent: "center",
             textAlign: "center",
+            borderRadius: 4,
+            pt: 4,
             pb: 6,
           }}
         >
           <ListOutlined sx={{ mb: 2 }} color="action" />
           <Typography>You have no saved designs</Typography>
-          <Typography variant="body2" color="text.secondary">
-            Create, Modify and Save, for it to appear here.
+          <Typography variant="body2" fontSize={"caption.fontSize"} color="text.secondary">
+            Create, Edit and Save, for it to appear here.
           </Typography>
         </Card>
       ) : (
