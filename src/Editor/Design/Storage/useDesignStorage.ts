@@ -101,9 +101,39 @@ export default function useDesignStorage(
     const before = await adapter.read();
     const found = before.find((d) => d.id === id);
     if (!found) return null;
+    // compute a unique title for the copy: "Title (copy)" or "Title (copy N)"
+    // normalize base title by removing any existing "(copy)" suffix so we don't produce "A (copy)(copy)"
+    const rawTitle = found.title || "Untitled";
+    const normalizedBase = rawTitle.replace(/\s*\(copy(?:\s*\d+)?\)\s*$/i, "").trim() || "Untitled";
+
+    function escapeRegExp(s: string) {
+      return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    }
+
+    const copyPattern = new RegExp(`^${escapeRegExp(normalizedBase)}\\s*\\(copy(?:\\s*\\d+)?\\)$`, "i");
+    const existingCopies = before
+      .map((d) => d.title)
+      .filter(Boolean)
+      .filter((t) => !!t && copyPattern.test(t));
+
+    let copyTitle = `${normalizedBase} (copy)`;
+    if (existingCopies.length > 0) {
+      // find highest numbered copy
+      let max = 0;
+      for (const t of existingCopies) {
+        const m = t!.match(/\(copy(?:\s*(\d+))?\)$/i);
+        if (m) {
+          const n = m[1] ? parseInt(m[1], 10) : 1;
+          if (n > max) max = n;
+        }
+      }
+      const next = max === 0 ? 2 : max + 1;
+      copyTitle = `${normalizedBase} (copy ${next})`;
+    }
+
     const copy: SavedDesign = {
       id: Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 8),
-      title: `${found.title} (copy)`,
+      title: copyTitle,
       createdAt: Date.now(),
       snapshot: JSON.parse(JSON.stringify(found.snapshot)),
     };
