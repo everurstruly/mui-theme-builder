@@ -2,7 +2,6 @@ import { MoreVertOutlined } from "@mui/icons-material";
 import {
   Stack,
   Typography,
-  IconButton,
   Menu,
   MenuItem,
   Dialog,
@@ -69,36 +68,47 @@ function CurrentThemeDesignStatus() {
 
   return (
     <>
-      <Stack direction="row" sx={{ px: 1, flexGrow: 1 }} onClick={handleMenuOpen}>
-        <Stack sx={{ overflow: "hidden", flexGrow: 1 }}>
+      <Stack
+        direction="row"
+        sx={{ flexGrow: 1, alignItems: "center" }}
+        onClick={handleMenuOpen}
+      >
+        <Button
+          sx={{
+            display: "flex",
+            overflow: "hidden",
+            flexGrow: 1,
+            alignItems: "center",
+            justifyContent: "space-between",
+            columnGap: 1,
+          }}
+          endIcon={<MoreVertOutlined fontSize="small" />}
+        >
           <Typography
-            variant="caption"
-            fontWeight={"bold"}
+            variant="button"
             color="primary"
-            sx={{ whiteSpace: "nowrap", p: 0 }}
-          >
-            You're editing
-          </Typography>
-
-          <Typography
-            variant="body2"
             sx={{
               whiteSpace: "nowrap",
+              maxWidth: "30ch", // FIXME: sync with design sidebar
               textOverflow: "ellipsis",
-              lineHeight: 1,
-              mb: "3px",
               overflow: "hidden",
             }}
           >
-            {title} {hasUnsavedChanges ? "(unsaved)" : ""}
+            Editing {hasUnsavedChanges ? "(unsaved)" : ""} —{" "}
+            <Typography
+              variant="caption"
+              color="textPrimary"
+              sx={{
+                whiteSpace: "nowrap",
+                textOverflow: "ellipsis",
+                lineHeight: 1,
+                overflow: "hidden",
+              }}
+            >
+              {title}
+            </Typography>
           </Typography>
-        </Stack>
-        <IconButton
-          aria-controls={menuOpen ? "design-menu" : undefined}
-          aria-haspopup="true"
-        >
-          <MoreVertOutlined fontSize="small" />
-        </IconButton>
+        </Button>
       </Stack>
 
       <Menu
