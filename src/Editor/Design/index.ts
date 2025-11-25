@@ -1,8 +1,8 @@
-export { default as useCodeOverridesActions } from "./useCodeOverridesActions";
-export { default as useCodeOverridesState } from "./useCodeOverridesState";
-export { default as useEditWithVisualTool } from "./useEditWithVisualTool";
-export { default as useCreatedTheme } from "./useCreatedTheme";
-export { default as useCreatedThemeOption } from "./useCreatedThemeOption";
+export { default as useCodeOverridesActions } from "./Current/useCodeOverridesActions";
+export { default as useCodeOverridesState } from "./Current/useCodeOverridesState";
+export { default as useEditWithVisualTool } from "./Current/useEditWithVisualTool";
+export { default as useCreatedTheme } from "./Current/useCreatedTheme";
+export { default as useCreatedThemeOption } from "./Current/useCreatedThemeOption";
 
 // === Validation ===
 export {
@@ -17,7 +17,7 @@ export { transformCodeToDsl } from "./domainSpecificLanguage/themeOptionsToDslTr
 export { transformDslToThemeOptions } from "./domainSpecificLanguage/dslToThemeOptionsTransformer";
 
 // === Store ===
-export { useDesignStore as useThemeDesignStore } from "./designStore";
+export { useDesignStore as useThemeDesignStore } from "./Current/designStore";
 // === Template Registry (New) ===
 export {
   templatesRegistry,
@@ -40,10 +40,10 @@ export type {
   ThemeDesignStore,
   ColorSchemeEdits,
   SerializableValue,
-} from "./designStore";
+} from "./Current/designStore";
 
 export type { CodeEvaluationResult } from "./domainSpecificLanguage/dslValidator";
-export type { ThemeResolutionConfig } from "./createThemeOptionsFromEdits";
+export type { ThemeResolutionConfig } from "./domainSpecificLanguage/createThemeOptionsFromEdits";
 
 export type {
   ThemeDsl,
@@ -67,4 +67,4 @@ export {
 } from "./shared";
 
 // === Resolver (if needed externally) ===
-export { default as resolveThemeOptions } from "./createThemeOptionsFromEdits";
+export { default as resolveThemeOptions } from "./domainSpecificLanguage/createThemeOptionsFromEdits";

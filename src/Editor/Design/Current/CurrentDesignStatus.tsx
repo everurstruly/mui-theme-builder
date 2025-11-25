@@ -14,7 +14,7 @@ import {
   Snackbar,
   Alert,
 } from "@mui/material";
-import { useDesignStore } from "../Design/designStore";
+import { useDesignStore } from "./designStore";
 import React from "react";
 
 function CurrentThemeDesignStatus() {

@@ -1,8 +1,8 @@
-import createThemeOptionsFromEdits from "./createThemeOptionsFromEdits";
+import createThemeOptionsFromEdits from "../domainSpecificLanguage/createThemeOptionsFromEdits";
 import { useDesignStore } from "./designStore";
-import { parseThemeCode } from "./codeParser";
-import { transformDslToThemeOptions } from "./domainSpecificLanguage/dslToThemeOptionsTransformer";
-import { extractThemeOptionsForScheme } from "../Templates/registry";
+import { parseThemeCode } from "../domainSpecificLanguage/codeParser";
+import { transformDslToThemeOptions } from "../domainSpecificLanguage/dslToThemeOptionsTransformer";
+import { extractThemeOptionsForScheme } from "../../Templates/registry";
 import { type ThemeOptions } from "@mui/material";
 import { useMemo } from "react";
 

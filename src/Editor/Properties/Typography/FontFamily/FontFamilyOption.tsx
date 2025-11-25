@@ -2,8 +2,8 @@ import { ListItem, Typography, Stack, type SelectChangeEvent } from "@mui/materi
 import FontFamilyOptionInput from "./FontFamilyOptionInput";
 import { useEditWithVisualTool } from "../../../Design";
 import OptionListItemResetButton from "../../OptionListItemResetButton";
-import useDesignCreatedTheme from "../../../Design/useCreatedTheme";
-import { useDesignStore } from "../../../Design/designStore";
+import useDesignCreatedTheme from "../../../Design/Current/useCreatedTheme";
+import { useDesignStore } from "../../../Design/Current/designStore";
 
 export type FontFamilyOptionProps = {
   title: string;

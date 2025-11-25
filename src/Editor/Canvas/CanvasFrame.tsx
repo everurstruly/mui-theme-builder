@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import useEditorUiStore from "../editorStore";
+import useEditorUiStore from "../useEditorStore";
 
 type CanvasFrameProps = {
   controls?: {

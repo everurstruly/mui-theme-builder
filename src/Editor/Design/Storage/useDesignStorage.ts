@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { useDesignStore } from "../designStore";
+import { useDesignStore } from "../Current/designStore";
 import type { PersistenceAdapter } from "./persistenceAdapter";
 import deviceStorageAdapter from "./persistenceAdapter";
 

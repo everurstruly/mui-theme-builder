@@ -1,5 +1,5 @@
 import Drawer from "@mui/material/Drawer";
-import useEditorUiStore from "../editorStore";
+import useEditorUiStore from "../useEditorStore";
 import PropertiesPanelBody from "./PropertiesPanelBody";
 import { TuneOutlined } from "@mui/icons-material";
 import { Divider, Fab, Stack } from "@mui/material";

@@ -1,7 +1,7 @@
 import { SaveRounded } from "@mui/icons-material";
 import { Button, Snackbar } from "@mui/material";
 import { useState } from "react";
-import { useDesignStore } from "../designStore";
+import { useDesignStore } from "../Current/designStore";
 import useDesignStorage from "./useDesignStorage";
 
 export default function SaveDesignButton() {
@@ -15,6 +15,7 @@ export default function SaveDesignButton() {
       await saveCurrent({ title });
       setOpen(true);
     } catch (e) {
+      void e;
       // swallow for now
     }
   };

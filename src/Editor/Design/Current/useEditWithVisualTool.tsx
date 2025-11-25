@@ -1,7 +1,7 @@
 import useDesignCreatedTheme from "./useCreatedTheme";
 import { useMemo } from "react";
 import { useDesignStore, type SerializableValue } from "./designStore";
-import { getNestedValue } from "./shared";
+import { getNestedValue } from "../shared";
 
 export default function useEditWithVisualTool(path: string) {
   const theme = useDesignCreatedTheme();

@@ -4,7 +4,7 @@ import templatesRegistry, {
   isTemplateIdValid,
   buildTemplatesTree,
   type TreeNode as TemplateTreeNode,
-} from "./registry";
+} from "../../Templates/registry";
 
 /**
  * Lightweight hook for template discovery and metadata.

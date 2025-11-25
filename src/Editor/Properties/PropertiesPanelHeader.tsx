@@ -1,4 +1,4 @@
-import DesignColorSchemeToggle from "../Activities/DesignColorSchemeToggle";
+import DesignColorSchemeToggle from "../Design/Current/DesignColorSchemeToggle";
 import ThemingExperienceTab from "../Activities/DesignExperienceTab";
 import { Box } from "@mui/material";
 

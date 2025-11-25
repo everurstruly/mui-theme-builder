@@ -1,10 +1,10 @@
 import { create } from "zustand";
-import { isColorSchemePath } from "./shared";
-import { transformCodeToDsl } from "./domainSpecificLanguage/themeOptionsToDslTransformer";
-import { validateCodeBeforeEvaluation } from "./domainSpecificLanguage/dslValidator";
+import { isColorSchemePath } from "../shared";
+import { transformCodeToDsl } from "../domainSpecificLanguage/themeOptionsToDslTransformer";
+import { validateCodeBeforeEvaluation } from "../domainSpecificLanguage/dslValidator";
 import { devtools } from "zustand/middleware";
-import type { EditorDesignExperienceId } from "../editorDesignExperience";
-import type { ThemeDsl } from "./domainSpecificLanguage/types";
+import type { EditorDesignExperienceId } from "../../editorDesignExperience";
+import type { ThemeDsl } from "../domainSpecificLanguage/types";
 import type { ThemeOptions } from "@mui/material";
 
 export const useDesignStore = create<ThemeDesignStore>()(

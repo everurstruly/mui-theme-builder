@@ -1,4 +1,4 @@
-import useEditorUiStore from "../editorStore";
+import useEditorUiStore from "../useEditorStore";
 import useFolderNavigator from "./useFolderNavigator";
 import { DoubleArrowOutlined } from "@mui/icons-material";
 import { Stack, Breadcrumbs, Link, Typography, Box } from "@mui/material";

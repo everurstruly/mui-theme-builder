@@ -1,4 +1,4 @@
-import useEditorUiStore from "../editorStore";
+import useEditorUiStore from "../useEditorStore";
 import { IconButton } from "@mui/material";
 import { ExpandOutlined, ViewSidebarOutlined } from "@mui/icons-material";
 

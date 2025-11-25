@@ -1,6 +1,6 @@
 import { Button, ButtonGroup } from "@mui/material";
 import { RedoRounded, UndoRounded } from "@mui/icons-material";
-import { useThemeDesignStore } from "../Design";
+import { useThemeDesignStore } from "..";
 
 export default function DesignChangeHistoryButtons() {
   // Use the same per-experience undo/redo API that keyboard shortcuts use

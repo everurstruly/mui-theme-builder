@@ -15,7 +15,7 @@ import {
   responsiveFontSizes,
   ThemeProvider,
 } from "@mui/material";
-import EditorGlobalKeyboardShortcuts from "./Editor/KeyboardShortcuts";
+import EditorGlobalKeyboardShortcuts from "./Editor/Properties/KeyboardShortcuts";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

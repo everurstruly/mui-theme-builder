@@ -1,7 +1,7 @@
-import useEditorUiStore from "../editorStore";
+import useEditorUiStore from "../useEditorStore";
 import { Box } from "@mui/material";
 import { editorDesignExperiences } from "../editorDesignExperience";
-import { useDesignStore } from "../Design/designStore";
+import { useDesignStore } from "../Design/Current/designStore";
 
 export default function PanelBody() {
   const selectedExperienceId = useDesignStore((state) => state.selectedExperienceId);

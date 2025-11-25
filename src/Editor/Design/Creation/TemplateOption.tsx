@@ -16,8 +16,8 @@ import {
   AdsClickOutlined,
   ShuffleOutlined,
 } from "@mui/icons-material";
-import useTemplateSelection from "../../Templates/useTemplateSelection";
-import DesignColorSchemeToggle from "../DesignColorSchemeToggle";
+import useTemplateSelection from "./useTemplateSelection";
+import DesignColorSchemeToggle from "../Current/DesignColorSchemeToggle";
 
 export default function TemplateOption({ onClose }: { onClose: () => void }) {
   const {

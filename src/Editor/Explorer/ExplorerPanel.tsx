@@ -1,8 +1,8 @@
 import Drawer from "@mui/material/Drawer";
-import useEditorUiStore from "../editorStore";
+import useEditorUiStore from "../useEditorStore";
 import ExplorerPanelHeader from "./ExplorerPanelHeader";
 import ExplorerPanelBody from "./ExplorerPanelBody";
-import { useDesignStore } from "../Design/designStore";
+import { useDesignStore } from "../Design/Current/designStore";
 
 export default function EditorExplorerPanel() {
   return (

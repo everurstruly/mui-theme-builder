@@ -1,7 +1,7 @@
 import type { ThemeOptions } from "@mui/material";
-import { transformCodeToDsl } from "./domainSpecificLanguage/themeOptionsToDslTransformer";
-import { transformDslToThemeOptions } from "./domainSpecificLanguage/dslToThemeOptionsTransformer";
-import type { ThemeDsl, DslResolutionContext } from "./domainSpecificLanguage/types";
+import { transformCodeToDsl } from "./themeOptionsToDslTransformer";
+import { transformDslToThemeOptions } from "./dslToThemeOptionsTransformer";
+import type { ThemeDsl, DslResolutionContext } from "./types";
 
 /**
  * Parses theme code string (JavaScript/DSL JSON) into executable ThemeOptions.

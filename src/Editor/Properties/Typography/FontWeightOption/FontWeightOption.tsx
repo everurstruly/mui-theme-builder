@@ -2,7 +2,7 @@ import { ListItem, Typography, Stack } from "@mui/material";
 import FontWeightOptionInput from "./FontWeightOptionInput";
 import { useEditWithVisualTool } from "../../../Design";
 import OptionListItemResetButton from "../../OptionListItemResetButton";
-import useDesignCreatedTheme from "../../../Design/useCreatedTheme";
+import useDesignCreatedTheme from "../../../Design/Current/useCreatedTheme";
 import { getNestedValue } from "../../../Design/shared";
 
 export type FontWeightOptionProps = {

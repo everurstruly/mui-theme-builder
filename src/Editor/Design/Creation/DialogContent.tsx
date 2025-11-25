@@ -1,5 +1,5 @@
 import * as React from "react";
-import TemplateOption from "./NewDesignOptions/TemplateOption";
+import TemplateOption from "./TemplateOption";
 import { Box, Tabs, Tab, Stack } from "@mui/material";
 // import PasteOption from "./NewDesignOptions/PasteOption";
 

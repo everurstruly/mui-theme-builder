@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useCreatedThemeOption } from ".";
+import { useCreatedThemeOption } from "..";
 import { createTheme, type Theme } from "@mui/material";
 
 export default function useCreatedTheme(
@@ -15,7 +15,6 @@ export default function useCreatedTheme(
       // entire app crash. Log the error and fall back to the default theme.
       // The pre-apply validator should catch these issues; this is a runtime
       // safety net.
-      // eslint-disable-next-line no-console
       console.error('createTheme failed for user ThemeOptions:', err);
       return createTheme();
     }

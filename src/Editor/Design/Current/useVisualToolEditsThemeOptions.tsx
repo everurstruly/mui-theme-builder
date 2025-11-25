@@ -1,4 +1,4 @@
-import createThemeOptionsFromEdits from "./createThemeOptionsFromEdits";
+import createThemeOptionsFromEdits from "../domainSpecificLanguage/createThemeOptionsFromEdits";
 import type { ThemeOptions } from "@mui/material";
 import { useDesignStore } from "./designStore";
 import { useMemo } from "react";

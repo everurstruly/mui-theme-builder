@@ -1,6 +1,6 @@
 import type { ThemeOptions } from "@mui/material";
 import { parse } from 'acorn';
-import type { SerializableValue } from "../designStore";
+import type { SerializableValue } from "../Current/designStore";
 
 /**
  * Result of evaluating code overrides.

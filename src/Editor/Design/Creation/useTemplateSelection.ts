@@ -1,7 +1,7 @@
 import { useState, useCallback, useMemo } from "react";
 import { useTemplateStore, type TemplateMetadata } from "./useTemplateStore";
-import { useThemeDesignStore } from "../Design";
-import { serializeThemeOptions } from "../Design/codeParser";
+import { serializeThemeOptions } from "../domainSpecificLanguage/codeParser";
+import { useThemeDesignStore } from "..";
 
 export type UseTemplateSelectionOptions = {
   autoConfirm?: boolean;

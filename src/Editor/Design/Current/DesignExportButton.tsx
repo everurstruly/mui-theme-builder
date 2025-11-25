@@ -8,8 +8,8 @@ import { CancelOutlined, ContentCopyOutlined } from "@mui/icons-material";
 import { Stack, Box, Typography, Paper, Tabs, Tab } from "@mui/material";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
-import { useCreatedThemeOption } from "../Design";
-import FlashStateContent from "../../lib/FlashStateButton";
+import { useCreatedThemeOption } from "..";
+import FlashStateContent from "../../../lib/FlashStateButton";
 
 type ExportType = "themeOptions" | "themeObject";
 type ExportFormat = "js" | "ts" | "json";

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import { useDebouncyEffect } from "use-debouncy";
-import useEditWithVisualTool from "../../Design/useEditWithVisualTool";
+import useEditWithVisualTool from "../../Design/Current/useEditWithVisualTool";
 import { readableColor } from "polished";
 
 type Options = {

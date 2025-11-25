@@ -7,7 +7,7 @@ import type {
 } from './types';
 
 // Type helpers for acorn AST nodes
-type AnyNode = any; // eslint-disable-line @typescript-eslint/no-explicit-any
+type AnyNode = any;
 
 /**
  * Transforms user-written MUI ThemeOptions code into a safe DSL representation.

@@ -2,7 +2,7 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import type { SelectChangeEvent } from "@mui/material/Select";
-import useTemplateSelection from "../Templates/useTemplateSelection";
+import useTemplateSelection from "../Design/Creation/useTemplateSelection";
 
 export default function TemplateSelectBox() {
   const { templates, selectedTemplateId, selectTemplate } = useTemplateSelection();

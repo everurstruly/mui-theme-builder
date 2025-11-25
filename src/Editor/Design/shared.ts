@@ -1,5 +1,5 @@
 import type { ThemeOptions } from "@mui/material/styles";
-import type { SerializableValue } from "./designStore";
+import type { SerializableValue } from "./Current/designStore";
 import type { CodeEvaluationResult } from "./domainSpecificLanguage/dslValidator";
 
 /**

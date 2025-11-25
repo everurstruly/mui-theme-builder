@@ -1,6 +1,6 @@
 import * as React from "react";
 import Button from "@mui/material/Button";
-import NewDesignDialogContent from "./NewDesignDialogContent";
+import NewDesignDialogContent from "./DialogContent";
 import { Popover } from "@mui/material";
 import { Add } from "@mui/icons-material";
 

@@ -1,6 +1,6 @@
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
-import { useThemeDesignStore } from "../Design";
+import { useThemeDesignStore } from "..";
 import { DarkModeOutlined, LightModeOutlined } from "@mui/icons-material";
 
 const options = [

@@ -3,7 +3,7 @@ import SliderInput from "../../SliderInput";
 import { useEditWithVisualTool } from "../../../Design";
 import { useState, useEffect } from "react";
 import OptionListItemResetButton from "../../OptionListItemResetButton";
-import useDesignCreatedTheme from "../../../Design/useCreatedTheme";
+import useDesignCreatedTheme from "../../../Design/Current/useCreatedTheme";
 import { getNestedValue } from "../../../Design/shared";
 
 export type FontStyleRangedOptionProps = {
