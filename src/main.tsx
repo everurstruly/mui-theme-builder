@@ -67,6 +67,13 @@ createRoot(document.getElementById("root")!).render(
                 },
               },
             },
+            MuiDialog: {
+              styleOverrides: {
+                paper: {
+                  borderRadius: "18px",
+                },
+              },
+            },
           },
         })
       )}
