@@ -1,47 +1,48 @@
 # MUI Theme Builder 
 
-A modern visual editor for customizing MUI components with Material and iOS design. 
-
-![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+A modern visual & code editor for customizing MUI themes. 
 
 ## Why This Exists
 
-Existing MUI theme builders are well-built and functional, but there were a few gaps I wanted to fill:
-- **Simultaneous light/dark theming**: Most tools make you switch modes to preview - I wanted to design both side-by-side
-- **Code editor access**: Working directly with the theme object felt missing
-- **Modern aesthetics**: Prove that MUI can look elegant in dev tools, not just production apps
+Existing MUI theme builders are well-built and functional, but there were a few gaps I wanted to fill.
 
 This isn't about replacing what's out there - those projects are solid, senior-level work with great docs and optimization. This is about exploring a different approach to the same problem.
 
-## What Makes This Different
+What nakes this different?
+
 
 ### 1. Simultaneous Light & Dark Mode
-Design and preview both color schemes side-by-side. Export independent configurations for each mode - not just a `palette.mode` toggle.
 
-### 2. Real Export Flexibility
+Design and preview both color schemes side-by-side
+
+### 2. Export Flexibility
+
 - **ThemeOptions only** or **full Theme object**
 - **TypeScript**, **JavaScript**, or **JSON**
 - Clean, copy-paste ready code
 
+
 ### 3. Code Editor Integration
-Direct access to the theme object. Write custom overrides in TypeScript with full autocomplete. No more guessing at deeply nested paths.
 
-### 4. Design Presets You'd Love
-- **Material Design** (default MUI)
-- **iOS Design** (proper HIG-inspired preset, not liquid glass garbage)
-- Clean foundation to build from
+Direct access to the theme object. Write custom overrides in TypeScript with full autocomplete, doc and diff view. No more guessing at deeply nested paths.
 
-### 5. Modern, Intuitive Interface
-Proves MUI can be used to build beautiful tools, not just boring enterprise dashboards. Clean panels, smooth interactions, real-time previews on actual components.
+
+### 4. Design Presets You'd Love. 
+
+Material Design, Minimalism, IOS Designs and more **(Submission are encouraged via pull request)**
+
+
+### 5. Modern, Intuitive Interfacs. 
+
+Prove that MUI can be used to build elegant apps and tools, not just boring enterprise dashboards.
 
 
 ## Credits & Inspiration
 
 This editor's design was inspired by:
-- **MUI Theme Creator** - Code optimization inspiration and more 
-- **Shadcn/ui** - Made me realize I like to prototype themes remotely and visually
-- **AntDesign** - Polished editor design experience
-- **Figma** - Best-in-class design editor UX
+- **Material Builder Plugin & MUI Theme Creator** - Code optimization inspiration and more 
+- **Tweakcn Shadcn/ui** - Made me realize I like to prototype themes remotely and visually
+- **Figma, Mantine, Daisy UI, AntDesign Editor** - Polished editor design experience
 
 Started as a potential PR to existing projects, but the vision diverged enough to warrant building it separately.
 
