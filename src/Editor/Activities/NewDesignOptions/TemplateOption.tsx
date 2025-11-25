@@ -168,7 +168,7 @@ export default function TemplateOption({ onClose }: { onClose: () => void }) {
             sx={{ justifyContent: "center", mb: 1 }}
           >
             <Button color="warning" onClick={() => confirmSwitch(false)}>
-              Discard all & Switch
+              Discard Changes
             </Button>
 
             <Button
@@ -185,5 +185,3 @@ export default function TemplateOption({ onClose }: { onClose: () => void }) {
     </>
   );
 }
-
-// color sample extraction moved into the hook (getColorSamples)

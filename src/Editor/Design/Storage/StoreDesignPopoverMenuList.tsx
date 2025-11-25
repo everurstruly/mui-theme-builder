@@ -123,7 +123,7 @@ function SavedDesignPopoverMenuList({ onClose }: SavedDesignPopoverMenuListProps
             Loading a saved design will discard unsaved changes. Continue?
           </Typography>
         </DialogContent>
-        <DialogActions>
+        <DialogActions sx={{ p: 3 }}>
           <Button onClick={handleCancelDiscard}>Cancel</Button>
           <Button color="error" onClick={handleConfirmDiscard} autoFocus>
             Discard and Load
