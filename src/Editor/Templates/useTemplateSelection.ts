@@ -50,6 +50,14 @@ export default function useTemplateSelection(options?: UseTemplateSelectionOptio
     [getTemplateById, loadNew]
   );
 
+  const BLANK_PENDING_ID = "__blank__";
+
+  const applyBlank = useCallback(() => {
+    loadNew("{}", { sourceTemplateId: "", title: "Untitled Design" });
+    setPendingChange(null);
+    setShouldKeepUnsavedChanges(false);
+  }, [loadNew]);
+
   const applyKeepingUnsaved = useCallback(() => {
     // Default: keep current base theme and simply clear pending state.
     setPendingChange(null);
@@ -91,22 +99,32 @@ export default function useTemplateSelection(options?: UseTemplateSelectionOptio
       const pending = pendingChange;
       if (!pending) return;
 
+      // special-case the blank selection
+      if (pending.templateId === BLANK_PENDING_ID) {
+        if (keepUnsavedChanges) {
+          applyKeepingUnsaved();
+        } else {
+          applyBlank();
+        }
+        return;
+      }
+
       if (keepUnsavedChanges) {
         applyKeepingUnsaved();
       } else {
         discardAndApply(pending.templateId);
       }
     },
-    [pendingChange, applyKeepingUnsaved, discardAndApply]
+    [pendingChange, applyKeepingUnsaved, discardAndApply, applyBlank]
   );
 
   const selectRandomTemplate = useCallback(() => {
     const all = templates;
     if (!all || all.length === 0) return;
 
-    let candidates = all.map((t) => t.id);
+    let candidates = all.map((t: TemplateMetadata) => t.id);
     if (candidates.length > 1) {
-      candidates = candidates.filter((id) => id !== selectedTemplateId);
+      candidates = candidates.filter((id: string) => id !== selectedTemplateId);
     }
 
     const idx = Math.floor(Math.random() * candidates.length);
@@ -166,6 +184,16 @@ export default function useTemplateSelection(options?: UseTemplateSelectionOptio
     return colors.slice(0, 6);
   }
 
+  const selectBlank = useCallback(() => {
+    if (hasUnsavedChanges) {
+      setPendingChange({ templateId: BLANK_PENDING_ID });
+      setShouldKeepUnsavedChanges(null);
+      return;
+    }
+
+    applyBlank();
+  }, [hasUnsavedChanges, applyBlank]);
+
   return {
     templates,
     getTemplateById,
@@ -175,6 +203,7 @@ export default function useTemplateSelection(options?: UseTemplateSelectionOptio
     pendingChange,
     shouldKeepUnsavedChanges,
     selectTemplate,
+    selectBlank,
     confirmSwitch,
     discardAndApply,
     applyKeepingUnsaved,

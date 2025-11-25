@@ -6,11 +6,16 @@ import {
   DialogTitle,
   List,
   ListItemButton,
+  ListItemText,
   Stack,
   Toolbar,
   Typography,
 } from "@mui/material";
-import { AdsClickOutlined, ShuffleOutlined } from "@mui/icons-material";
+import {
+  AddCircleOutline,
+  AdsClickOutlined,
+  ShuffleOutlined,
+} from "@mui/icons-material";
 import useTemplateSelection from "../../Templates/useTemplateSelection";
 import DesignColorSchemeToggle from "../DesignColorSchemeToggle";
 
@@ -18,6 +23,7 @@ export default function TemplateOption({ onClose }: { onClose: () => void }) {
   const {
     templates: allTemplates,
     selectedTemplateId,
+    selectBlank,
     pendingChange,
     selectTemplate,
     confirmSwitch,
@@ -39,18 +45,27 @@ export default function TemplateOption({ onClose }: { onClose: () => void }) {
     selectTemplate(templateId);
   };
 
+  const handleWithoutTemplate = () => {
+    selectBlank();
+    onClose();
+  };
+
   return (
     <>
       <Toolbar
         variant="dense"
         sx={{
+          position: "sticky",
+          top: "56px",
+          zIndex: 1,
           justifyContent: "space-between",
           px: "0px !important",
           columnGap: 1,
           mb: 1,
+          backgroundColor: (theme) => theme.palette.background.paper,
         }}
       >
-        <Button size="small" startIcon={<ShuffleOutlined />} onClick={selectRandom}>
+        <Button startIcon={<ShuffleOutlined />} onClick={selectRandom}>
           Random
         </Button>
 
@@ -58,6 +73,15 @@ export default function TemplateOption({ onClose }: { onClose: () => void }) {
       </Toolbar>
 
       <List component={Stack} sx={{ gap: 1 }}>
+        <ListItemButton
+          dense
+          sx={{ borderRadius: 2, mb: 1, columnGap: 1 }}
+          onClick={handleWithoutTemplate}
+        >
+          <ListItemText>Create without a template</ListItemText>
+          <AddCircleOutline color="action" fontSize="small" />
+        </ListItemButton>
+
         {allTemplates.map((template) => {
           const isSelected = selectedTemplateId === template.id;
           const colorSamples = getColorSamples(template);
