@@ -1,14 +1,13 @@
 import { create } from "zustand";
 import { combine } from "zustand/middleware";
 
-const panels = [
-  "library",
+const sidebarPanels = [
   "properties",
   "explorer",
   "properties.mobile",
   "explorer.mobile",
 ];
-
+const panels = ["library", ...sidebarPanels];
 export type EditorUiPanels = (typeof panels)[number];
 
 const useEditorUiStore = create(
@@ -17,6 +16,7 @@ const useEditorUiStore = create(
       mouseOverCanvas: false,
       mouseOverPropertiesPanel: false,
       hasSavedChanges: true,
+      sidebarPanelsBeforeHide: [] as EditorUiPanels[],
       hiddenPanels: [
         "library",
         "properties.mobile",
@@ -25,7 +25,7 @@ const useEditorUiStore = create(
       ] as EditorUiPanels[],
     },
 
-    (set) => ({
+    (set, get) => ({
       setMouseOverPropertiesPanel: (isMouseOver: boolean) => {
         set(() => ({
           mouseOverPropertiesPanel: isMouseOver,
@@ -41,6 +41,25 @@ const useEditorUiStore = create(
       hidePanel: (panel: EditorUiPanels) => {
         set((state) => ({
           hiddenPanels: Array.from(new Set([...state.hiddenPanels, panel])),
+        }));
+      },
+
+      hideCanvasSidebarPanels: () => {
+        set(() => ({
+          sidebarPanelsBeforeHide: get().hiddenPanels,
+          hiddenPanels: [
+            "properties",
+            "properties.mobile",
+            "explorer",
+            "explorer.mobile",
+          ],
+        }));
+      },
+
+      restoreCanvasSidebarPanels: () => {
+        set(() => ({
+          hiddenPanels: get().sidebarPanelsBeforeHide,
+          sidebarPanelsBeforeHide: [],
         }));
       },
 
