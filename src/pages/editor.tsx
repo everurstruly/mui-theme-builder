@@ -15,7 +15,7 @@ import {
   Stack,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { EDITOR_MENU_ITEMS } from "./editorMenuItems";
+import { editorMiscsLinksMenu } from "../Editor/editorMiscsLinksMenu";
 import { useState } from "react";
 import BrandLink from "../BrandLink";
 
@@ -74,7 +74,7 @@ export default function EditorPage() {
             alignItems={"center"}
             sx={{ columnGap: 4, display: { xs: "none", md: "flex" } }}
           >
-            {EDITOR_MENU_ITEMS.map((item) => (
+            {editorMiscsLinksMenu.map((item) => (
               <Link
                 key={item.key}
                 href={item.href}
@@ -149,7 +149,7 @@ function MobileMenuButton() {
           },
         }}
       >
-        {EDITOR_MENU_ITEMS.map((item) =>
+        {editorMiscsLinksMenu.map((item) =>
           item.href ? (
             <MenuItem
               key={item.key}

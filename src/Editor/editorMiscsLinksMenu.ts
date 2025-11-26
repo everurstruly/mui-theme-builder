@@ -5,7 +5,7 @@ export type EditorMenuItem = {
   target?: string;
 };
 
-export const EDITOR_MENU_ITEMS: EditorMenuItem[] = [
+export const editorMiscsLinksMenu: EditorMenuItem[] = [
   {
     key: "human",
     label: "Human",
