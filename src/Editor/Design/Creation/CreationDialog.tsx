@@ -1,5 +1,5 @@
 import * as React from "react";
-import TemplateOption from "./TemplateOption";
+import TemplateOption from "./Methods/TemplateOption";
 import { Box, Tabs, Tab, Stack } from "@mui/material";
 // import PasteOption from "./NewDesignOptions/PasteOption";
 
@@ -10,11 +10,7 @@ const modes = [
 
 type ModeValue = (typeof modes)[number]["value"];
 
-export default function NewDesignDialogContent({
-  onClose,
-}: {
-  onClose: () => void;
-}) {
+export default function CreationDialog({ onClose }: { onClose: () => void }) {
   const [mode, setMode] = React.useState<ModeValue>("template");
 
   return (

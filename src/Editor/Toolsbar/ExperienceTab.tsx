@@ -1,11 +1,11 @@
 import * as React from "react";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import { useDesignStore } from "../Design/Current/currentStore";
+import { useCurrentDesign } from "../Design/Current/useCurrent";
 import {
-  editorDesignExperiences,
+  editorDesignExperience,
   type EditorDesignExperienceId,
-} from "../editorDesignExperience";
+} from "../editorExperience";
 import { alpha, type SxProps, type Theme } from "@mui/material";
 
 type EditorThemingExperienceTabProps = {
@@ -17,8 +17,8 @@ export default function ThemingExperienceTab({
   centered = false,
   sx,
 }: EditorThemingExperienceTabProps) {
-  const value = useDesignStore((state) => state.selectedExperienceId);
-  const setValue = useDesignStore((state) => state.selectExperience);
+  const value = useCurrentDesign((state) => state.selectedExperienceId);
+  const setValue = useCurrentDesign((state) => state.selectExperience);
 
   const handleChange = (
     event: React.SyntheticEvent,
@@ -89,8 +89,8 @@ export default function ThemingExperienceTab({
       centered={centered}
       sx={mergedSx}
     >
-      {Object.keys(editorDesignExperiences).map((id) => {
-        const tab = editorDesignExperiences[id as EditorDesignExperienceId];
+      {Object.keys(editorDesignExperience).map((id) => {
+        const tab = editorDesignExperience[id as EditorDesignExperienceId];
         return (
           <Tab
             key={tab.id}

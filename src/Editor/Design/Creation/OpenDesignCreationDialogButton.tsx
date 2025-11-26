@@ -1,10 +1,10 @@
 import * as React from "react";
 import Button from "@mui/material/Button";
-import NewDesignDialogContent from "./DialogContent";
+import CreationDialog from "./CreationDialog";
 import { Popover } from "@mui/material";
 import { Add } from "@mui/icons-material";
 
-export default function CreateNewThemeDesign() {
+export default function OpenDesignCreationDialogButton() {
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
 
   const handleClickOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -36,14 +36,14 @@ export default function CreateNewThemeDesign() {
         transformOrigin={{ vertical: "top", horizontal: "left" }}
         slotProps={{
           root: {
-            sx: { mt: 2 }
+            sx: { mt: 2 },
           },
           paper: {
             sx: { width: 320, borderRadius: 4 },
           },
         }}
       >
-        <NewDesignDialogContent onClose={handleClose} />
+        <CreationDialog onClose={handleClose} />
       </Popover>
     </>
   );

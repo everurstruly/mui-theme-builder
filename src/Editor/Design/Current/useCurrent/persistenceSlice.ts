@@ -1,10 +1,10 @@
 /**
  * Persistence Slice - Storage Status Management
- * 
+ *
  * Responsibilities:
  * - Track persistence/save status
  * - Manage loading/error states for storage operations
- * 
+ *
  * Does NOT contain:
  * - Domain state
  * - UI state
@@ -12,11 +12,11 @@
  * - Actual persistence logic (that belongs in a service)
  */
 
-import type { StateCreator } from 'zustand';
+import type { StateCreator } from "zustand";
 
 // ===== Types =====
 
-export type PersistenceStatus = 'idle' | 'loading' | 'success' | 'error';
+export type PersistenceStatus = "idle" | "loading" | "success" | "error";
 
 /**
  * Persistence state.
@@ -24,10 +24,10 @@ export type PersistenceStatus = 'idle' | 'loading' | 'success' | 'error';
 export interface ThemeDesignPersistenceState {
   /** Current persistence status */
   status: PersistenceStatus;
-  
+
   /** Error message if status is 'error' */
   error: string | null;
-  
+
   /** Last successful save timestamp */
   lastSaved: number | null;
 }
@@ -38,15 +38,16 @@ export interface ThemeDesignPersistenceState {
 export interface ThemeDesignPersistenceActions {
   /** Set persistence status */
   setStatus: (status: PersistenceStatus, error?: string) => void;
-  
+
   /** Mark as successfully saved */
   recordLastSaved: () => void;
-  
+
   /** Reset persistence state */
   resetPersistence: () => void;
 }
 
-export type ThemeDesignPersistenceSlice = ThemeDesignPersistenceState & ThemeDesignPersistenceActions;
+export type ThemeDesignPersistenceSlice = ThemeDesignPersistenceState &
+  ThemeDesignPersistenceActions;
 
 // ===== Slice Creator =====
 
@@ -57,7 +58,7 @@ export const createPersistenceSlice: StateCreator<
   ThemeDesignPersistenceSlice
 > = (set) => ({
   // Initial state
-  status: 'idle',
+  status: "idle",
   error: null,
   lastSaved: null,
 
@@ -68,7 +69,7 @@ export const createPersistenceSlice: StateCreator<
 
   recordLastSaved: () => {
     set({
-      status: 'success',
+      status: "success",
       error: null,
       lastSaved: Date.now(),
     });
@@ -76,7 +77,7 @@ export const createPersistenceSlice: StateCreator<
 
   resetPersistence: () => {
     set({
-      status: 'idle',
+      status: "idle",
       error: null,
       lastSaved: null,
     });

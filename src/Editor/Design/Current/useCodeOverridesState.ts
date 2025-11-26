@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useDesignStore } from "./currentStore";
+import { useCurrentDesign } from "./useCurrent";
 
 /**
  * Hook for accessing code overrides state.
@@ -14,8 +14,8 @@ import { useDesignStore } from "./currentStore";
  * }
  */
 export default function useCodeOverridesState() {
-  const source = useDesignStore((s) => s.codeOverridesSource);
-  const error = useDesignStore((s) => s.codeOverridesError);
+  const source = useCurrentDesign((s) => s.codeOverridesSource);
+  const error = useCurrentDesign((s) => s.codeOverridesError);
   const hasOverrides = source.length > 0;
 
   return useMemo(

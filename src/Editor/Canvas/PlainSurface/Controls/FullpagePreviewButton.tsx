@@ -1,6 +1,6 @@
 import FullscreenIcon from "@mui/icons-material/Fullscreen";
 import FullscreenExitIcon from "@mui/icons-material/FullscreenExit";
-import useEditorUiStore from "../../../useEditorStore";
+import useEditorUiStore from "../../../useEditor";
 import { IconButton, Tooltip } from "@mui/material";
 import { useState } from "react";
 

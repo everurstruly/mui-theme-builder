@@ -16,11 +16,13 @@ import { ListOutlined } from "@mui/icons-material";
 import StoredDesignListItem from "./StoredDesignListItem";
 import useHasUnsavedChanges from "../Current/useHasUnsavedChanges";
 
-type SavedDesignPopoverMenuListProps = {
+type SavedDesignPopoverMenuContentProps = {
   onClose?: () => void;
 };
 
-function SavedDesignPopoverMenuList({ onClose }: SavedDesignPopoverMenuListProps) {
+function SavedDesignPopoverMenuContent({
+  onClose,
+}: SavedDesignPopoverMenuContentProps) {
   const { savedDesigns, loadSaved, removeSaved, duplicateSaved } =
     useDesignStorage();
   const hasUnsaved = useHasUnsavedChanges();
@@ -101,7 +103,11 @@ function SavedDesignPopoverMenuList({ onClose }: SavedDesignPopoverMenuListProps
         >
           <ListOutlined sx={{ mb: 2 }} color="action" />
           <Typography>You have no saved designs</Typography>
-          <Typography variant="body2" fontSize={"caption.fontSize"} color="text.secondary">
+          <Typography
+            variant="body2"
+            fontSize={"caption.fontSize"}
+            color="text.secondary"
+          >
             Create, Edit and Save, for it to appear here.
           </Typography>
         </Card>
@@ -121,11 +127,13 @@ function SavedDesignPopoverMenuList({ onClose }: SavedDesignPopoverMenuListProps
 
       <Dialog open={confirmOpen} onClose={handleCancelDiscard}>
         <DialogTitle>Discard changes?</DialogTitle>
+
         <DialogContent>
           <Typography>
             Loading a saved design will discard unsaved changes. Continue?
           </Typography>
         </DialogContent>
+
         <DialogActions sx={{ p: 3 }}>
           <Button onClick={handleCancelDiscard}>Cancel</Button>
           <Button color="error" onClick={handleConfirmDiscard} autoFocus>
@@ -137,4 +145,4 @@ function SavedDesignPopoverMenuList({ onClose }: SavedDesignPopoverMenuListProps
   );
 }
 
-export default SavedDesignPopoverMenuList;
+export default SavedDesignPopoverMenuContent;

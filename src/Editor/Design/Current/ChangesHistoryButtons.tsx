@@ -1,20 +1,20 @@
 import { Button, ButtonGroup } from "@mui/material";
 import { RedoRounded, UndoRounded } from "@mui/icons-material";
-import useDesignStore from "./currentStore";
+import useCurrentDesign from "./useCurrent";
 
-export default function DesignChangeHistoryButtons() {
+export default function ChangesHistoryButtons() {
   // Use the same per-experience undo/redo API that keyboard shortcuts use
-  const selected = useDesignStore((s) => s.selectedExperienceId);
+  const selected = useCurrentDesign((s) => s.selectedExperienceId);
 
-  const undoVisual = useDesignStore((s) => s.undoVisualToolEdit);
-  const redoVisual = useDesignStore((s) => s.redoVisualToolEdit);
-  const undoCode = useDesignStore((s) => s.undoCodeOverride);
-  const redoCode = useDesignStore((s) => s.redoCodeOverride);
+  const undoVisual = useCurrentDesign((s) => s.undoVisualToolEdit);
+  const redoVisual = useCurrentDesign((s) => s.redoVisualToolEdit);
+  const undoCode = useCurrentDesign((s) => s.undoCodeOverride);
+  const redoCode = useCurrentDesign((s) => s.redoCodeOverride);
 
-  const canUndoVisual = useDesignStore((s) => s.visualHistoryPast.length > 0);
-  const canRedoVisual = useDesignStore((s) => s.visualHistoryFuture.length > 0);
-  const canUndoCode = useDesignStore((s) => s.codeHistoryPast.length > 0);
-  const canRedoCode = useDesignStore((s) => s.codeHistoryFuture.length > 0);
+  const canUndoVisual = useCurrentDesign((s) => s.visualHistoryPast.length > 0);
+  const canRedoVisual = useCurrentDesign((s) => s.visualHistoryFuture.length > 0);
+  const canUndoCode = useCurrentDesign((s) => s.codeHistoryPast.length > 0);
+  const canRedoCode = useCurrentDesign((s) => s.codeHistoryFuture.length > 0);
 
   const isCodeExperience = selected === "components";
 

@@ -12,7 +12,7 @@ export type ThemeDesignStore = ThemeDesignDomainSlice &
   ThemeDesignHistorySlice &
   ThemeDesignPersistenceSlice;
 
-export const useDesignStore = create<ThemeDesignStore>()((...a) => {
+export const useCurrentDesign = create<ThemeDesignStore>()((...a) => {
   return {
     ...createDomainSlice(...a),
     ...createUISlice(...a),
@@ -21,4 +21,4 @@ export const useDesignStore = create<ThemeDesignStore>()((...a) => {
   };
 });
 
-export default useDesignStore;
+export default useCurrentDesign;

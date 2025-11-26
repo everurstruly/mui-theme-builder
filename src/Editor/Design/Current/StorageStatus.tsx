@@ -13,16 +13,16 @@ import {
   Alert,
 } from "@mui/material";
 import React from "react";
-import useKeptInStorageStatus from "./useKeptInStorageStatus";
+import useSavedToStorageStatus from "./useSavedToStorageStatus";
 import useHasUnsavedChanges from "./useHasUnsavedChanges";
-import { useDesignStore } from "./currentStore";
+import { useCurrentDesign } from "./useCurrent";
 
-function CurrentThemeDesignStatus() {
-  const title = useDesignStore((s) => s.title);
-  const setTitle = useDesignStore((s) => s.setTitle);
-  const storageStatus = useKeptInStorageStatus();
+function StorageStatus() {
+  const title = useCurrentDesign((s) => s.title);
+  const setTitle = useCurrentDesign((s) => s.setTitle);
+  const storageStatus = useSavedToStorageStatus();
   const hasUnsavedChanges = useHasUnsavedChanges();
-  const loadNew = useDesignStore((s) => s.loadNew);
+  const loadNew = useCurrentDesign((s) => s.loadNew);
 
   const isSavedNow = storageStatus === "success";
 
@@ -191,4 +191,4 @@ function CurrentThemeDesignStatus() {
   );
 }
 
-export default CurrentThemeDesignStatus;
+export default StorageStatus;

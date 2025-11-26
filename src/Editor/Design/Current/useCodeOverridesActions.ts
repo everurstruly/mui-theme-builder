@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useDesignStore } from "./currentStore";
+import { useCurrentDesign } from "./useCurrent";
 import { transformCodeToDsl } from "../compiler";
 
 /**
@@ -16,10 +16,10 @@ import { transformCodeToDsl } from "../compiler";
  * }
  */
 export default function useCodeOverridesActions() {
-  const setCodeOverrides = useDesignStore((s) => s.setCodeOverrides);
-  const clearCodeOverrides = useDesignStore((s) => s.clearCodeOverrides);
-  const resetToVisual = useDesignStore((s) => s.clearCodeOverrides);
-  const resetToBase = useDesignStore((s) => s.resetToBase);
+  const setCodeOverrides = useCurrentDesign((s) => s.setCodeOverrides);
+  const clearCodeOverrides = useCurrentDesign((s) => s.clearCodeOverrides);
+  const resetToVisual = useCurrentDesign((s) => s.clearCodeOverrides);
+  const resetToBase = useCurrentDesign((s) => s.resetToBase);
 
   return useMemo(
     () => ({

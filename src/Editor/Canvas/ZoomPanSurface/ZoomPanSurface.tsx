@@ -6,7 +6,7 @@ import useCanvasGestures from "./useCanvasGestures";
 import useCanvasKeyboardShortcuts from "./useCanvasKeyboardShortcuts";
 import React, { useRef, useEffect, useCallback, useMemo } from "react";
 import { Box } from "@mui/material";
-import useDesignStore from "../../Design/Current/currentStore";
+import useCurrentDesign from "../../Design/Current/useCurrent";
 import useCreatedThemeOption from "../../Design/Current/useCreatedThemeOption";
 
 type ZoomPanSurfaceProps = {
@@ -36,7 +36,7 @@ export default function ZoomPanSurface({
   showDefaultControls = true,
 }: ZoomPanSurfaceProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const component = useDesignStore((s) => s.activePreviewId);
+  const component = useCurrentDesign((s) => s.activePreviewId);
   const themeOptions = useCreatedThemeOption();
 
   // New unified store selectors

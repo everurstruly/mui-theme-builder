@@ -4,7 +4,7 @@ import Select from "@mui/material/Select";
 import type { SelectChangeEvent } from "@mui/material/Select";
 import useTemplateSelection from "./useTemplateSelection";
 
-export default function DesignTemplateSelectMenu() {
+export default function TemplateCreationMobileSelectMenu() {
   const { templates, selectedTemplateId, selectTemplate } = useTemplateSelection();
 
   const handleChange = (event: SelectChangeEvent<string>) => {

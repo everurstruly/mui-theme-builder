@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useDesignStore } from './currentStore';
+import { useCurrentDesign } from './useCurrent';
 
 /** Hook that returns explicit visual edit action helpers.
  * These functions are explicit: callers must decide whether an edit
@@ -7,11 +7,11 @@ import { useDesignStore } from './currentStore';
  * the store and keeps actions dumb.
  */
 export function useVisualEditActions() {
-  const addGlobal = useDesignStore((s) => s.addGlobalVisualEdit);
-  const addScheme = useDesignStore((s) => s.addSchemeVisualEdit);
-  const removeGlobal = useDesignStore((s) => s.removeGlobalVisualEdit);
-  const removeScheme = useDesignStore((s) => s.removeSchemeVisualEdit);
-  const removeAll = useDesignStore((s) => s.clearVisualEdits);
+  const addGlobal = useCurrentDesign((s) => s.addGlobalVisualEdit);
+  const addScheme = useCurrentDesign((s) => s.addSchemeVisualEdit);
+  const removeGlobal = useCurrentDesign((s) => s.removeGlobalVisualEdit);
+  const removeScheme = useCurrentDesign((s) => s.removeSchemeVisualEdit);
+  const removeAll = useCurrentDesign((s) => s.clearVisualEdits);
 
   const addGlobalVisualEdit = useCallback((path: string, value: any) => addGlobal(path, value), [addGlobal]);
   const addSchemeVisualEdit = useCallback((scheme: string, path: string, value: any) => addScheme(scheme, path, value), [addScheme]);

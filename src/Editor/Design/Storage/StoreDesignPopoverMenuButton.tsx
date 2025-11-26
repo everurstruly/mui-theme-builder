@@ -1,7 +1,7 @@
 import * as React from "react";
 import Button from "@mui/material/Button";
 import { Popover } from "@mui/material";
-import SavedDesignPopoverMenuList from "./StoreDesignPopoverMenuList";
+import SavedDesignPopoverMenuContent from "./StoreDesignPopoverMenuContent";
 import { BookmarkBorderOutlined } from "@mui/icons-material";
 
 export default function StoreDesignPopoverMenuButton() {
@@ -36,14 +36,14 @@ export default function StoreDesignPopoverMenuButton() {
         transformOrigin={{ vertical: "top", horizontal: "left" }}
         slotProps={{
           root: {
-            sx: { mt: 2 }
+            sx: { mt: 2 },
           },
           paper: {
             sx: { width: 320, borderRadius: 4 },
           },
         }}
       >
-        <SavedDesignPopoverMenuList onClose={handleClose} />
+        <SavedDesignPopoverMenuContent onClose={handleClose} />
       </Popover>
     </>
   );

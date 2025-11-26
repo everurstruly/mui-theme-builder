@@ -1,8 +1,8 @@
 import { useState, useCallback, useMemo } from "react";
-import { useTemplateStore, type TemplateMetadata } from "./useTemplateStore";
+import { useTemplates, type TemplateMetadata } from "./useTemplates";
 import { serializeThemeOptions } from "../compiler";
 import useHasUnsavedChanges from "../Current/useHasUnsavedChanges";
-import useDesignStore from "../Current/currentStore";
+import useCurrentDesign from "../Current/useCurrent";
 
 export type UseTemplateSelectionOptions = {
   autoConfirm?: boolean;
@@ -16,15 +16,15 @@ const BLANK_PENDING_ID = "__blank__";
 export default function useTemplateSelection(options?: UseTemplateSelectionOptions) {
   const autoConfirm = options?.autoConfirm ?? false;
   const defaultScheme = options?.defaultScheme ?? "light";
-  const { getAllTemplates, getTemplateById, templatesRegistry } = useTemplateStore();
+  const { getAllTemplates, getTemplateById, templatesRegistry } = useTemplates();
 
   const templates = useMemo(() => getAllTemplates(), [getAllTemplates]);
-  const selectedTemplateId = useDesignStore(
+  const selectedTemplateId = useCurrentDesign(
     (s) => s.baseThemeMetadata?.sourceTemplateId
   );
 
   const hasUnsavedChanges = useHasUnsavedChanges();
-  const loadNew = useDesignStore((s) => s.loadNew);
+  const loadNew = useCurrentDesign((s) => s.loadNew);
 
   const [pendingChange, setPendingChange] = useState<PendingChange>(null);
   const [shouldKeepUnsavedChanges, setShouldKeepUnsavedChanges] = useState(

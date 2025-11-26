@@ -1,12 +1,12 @@
-import DesignColorSchemeToggle from "../Design/Current/DesignColorSchemeToggle";
-import ThemingExperienceTab from "../Toolsbar/DesignExperienceTab";
+import ColorSchemeToggle from "../Design/Current/ColorSchemeToggle";
+import ThemingExperienceTab from "../Toolsbar/ExperienceTab";
 import { Box } from "@mui/material";
 
 export default function PropertiesPanelHeader() {
   return (
     <>
       <Box display="inherit" columnGap={"inherit"}>
-        <DesignColorSchemeToggle />
+        <ColorSchemeToggle />
       </Box>
 
       <Box display={"inherit"} columnGap={"inherit"}>

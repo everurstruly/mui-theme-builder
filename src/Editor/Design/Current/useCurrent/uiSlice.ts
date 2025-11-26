@@ -13,7 +13,7 @@
  */
 
 import type { StateCreator } from 'zustand';
-import type { EditorDesignExperienceId } from '../../../editorDesignExperience';
+import type { EditorDesignExperienceId } from '../../../editorExperience';
 
 // ===== Types =====
 

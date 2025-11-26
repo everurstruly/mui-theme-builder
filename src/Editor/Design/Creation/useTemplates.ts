@@ -9,15 +9,15 @@ import templatesRegistry, {
 /**
  * Lightweight hook for template discovery and metadata.
  * Templates are separate from active designs - they serve as starting points.
- * 
+ *
  * This hook provides access to the static template registry without
  * coupling it to the design store state.
- * 
+ *
  * @example
  * function TemplateSelector() {
  *   const { getAllTemplates, getTemplateById } = useTemplateStore();
  *   const templates = getAllTemplates();
- *   
+ *
  *   return templates.map(t => (
  *     <button onClick={() => loadTemplate(t.id)}>
  *       {t.label}
@@ -25,7 +25,7 @@ import templatesRegistry, {
  *   ));
  * }
  */
-export function useTemplateStore() {
+export function useTemplates() {
   return {
     /**
      * Get a template by ID

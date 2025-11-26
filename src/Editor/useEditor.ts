@@ -10,7 +10,7 @@ const sidebarPanels = [
 const panels = ["library", ...sidebarPanels];
 export type EditorUiPanels = (typeof panels)[number];
 
-const useEditorUiStore = create(
+export const useEditorUiStore = create(
   combine(
     {
       mouseOverCanvas: false,

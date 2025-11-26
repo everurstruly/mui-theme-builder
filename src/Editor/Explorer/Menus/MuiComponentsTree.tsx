@@ -2,11 +2,11 @@ import Box from "@mui/material/Box";
 import { SimpleTreeView } from "@mui/x-tree-view/SimpleTreeView";
 import { TreeItem } from "@mui/x-tree-view/TreeItem";
 import { muiComponentsRegistry } from "../../Previews/MuiComponents/muiComponentsRegistry";
-import useDesignStore from "../../Design/Current/currentStore";
+import useCurrentDesign from "../../Design/Current/useCurrent";
 
 export default function MuiComponentsTree() {
-  const activePreviewId = useDesignStore((state) => state.activePreviewId);
-  const selectPreview = useDesignStore((state) => state.selectPreview);
+  const activePreviewId = useCurrentDesign((state) => state.activePreviewId);
+  const selectPreview = useCurrentDesign((state) => state.selectPreview);
 
   const handleSelectComponent = (_event: React.SyntheticEvent | null, itemId: string | null) => {
     if (itemId && !itemId.startsWith("folder-")) {

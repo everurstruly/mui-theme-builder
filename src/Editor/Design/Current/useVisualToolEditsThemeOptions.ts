@@ -1,6 +1,6 @@
 import type { ThemeOptions } from "@mui/material";
 import { useMemo } from "react";
-import useDesignStore from "./currentStore";
+import useCurrentDesign from "./useCurrent";
 import { createThemeOptionsFromEdits } from "../compiler";
 
 /**
@@ -19,14 +19,14 @@ import { createThemeOptionsFromEdits } from "../compiler";
 export default function useVisualToolEditsThemeOptions(
   colorScheme?: "light" | "dark"
 ): ThemeOptions {
-  const activeColorScheme = useDesignStore((s) => s.activeColorScheme);
+  const activeColorScheme = useCurrentDesign((s) => s.activeColorScheme);
   const targetScheme = colorScheme ?? activeColorScheme;
 
-  const baseVisualToolEdits = useDesignStore(
+  const baseVisualToolEdits = useCurrentDesign(
     (s) => s.colorSchemeIndependentVisualToolEdits
   );
-  const lightMode = useDesignStore((s) => s.colorSchemes.light);
-  const darkMode = useDesignStore((s) => s.colorSchemes.dark);
+  const lightMode = useCurrentDesign((s) => s.colorSchemes.light);
+  const darkMode = useCurrentDesign((s) => s.colorSchemes.dark);
 
   const { visualToolEdits } = targetScheme === "light" ? lightMode : darkMode;
 

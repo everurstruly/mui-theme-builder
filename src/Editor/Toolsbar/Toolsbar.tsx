@@ -1,12 +1,12 @@
-import DesignTemplateSelectMenu from "../Design/Creation/DesignTemplateSelectMenu";
-import DesignExportButton from "../Design/Current/DesignExportButton";
-import DesignChangeHistoryButtons from "../Design/Current/DesignChangeHistoryButtons";
-import MobileActionGroup from "./MobileDesignActionGroup";
-import DesignActionListMenu from "./DesignActionListMenu";
-import CurrentDesignStatus from "../Design/Current/CurrentDesignStatus";
+import TemplateCreationMobileSelectMenu from "../Design/Creation/TemplateCreationMobileSelectMenu";
+import ExportButton from "../Design/Current/ExportButton";
+import ChangesHistoryButtons from "../Design/Current/ChangesHistoryButtons";
+import CurrentDesignMobileActionMenu from "./CurrentDesignMobileActionMenu";
+import CurrentDesignActionMenu from "./CurrentDesignActionMenu";
+import CurrentDesignStatus from "../Design/Current/StorageStatus";
 import { AppBar, Stack, Divider, Toolbar, type SxProps } from "@mui/material";
 import PropertiesPanelHeader from "../Properties/PropertiesPanelHeader";
-import SaveDesignButton from "../Design/Storage/StoreDesignButton";
+import SaveToStoreButton from "../Design/Storage/SaveToStoreButton";
 
 export default function EditorToolsbar() {
   return (
@@ -52,12 +52,12 @@ function DesktopToolbarContent() {
         paddingInline={1.5}
         columnGap={2}
       >
-        <DesignActionListMenu sx={{ columnGap: 2 }} />
+        <CurrentDesignActionMenu sx={{ columnGap: 2 }} />
 
         <Stack direction={"row"} alignItems={"inherit"} columnGap={2} mx={2}>
-          <SaveDesignButton />
-          <DesignChangeHistoryButtons />
-          <DesignExportButton />
+          <SaveToStoreButton />
+          <ChangesHistoryButtons />
+          <ExportButton />
         </Stack>
       </Stack>
 
@@ -94,8 +94,8 @@ function MobileToolbarContent() {
       alignItems={"center"}
       paddingInline={{ sm: "12px" }}
     >
-      <DesignTemplateSelectMenu />
-      <MobileActionGroup />
+      <TemplateCreationMobileSelectMenu />
+      <CurrentDesignMobileActionMenu />
     </Stack>
   );
 }

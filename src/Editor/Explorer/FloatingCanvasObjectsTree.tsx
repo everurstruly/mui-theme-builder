@@ -1,6 +1,6 @@
 import * as React from "react";
 import Popover from "@mui/material/Popover";
-import useEditorUiStore from "../useEditorStore";
+import useEditorUiStore from "../useEditor";
 import SampleCanvasObjectsTree from "./Menus/SampleCanvasObjectsTree";
 import {
   ArrowDropDownOutlined,

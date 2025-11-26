@@ -1,9 +1,9 @@
-import { extractThemeOptionsForScheme } from "../../Templates/registry";
 import { type ThemeOptions } from "@mui/material";
 import { useMemo } from "react";
-import useDesignStore from "./currentStore";
+import useCurrentDesign from "./useCurrent";
 import {
   createThemeOptionsFromEdits,
+  deepMerge,
   parseThemeCode,
   transformDslToThemeOptions,
 } from "../compiler";
@@ -19,14 +19,14 @@ export default function useCreatedThemeOption(
   colorScheme?: "light" | "dark"
 ): ThemeOptions {
   // Subscribe to all relevant state slices with selectors
-  const activeColorScheme = useDesignStore((s) => s.activeColorScheme);
-  const baseThemeCode = useDesignStore((s) => s.baseThemeCode);
-  const baseVisualToolEdits = useDesignStore(
+  const activeColorScheme = useCurrentDesign((s) => s.activeColorScheme);
+  const baseThemeCode = useCurrentDesign((s) => s.baseThemeCode);
+  const baseVisualToolEdits = useCurrentDesign(
     (s) => s.colorSchemeIndependentVisualToolEdits
   );
-  const codeOverridesDsl = useDesignStore((s) => s.codeOverridesDsl);
-  const lightMode = useDesignStore((s) => s.colorSchemes.light);
-  const darkMode = useDesignStore((s) => s.colorSchemes.dark);
+  const codeOverridesDsl = useCurrentDesign((s) => s.codeOverridesDsl);
+  const lightMode = useCurrentDesign((s) => s.colorSchemes.light);
+  const darkMode = useCurrentDesign((s) => s.colorSchemes.dark);
 
   const targetScheme = colorScheme ?? activeColorScheme;
   const { visualToolEdits } = targetScheme === "light" ? lightMode : darkMode;
@@ -67,4 +67,34 @@ export default function useCreatedThemeOption(
     visualToolEdits,
     targetScheme,
   ]);
+}
+
+/**
+ * Resolve a ThemeOptions for a specific color scheme when templates use the
+ * `colorSchemes` structure. If template already is a flat ThemeOptions (old
+ * format), it will be returned as-is.
+ */
+function extractThemeOptionsForScheme(
+  themeOptions: ThemeOptions,
+  scheme: "light" | "dark"
+): ThemeOptions {
+  if (
+    themeOptions.colorSchemes &&
+    typeof themeOptions.colorSchemes === "object" &&
+    scheme in themeOptions.colorSchemes
+  ) {
+    const schemeOpts = (themeOptions.colorSchemes as Record<string, any>)[scheme] as
+      | Record<string, any>
+      | undefined;
+
+    const { colorSchemes, ...base } = themeOptions as Record<string, any>;
+
+    if (schemeOpts) {
+      void colorSchemes;
+      return deepMerge(base as Record<string, any>, schemeOpts) as ThemeOptions;
+    }
+  }
+
+  // Fallback: return template as-is
+  return themeOptions;
 }

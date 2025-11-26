@@ -4,7 +4,7 @@ import { SaveRounded } from "@mui/icons-material";
 import { Button, Snackbar } from "@mui/material";
 import { useState } from "react";
 
-export default function SaveDesignButton() {
+export default function SaveToStoreButton() {
   const [shouldShowNotification, showNotification] = useState(false);
   const hasUnsavedChanges = useHasUnsavedChanges();
 

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { useDesignStore } from "../Current/currentStore";
+import { useCurrentDesign } from "../Current/useCurrent";
 import useCreatedThemeOption from "../Current/useCreatedThemeOption";
 import { useVisualEditActions } from "../Current/useVisualEditActions";
 import useCodeOverridesActions from "../Current/useCodeOverridesActions";
@@ -30,20 +30,20 @@ export default function useDesignStorage(
 ) {
   const [savedDesigns, setSavedDesigns] = useState<SavedToStorageDesign[]>([]);
 
-  const loadNewDesign = useDesignStore((s) => s.loadNew);
-  const setStatus = useDesignStore((s) => s.setStatus);
-  const markSavedDomain = useDesignStore((s) => s.markSaved);
-  const recordLastSaved = useDesignStore((s) => s.recordLastSaved);
+  const loadNewDesign = useCurrentDesign((s) => s.loadNew);
+  const setStatus = useCurrentDesign((s) => s.setStatus);
+  const markSavedDomain = useCurrentDesign((s) => s.markSaved);
+  const recordLastSaved = useCurrentDesign((s) => s.recordLastSaved);
   const createdThemeOptions = useCreatedThemeOption();
   const { addGlobalVisualEdit } = useVisualEditActions();
   const { applyChanges: applyCodeOverrides } = useCodeOverridesActions();
-  const setActiveColorScheme = useDesignStore((s) => s.setActiveColorScheme);
+  const setActiveColorScheme = useCurrentDesign((s) => s.setActiveColorScheme);
 
   const saveCurrent = useCallback(
     async (opts?: { title?: string; includeSession?: boolean }) => {
       setStatus("loading");
 
-      const state = useDesignStore.getState();
+      const state = useCurrentDesign.getState();
       const title = opts?.title ?? state.title ?? "Untitled";
 
       // Primary data: the merged/created ThemeOptions as JSON string

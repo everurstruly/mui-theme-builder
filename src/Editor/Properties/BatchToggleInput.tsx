@@ -3,7 +3,7 @@ import ListItemText from "@mui/material/ListItemText";
 import { useVisualEditActions } from "../Design/Current/useVisualEditActions";
 import { useMemo } from "react";
 import { AddOutlined, InfoOutline, RemoveOutlined } from "@mui/icons-material";
-import useDesignStore from "../Design/Current/currentStore";
+import useCurrentDesign from "../Design/Current/useCurrent";
 import type { SerializableValue } from "../Design/compiler";
 
 export type BatchToggleInputProps = {
@@ -22,12 +22,12 @@ export type BatchToggleInputProps = {
  */
 export default function BatchToggleInput(props: BatchToggleInputProps) {
   const { addGlobalVisualEdit, removeGlobalVisualEdit } = useVisualEditActions();
-  const baseVisualToolEdits = useDesignStore(
+  const baseVisualToolEdits = useCurrentDesign(
     (s) => s.colorSchemeIndependentVisualToolEdits
   );
-  const lightMode = useDesignStore((s) => s.colorSchemes.light);
-  const darkMode = useDesignStore((s) => s.colorSchemes.dark);
-  const activeColorScheme = useDesignStore((s) => s.activeColorScheme);
+  const lightMode = useCurrentDesign((s) => s.colorSchemes.light);
+  const darkMode = useCurrentDesign((s) => s.colorSchemes.dark);
+  const activeColorScheme = useCurrentDesign((s) => s.activeColorScheme);
 
   // Get the appropriate visual edits based on active color scheme
   const activeVisualToolEdits = useMemo(() => {

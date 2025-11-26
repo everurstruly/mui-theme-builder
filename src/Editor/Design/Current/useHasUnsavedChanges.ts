@@ -1,4 +1,4 @@
-import useDesignStore from "./currentStore";
+import useCurrentDesign from "./useCurrent";
 
 /**
  * Hook: useHasUnsavedChanges
@@ -6,5 +6,5 @@ import useDesignStore from "./currentStore";
  * Avoids calling `get()` directly and keeps the component reactive to changes.
  */
 export default function useHasUnsavedChanges(): boolean {
-  return useDesignStore((s) => s.version !== s.savedVersion);
+  return useCurrentDesign((s) => s.version !== s.savedVersion);
 }

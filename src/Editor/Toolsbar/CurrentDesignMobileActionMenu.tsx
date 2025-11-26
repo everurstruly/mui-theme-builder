@@ -1,6 +1,6 @@
 import * as React from "react";
-import ExportThemeButton from "../Design/Current/DesignExportButton";
-import ChangeHistoryActions from "../Design/Current/DesignChangeHistoryButtons";
+import ExportThemeButton from "../Design/Current/ExportButton";
+import ChangeHistoryActions from "../Design/Current/ChangesHistoryButtons";
 import MenuItem from "@mui/material/MenuItem";
 import {
   ContentCopy,
@@ -21,7 +21,7 @@ import {
   Stack,
 } from "@mui/material";
 
-export default function MobileActionGroup() {
+export default function CurrentDesignMobileActionMenu() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const theme = useTheme();
@@ -120,4 +120,3 @@ export default function MobileActionGroup() {
     </>
   );
 }
-

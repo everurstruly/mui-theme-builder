@@ -16,8 +16,8 @@ import {
   KeyboardArrowRight,
   ShuffleOutlined,
 } from "@mui/icons-material";
-import useTemplateSelection from "./useTemplateSelection";
-import DesignColorSchemeToggle from "../Current/DesignColorSchemeToggle";
+import useTemplateSelection from "../useTemplateSelection";
+import ColorSchemeToggle from "../../Current/ColorSchemeToggle";
 
 export default function TemplateOption({ onClose }: { onClose: () => void }) {
   const {
@@ -70,7 +70,7 @@ export default function TemplateOption({ onClose }: { onClose: () => void }) {
           Random
         </Button>
 
-        <DesignColorSchemeToggle />
+        <ColorSchemeToggle />
       </Toolbar>
 
       <List component={Stack} sx={{ gap: 1 }}>

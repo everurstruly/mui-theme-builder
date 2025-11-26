@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import { useDebouncyEffect } from "use-debouncy";
 import useEditWithVisualTool from "../../Design/Current/useEditWithVisualTool";
-import { useDesignStore } from "../../Design/Current/currentStore";
+import { useCurrentDesign } from "../../Design/Current/useCurrent";
 import { readableColor } from "polished";
 
 type Options = {
@@ -22,7 +22,7 @@ export default function useColorPickerEdit(path: string, options?: Options) {
   const autoApply = options?.autoApply ?? true;
 
   // -- Source: visual edit store wrapper
-  const activeScheme = useDesignStore((s) => s.activeColorScheme);
+  const activeScheme = useCurrentDesign((s) => s.activeColorScheme);
   const {
     value,
     resolvedValue,

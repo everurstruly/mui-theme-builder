@@ -2,8 +2,7 @@ import type { ThemeOptions } from "@mui/material";
 import materialTheme from "./material";
 import modernTheme from "./modern";
 import minimalTheme from "./minimal";
-import ios26 from "./collections/ios26";
-import { deepMerge } from "../Design/compiler";
+import ios26 from "./ios26";
 
 export type TemplateMetadata = {
   id: string;
@@ -212,34 +211,4 @@ export function getTemplateById(id: string): TemplateMetadata | undefined {
  */
 export function registerTemplate(metadata: TemplateMetadata): void {
   templatesRegistry[metadata.id] = metadata;
-}
-
-/**
- * Resolve a ThemeOptions for a specific color scheme when templates use the
- * `colorSchemes` structure. If template already is a flat ThemeOptions (old
- * format), it will be returned as-is.
- */
-export function extractThemeOptionsForScheme(
-  themeOptions: ThemeOptions,
-  scheme: "light" | "dark"
-): ThemeOptions {
-  if (
-    themeOptions.colorSchemes &&
-    typeof themeOptions.colorSchemes === "object" &&
-    scheme in themeOptions.colorSchemes
-  ) {
-    const schemeOpts = (themeOptions.colorSchemes as Record<string, any>)[scheme] as
-      | Record<string, any>
-      | undefined;
-
-    const { colorSchemes, ...base } = themeOptions as Record<string, any>;
-
-    if (schemeOpts) {
-      void colorSchemes;
-      return deepMerge(base as Record<string, any>, schemeOpts) as ThemeOptions;
-    }
-  }
-
-  // Fallback: return template as-is
-  return themeOptions;
 }

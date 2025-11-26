@@ -14,7 +14,7 @@ import useCreatedThemeOption from "./useCreatedThemeOption";
 type ExportType = "themeOptions" | "themeObject";
 type ExportFormat = "js" | "ts" | "json";
 
-export default function DesignExportButton() {
+export default function ExportButton() {
   const [open, setOpen] = React.useState(false);
   const [exportType, setExportType] = React.useState<ExportType>("themeOptions");
   const [exportFormat] = React.useState<ExportFormat>("ts");

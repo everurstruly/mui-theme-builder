@@ -14,7 +14,7 @@ export type EditorExperience = {
   renderPropsPanel?: () => React.ReactNode;
 };
 
-export const editorDesignExperiences = {
+export const editorDesignExperience = {
   primitives: {
     icon: AutoFixHighOutlined,
     id: "primitives",
@@ -40,4 +40,4 @@ export const editorDesignExperiences = {
   } as EditorExperience,
 } as const;
 
-export type EditorDesignExperienceId = keyof typeof editorDesignExperiences;
+export type EditorDesignExperienceId = keyof typeof editorDesignExperience;
