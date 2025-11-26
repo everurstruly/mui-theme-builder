@@ -5,8 +5,8 @@ import type {
   DslValue,
   DslPlaceholder,
   DslResolutionContext,
-} from './types';
-import { getNestedValue } from '../shared';
+} from '../types';
+import { getNestedValue } from "../utilities/objectOps";
 
 /**
  * Transforms DSL representation back to executable ThemeOptions.

@@ -1,6 +1,6 @@
 import type { ThemeOptions } from "@mui/material";
 import { parse } from 'acorn';
-import type { SerializableValue } from "../Current/designStore";
+import type { SerializableValue } from "../utilities/objectOps";
 
 /**
  * Result of evaluating code overrides.
@@ -519,31 +519,4 @@ export function validateCodeBeforeEvaluation(source: string): ValidationResult {
 
   const valid = errors.length === 0;
   return { valid, errors, warnings };
-}
-
-
-/**
- * Hook for code editor validation.
- * Provides validation function and current validation state.
- *
- * @returns Validation utilities
- *
- * @example
- * function CodeEditor() {
- * const { validate } = useCodeOverridesValidation();
- *
- * const handleApply = (code: string) => {
- * const result = validate(code);
- * if (!result.valid) {
- * showErrors(result.errors);
- * return;
- * }
- * applyChanges(code);
- * };
- * }
- */
-export function useCodeOverridesValidation() {
-  return {
-    validate: validateCodeBeforeEvaluation,
-  };
 }

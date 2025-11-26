@@ -4,7 +4,7 @@ import type {
   DslTransformResult,
   DslValue,
   DslPlaceholder,
-} from './types';
+} from '../types';
 
 // Type helpers for acorn AST nodes
 type AnyNode = any;

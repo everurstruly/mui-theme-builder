@@ -1,6 +1,5 @@
-import { expandFlatThemeOptions, deepMerge } from "../shared";
 import type { ThemeOptions } from "@mui/material/styles";
-import type { SerializableValue } from "../Current/designStore";
+import { deepMerge, expandFlatThemeOptions, type SerializableValue } from "../utilities/objectOps";
 
 export default function createThemeOptionsFromEdits(
   config: ThemeResolutionConfig
