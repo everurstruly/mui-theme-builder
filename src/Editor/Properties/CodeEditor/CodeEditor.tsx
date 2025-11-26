@@ -43,7 +43,7 @@ const extractBody = (fullContent: string): string => {
 export default function CodeEditor() {
   // Use focused hooks instead of monolithic useCodeEditorPanel
   const { source, error, hasOverrides } = useCodeOverridesState();
-  const { applyChanges, clearOverrides } = useCodeOverridesActions();
+  const { applyModifications, clearOverrides } = useCodeOverridesActions();
   const validate = validateCodeBeforeEvaluation;
 
   // Track validation errors separately from evaluation errors
@@ -67,7 +67,7 @@ export default function CodeEditor() {
   }, [editorBody]);
 
   // Track unsaved changes relative to the incoming `source`
-  const hasUnsavedChanges = useMemo(() => {
+  const hasUnsavedModifications = useMemo(() => {
     const current = source ? extractBody(source) : DEFAULT_BODY_CONTENT;
     return editorBody !== current;
   }, [editorBody, source]);
@@ -239,8 +239,8 @@ export default function CodeEditor() {
     setValidationErrors([]);
 
     // Step 2: Apply changes (will trigger evaluation in store)
-    applyChanges(formattedFull);
-  }, [applyChanges, editorBody, validate, formatWithPrettier]);
+    applyModifications(formattedFull);
+  }, [applyModifications, editorBody, validate, formatWithPrettier]);
 
   // Global handler: if user presses Mod+S while the editor is NOT focused,
   // still trigger Apply/format. This makes Ctrl/Cmd+S work even when focus
@@ -369,7 +369,7 @@ export default function CodeEditor() {
         onApply={handleApply}
         onDiscard={handleDiscard}
         onClear={handleReset}
-        hasUnsaved={hasUnsavedChanges}
+        hasUnsaved={hasUnsavedModifications}
         hasOverrides={!!hasOverrides}
       />
 

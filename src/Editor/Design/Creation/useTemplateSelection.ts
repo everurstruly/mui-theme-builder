@@ -1,7 +1,7 @@
 import { useState, useCallback, useMemo } from "react";
 import { useTemplates, type TemplateMetadata } from "./useTemplates";
 import { serializeThemeOptions } from "../compiler";
-import useHasUnsavedChanges from "../Current/useHasUnsavedChanges";
+import useHasUnsavedModifications from "../Current/useHasUnsavedModifications";
 import useCurrentDesign from "../Current/useCurrent";
 
 export type UseTemplateSelectionOptions = {
@@ -23,18 +23,18 @@ export default function useTemplateSelection(options?: UseTemplateSelectionOptio
     (s) => s.baseThemeMetadata?.sourceTemplateId
   );
 
-  const hasUnsavedChanges = useHasUnsavedChanges();
+  const hasUnsavedModifications = useHasUnsavedModifications();
   const loadNew = useCurrentDesign((s) => s.loadNew);
 
   const [pendingChange, setPendingChange] = useState<PendingChange>(null);
-  const [shouldKeepUnsavedChanges, setShouldKeepUnsavedChanges] = useState(
-    hasUnsavedChanges ? null : true
+  const [shouldKeepUnsavedModifications, setShouldKeepUnsavedModifications] = useState(
+    hasUnsavedModifications ? null : true
   );
 
   const clearPending = useCallback(() => {
     setPendingChange(null);
-    setShouldKeepUnsavedChanges(hasUnsavedChanges ? null : true);
-  }, [hasUnsavedChanges]);
+    setShouldKeepUnsavedModifications(hasUnsavedModifications ? null : true);
+  }, [hasUnsavedModifications]);
 
   const discardAndApply = useCallback(
     (templateId: string) => {
@@ -47,7 +47,7 @@ export default function useTemplateSelection(options?: UseTemplateSelectionOptio
       const themeCode = serializeThemeOptions(template.themeOptions);
       loadNew(themeCode, { sourceTemplateId: templateId, title: template.label });
       setPendingChange(null);
-      setShouldKeepUnsavedChanges(false);
+      setShouldKeepUnsavedModifications(false);
     },
     [getTemplateById, loadNew]
   );
@@ -55,24 +55,24 @@ export default function useTemplateSelection(options?: UseTemplateSelectionOptio
   const applyBlank = useCallback(() => {
     loadNew("{}", { sourceTemplateId: "", title: "Untitled Design" });
     setPendingChange(null);
-    setShouldKeepUnsavedChanges(false);
+    setShouldKeepUnsavedModifications(false);
   }, [loadNew]);
 
   const applyKeepingUnsaved = useCallback(() => {
     setPendingChange(null);
-    setShouldKeepUnsavedChanges(true);
+    setShouldKeepUnsavedModifications(true);
   }, []);
 
   const selectTemplate = useCallback(
-    (templateId: string, opts?: { keepUnsavedChanges?: boolean }) => {
+    (templateId: string, opts?: { keepUnsavedModifications?: boolean }) => {
       if (autoConfirm) {
         discardAndApply(templateId);
         return;
       }
 
       // If caller explicitly provided keep/discard preference, honor it
-      if (typeof opts?.keepUnsavedChanges === "boolean") {
-        if (opts.keepUnsavedChanges) {
+      if (typeof opts?.keepUnsavedModifications === "boolean") {
+        if (opts.keepUnsavedModifications) {
           applyKeepingUnsaved();
         } else {
           discardAndApply(templateId);
@@ -81,26 +81,26 @@ export default function useTemplateSelection(options?: UseTemplateSelectionOptio
       }
 
       // If there are unsaved changes, request confirmation
-      if (hasUnsavedChanges) {
+      if (hasUnsavedModifications) {
         setPendingChange({ templateId });
-        setShouldKeepUnsavedChanges(null);
+        setShouldKeepUnsavedModifications(null);
         return;
       }
 
       // No unsaved changes — apply immediately
       discardAndApply(templateId);
     },
-    [autoConfirm, hasUnsavedChanges, discardAndApply, applyKeepingUnsaved]
+    [autoConfirm, hasUnsavedModifications, discardAndApply, applyKeepingUnsaved]
   );
 
   const confirmSwitch = useCallback(
-    (keepUnsavedChanges: boolean) => {
+    (keepUnsavedModifications: boolean) => {
       const pending = pendingChange;
       if (!pending) return;
 
       // special-case the blank selection
       if (pending.templateId === BLANK_PENDING_ID) {
-        if (keepUnsavedChanges) {
+        if (keepUnsavedModifications) {
           applyKeepingUnsaved();
         } else {
           applyBlank();
@@ -108,7 +108,7 @@ export default function useTemplateSelection(options?: UseTemplateSelectionOptio
         return;
       }
 
-      if (keepUnsavedChanges) {
+      if (keepUnsavedModifications) {
         applyKeepingUnsaved();
       } else {
         discardAndApply(pending.templateId);
@@ -132,14 +132,14 @@ export default function useTemplateSelection(options?: UseTemplateSelectionOptio
   }, [templates, selectedTemplateId, selectTemplate]);
 
   const selectBlank = useCallback(() => {
-    if (hasUnsavedChanges) {
+    if (hasUnsavedModifications) {
       setPendingChange({ templateId: BLANK_PENDING_ID });
-      setShouldKeepUnsavedChanges(null);
+      setShouldKeepUnsavedModifications(null);
       return;
     }
 
     applyBlank();
-  }, [hasUnsavedChanges, applyBlank]);
+  }, [hasUnsavedModifications, applyBlank]);
 
   function getColorSamples(templateOrId: TemplateMetadata | string): string[] {
     const template =
@@ -201,9 +201,9 @@ export default function useTemplateSelection(options?: UseTemplateSelectionOptio
     getTemplateById,
     templatesRegistry,
     selectedTemplateId,
-    hasUnsavedChanges,
+    hasUnsavedModifications,
     pendingChange,
-    shouldKeepUnsavedChanges,
+    shouldKeepUnsavedModifications,
     selectTemplate,
     selectBlank,
     confirmSwitch,

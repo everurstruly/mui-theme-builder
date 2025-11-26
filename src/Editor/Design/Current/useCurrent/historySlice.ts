@@ -14,7 +14,7 @@
  * Does NOT contain:
  * - Domain state itself
  * - UI state
- * - Persistence logic
+ * - Storage logic
  */
 
 import type { StateCreator } from 'zustand';
@@ -106,8 +106,8 @@ export interface ThemeDesignHistoryActions {
   undoCodeOverride: () => void;
   redoCodeOverride: () => void;
   
-  /** Mark current version as saved */
-  // savedVersion tracking is handled by the domain slice; history does not track savedVersion.
+  /** Mark current version as stored */
+  // lastStoredModificationVersion tracking is handled by the domain slice; history does not track it.
   
   /** Clear all history */
   clearHistory: () => void;

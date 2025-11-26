@@ -1,6 +1,6 @@
 import * as React from "react";
 import ExportThemeButton from "../Design/Current/ExportButton";
-import ChangeHistoryActions from "../Design/Current/ChangesHistoryButtons";
+import ChangeHistoryActions from "../Design/Current/ModificationHistoryButtons";
 import MenuItem from "@mui/material/MenuItem";
 import {
   ContentCopy,

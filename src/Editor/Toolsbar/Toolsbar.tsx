@@ -1,9 +1,9 @@
 import TemplateCreationMobileSelectMenu from "../Design/Creation/TemplateCreationMobileSelectMenu";
 import ExportButton from "../Design/Current/ExportButton";
-import ChangesHistoryButtons from "../Design/Current/ChangesHistoryButtons";
+import ModificationHistoryButtons from "../Design/Current/ModificationHistoryButtons";
 import CurrentDesignMobileActionMenu from "./CurrentDesignMobileActionMenu";
 import CurrentDesignActionMenu from "./CurrentDesignActionMenu";
-import CurrentDesignStatus from "../Design/Current/StorageStatus";
+import CurrentDesignStatus from "../Design/Current/Status";
 import { AppBar, Stack, Divider, Toolbar, type SxProps } from "@mui/material";
 import PropertiesPanelHeader from "../Properties/PropertiesPanelHeader";
 import SaveToStoreButton from "../Design/Storage/SaveToStoreButton";
@@ -56,7 +56,7 @@ function DesktopToolbarContent() {
 
         <Stack direction={"row"} alignItems={"inherit"} columnGap={2} mx={2}>
           <SaveToStoreButton />
-          <ChangesHistoryButtons />
+          <ModificationHistoryButtons />
           <ExportButton />
         </Stack>
       </Stack>

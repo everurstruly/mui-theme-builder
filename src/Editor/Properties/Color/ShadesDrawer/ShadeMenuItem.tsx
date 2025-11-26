@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { useCurrentDesign } from "../../../Design/Current/useCurrent";
 import { useDebouncyEffect } from "use-debouncy";
 import OptionListItemResetButton from "../../OptionListItemResetButton";
-import useEditWithVisualTool from "../../../Design/Current/useEditWithVisualTool";
+import useEditWithDesignTool from "../../../Design/Current/useEditWithDesignTool";
 
 export default function ShadeListItem({
   title,
@@ -21,7 +21,7 @@ export default function ShadeListItem({
     reset: resetValue,
     hasVisualEdit: isCustomized,
     hasCodeOverride: isControlledByFunction,
-  } = useEditWithVisualTool(path, activeScheme);
+  } = useEditWithDesignTool(path, activeScheme);
 
   const canResetValue = isCustomized || isControlledByFunction;
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);

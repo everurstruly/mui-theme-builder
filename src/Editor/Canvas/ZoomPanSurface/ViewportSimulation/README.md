@@ -359,7 +359,7 @@ A: Yes!
 3. **Check component registration**: if the component doesn't render, verify it's in `samplesRegistry` (available in both parent and iframe).
 4. **Inspect the iframe**: in DevTools, find the iframe element in the DOM, right-click → Inspect → toggle to iframe's DevTools context.
 
-## File Changes and Maintenance
+## File Modifications and Maintenance
 
 If you:
 - Add a new component: register it in `src/Editor/Samples/registry.ts` (used by both parent and iframe).

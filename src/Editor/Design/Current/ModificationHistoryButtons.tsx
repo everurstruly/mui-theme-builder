@@ -2,7 +2,7 @@ import { Button, ButtonGroup } from "@mui/material";
 import { RedoRounded, UndoRounded } from "@mui/icons-material";
 import useCurrentDesign from "./useCurrent";
 
-export default function ChangesHistoryButtons() {
+export default function ModificationHistoryButtons() {
   // Use the same per-experience undo/redo API that keyboard shortcuts use
   const selected = useCurrentDesign((s) => s.selectedExperienceId);
 

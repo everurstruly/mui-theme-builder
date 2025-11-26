@@ -10,7 +10,7 @@ export default function TemplateCreationMobileSelectMenu() {
   const handleChange = (event: SelectChangeEvent<string>) => {
     const themeId = event.target.value as string;
     // Apply immediately, discarding unsaved changes — caller can change opts if needed
-    selectTemplate(themeId, { keepUnsavedChanges: false });
+    selectTemplate(themeId, { keepUnsavedModifications: false });
   };
 
   return (

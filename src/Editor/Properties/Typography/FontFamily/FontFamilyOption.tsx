@@ -3,7 +3,7 @@ import FontFamilyOptionInput from "./FontFamilyOptionInput";
 import OptionListItemResetButton from "../../OptionListItemResetButton";
 import useDesignCreatedTheme from "../../../Design/Current/useCreatedTheme";
 import { useVisualEditActions } from "../../../Design/Current/useVisualEditActions";
-import useEditWithVisualTool from "../../../Design/Current/useEditWithVisualTool";
+import useEditWithDesignTool from "../../../Design/Current/useEditWithDesignTool";
 
 export type FontFamilyOptionProps = {
   title: string;
@@ -32,7 +32,7 @@ export default function FontFamilyOption({
   const { addGlobalVisualEdit, removeGlobalVisualEdit } = useVisualEditActions();
 
   const { value, hasVisualEdit, hasCodeOverride } =
-    useEditWithVisualTool(path);
+    useEditWithDesignTool(path);
 
   const autoResolvedValue = fontFamily;
   const resolvedValue = (value as string) ?? autoResolvedValue;

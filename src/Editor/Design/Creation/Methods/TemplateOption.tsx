@@ -156,7 +156,7 @@ export default function TemplateOption({ onClose }: { onClose: () => void }) {
         }}
       >
         <DialogTitle sx={{ textAlign: "center", py: 4 }}>
-          <Typography variant="h6">Wait! You've Unsaved Changes</Typography>
+          <Typography variant="h6">Wait! You've Unsaved Modifications</Typography>
           <Typography
             variant="body2"
             color="textSecondary"
@@ -174,7 +174,7 @@ export default function TemplateOption({ onClose }: { onClose: () => void }) {
             sx={{ justifyContent: "center", mb: 1 }}
           >
             <Button color="warning" onClick={() => confirmSwitch(false)}>
-              Discard Changes
+              Discard Modifications
             </Button>
 
             <Button

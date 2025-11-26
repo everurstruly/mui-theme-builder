@@ -3,7 +3,7 @@ import SliderInput from "../../SliderInput";
 import { useState, useEffect } from "react";
 import OptionListItemResetButton from "../../OptionListItemResetButton";
 import useDesignCreatedTheme from "../../../Design/Current/useCreatedTheme";
-import useEditWithVisualTool from "../../../Design/Current/useEditWithVisualTool";
+import useEditWithDesignTool from "../../../Design/Current/useEditWithDesignTool";
 import { getNestedValue } from "../../../Design/compiler";
 
 export type FontStyleRangedOptionProps = {
@@ -17,7 +17,7 @@ export default function FontStyleRangedOption(props: FontStyleRangedOptionProps)
   const autoResolvedValue = getNestedValue(theme, props.path);
 
   const { value, hasVisualEdit, hasCodeOverride, setValue, reset } =
-    useEditWithVisualTool(props.path);
+    useEditWithDesignTool(props.path);
 
   const currentValue = value ?? autoResolvedValue;
   const canResetValue = hasVisualEdit || hasCodeOverride;

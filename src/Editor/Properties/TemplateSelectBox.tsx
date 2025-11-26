@@ -9,7 +9,7 @@ export default function TemplateSelectBox() {
 
   const handleChange = (event: SelectChangeEvent<string>) => {
     const themeId = event.target.value as string;
-    selectTemplate(themeId, { keepUnsavedChanges: false });
+    selectTemplate(themeId, { keepUnsavedModifications: false });
   };
 
   return (

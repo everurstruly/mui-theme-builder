@@ -10,8 +10,8 @@ import { transformCodeToDsl } from "../compiler";
  *
  * @example
  * function ApplyButton() {
- *   const { applyChanges } = useCodeOverridesActions();
- *   const handleApply = () => applyChanges('{ palette: { primary: { main: "#ff0000" } } }');
+ *   const { applyModifications } = useCodeOverridesActions();
+ *   const handleApply = () => applyModifications('{ palette: { primary: { main: "#ff0000" } } }');
  *   return <Button onClick={handleApply}>Apply</Button>;
  * }
  */
@@ -24,7 +24,7 @@ export default function useCodeOverridesActions() {
   return useMemo(
     () => ({
       /** Apply code overrides from editor */
-      applyChanges: (code: string) => {
+      applyModifications: (code: string) => {
         const result = transformCodeToDsl(code);
         if (result.error) {
           setCodeOverrides(code, {}, {}, result.error);

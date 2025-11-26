@@ -13,15 +13,15 @@ import {
   Alert,
 } from "@mui/material";
 import React from "react";
-import useSavedToStorageStatus from "./useSavedToStorageStatus";
-import useHasUnsavedChanges from "./useHasUnsavedChanges";
+import useHasUnsavedModifications from "./useHasUnsavedModifications";
 import { useCurrentDesign } from "./useCurrent";
+import useStorage from "../Storage/useStorage";
 
-function StorageStatus() {
+function Status() {
   const title = useCurrentDesign((s) => s.title);
   const setTitle = useCurrentDesign((s) => s.setTitle);
-  const storageStatus = useSavedToStorageStatus();
-  const hasUnsavedChanges = useHasUnsavedChanges();
+  const storageStatus = useStorage((s) => s.storageProgress);
+  const hasUnsavedModifications = useHasUnsavedModifications();
   const loadNew = useCurrentDesign((s) => s.loadNew);
 
   const isSavedNow = storageStatus === "success";
@@ -91,7 +91,7 @@ function StorageStatus() {
             overflow: "hidden",
           }}
         >
-          Editing {hasUnsavedChanges ? "(unsaved)" : ""} —{" "}
+          Editing {hasUnsavedModifications ? "(unsaved)" : ""} —{" "}
           <Typography
             variant="caption"
             color="textPrimary"
@@ -191,4 +191,4 @@ function StorageStatus() {
   );
 }
 
-export default StorageStatus;
+export default Status;

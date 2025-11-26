@@ -1,26 +1,26 @@
 /**
  * Domain Slice - Pure Theme Design Model
- * 
+ *
  * Responsibilities:
  * - Store base theme representation (DSL format)
  * - Store visual tool edits (UI-driven modifications)
  * - Store code overrides (developer-driven modifications)
  * - Maintain theme metadata and provenance
- * 
+ *
  * Does NOT contain:
  * - UI state (activeColorScheme, selectedPreview, etc.)
  * - History/undo/redo logic
- * - Persistence status
+ * - Storage status
  * - Compiler/transformation logic
  * - Runtime decisions (no isColorSchemePath checks)
- * 
+ *
  * Actions are DUMB mutations:
  * - Caller provides all context (scheme, path, value)
  * - No service calls (themeCompiler)
  * - No conditional routing
  */
 
-import type { StateCreator } from 'zustand';
+import type { StateCreator } from "zustand";
 import type { ThemeDsl } from "../../compiler";
 
 // ===== Types =====
@@ -48,8 +48,8 @@ export interface ColorSchemeEdits {
  */
 export interface ThemeMetadata {
   sourceTemplateId?: string;
-  createdAt: number;
-  lastModified: number;
+  createdAtTimestamp: number;
+  lastModifiedTimestamp: number;
 }
 
 /**
@@ -68,7 +68,7 @@ export interface ThemeDesignDomainState {
   /** Global visual edits (typography, spacing, shape, breakpoints, etc.) */
   colorSchemeIndependentVisualToolEdits: Record<string, SerializableValue>;
 
-  /** 
+  /**
    * Color scheme-specific edits (palette.*, shadows).
    * Supports any scheme name: 'light', 'dark', 'high-contrast', 'sepia', etc.
    * Future-proofs for MUI v6+ custom color schemes.
@@ -88,10 +88,10 @@ export interface ThemeDesignDomainState {
   codeOverridesError: string | null;
 
   /** Version counter - incremented on any domain change */
-  version: number;
+  modificationVersion: number;
 
   /** Last saved version - for dirty checking */
-  savedVersion: number;
+  lastStoredModificationVersion: number;
 }
 
 /**
@@ -111,7 +111,11 @@ export interface ThemeDesignDomainActions {
   addGlobalVisualEdit: (path: string, value: SerializableValue) => void;
 
   /** Add or update a scheme-specific visual edit (palette.*, shadows) */
-  addSchemeVisualEdit: (scheme: string, path: string, value: SerializableValue) => void;
+  addSchemeVisualEdit: (
+    scheme: string,
+    path: string,
+    value: SerializableValue
+  ) => void;
 
   /** Remove a global visual edit */
   removeGlobalVisualEdit: (path: string) => void;
@@ -126,10 +130,18 @@ export interface ThemeDesignDomainActions {
   getSchemeVisualEdit: (scheme: string, path: string) => SerializableValue;
 
   /** Clear visual edits */
-  clearVisualEdits: (scope: 'global' | 'current-scheme' | 'all', scheme: string) => void;
+  clearVisualEdits: (
+    scope: "global" | "current-scheme" | "all",
+    scheme: string
+  ) => void;
 
   /** Set code overrides (pre-transformed by caller) */
-  setCodeOverrides: (source: string, dsl: ThemeDsl, flattened: Record<string, SerializableValue>, error: string | null) => void;
+  setCodeOverrides: (
+    source: string,
+    dsl: ThemeDsl,
+    flattened: Record<string, SerializableValue>,
+    error: string | null
+  ) => void;
 
   /** Clear code overrides */
   clearCodeOverrides: () => void;
@@ -144,10 +156,11 @@ export interface ThemeDesignDomainActions {
   resetToBase: () => void;
 
   /** Mark current version as saved */
-  markSaved: () => void;
+  acknowledgeStoredVersion: () => void;
 }
 
-export type ThemeDesignDomainSlice = ThemeDesignDomainState & ThemeDesignDomainActions;
+export type ThemeDesignDomainSlice = ThemeDesignDomainState &
+  ThemeDesignDomainActions;
 
 // ===== Initial State Factory =====
 
@@ -157,8 +170,8 @@ function createInitialColorSchemeEdits(): ColorSchemeEdits {
 
 function createInitialMetadata(): ThemeMetadata {
   return {
-    createdAt: Date.now(),
-    lastModified: Date.now(),
+    createdAtTimestamp: Date.now(),
+    lastModifiedTimestamp: Date.now(),
   };
 }
 
@@ -171,29 +184,32 @@ export const createDomainSlice: StateCreator<
   ThemeDesignDomainSlice
 > = (set, get) => ({
   // Initial state
-  title: 'MUI Default',
-  baseThemeCode: '',
+  title: "MUI Default",
+  baseThemeCode: "",
   baseThemeMetadata: createInitialMetadata(),
   colorSchemeIndependentVisualToolEdits: {},
   colorSchemes: {
     light: createInitialColorSchemeEdits(),
     dark: createInitialColorSchemeEdits(),
   },
-  codeOverridesSource: '',
+  codeOverridesSource: "",
   codeOverridesDsl: {},
   codeOverridesFlattened: {},
   codeOverridesError: null,
-  version: 0,
-  savedVersion: 0,
+  modificationVersion: 0,
+  lastStoredModificationVersion: 0,
 
   // Actions
   setTitle: (title: string) => {
-    set({ title, version: get().version + 1 });
+    set({
+      title,
+      modificationVersion: get().modificationVersion + 1,
+    });
   },
 
   setBaseTheme: (themeCodeOrDsl, metadata) => {
     const codeString =
-      typeof themeCodeOrDsl === 'string'
+      typeof themeCodeOrDsl === "string"
         ? themeCodeOrDsl
         : JSON.stringify(themeCodeOrDsl);
 
@@ -202,10 +218,10 @@ export const createDomainSlice: StateCreator<
       baseThemeMetadata: {
         ...state.baseThemeMetadata,
         ...metadata,
-        lastModified: Date.now(),
+        lastModifiedTimestamp: Date.now(),
       },
       title: metadata?.title ?? state.title,
-      version: state.version + 1,
+      modificationVersion: state.modificationVersion + 1,
     }));
   },
 
@@ -215,7 +231,7 @@ export const createDomainSlice: StateCreator<
         ...state.colorSchemeIndependentVisualToolEdits,
         [path]: value,
       },
-      version: state.version + 1,
+      modificationVersion: state.modificationVersion + 1,
     }));
   },
 
@@ -231,7 +247,7 @@ export const createDomainSlice: StateCreator<
           },
         },
       },
-      version: state.version + 1,
+      modificationVersion: state.modificationVersion + 1,
     }));
   },
 
@@ -241,7 +257,7 @@ export const createDomainSlice: StateCreator<
       delete newEdits[path];
       return {
         colorSchemeIndependentVisualToolEdits: newEdits,
-        version: state.version + 1,
+        modificationVersion: state.modificationVersion + 1,
       };
     });
   },
@@ -261,7 +277,7 @@ export const createDomainSlice: StateCreator<
             visualToolEdits: newEdits,
           },
         },
-        version: state.version + 1,
+        modificationVersion: state.modificationVersion + 1,
       };
     });
   },
@@ -285,12 +301,12 @@ export const createDomainSlice: StateCreator<
   },
 
   clearVisualEdits: (scope, scheme) => {
-    if (scope === 'global') {
+    if (scope === "global") {
       set((state) => ({
         colorSchemeIndependentVisualToolEdits: {},
-        version: state.version + 1,
+        modificationVersion: state.modificationVersion + 1,
       }));
-    } else if (scope === 'current-scheme') {
+    } else if (scope === "current-scheme") {
       set((state) => ({
         colorSchemes: {
           ...state.colorSchemes,
@@ -299,7 +315,7 @@ export const createDomainSlice: StateCreator<
             visualToolEdits: {},
           },
         },
-        version: state.version + 1,
+        modificationVersion: state.modificationVersion + 1,
       }));
     } else {
       set((state) => ({
@@ -308,7 +324,7 @@ export const createDomainSlice: StateCreator<
           light: createInitialColorSchemeEdits(),
           dark: createInitialColorSchemeEdits(),
         },
-        version: state.version + 1,
+        modificationVersion: state.modificationVersion + 1,
       }));
     }
   },
@@ -319,45 +335,45 @@ export const createDomainSlice: StateCreator<
       codeOverridesDsl: dsl,
       codeOverridesFlattened: flattened,
       codeOverridesError: error,
-      version: state.version + 1,
+      modificationVersion: state.modificationVersion + 1,
     }));
   },
 
   clearCodeOverrides: () => {
     set((state) => ({
-      codeOverridesSource: '',
+      codeOverridesSource: "",
       codeOverridesDsl: {},
       codeOverridesFlattened: {},
       codeOverridesError: null,
-      version: state.version + 1,
+      modificationVersion: state.modificationVersion + 1,
     }));
   },
 
   loadNew: (themeCodeOrDsl, metadata) => {
     const codeString = themeCodeOrDsl
-      ? typeof themeCodeOrDsl === 'string'
+      ? typeof themeCodeOrDsl === "string"
         ? themeCodeOrDsl
         : JSON.stringify(themeCodeOrDsl)
-      : '';
+      : "";
 
     set({
-      title: metadata?.title || 'MUI Default',
+      title: metadata?.title || "MUI Default",
       baseThemeCode: codeString,
       baseThemeMetadata: {
         sourceTemplateId: metadata?.sourceTemplateId,
-        createdAt: Date.now(),
-        lastModified: Date.now(),
+        createdAtTimestamp: Date.now(),
+        lastModifiedTimestamp: Date.now(),
       },
       colorSchemeIndependentVisualToolEdits: {},
       colorSchemes: {
         light: createInitialColorSchemeEdits(),
         dark: createInitialColorSchemeEdits(),
       },
-      codeOverridesSource: '',
+      codeOverridesSource: "",
       codeOverridesDsl: {},
       codeOverridesFlattened: {},
       codeOverridesError: null,
-      version: 0, // Reset version on new load
+      modificationVersion: 0, // Reset version on new load
     });
   },
 
@@ -368,17 +384,17 @@ export const createDomainSlice: StateCreator<
         light: createInitialColorSchemeEdits(),
         dark: createInitialColorSchemeEdits(),
       },
-      codeOverridesSource: '',
+      codeOverridesSource: "",
       codeOverridesDsl: {},
       codeOverridesFlattened: {},
       codeOverridesError: null,
-      version: state.version + 1,
+      modificationVersion: state.modificationVersion + 1,
     }));
   },
 
-  markSaved: () => {
+  acknowledgeStoredVersion: () => {
     set((state) => ({
-      savedVersion: state.version,
+      lastStoredModificationVersion: state.modificationVersion,
     }));
   },
 });

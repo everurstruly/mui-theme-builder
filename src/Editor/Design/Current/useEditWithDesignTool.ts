@@ -5,7 +5,7 @@ import { getNestedValue, type SerializableValue } from "../compiler";
 
 // NOTE: This hook no longer decides whether a path is scheme-specific.
 // Callers must explicitly pass a `scheme` when they intend scheme-scoped edits.
-export default function useEditWithVisualTool(path: string, scheme?: string | null) {
+export default function useEditWithDesignTool(path: string, scheme?: string | null) {
   const theme = useDesignCreatedTheme();
   const codeFlattened = useCurrentDesign((s) => s.codeOverridesFlattened);
   

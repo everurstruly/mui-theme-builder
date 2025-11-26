@@ -2,22 +2,17 @@ import { create } from "zustand";
 import { createDomainSlice, type ThemeDesignDomainSlice } from "./domainSlice";
 import { createUISlice, type ThemeDesignUISlice } from "./uiSlice";
 import { createHistorySlice, type ThemeDesignHistorySlice } from "./historySlice";
-import {
-  createPersistenceSlice,
-  type ThemeDesignPersistenceSlice,
-} from "./persistenceSlice";
+// storage slice migrated to standalone `useStorage` store
 
 export type ThemeDesignStore = ThemeDesignDomainSlice &
   ThemeDesignUISlice &
-  ThemeDesignHistorySlice &
-  ThemeDesignPersistenceSlice;
+  ThemeDesignHistorySlice;
 
 export const useCurrentDesign = create<ThemeDesignStore>()((...a) => {
   return {
     ...createDomainSlice(...a),
     ...createUISlice(...a),
     ...createHistorySlice(...a),
-    ...createPersistenceSlice(...a),
   };
 });
 

@@ -15,7 +15,6 @@ export const useEditorUiStore = create(
     {
       mouseOverCanvas: false,
       mouseOverPropertiesPanel: false,
-      hasSavedChanges: true,
       sidebarPanelsBeforeHide: [] as EditorUiPanels[],
       hiddenPanels: [
         "library",

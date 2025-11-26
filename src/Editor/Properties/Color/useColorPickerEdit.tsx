@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import { useDebouncyEffect } from "use-debouncy";
-import useEditWithVisualTool from "../../Design/Current/useEditWithVisualTool";
+import useEditWithDesignTool from "../../Design/Current/useEditWithDesignTool";
 import { useCurrentDesign } from "../../Design/Current/useCurrent";
 import { readableColor } from "polished";
 
@@ -31,7 +31,7 @@ export default function useColorPickerEdit(path: string, options?: Options) {
     hasVisualEdit,
     hasCodeOverride,
     isModified,
-  } = useEditWithVisualTool(path, activeScheme);
+  } = useEditWithDesignTool(path, activeScheme);
 
   // -- Local UI state
   const anchorRef = useRef<HTMLDivElement | null>(null);

@@ -9,7 +9,7 @@
  * Does NOT contain:
  * - Theme domain state
  * - History/undo/redo
- * - Persistence status (separate concern)
+ * - Storage status (separate concern)
  */
 
 import type { StateCreator } from 'zustand';
