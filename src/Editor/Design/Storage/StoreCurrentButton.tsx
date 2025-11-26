@@ -1,12 +1,15 @@
 import useStorageCollection from "./useStorageCollection";
 import useHasStoredAllModifications from "../Edit/useHasStoredAllModifications";
-import { SaveRounded } from "@mui/icons-material";
 import { Button, Snackbar } from "@mui/material";
 import { useState } from "react";
+import useStorage from "./useStorage";
 
 export default function StoreCurrentButton() {
   const [shouldShowNotification, showNotification] = useState(false);
-  const hasUnsavedModifications = useHasStoredAllModifications();
+  const hasStoredAllModifications = useHasStoredAllModifications();
+  const storageProgress = useStorage((s) => s.storageProgress);
+  const isCurrentlyStored =
+    hasStoredAllModifications && storageProgress === "success";
 
   const { saveCurrent } = useStorageCollection();
 
@@ -22,11 +25,11 @@ export default function StoreCurrentButton() {
         aria-label="Save design"
         color="info"
         variant="outlined"
-        disabled={hasUnsavedModifications}
-        startIcon={<SaveRounded />}
+        disabled={isCurrentlyStored}
+        // startIcon={<SaveRounded />}
         onClick={() => handleSaveModifications()}
       >
-        {hasUnsavedModifications ? "Saved" : "Save"}
+        Save to Device
       </Button>
 
       <Snackbar

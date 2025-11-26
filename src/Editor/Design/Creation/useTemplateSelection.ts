@@ -14,22 +14,22 @@ export type PendingChange = { templateId: string } | null;
 const BLANK_PENDING_ID = "__blank__";
 
 export default function useTemplateSelection(options?: UseTemplateSelectionOptions) {
-  const autoConfirm = options?.autoConfirm ?? false;
-  const defaultScheme = options?.defaultScheme ?? "light";
   const { getAllTemplates, getTemplateById, templatesRegistry } = useTemplates();
 
-  const templates = useMemo(() => getAllTemplates(), [getAllTemplates]);
-  const selectedTemplateId = useEdit(
-    (s) => s.baseThemeMetadata?.sourceTemplateId
-  );
+  const autoConfirm = options?.autoConfirm ?? false;
+  const defaultScheme = options?.defaultScheme ?? "light";
 
-  const hasUnsavedModifications = useHasStoredAllModifications();
+  const templates = useMemo(() => getAllTemplates(), [getAllTemplates]);
+  const selectedTemplateId = useEdit((s) => s.baseThemeMetadata?.sourceTemplateId);
+
+  const hasStoredAllModifications = useHasStoredAllModifications();
+  const hasUnsavedModifications = !hasStoredAllModifications;
+
   const loadNew = useEdit((s) => s.loadNew);
 
   const [pendingChange, setPendingChange] = useState<PendingChange>(null);
-  const [shouldKeepUnsavedModifications, setShouldKeepUnsavedModifications] = useState(
-    hasUnsavedModifications ? null : true
-  );
+  const [shouldKeepUnsavedModifications, setShouldKeepUnsavedModifications] =
+    useState(hasUnsavedModifications ? null : true);
 
   const clearPending = useCallback(() => {
     setPendingChange(null);

@@ -372,7 +372,8 @@ export const createCurrentSlice: StateCreator<
       codeOverridesDsl: {},
       codeOverridesFlattened: {},
       codeOverridesError: null,
-      modificationVersion: 0, // Reset version on new load
+      modificationVersion: 0,
+      lastStoredModificationVersion: 0,
     });
   },
 

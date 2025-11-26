@@ -1,11 +1,11 @@
-import { useCallback, useEffect, useState } from "react";
 import useEdit from "../Edit/useEdit";
+import useStorage from "./useStorage";
 import useCreatedThemeOption from "../Edit/useCreatedThemeOption";
-import { useEditWithDesignerTools } from "../Edit/useEditWithDesignerTools";
 import useDeveloperToolActions from "../Edit/useDeveloperToolActions";
+import { useCallback, useEffect, useState } from "react";
+import { useEditWithDesignerTools } from "../Edit/useEditWithDesignerTools";
 import type { StorageAdapter } from "./storageAdapters";
 import { deviceStorageAdapter } from "./storageAdapters";
-import useStorage from "./useStorage";
 import type { SavedToStorageDesign } from "./types";
 import { MAX_SAVED } from "./types";
 
@@ -15,11 +15,11 @@ export default function useStorageCollection(
   const [savedDesigns, setSavedDesigns] = useState<SavedToStorageDesign[]>([]);
 
   const loadNewDesign = useEdit((s) => s.loadNew);
-  const markStoredDomain = useEdit((s) => s.acknowledgeStoredVersion);
-  const createdThemeOptions = useCreatedThemeOption();
-  const { addGlobalVisualEdit } = useEditWithDesignerTools();
-  const { applyModifications: applyCodeOverrides } = useDeveloperToolActions();
+  const acknowledgeStoredVersion = useEdit((s) => s.acknowledgeStoredVersion);
   const setActiveColorScheme = useEdit((s) => s.setActiveColorScheme);
+  const { addGlobalVisualEdit } = useEditWithDesignerTools();
+  const { applyModifications } = useDeveloperToolActions();
+  const createdThemeOptions = useCreatedThemeOption();
 
   const setStatus = useStorage((s) => s.setStatus);
   const recordLastStored = useStorage((s) => s.recordLastStored);
@@ -53,10 +53,9 @@ export default function useStorageCollection(
 
       const before = await adapter.read();
 
-      // Check for existing saved design with same themeOptionsCode and title
-      const existingIndex = before.findIndex(
-        (d) => d.themeOptionsCode === themeOptionsCode && d.title === title
-      );
+      // Check for existing saved design with the same title (case-sensitive).
+      // Titles are treated as unique identifiers for saved items.
+      const existingIndex = before.findIndex((d) => d.title === title);
 
       let newItem: SavedToStorageDesign;
 
@@ -81,7 +80,7 @@ export default function useStorageCollection(
         await adapter.write(next);
         setSavedDesigns(next);
         // mark domain as stored
-        markStoredDomain();
+        acknowledgeStoredVersion();
         // record storage success + timestamp
         recordLastStored();
         return newItem.id;
@@ -101,12 +100,18 @@ export default function useStorageCollection(
       await adapter.write(next);
       setSavedDesigns(next);
       // mark domain as stored
-      markStoredDomain();
+      acknowledgeStoredVersion();
       // record storage success + timestamp
       recordLastStored();
       return newItem.id;
     },
-    [adapter, createdThemeOptions, markStoredDomain, recordLastStored, setStatus]
+    [
+      adapter,
+      createdThemeOptions,
+      acknowledgeStoredVersion,
+      recordLastStored,
+      setStatus,
+    ]
   );
 
   const removeSaved = useCallback(
@@ -118,6 +123,27 @@ export default function useStorageCollection(
         if (next.length === before.length) return false;
         await adapter.write(next);
         setSavedDesigns(next);
+
+        // If the deleted design is the one currently open in the editor,
+        // load the next saved design (if any) or fall back to an untitled blank.
+        try {
+          const state = useEdit.getState();
+          const currentSourceId = (state as any).sourceTemplateId as string | undefined;
+          if (currentSourceId === id) {
+            if (next.length > 0) {
+              const first = next[0];
+              loadNewDesign(first.themeOptionsCode, {
+                title: first.title,
+                sourceTemplateId: first.id,
+              });
+            } else {
+              loadNewDesign("", { title: "Untitled" });
+            }
+          }
+        } catch (e) {
+          void e;
+        }
+
         return true;
       } catch (e) {
         setStatus("error", String(e));
@@ -126,7 +152,7 @@ export default function useStorageCollection(
         setStatus("idle");
       }
     },
-    [adapter, setStatus]
+    [adapter, setStatus, loadNewDesign]
   );
 
   const duplicateSaved = useCallback(
@@ -245,7 +271,7 @@ export default function useStorageCollection(
         // Apply code overrides if present
         if (session.codeOverridesSource) {
           try {
-            applyCodeOverrides(session.codeOverridesSource);
+            applyModifications(session.codeOverridesSource);
           } catch (e) {
             void e;
           }
@@ -261,8 +287,7 @@ export default function useStorageCollection(
         }
       }
 
-      // mark loaded state as stored in domain and storage
-      markStoredDomain();
+      acknowledgeStoredVersion();
       recordLastStored();
       return true;
     } catch (e) {
@@ -319,22 +344,6 @@ export default function useStorageCollection(
       window.removeEventListener("storage", onStorage);
     };
   }, [adapter]);
-
-  // Register save delegate so `useStorage` can expose a simple `save()` API.
-  useEffect(() => {
-    try {
-      useStorage.getState().setSaveDelegate(saveCurrent);
-    } catch {
-      // ignore in environments without window / getState
-    }
-    return () => {
-      try {
-        useStorage.getState().setSaveDelegate(undefined);
-      } catch {
-        // ignore
-      }
-    };
-  }, [saveCurrent]);
 
   return {
     savedDesigns,

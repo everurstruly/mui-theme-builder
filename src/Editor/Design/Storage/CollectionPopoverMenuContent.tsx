@@ -25,7 +25,8 @@ function CollectionPopoverMenuContent({
 }: CollectionPopoverMenuContentProps) {
   const { savedDesigns, loadSaved, removeSaved, duplicateSaved } =
     useStorageCollection();
-  const hasUnsaved = useHasStoredAllModifications();
+  const hasStoredAllModifications = useHasStoredAllModifications();
+  const hasUnsaved = !hasStoredAllModifications;
   const [confirmOpen, setConfirmOpen] = React.useState(false);
   const [pendingId, setPendingId] = React.useState<string | null>(null);
 

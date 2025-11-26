@@ -54,7 +54,7 @@ function DesktopToolbarContent() {
       >
         <DesignActionMenu sx={{ columnGap: 2 }} />
 
-        <Stack direction={"row"} alignItems={"inherit"} columnGap={2} mx={2}>
+        <Stack direction={"row"} alignItems={"inherit"} columnGap={2}>
           <StoreCurrentButton />
           <ModificationHistoryButtons />
           <ExportCommand />

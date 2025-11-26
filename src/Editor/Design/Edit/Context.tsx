@@ -21,7 +21,9 @@ function Context() {
   const title = useEdit((s) => s.title);
   const setTitle = useEdit((s) => s.setTitle);
   const storageStatus = useStorage((s) => s.storageProgress);
-  const hasUnsavedModifications = useHasStoredAllModifications();
+  const hasStoredAllModifications = useHasStoredAllModifications();
+
+  const hasUnsavedModifications = !hasStoredAllModifications;
   const loadNew = useEdit((s) => s.loadNew);
 
   const isSavedNow = storageStatus === "success";
@@ -91,7 +93,7 @@ function Context() {
             overflow: "hidden",
           }}
         >
-          Editing {hasUnsavedModifications ? "(unsaved)" : ""} —{" "}
+          You're editing {hasUnsavedModifications ? "(unsaved)" : ""} —{" "}
           <Typography
             variant="caption"
             color="textPrimary"
