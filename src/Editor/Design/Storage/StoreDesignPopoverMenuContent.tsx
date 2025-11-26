@@ -14,7 +14,7 @@ import useDesignStorage from "./useDesignStorage";
 import React from "react";
 import { ListOutlined } from "@mui/icons-material";
 import StoredDesignListItem from "./StoredDesignListItem";
-import useHasUnsavedChanges from "../Current/useHasUnsavedChanges";
+import useHasUnsavedModifications from "../Current/useHasUnsavedModifications";
 
 type SavedDesignPopoverMenuContentProps = {
   onClose?: () => void;
@@ -25,7 +25,7 @@ function SavedDesignPopoverMenuContent({
 }: SavedDesignPopoverMenuContentProps) {
   const { savedDesigns, loadSaved, removeSaved, duplicateSaved } =
     useDesignStorage();
-  const hasUnsaved = useHasUnsavedChanges();
+  const hasUnsaved = useHasUnsavedModifications();
   const [confirmOpen, setConfirmOpen] = React.useState(false);
   const [pendingId, setPendingId] = React.useState<string | null>(null);
 

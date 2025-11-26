@@ -8,7 +8,7 @@ import {
   Box,
   alpha,
 } from "@mui/material";
-import type { SavedToStorageDesign } from "./useDesignStorage";
+import type { SavedToStorageDesign } from "./types";
 
 type Props = {
   design: SavedToStorageDesign;

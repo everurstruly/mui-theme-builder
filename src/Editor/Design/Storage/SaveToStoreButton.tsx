@@ -1,16 +1,16 @@
 import useDesignStorage from "./useDesignStorage";
-import useHasUnsavedChanges from "../Current/useHasUnsavedChanges";
+import useHasUnsavedModifications from "../Current/useHasUnsavedModifications";
 import { SaveRounded } from "@mui/icons-material";
 import { Button, Snackbar } from "@mui/material";
 import { useState } from "react";
 
 export default function SaveToStoreButton() {
   const [shouldShowNotification, showNotification] = useState(false);
-  const hasUnsavedChanges = useHasUnsavedChanges();
+  const hasUnsavedModifications = useHasUnsavedModifications();
 
   const { saveCurrent } = useDesignStorage();
 
-  const handleSaveChanges = async () => {
+  const handleSaveModifications = async () => {
     await saveCurrent();
     showNotification(true);
   };
@@ -22,11 +22,11 @@ export default function SaveToStoreButton() {
         aria-label="Save design"
         color="info"
         variant="outlined"
-        disabled={hasUnsavedChanges}
+        disabled={hasUnsavedModifications}
         startIcon={<SaveRounded />}
-        onClick={() => handleSaveChanges()}
+        onClick={() => handleSaveModifications()}
       >
-        {hasUnsavedChanges ? "Saved" : "Save"}
+        {hasUnsavedModifications ? "Saved" : "Save"}
       </Button>
 
       <Snackbar

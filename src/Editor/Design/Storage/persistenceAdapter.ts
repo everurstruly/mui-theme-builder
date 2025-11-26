@@ -1,6 +1,6 @@
-import type { SavedToStorageDesign } from "./useDesignStorage";
+import type { SavedToStorageDesign } from "./types";
 
-export interface PersistenceAdapter {
+export interface StorageAdapter {
   read(): Promise<SavedToStorageDesign[]>;
   write(items: SavedToStorageDesign[]): Promise<void>;
   clear(): Promise<void>;
@@ -8,7 +8,7 @@ export interface PersistenceAdapter {
 
 const STORAGE_KEY = "mui-theme-builder.savedDesigns.v1";
 
-export const deviceStorageAdapter: PersistenceAdapter = {
+export const deviceStorageAdapter: StorageAdapter = {
   async read() {
     try {
       if (typeof window === "undefined" || !window.localStorage) return [];
