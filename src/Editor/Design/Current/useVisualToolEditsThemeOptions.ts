@@ -1,7 +1,7 @@
-import createThemeOptionsFromEdits from "../domainSpecificLanguage/createThemeOptionsFromEdits";
+import createThemeOptionsFromEdits from "../themeCompiler/transformation/editsToTheme";
 import type { ThemeOptions } from "@mui/material";
-import { useDesignStore } from "./designStore";
 import { useMemo } from "react";
+import useDesignStore from "./currentStore";
 
 /**
  * Hook for accessing merged theme preview without code overrides.
@@ -25,8 +25,8 @@ export default function useVisualToolEditsThemeOptions(
   const baseVisualToolEdits = useDesignStore(
     (s) => s.colorSchemeIndependentVisualToolEdits
   );
-  const lightMode = useDesignStore((s) => s.light);
-  const darkMode = useDesignStore((s) => s.dark);
+  const lightMode = useDesignStore((s) => s.colorSchemes.light);
+  const darkMode = useDesignStore((s) => s.colorSchemes.dark);
 
   const { visualToolEdits } = targetScheme === "light" ? lightMode : darkMode;
 

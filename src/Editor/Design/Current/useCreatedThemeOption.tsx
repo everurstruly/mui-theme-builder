@@ -1,10 +1,12 @@
-import createThemeOptionsFromEdits from "../domainSpecificLanguage/createThemeOptionsFromEdits";
-import { useDesignStore } from "./designStore";
-import { parseThemeCode } from "../domainSpecificLanguage/codeParser";
-import { transformDslToThemeOptions } from "../domainSpecificLanguage/dslToThemeOptionsTransformer";
 import { extractThemeOptionsForScheme } from "../../Templates/registry";
 import { type ThemeOptions } from "@mui/material";
 import { useMemo } from "react";
+import useDesignStore from "./currentStore";
+import {
+  createThemeOptionsFromEdits,
+  parseThemeCode,
+  transformDslToThemeOptions,
+} from "../compiler";
 
 /**
  * Internal hook that resolves ThemeOptions from all layers.
@@ -23,8 +25,8 @@ export default function useCreatedThemeOption(
     (s) => s.colorSchemeIndependentVisualToolEdits
   );
   const codeOverridesDsl = useDesignStore((s) => s.codeOverridesDsl);
-  const lightMode = useDesignStore((s) => s.light);
-  const darkMode = useDesignStore((s) => s.dark);
+  const lightMode = useDesignStore((s) => s.colorSchemes.light);
+  const darkMode = useDesignStore((s) => s.colorSchemes.dark);
 
   const targetScheme = colorScheme ?? activeColorScheme;
   const { visualToolEdits } = targetScheme === "light" ? lightMode : darkMode;

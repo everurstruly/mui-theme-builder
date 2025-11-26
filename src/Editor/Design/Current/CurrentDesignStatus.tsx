@@ -1,6 +1,5 @@
 import { MoreVertOutlined } from "@mui/icons-material";
 import {
-  Stack,
   Typography,
   Menu,
   MenuItem,
@@ -13,20 +12,25 @@ import {
   Snackbar,
   Alert,
 } from "@mui/material";
-import { useDesignStore } from "./designStore";
 import React from "react";
+import useKeptInStorageStatus from "./useKeptInStorageStatus";
+import useHasUnsavedChanges from "./useHasUnsavedChanges";
+import { useDesignStore } from "./currentStore";
 
 function CurrentThemeDesignStatus() {
   const title = useDesignStore((s) => s.title);
-  const hasUnsavedChanges = useDesignStore((s) => s.hasUnsavedChanges);
   const setTitle = useDesignStore((s) => s.setTitle);
+  const storageStatus = useKeptInStorageStatus();
+  const hasUnsavedChanges = useHasUnsavedChanges();
   const loadNew = useDesignStore((s) => s.loadNew);
 
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const menuOpen = Boolean(anchorEl);
+  const isSavedNow = storageStatus === "success";
 
   const [renameOpen, setRenameOpen] = React.useState(false);
   const [renameValue, setRenameValue] = React.useState(title);
+
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const menuOpen = Boolean(anchorEl);
 
   const [deleteConfirmOpen, setDeleteConfirmOpen] = React.useState(false);
 
@@ -34,8 +38,6 @@ function CurrentThemeDesignStatus() {
     severity?: "info" | "success" | "error";
     message: string;
   }>(null);
-
-  React.useEffect(() => setRenameValue(title), [title]);
 
   const handleMenuOpen = (e: React.MouseEvent<HTMLElement>) =>
     setAnchorEl(e.currentTarget);
@@ -58,8 +60,7 @@ function CurrentThemeDesignStatus() {
   };
 
   const handleDeleteConfirm = () => {
-    // reset to blank design
-    loadNew("{}", { sourceTemplateId: "", title: "Untitled Design" });
+    loadNew("{}", {});
     setDeleteConfirmOpen(false);
     setSnack({ severity: "info", message: "Deleted current design" });
   };
@@ -68,48 +69,43 @@ function CurrentThemeDesignStatus() {
 
   return (
     <>
-      <Stack
-        direction="row"
-        sx={{ flexGrow: 1, alignItems: "center" }}
+      <Button
         onClick={handleMenuOpen}
+        sx={{
+          display: "flex",
+          overflow: "hidden",
+          flexGrow: 1,
+          alignItems: "center",
+          justifyContent: "space-between",
+          columnGap: 1,
+        }}
+        endIcon={<MoreVertOutlined fontSize="small" />}
       >
-        <Button
+        <Typography
+          variant="button"
+          color="primary"
           sx={{
-            display: "flex",
+            whiteSpace: "nowrap",
+            maxWidth: "30ch", // FIXME: sync with design sidebar
+            textOverflow: "ellipsis",
             overflow: "hidden",
-            flexGrow: 1,
-            alignItems: "center",
-            justifyContent: "space-between",
-            columnGap: 1,
           }}
-          endIcon={<MoreVertOutlined fontSize="small" />}
         >
+          Editing {hasUnsavedChanges ? "(unsaved)" : ""} —{" "}
           <Typography
-            variant="button"
-            color="primary"
+            variant="caption"
+            color="textPrimary"
             sx={{
               whiteSpace: "nowrap",
-              maxWidth: "30ch", // FIXME: sync with design sidebar
               textOverflow: "ellipsis",
+              lineHeight: 1,
               overflow: "hidden",
             }}
           >
-            Editing {hasUnsavedChanges ? "(unsaved)" : ""} —{" "}
-            <Typography
-              variant="caption"
-              color="textPrimary"
-              sx={{
-                whiteSpace: "nowrap",
-                textOverflow: "ellipsis",
-                lineHeight: 1,
-                overflow: "hidden",
-              }}
-            >
-              {title}
-            </Typography>
+            {title}
           </Typography>
-        </Button>
-      </Stack>
+        </Typography>
+      </Button>
 
       <Menu
         id="design-menu"
@@ -117,9 +113,6 @@ function CurrentThemeDesignStatus() {
         open={menuOpen}
         onClose={handleMenuClose}
         slotProps={{
-          root: {
-            sx: { top: 4 },
-          },
           paper: {
             sx: {
               minWidth: 230,
@@ -130,7 +123,7 @@ function CurrentThemeDesignStatus() {
         <MenuItem dense onClick={handleRename}>
           Rename
         </MenuItem>
-        <MenuItem dense onClick={handleDelete}>
+        <MenuItem dense onClick={handleDelete} disabled={!isSavedNow}>
           Delete
         </MenuItem>
       </Menu>

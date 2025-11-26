@@ -1,7 +1,7 @@
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
-import { useThemeDesignStore } from "..";
 import { DarkModeOutlined, LightModeOutlined } from "@mui/icons-material";
+import useDesignStore from "./currentStore";
 
 const options = [
   {
@@ -17,8 +17,8 @@ const options = [
 ] as const;
 
 export default function DesignColorSchemeToggle() {
-  const colorScheme = useThemeDesignStore((state) => state.activeColorScheme);
-  const setColorScheme = useThemeDesignStore((state) => state.setActiveColorScheme);
+  const colorScheme = useDesignStore((s) => s.activeColorScheme);
+  const setColorScheme = useDesignStore((s) => s.setActiveColorScheme);
 
   const handleChange = (
     _: React.MouseEvent<HTMLElement>,

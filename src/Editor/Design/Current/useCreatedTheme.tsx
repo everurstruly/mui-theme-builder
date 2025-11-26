@@ -1,6 +1,6 @@
 import { useMemo } from "react";
-import { useCreatedThemeOption } from "..";
 import { createTheme, type Theme } from "@mui/material";
+import useCreatedThemeOption from "./useCreatedThemeOption";
 
 export default function useCreatedTheme(
   colorScheme?: "light" | "dark"

@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useDesignStore } from "./designStore";
+import { useDesignStore } from "./currentStore";
 
 /**
  * Hook for accessing code overrides state.

@@ -1,16 +1,26 @@
 import useDesignCreatedTheme from "./useCreatedTheme";
 import { useMemo } from "react";
-import { useDesignStore, type SerializableValue } from "./designStore";
-import { getNestedValue } from "../shared";
+import { useDesignStore } from "./currentStore";
+import { getNestedValue, type SerializableValue } from "../compiler";
 
-export default function useEditWithVisualTool(path: string) {
+// NOTE: This hook no longer decides whether a path is scheme-specific.
+// Callers must explicitly pass a `scheme` when they intend scheme-scoped edits.
+export default function useEditWithVisualTool(path: string, scheme?: string | null) {
   const theme = useDesignCreatedTheme();
   const codeFlattened = useDesignStore((s) => s.codeOverridesFlattened);
-  const getVisualToolEdit = useDesignStore((s) => s.getVisualToolEdit);
+  
+  // Determine if this usage intends scheme-specific edits. Caller must provide `scheme`.
+  const isSchemeSpecific = scheme != null;
+  
+  // Get the appropriate edit value
+  const getGlobalEdit = useDesignStore((s) => s.getGlobalVisualEdit);
+  const getSchemeEdit = useDesignStore((s) => s.getSchemeVisualEdit);
+  const editValue = isSchemeSpecific 
+    ? getSchemeEdit(scheme as string, path)
+    : getGlobalEdit(path);
 
   const codeValue = codeFlattened[path];
   const autoResolvedValue = getNestedValue(theme, path) as SerializableValue;
-  const editValue = getVisualToolEdit(path);
 
   const value = codeValue ?? editValue;
   const hasVisualEdit = typeof editValue === "string" || !!editValue;
@@ -18,8 +28,11 @@ export default function useEditWithVisualTool(path: string) {
 
   const canReset = hasVisualEdit || hasCodeOverride;
 
-  const setVisualEdit = useDesignStore((s) => s.addVisualToolEdit);
-  const resetPath = useDesignStore((s) => s.removeVisualToolEdit);
+  // Get the appropriate actions
+  const addGlobalEdit = useDesignStore((s) => s.addGlobalVisualEdit);
+  const addSchemeEdit = useDesignStore((s) => s.addSchemeVisualEdit);
+  const removeGlobalEdit = useDesignStore((s) => s.removeGlobalVisualEdit);
+  const removeSchemeEdit = useDesignStore((s) => s.removeSchemeVisualEdit);
 
   return useMemo(
     () => ({
@@ -29,18 +42,28 @@ export default function useEditWithVisualTool(path: string) {
       hasVisualEdit,
       canReset,
       isModified: hasCodeOverride || hasVisualEdit,
-      setValue: (value: SerializableValue) => setVisualEdit(path, value),
-      reset: () => resetPath(path),
+      setValue: (value: SerializableValue) => 
+        isSchemeSpecific 
+          ? addSchemeEdit(scheme as string, path, value)
+          : addGlobalEdit(path, value),
+      reset: () => 
+        isSchemeSpecific
+          ? removeSchemeEdit(scheme as string, path)
+          : removeGlobalEdit(path),
     }),
     [
       value,
+      scheme,
       autoResolvedValue,
       hasCodeOverride,
       hasVisualEdit,
       canReset,
-      setVisualEdit,
+      isSchemeSpecific,
+      addGlobalEdit,
+      addSchemeEdit,
+      removeGlobalEdit,
+      removeSchemeEdit,
       path,
-      resetPath,
     ]
   );
 }
