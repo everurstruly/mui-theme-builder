@@ -1,16 +1,16 @@
 import { Button, ButtonGroup, useMediaQuery, useTheme } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
-import useCanvasViewStore from "../../canvasViewStore";
+import useCanvasView from "../../useCanvasView";
 import CameraControlPopOver from "./CameraControlPopOver";
 
 export default function CameraControls() {
   const theme = useTheme();
   const isLargeScreen = useMediaQuery(theme.breakpoints.up("md"));
-  const zoom = useCanvasViewStore((s) => s.camera.zoom);
-  const zoomIn = useCanvasViewStore((s) => s.zoomIn);
-  const zoomOut = useCanvasViewStore((s) => s.zoomOut);
-  const cycleZoomPreset = useCanvasViewStore((s) => s.cycleZoomPreset);
+  const zoom = useCanvasView((s) => s.camera.zoom);
+  const zoomIn = useCanvasView((s) => s.zoomIn);
+  const zoomOut = useCanvasView((s) => s.zoomOut);
+  const cycleZoomPreset = useCanvasView((s) => s.cycleZoomPreset);
 
   return (
     <>

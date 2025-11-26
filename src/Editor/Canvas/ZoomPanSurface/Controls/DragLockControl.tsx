@@ -1,10 +1,10 @@
 import { IconButton, Tooltip } from "@mui/material";
 import { LockOpenOutlined, LockOutlined } from "@mui/icons-material";
-import useCanvasViewStore from "../../canvasViewStore";
+import useCanvasView from "../../useCanvasView";
 
 export default function DragLockControl() {
-  const locked = useCanvasViewStore((s) => s.camera.dragLock);
-  const toggleDragLock = useCanvasViewStore((s) => s.toggleDragLock);
+  const locked = useCanvasView((s) => s.camera.dragLock);
+  const toggleDragLock = useCanvasView((s) => s.toggleDragLock);
 
   const label = locked
     ? "Start Interacting (Disables Dragging)"

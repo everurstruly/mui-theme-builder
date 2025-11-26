@@ -10,7 +10,7 @@
  */
 
 import { useRef, useCallback } from "react";
-import useCanvasViewStore from "../canvasViewStore";
+import useCanvasView from "../useCanvasView";
 import { computeDragPosition } from "./zoomPanLogic";
 
 export interface CanvasGestureHandlers {
@@ -31,13 +31,13 @@ export default function useCanvasGestures(
   } | null>(null);
 
   // Store selectors
-  const zoom = useCanvasViewStore((s) => s.camera.zoom);
-  const position = useCanvasViewStore((s) => s.camera.position);
-  const setZoom = useCanvasViewStore((s) => s.setZoom);
-  const zoomIn = useCanvasViewStore((s) => s.zoomIn);
-  const zoomOut = useCanvasViewStore((s) => s.zoomOut);
-  const setCameraPosition = useCanvasViewStore((s) => s.setCameraPosition);
-  const setIsDragging = useCanvasViewStore((s) => s.setIsDragging);
+  const zoom = useCanvasView((s) => s.camera.zoom);
+  const position = useCanvasView((s) => s.camera.position);
+  const setZoom = useCanvasView((s) => s.setZoom);
+  const zoomIn = useCanvasView((s) => s.zoomIn);
+  const zoomOut = useCanvasView((s) => s.zoomOut);
+  const setCameraPosition = useCanvasView((s) => s.setCameraPosition);
+  const setIsDragging = useCanvasView((s) => s.setIsDragging);
 
   /** Handle zoom with Ctrl + wheel */
   const handleWheel = useCallback(

@@ -8,12 +8,12 @@
  */
 
 import { useRef, useState, useLayoutEffect, useCallback } from "react";
-import useCanvasViewStore from "../canvasViewStore";
+import useCanvasView from "../useCanvasView";
 import {
   computeTranslatePosition,
   computeAlignedPosition,
 } from "./zoomPanLogic";
-import type { ViewAlignment } from "../canvasViewStore";
+import type { ViewAlignment } from "../useCanvasView";
 
 export interface CanvasCameraState {
   ref: React.RefObject<HTMLDivElement | null>;
@@ -30,15 +30,15 @@ export default function useCanvasZoomPanCamera(
   const containerRef = externalRef ?? internalRef;
 
   // New unified store selectors
-  const zoom = useCanvasViewStore((s) => s.camera.zoom);
-  const position = useCanvasViewStore((s) => s.camera.position);
-  const setCameraPositionPreserveAlignment = useCanvasViewStore(
+  const zoom = useCanvasView((s) => s.camera.zoom);
+  const position = useCanvasView((s) => s.camera.position);
+  const setCameraPositionPreserveAlignment = useCanvasView(
     (s) => s.setCameraPositionPreserveAlignment
   );
-  const alignment = useCanvasViewStore((s) => s.camera.alignment);
-  const isDragging = useCanvasViewStore((s) => s.camera.isDragging);
-  const width = useCanvasViewStore((s) => s.viewport.width);
-  const height = useCanvasViewStore((s) => s.viewport.height);
+  const alignment = useCanvasView((s) => s.camera.alignment);
+  const isDragging = useCanvasView((s) => s.camera.isDragging);
+  const width = useCanvasView((s) => s.viewport.width);
+  const height = useCanvasView((s) => s.viewport.height);
 
   const scale = zoom / 100;
 

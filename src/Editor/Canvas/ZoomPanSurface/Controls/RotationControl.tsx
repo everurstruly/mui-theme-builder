@@ -7,11 +7,11 @@
 
 import { IconButton, Tooltip } from "@mui/material";
 import { ScreenRotation } from "@mui/icons-material";
-import useCanvasViewStore from "../../canvasViewStore";
+import useCanvasView from "../../useCanvasView";
 
 export default function RotationControl() {
-  const rotateViewport = useCanvasViewStore((s) => s.rotateViewport);
-  const { width, height } = useCanvasViewStore((s) => s.viewport);
+  const rotateViewport = useCanvasView((s) => s.rotateViewport);
+  const { width, height } = useCanvasView((s) => s.viewport);
 
   return (
     <Tooltip

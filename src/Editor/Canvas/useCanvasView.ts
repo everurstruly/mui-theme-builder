@@ -1,10 +1,10 @@
 /**
  * Unified Canvas View Store
- * 
+ *
  * Replaces:
  * - zoomPanSurfaceStore (camera controls)
  * - viewportSimulationStore (viewport dimensions)
- * 
+ *
  * Benefits:
  * - Single source of truth
  * - No sync issues
@@ -78,7 +78,7 @@ function getNextAlignment(current: ViewAlignment): ViewAlignment {
 // Store
 // ============================================================================
 
-const useCanvasViewStore = create(
+const useCanvasView = create(
   combine(
     {
       // ========== Viewport (content dimensions) ==========
@@ -374,5 +374,4 @@ const useCanvasViewStore = create(
   )
 );
 
-export default useCanvasViewStore;
-
+export default useCanvasView;

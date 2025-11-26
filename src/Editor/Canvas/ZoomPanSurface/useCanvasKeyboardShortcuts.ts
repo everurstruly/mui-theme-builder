@@ -10,7 +10,7 @@
  */
 
 import { useEffect, useRef } from "react";
-import useCanvasViewStore from "../canvasViewStore";
+import useCanvasView from "../useCanvasView";
 
 type UseCanvasKeyboardShortcutsOptions = {
   enabled?: boolean;
@@ -21,11 +21,11 @@ export default function useCanvasKeyboardShortcuts({
   enabled = true,
   target,
 }: UseCanvasKeyboardShortcutsOptions = {}) {
-  const zoomIn = useCanvasViewStore((s) => s.zoomIn);
-  const zoomOut = useCanvasViewStore((s) => s.zoomOut);
-  const resetCamera = useCanvasViewStore((s) => s.resetCamera);
-  const toggleDragLock = useCanvasViewStore((s) => s.toggleDragLock);
-  const dragLock = useCanvasViewStore((s) => s.camera.dragLock);
+  const zoomIn = useCanvasView((s) => s.zoomIn);
+  const zoomOut = useCanvasView((s) => s.zoomOut);
+  const resetCamera = useCanvasView((s) => s.resetCamera);
+  const toggleDragLock = useCanvasView((s) => s.toggleDragLock);
+  const dragLock = useCanvasView((s) => s.camera.dragLock);
 
   const spacePressed = useRef(false);
   const previousDragLock = useRef(dragLock);

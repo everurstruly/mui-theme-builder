@@ -1,14 +1,14 @@
 import { IconButton, Tooltip } from "@mui/material";
 import { useCallback, useMemo } from "react";
-import useCanvasViewStore from "../../canvasViewStore";
+import useCanvasView from "../../useCanvasView";
 import {
   AlignHorizontalCenterOutlined,
   AlignHorizontalLeftOutlined,
 } from "@mui/icons-material";
 
 export default function AlignmentControl() {
-  const alignment = useCanvasViewStore((s) => s.camera.alignment);
-  const setCameraAlignment = useCanvasViewStore((s) => s.setCameraAlignment);
+  const alignment = useCanvasView((s) => s.camera.alignment);
+  const setCameraAlignment = useCanvasView((s) => s.setCameraAlignment);
 
   const nextPosition = useMemo<"center" | "start">(() => {
     const candidates: ("center" | "start")[] = ["center", "start"];

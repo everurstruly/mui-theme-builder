@@ -5,7 +5,7 @@ import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import { TabletAndroidOutlined } from "@mui/icons-material";
 import { Tooltip } from "@mui/material";
-import useCanvasViewStore, { type DevicePreset } from "../../canvasViewStore";
+import useCanvasView, { type DevicePreset } from "../../useCanvasView";
 
 // Re-export for use in this component
 const DEVICE_PRESETS = {
@@ -17,8 +17,8 @@ const DEVICE_PRESETS = {
 
 
 export default function DeviceToggleGroupControl() {
-  const preset = useCanvasViewStore((s) => s.viewport.preset);
-  const setViewportPreset = useCanvasViewStore((s) => s.setViewportPreset);
+  const preset = useCanvasView((s) => s.viewport.preset);
+  const setViewportPreset = useCanvasView((s) => s.setViewportPreset);
 
   const handlePresetChange = (
     _event: React.MouseEvent<HTMLElement>,

@@ -1,4 +1,4 @@
-import useCanvasViewStore from "../canvasViewStore";
+import useCanvasView from "../useCanvasView";
 import ZoomPanSurfaceControls from "./ZoomPanSurfaceControls";
 import CanvasViewport from "./ZoomPanSurfaceViewport";
 import useCanvasZoomPanCamera from "./useZoomPanCamera";
@@ -40,11 +40,11 @@ export default function ZoomPanSurface({
   const themeOptions = useCreatedThemeOption();
 
   // New unified store selectors
-  const width = useCanvasViewStore((s) => s.viewport.width);
-  const height = useCanvasViewStore((s) => s.viewport.height);
-  const dragLock = useCanvasViewStore((s) => s.camera.dragLock);
-  const setCameraAlignment = useCanvasViewStore((s) => s.setCameraAlignment);
-  const zoomToFit = useCanvasViewStore((s) => s.zoomToFit);
+  const width = useCanvasView((s) => s.viewport.width);
+  const height = useCanvasView((s) => s.viewport.height);
+  const dragLock = useCanvasView((s) => s.camera.dragLock);
+  const setCameraAlignment = useCanvasView((s) => s.setCameraAlignment);
+  const zoomToFit = useCanvasView((s) => s.zoomToFit);
 
   // Camera calculations (positions, scale)
   const { scale, isDragging, translatePosition } =
