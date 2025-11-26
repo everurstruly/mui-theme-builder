@@ -1,9 +1,9 @@
 import Typography from "@mui/material/Typography";
 import { editorDesignExperience } from "../editorExperience";
-import { useCurrentDesign } from "../Design/Current/useCurrent";
+import { useEdit } from "../Design/Edit/useEdit";
 
 export default function ExplorerPanelHeader() {
-  const selectedTabId = useCurrentDesign((state) => state.selectedExperienceId);
+  const selectedTabId = useEdit((state) => state.selectedExperienceId);
   const selectedTab = editorDesignExperience[selectedTabId];
 
   if (!selectedTab) return null;

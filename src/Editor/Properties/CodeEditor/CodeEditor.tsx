@@ -8,8 +8,8 @@ import { keymap, EditorView, ViewPlugin } from "@codemirror/view";
 import { defaultKeymap, historyKeymap, indentWithTab } from "@codemirror/commands";
 import { searchKeymap } from "@codemirror/search";
 import { muiThemeCompletions } from "./muiThemeCompletions";
-import useCodeOverridesState from "../../Design/Current/useCodeOverridesState";
-import useCodeOverridesActions from "../../Design/Current/useCodeOverridesActions";
+import useDeveloperToolEdits from "../../Design/Edit/useDeveloperToolEdits";
+import useDeveloperToolActions from "../../Design/Edit/useDeveloperToolActions";
 import {
   validateCodeBeforeEvaluation,
   type ValidationError,
@@ -42,8 +42,8 @@ const extractBody = (fullContent: string): string => {
 
 export default function CodeEditor() {
   // Use focused hooks instead of monolithic useCodeEditorPanel
-  const { source, error, hasOverrides } = useCodeOverridesState();
-  const { applyModifications, clearOverrides } = useCodeOverridesActions();
+  const { source, error, hasOverrides } = useDeveloperToolEdits();
+  const { applyModifications, clearOverrides } = useDeveloperToolActions();
   const validate = validateCodeBeforeEvaluation;
 
   // Track validation errors separately from evaluation errors

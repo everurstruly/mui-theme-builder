@@ -1,10 +1,10 @@
 import useEditorUiStore from "../useEditor";
 import { Box } from "@mui/material";
 import { editorDesignExperience } from "../editorExperience";
-import { useCurrentDesign } from "../Design/Current/useCurrent";
+import { useEdit } from "../Design/Edit/useEdit";
 
 export default function PanelBody() {
-  const selectedExperienceId = useCurrentDesign((state) => state.selectedExperienceId);
+  const selectedExperienceId = useEdit((state) => state.selectedExperienceId);
   const selectedExperience = editorDesignExperience[selectedExperienceId];
 
   const setMouseOverPropertiesPanel = useEditorUiStore(

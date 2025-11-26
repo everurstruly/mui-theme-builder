@@ -1,20 +1,18 @@
 import useDesignCreatedTheme from "./useCreatedTheme";
 import { useMemo } from "react";
-import { useCurrentDesign } from "./useCurrent";
+import { useEdit } from "./useEdit";
 import { getNestedValue, type SerializableValue } from "../compiler";
 
-// NOTE: This hook no longer decides whether a path is scheme-specific.
-// Callers must explicitly pass a `scheme` when they intend scheme-scoped edits.
-export default function useEditWithDesignTool(path: string, scheme?: string | null) {
+export default function useEditWithDesignerTool(path: string, scheme?: string | null) {
   const theme = useDesignCreatedTheme();
-  const codeFlattened = useCurrentDesign((s) => s.codeOverridesFlattened);
+  const codeFlattened = useEdit((s) => s.codeOverridesFlattened);
   
   // Determine if this usage intends scheme-specific edits. Caller must provide `scheme`.
   const isSchemeSpecific = scheme != null;
   
   // Get the appropriate edit value
-  const getGlobalEdit = useCurrentDesign((s) => s.getGlobalVisualEdit);
-  const getSchemeEdit = useCurrentDesign((s) => s.getSchemeVisualEdit);
+  const getGlobalEdit = useEdit((s) => s.getGlobalVisualEdit);
+  const getSchemeEdit = useEdit((s) => s.getSchemeVisualEdit);
   const editValue = isSchemeSpecific 
     ? getSchemeEdit(scheme as string, path)
     : getGlobalEdit(path);
@@ -29,10 +27,10 @@ export default function useEditWithDesignTool(path: string, scheme?: string | nu
   const canReset = hasVisualEdit || hasCodeOverride;
 
   // Get the appropriate actions
-  const addGlobalEdit = useCurrentDesign((s) => s.addGlobalVisualEdit);
-  const addSchemeEdit = useCurrentDesign((s) => s.addSchemeVisualEdit);
-  const removeGlobalEdit = useCurrentDesign((s) => s.removeGlobalVisualEdit);
-  const removeSchemeEdit = useCurrentDesign((s) => s.removeSchemeVisualEdit);
+  const addGlobalEdit = useEdit((s) => s.addGlobalVisualEdit);
+  const addSchemeEdit = useEdit((s) => s.addSchemeVisualEdit);
+  const removeGlobalEdit = useEdit((s) => s.removeGlobalVisualEdit);
+  const removeSchemeEdit = useEdit((s) => s.removeSchemeVisualEdit);
 
   return useMemo(
     () => ({

@@ -14,7 +14,7 @@ import useStorageCollection from "./useStorageCollection";
 import React from "react";
 import { ListOutlined } from "@mui/icons-material";
 import CollectionPopoverMenutem from "./CollectionPopoverMenutem";
-import useHasUnsavedModifications from "../Current/useHasUnsavedModifications";
+import useHasStoredAllModifications from "../Edit/useHasStoredAllModifications";
 
 type CollectionPopoverMenuContentProps = {
   onClose?: () => void;
@@ -25,7 +25,7 @@ function CollectionPopoverMenuContent({
 }: CollectionPopoverMenuContentProps) {
   const { savedDesigns, loadSaved, removeSaved, duplicateSaved } =
     useStorageCollection();
-  const hasUnsaved = useHasUnsavedModifications();
+  const hasUnsaved = useHasStoredAllModifications();
   const [confirmOpen, setConfirmOpen] = React.useState(false);
   const [pendingId, setPendingId] = React.useState<string | null>(null);
 

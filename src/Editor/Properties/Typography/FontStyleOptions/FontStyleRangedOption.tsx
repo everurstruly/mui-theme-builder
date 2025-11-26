@@ -2,8 +2,8 @@ import { Typography, TextField, ListItem, Stack } from "@mui/material";
 import SliderInput from "../../SliderInput";
 import { useState, useEffect } from "react";
 import OptionListItemResetButton from "../../OptionListItemResetButton";
-import useDesignCreatedTheme from "../../../Design/Current/useCreatedTheme";
-import useEditWithDesignTool from "../../../Design/Current/useEditWithDesignTool";
+import useDesignCreatedTheme from "../../../Design/Edit/useCreatedTheme";
+import useEditWithDesignerTool from "../../../Design/Edit/useEditWithDesignerTool";
 import { getNestedValue } from "../../../Design/compiler";
 
 export type FontStyleRangedOptionProps = {
@@ -17,7 +17,7 @@ export default function FontStyleRangedOption(props: FontStyleRangedOptionProps)
   const autoResolvedValue = getNestedValue(theme, props.path);
 
   const { value, hasVisualEdit, hasCodeOverride, setValue, reset } =
-    useEditWithDesignTool(props.path);
+    useEditWithDesignerTool(props.path);
 
   const currentValue = value ?? autoResolvedValue;
   const canResetValue = hasVisualEdit || hasCodeOverride;

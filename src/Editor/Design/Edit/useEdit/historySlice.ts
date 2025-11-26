@@ -18,7 +18,7 @@
  */
 
 import type { StateCreator } from 'zustand';
-import type { SerializableValue } from './domainSlice';
+import type { SerializableValue } from './currentSlice';
 
 // ===== Types =====
 

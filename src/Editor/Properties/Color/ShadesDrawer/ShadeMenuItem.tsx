@@ -1,10 +1,10 @@
 import { Box, ListItem, Popover, Typography } from "@mui/material";
 import { Sketch } from "@uiw/react-color";
 import { useState, useRef, useEffect } from "react";
-import { useCurrentDesign } from "../../../Design/Current/useCurrent";
+import { useEdit } from "../../../Design/Edit/useEdit";
 import { useDebouncyEffect } from "use-debouncy";
 import OptionListItemResetButton from "../../OptionListItemResetButton";
-import useEditWithDesignTool from "../../../Design/Current/useEditWithDesignTool";
+import useEditWithDesignerTool from "../../../Design/Edit/useEditWithDesignerTool";
 
 export default function ShadeListItem({
   title,
@@ -13,7 +13,7 @@ export default function ShadeListItem({
   title: string;
   path: string;
 }) {
-  const activeScheme = useCurrentDesign((s) => s.activeColorScheme);
+  const activeScheme = useEdit((s) => s.activeColorScheme);
   const {
     value,
     resolvedValue,
@@ -21,7 +21,7 @@ export default function ShadeListItem({
     reset: resetValue,
     hasVisualEdit: isCustomized,
     hasCodeOverride: isControlledByFunction,
-  } = useEditWithDesignTool(path, activeScheme);
+  } = useEditWithDesignerTool(path, activeScheme);
 
   const canResetValue = isCustomized || isControlledByFunction;
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);

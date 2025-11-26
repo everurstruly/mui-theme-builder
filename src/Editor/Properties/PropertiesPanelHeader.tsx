@@ -1,4 +1,4 @@
-import ColorSchemeToggle from "../Design/Current/ColorSchemeToggle";
+import ColorSchemeToggle from "../Design/Edit/ColorSchemeToggle";
 import ThemingExperienceTab from "../Toolsbar/ExperienceTab";
 import { Box } from "@mui/material";
 

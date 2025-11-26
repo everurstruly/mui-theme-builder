@@ -1,6 +1,6 @@
 import { type ThemeOptions } from "@mui/material";
 import { useMemo } from "react";
-import useCurrentDesign from "./useCurrent";
+import useEdit from "./useEdit";
 import {
   createThemeOptionsFromEdits,
   deepMerge,
@@ -19,14 +19,14 @@ export default function useCreatedThemeOption(
   colorScheme?: "light" | "dark"
 ): ThemeOptions {
   // Subscribe to all relevant state slices with selectors
-  const activeColorScheme = useCurrentDesign((s) => s.activeColorScheme);
-  const baseThemeCode = useCurrentDesign((s) => s.baseThemeCode);
-  const baseVisualToolEdits = useCurrentDesign(
+  const activeColorScheme = useEdit((s) => s.activeColorScheme);
+  const baseThemeCode = useEdit((s) => s.baseThemeCode);
+  const baseVisualToolEdits = useEdit(
     (s) => s.colorSchemeIndependentVisualToolEdits
   );
-  const codeOverridesDsl = useCurrentDesign((s) => s.codeOverridesDsl);
-  const lightMode = useCurrentDesign((s) => s.colorSchemes.light);
-  const darkMode = useCurrentDesign((s) => s.colorSchemes.dark);
+  const codeOverridesDsl = useEdit((s) => s.codeOverridesDsl);
+  const lightMode = useEdit((s) => s.colorSchemes.light);
+  const darkMode = useEdit((s) => s.colorSchemes.dark);
 
   const targetScheme = colorScheme ?? activeColorScheme;
   const { visualToolEdits } = targetScheme === "light" ? lightMode : darkMode;

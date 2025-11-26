@@ -1,12 +1,12 @@
 import { useEffect } from "react";
-import { useCurrentDesign } from "../Design/Current/useCurrent";
+import { useEdit } from "../Design/Edit/useEdit";
 
 export default function EditorGlobalKeyboardShortcuts() {
-  const selected = useCurrentDesign((s) => s.selectedExperienceId);
-  const undoVisual = useCurrentDesign((s) => s.undoVisualToolEdit);
-  const redoVisual = useCurrentDesign((s) => s.redoVisualToolEdit);
-  const undoCode = useCurrentDesign((s) => s.undoCodeOverride);
-  const redoCode = useCurrentDesign((s) => s.redoCodeOverride);
+  const selected = useEdit((s) => s.selectedExperienceId);
+  const undoVisual = useEdit((s) => s.undoVisualToolEdit);
+  const redoVisual = useEdit((s) => s.redoVisualToolEdit);
+  const undoCode = useEdit((s) => s.undoCodeOverride);
+  const redoCode = useEdit((s) => s.redoCodeOverride);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {

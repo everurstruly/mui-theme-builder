@@ -1,9 +1,9 @@
 import TemplateCreationMobileSelectMenu from "../Design/Creation/TemplateCreationMobileSelectMenu";
-import ExportButton from "../Design/Current/ExportButton";
-import ModificationHistoryButtons from "../Design/Current/ModificationHistoryButtons";
-import CurrentDesignMobileActionMenu from "./CurrentDesignMobileActionMenu";
-import CurrentDesignActionMenu from "./CurrentDesignActionMenu";
-import CurrentDesignStatus from "../Design/Current/Status";
+import ExportCommand from "../Design/Edit/ExportCommand";
+import ModificationHistoryButtons from "../Design/Edit/ModificationHistoryButtons";
+import DesignMobileActionMenu from "./DesignMobileActionMenu";
+import DesignActionMenu from "./DesignActionMenu";
+import CurrentDesignContext from "../Design/Edit/Context";
 import { AppBar, Stack, Divider, Toolbar, type SxProps } from "@mui/material";
 import PropertiesPanelHeader from "../Properties/PropertiesPanelHeader";
 import StoreCurrentButton from "../Design/Storage/StoreCurrentButton";
@@ -40,7 +40,7 @@ function DesktopToolbarContent() {
         width={"100%"}
         px={{ md: 1.5 }}
       >
-        <CurrentDesignStatus />
+        <CurrentDesignContext />
       </Stack>
 
       <Stack
@@ -52,12 +52,12 @@ function DesktopToolbarContent() {
         paddingInline={1.5}
         columnGap={2}
       >
-        <CurrentDesignActionMenu sx={{ columnGap: 2 }} />
+        <DesignActionMenu sx={{ columnGap: 2 }} />
 
         <Stack direction={"row"} alignItems={"inherit"} columnGap={2} mx={2}>
           <StoreCurrentButton />
           <ModificationHistoryButtons />
-          <ExportButton />
+          <ExportCommand />
         </Stack>
       </Stack>
 
@@ -95,7 +95,7 @@ function MobileToolbarContent() {
       paddingInline={{ sm: "12px" }}
     >
       <TemplateCreationMobileSelectMenu />
-      <CurrentDesignMobileActionMenu />
+      <DesignMobileActionMenu />
     </Stack>
   );
 }

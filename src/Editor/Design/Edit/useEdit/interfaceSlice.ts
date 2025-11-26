@@ -1,28 +1,28 @@
 /**
  * UI Slice - Editor Interface State
- * 
+ *
  * Responsibilities:
  * - Track active color scheme being edited
  * - Track selected preview component
  * - Track selected experience/tab
- * 
+ *
  * Does NOT contain:
  * - Theme domain state
  * - History/undo/redo
  * - Storage status (separate concern)
  */
 
-import type { StateCreator } from 'zustand';
-import type { EditorDesignExperienceId } from '../../../editorExperience';
+import type { StateCreator } from "zustand";
+import type { EditorDesignExperienceId } from "../../../editorExperience";
 
 // ===== Types =====
 
 /**
  * UI state for the theme editor.
  */
-export interface ThemeDesignUIState {
+export interface ThemeDesignInterfaceState {
   /** Currently active color scheme being edited */
-  activeColorScheme: 'light' | 'dark';
+  activeColorScheme: "light" | "dark";
 
   /** Currently selected preview component */
   activePreviewId: string;
@@ -34,9 +34,9 @@ export interface ThemeDesignUIState {
 /**
  * UI actions for the theme editor.
  */
-export interface ThemeDesignUIActions {
+export interface ThemeDesignInterfaceActions {
   /** Switch active color scheme */
-  setActiveColorScheme: (scheme: 'light' | 'dark') => void;
+  setActiveColorScheme: (scheme: "light" | "dark") => void;
 
   /** Select a preview component */
   selectPreview: (previewId: string) => void;
@@ -45,20 +45,21 @@ export interface ThemeDesignUIActions {
   selectExperience: (experienceId: EditorDesignExperienceId) => void;
 }
 
-export type ThemeDesignUISlice = ThemeDesignUIState & ThemeDesignUIActions;
+export type ThemeDesignInterfaceSlice = ThemeDesignInterfaceState &
+  ThemeDesignInterfaceActions;
 
 // ===== Slice Creator =====
 
-export const createUISlice: StateCreator<
-  ThemeDesignUISlice,
+export const createInterfaceSlice: StateCreator<
+  ThemeDesignInterfaceSlice,
   [],
   [],
-  ThemeDesignUISlice
+  ThemeDesignInterfaceSlice
 > = (set) => ({
   // Initial state
-  activeColorScheme: 'light',
-  activePreviewId: 'DevSandbox',
-  selectedExperienceId: 'primitives',
+  activeColorScheme: "light",
+  activePreviewId: "DevSandbox",
+  selectedExperienceId: "primitives",
 
   // Actions
   setActiveColorScheme: (scheme) => {

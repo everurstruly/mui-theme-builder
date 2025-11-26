@@ -13,16 +13,16 @@ import {
   Alert,
 } from "@mui/material";
 import React from "react";
-import useHasUnsavedModifications from "./useHasUnsavedModifications";
-import { useCurrentDesign } from "./useCurrent";
+import useHasStoredAllModifications from "./useHasStoredAllModifications";
+import { useEdit } from "./useEdit";
 import useStorage from "../Storage/useStorage";
 
-function Status() {
-  const title = useCurrentDesign((s) => s.title);
-  const setTitle = useCurrentDesign((s) => s.setTitle);
+function Context() {
+  const title = useEdit((s) => s.title);
+  const setTitle = useEdit((s) => s.setTitle);
   const storageStatus = useStorage((s) => s.storageProgress);
-  const hasUnsavedModifications = useHasUnsavedModifications();
-  const loadNew = useCurrentDesign((s) => s.loadNew);
+  const hasUnsavedModifications = useHasStoredAllModifications();
+  const loadNew = useEdit((s) => s.loadNew);
 
   const isSavedNow = storageStatus === "success";
 
@@ -191,4 +191,4 @@ function Status() {
   );
 }
 
-export default Status;
+export default Context;

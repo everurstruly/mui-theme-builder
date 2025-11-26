@@ -1,9 +1,9 @@
 import { ListItem, Typography, Stack, type SelectChangeEvent } from "@mui/material";
 import FontFamilyOptionInput from "./FontFamilyOptionInput";
 import OptionListItemResetButton from "../../OptionListItemResetButton";
-import useDesignCreatedTheme from "../../../Design/Current/useCreatedTheme";
-import { useVisualEditActions } from "../../../Design/Current/useVisualEditActions";
-import useEditWithDesignTool from "../../../Design/Current/useEditWithDesignTool";
+import useDesignCreatedTheme from "../../../Design/Edit/useCreatedTheme";
+import { useEditWithDesignerTools } from "../../../Design/Edit/useEditWithDesignerTools";
+import useEditWithDesignerTool from "../../../Design/Edit/useEditWithDesignerTool";
 
 export type FontFamilyOptionProps = {
   title: string;
@@ -29,10 +29,10 @@ export default function FontFamilyOption({
     typography: { fontFamily },
   } = useDesignCreatedTheme();
 
-  const { addGlobalVisualEdit, removeGlobalVisualEdit } = useVisualEditActions();
+  const { addGlobalVisualEdit, removeGlobalVisualEdit } = useEditWithDesignerTools();
 
   const { value, hasVisualEdit, hasCodeOverride } =
-    useEditWithDesignTool(path);
+    useEditWithDesignerTool(path);
 
   const autoResolvedValue = fontFamily;
   const resolvedValue = (value as string) ?? autoResolvedValue;

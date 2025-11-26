@@ -1,7 +1,7 @@
 import * as React from "react";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import { useCurrentDesign } from "../Design/Current/useCurrent";
+import { useEdit } from "../Design/Edit/useEdit";
 import {
   editorDesignExperience,
   type EditorDesignExperienceId,
@@ -17,8 +17,8 @@ export default function ThemingExperienceTab({
   centered = false,
   sx,
 }: EditorThemingExperienceTabProps) {
-  const value = useCurrentDesign((state) => state.selectedExperienceId);
-  const setValue = useCurrentDesign((state) => state.selectExperience);
+  const value = useEdit((state) => state.selectedExperienceId);
+  const setValue = useEdit((state) => state.selectExperience);
 
   const handleChange = (
     event: React.SyntheticEvent,

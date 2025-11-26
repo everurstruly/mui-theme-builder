@@ -1,5 +1,5 @@
 /**
- * Domain Slice - Pure Theme Design Model
+ * Current Slice - Pure Theme Design Model
  *
  * Responsibilities:
  * - Store base theme representation (DSL format)
@@ -55,7 +55,7 @@ export interface ThemeMetadata {
 /**
  * Domain state - pure theme design model.
  */
-export interface ThemeDesignDomainState {
+export interface ThemeCurrentState {
   /** Human-readable design title */
   title: string;
 
@@ -97,7 +97,7 @@ export interface ThemeDesignDomainState {
 /**
  * Domain actions - mutations on the theme design model.
  */
-export interface ThemeDesignDomainActions {
+export interface ThemeCurrentActions {
   /** Set design title */
   setTitle: (title: string) => void;
 
@@ -159,8 +159,7 @@ export interface ThemeDesignDomainActions {
   acknowledgeStoredVersion: () => void;
 }
 
-export type ThemeDesignDomainSlice = ThemeDesignDomainState &
-  ThemeDesignDomainActions;
+export type ThemeCurrentSlice = ThemeCurrentState & ThemeCurrentActions;
 
 // ===== Initial State Factory =====
 
@@ -177,11 +176,11 @@ function createInitialMetadata(): ThemeMetadata {
 
 // ===== Slice Creator =====
 
-export const createDomainSlice: StateCreator<
-  ThemeDesignDomainSlice,
+export const createCurrentSlice: StateCreator<
+  ThemeCurrentSlice,
   [],
   [],
-  ThemeDesignDomainSlice
+  ThemeCurrentSlice
 > = (set, get) => ({
   // Initial state
   title: "MUI Default",

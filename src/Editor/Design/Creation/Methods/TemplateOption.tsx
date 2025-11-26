@@ -17,7 +17,7 @@ import {
   ShuffleOutlined,
 } from "@mui/icons-material";
 import useTemplateSelection from "../useTemplateSelection";
-import ColorSchemeToggle from "../../Current/ColorSchemeToggle";
+import ColorSchemeToggle from "../../Edit/ColorSchemeToggle";
 
 export default function TemplateOption({ onClose }: { onClose: () => void }) {
   const {

@@ -1,8 +1,8 @@
 import { useState, useCallback, useMemo } from "react";
 import { useTemplates, type TemplateMetadata } from "./useTemplates";
 import { serializeThemeOptions } from "../compiler";
-import useHasUnsavedModifications from "../Current/useHasUnsavedModifications";
-import useCurrentDesign from "../Current/useCurrent";
+import useHasStoredAllModifications from "../Edit/useHasStoredAllModifications";
+import useEdit from "../Edit/useEdit";
 
 export type UseTemplateSelectionOptions = {
   autoConfirm?: boolean;
@@ -19,12 +19,12 @@ export default function useTemplateSelection(options?: UseTemplateSelectionOptio
   const { getAllTemplates, getTemplateById, templatesRegistry } = useTemplates();
 
   const templates = useMemo(() => getAllTemplates(), [getAllTemplates]);
-  const selectedTemplateId = useCurrentDesign(
+  const selectedTemplateId = useEdit(
     (s) => s.baseThemeMetadata?.sourceTemplateId
   );
 
-  const hasUnsavedModifications = useHasUnsavedModifications();
-  const loadNew = useCurrentDesign((s) => s.loadNew);
+  const hasUnsavedModifications = useHasStoredAllModifications();
+  const loadNew = useEdit((s) => s.loadNew);
 
   const [pendingChange, setPendingChange] = useState<PendingChange>(null);
   const [shouldKeepUnsavedModifications, setShouldKeepUnsavedModifications] = useState(

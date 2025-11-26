@@ -1,6 +1,6 @@
 import * as React from "react";
-import ExportThemeButton from "../Design/Current/ExportButton";
-import ChangeHistoryActions from "../Design/Current/ModificationHistoryButtons";
+import ExportThemeButton from "../Design/Edit/ExportCommand";
+import ChangeHistoryActions from "../Design/Edit/ModificationHistoryButtons";
 import MenuItem from "@mui/material/MenuItem";
 import {
   ContentCopy,
@@ -21,7 +21,7 @@ import {
   Stack,
 } from "@mui/material";
 
-export default function CurrentDesignMobileActionMenu() {
+export default function DesignMobileActionMenu() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const theme = useTheme();

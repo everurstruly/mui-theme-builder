@@ -5,8 +5,8 @@ import {
   useBreakpointSimulation,
   spoofThemeBreakpoints,
 } from "./BreakpointSimulation";
-import useCurrentDesign from "../../Design/Current/useCurrent";
-import useCreatedTheme from "../../Design/Current/useCreatedTheme";
+import useEdit from "../../Design/Edit/useEdit";
+import useCreatedTheme from "../../Design/Edit/useCreatedTheme";
 
 export type PlainSurfaceControls = {
   containerRef: RefObject<HTMLDivElement | null>;
@@ -25,7 +25,7 @@ export default function PlainSurface({
 }: PlainSurfaceControls) {
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  const previewId = useCurrentDesign((s) => s.activePreviewId);
+  const previewId = useEdit((s) => s.activePreviewId);
   const PreviewComponent = previewsRegistry[previewId]?.component;
 
   const [availableWidth, setAvailableWidth] = useState<number>(0);

@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useCurrentDesign } from "./useCurrent";
+import { useEdit } from "./useEdit";
 import { transformCodeToDsl } from "../compiler";
 
 /**
@@ -10,16 +10,16 @@ import { transformCodeToDsl } from "../compiler";
  *
  * @example
  * function ApplyButton() {
- *   const { applyModifications } = useCodeOverridesActions();
+ *   const { applyModifications } = useDeveloperToolActions();
  *   const handleApply = () => applyModifications('{ palette: { primary: { main: "#ff0000" } } }');
  *   return <Button onClick={handleApply}>Apply</Button>;
  * }
  */
-export default function useCodeOverridesActions() {
-  const setCodeOverrides = useCurrentDesign((s) => s.setCodeOverrides);
-  const clearCodeOverrides = useCurrentDesign((s) => s.clearCodeOverrides);
-  const resetToVisual = useCurrentDesign((s) => s.clearCodeOverrides);
-  const resetToBase = useCurrentDesign((s) => s.resetToBase);
+export default function useDeveloperToolActions() {
+  const setCodeOverrides = useEdit((s) => s.setCodeOverrides);
+  const clearCodeOverrides = useEdit((s) => s.clearCodeOverrides);
+  const resetToVisual = useEdit((s) => s.clearCodeOverrides);
+  const resetToBase = useEdit((s) => s.resetToBase);
 
   return useMemo(
     () => ({

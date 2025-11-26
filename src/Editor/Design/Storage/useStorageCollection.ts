@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
-import useCurrentDesign from "../Current/useCurrent";
-import useCreatedThemeOption from "../Current/useCreatedThemeOption";
-import { useVisualEditActions } from "../Current/useVisualEditActions";
-import useCodeOverridesActions from "../Current/useCodeOverridesActions";
+import useEdit from "../Edit/useEdit";
+import useCreatedThemeOption from "../Edit/useCreatedThemeOption";
+import { useEditWithDesignerTools } from "../Edit/useEditWithDesignerTools";
+import useDeveloperToolActions from "../Edit/useDeveloperToolActions";
 import type { StorageAdapter } from "./storageAdapters";
 import { deviceStorageAdapter } from "./storageAdapters";
 import useStorage from "./useStorage";
@@ -14,12 +14,12 @@ export default function useStorageCollection(
 ) {
   const [savedDesigns, setSavedDesigns] = useState<SavedToStorageDesign[]>([]);
 
-  const loadNewDesign = useCurrentDesign((s) => s.loadNew);
-  const markStoredDomain = useCurrentDesign((s) => s.acknowledgeStoredVersion);
+  const loadNewDesign = useEdit((s) => s.loadNew);
+  const markStoredDomain = useEdit((s) => s.acknowledgeStoredVersion);
   const createdThemeOptions = useCreatedThemeOption();
-  const { addGlobalVisualEdit } = useVisualEditActions();
-  const { applyModifications: applyCodeOverrides } = useCodeOverridesActions();
-  const setActiveColorScheme = useCurrentDesign((s) => s.setActiveColorScheme);
+  const { addGlobalVisualEdit } = useEditWithDesignerTools();
+  const { applyModifications: applyCodeOverrides } = useDeveloperToolActions();
+  const setActiveColorScheme = useEdit((s) => s.setActiveColorScheme);
 
   const setStatus = useStorage((s) => s.setStatus);
   const recordLastStored = useStorage((s) => s.recordLastStored);
@@ -28,7 +28,7 @@ export default function useStorageCollection(
     async (opts?: { title?: string; includeSession?: boolean }) => {
       setStatus("loading");
 
-      const state = useCurrentDesign.getState();
+      const state = useEdit.getState();
       const title = opts?.title ?? state.title ?? "Untitled";
 
       // Primary data: the merged/created ThemeOptions as JSON string

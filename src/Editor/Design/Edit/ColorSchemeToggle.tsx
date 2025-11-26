@@ -1,7 +1,7 @@
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import { DarkModeOutlined, LightModeOutlined } from "@mui/icons-material";
-import useCurrentDesign from "./useCurrent";
+import useEdit from "./useEdit";
 
 const options = [
   {
@@ -17,8 +17,8 @@ const options = [
 ] as const;
 
 export default function ColorSchemeToggle() {
-  const colorScheme = useCurrentDesign((s) => s.activeColorScheme);
-  const setColorScheme = useCurrentDesign((s) => s.setActiveColorScheme);
+  const colorScheme = useEdit((s) => s.activeColorScheme);
+  const setColorScheme = useEdit((s) => s.setActiveColorScheme);
 
   const handleChange = (
     _: React.MouseEvent<HTMLElement>,

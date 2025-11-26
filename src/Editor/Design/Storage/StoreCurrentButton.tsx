@@ -1,12 +1,12 @@
 import useStorageCollection from "./useStorageCollection";
-import useHasUnsavedModifications from "../Current/useHasUnsavedModifications";
+import useHasStoredAllModifications from "../Edit/useHasStoredAllModifications";
 import { SaveRounded } from "@mui/icons-material";
 import { Button, Snackbar } from "@mui/material";
 import { useState } from "react";
 
 export default function StoreCurrentButton() {
   const [shouldShowNotification, showNotification] = useState(false);
-  const hasUnsavedModifications = useHasUnsavedModifications();
+  const hasUnsavedModifications = useHasStoredAllModifications();
 
   const { saveCurrent } = useStorageCollection();
 

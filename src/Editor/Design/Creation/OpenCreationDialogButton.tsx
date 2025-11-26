@@ -4,7 +4,7 @@ import CreationDialog from "./CreationDialog";
 import { Popover } from "@mui/material";
 import { Add } from "@mui/icons-material";
 
-export default function OpenDesignCreationDialogButton() {
+export default function OpenCreationDialogButton() {
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
 
   const handleClickOpen = (event: React.MouseEvent<HTMLElement>) => {
