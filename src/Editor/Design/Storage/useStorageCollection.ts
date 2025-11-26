@@ -1,43 +1,28 @@
 import { useCallback, useEffect, useState } from "react";
-import { useCurrentDesign } from "../Current/useCurrent";
+import useCurrentDesign from "../Current/useCurrent";
 import useCreatedThemeOption from "../Current/useCreatedThemeOption";
 import { useVisualEditActions } from "../Current/useVisualEditActions";
 import useCodeOverridesActions from "../Current/useCodeOverridesActions";
-import type { PersistenceAdapter } from "./persistenceAdapter";
-import deviceStorageAdapter from "./persistenceAdapter";
+import type { StorageAdapter } from "./storageAdapters";
+import { deviceStorageAdapter } from "./storageAdapters";
+import useStorage from "./useStorage";
+import type { SavedToStorageDesign } from "./types";
+import { MAX_SAVED } from "./types";
 
-const MAX_SAVED = 50;
-
-export interface SavedSessionData {
-  activeColorScheme?: "light" | "dark";
-  colorSchemeIndependentVisualToolEdits?: Record<string, any>;
-  light?: { visualToolEdits?: Record<string, any> };
-  dark?: { visualToolEdits?: Record<string, any> };
-  codeOverridesSource?: string;
-}
-
-export interface SavedToStorageDesign {
-  id: string;
-  title: string;
-  createdAt: number;
-  updatedAt?: number;
-  themeOptionsCode: string;
-  session?: SavedSessionData;
-}
-
-export default function useDesignStorage(
-  adapter: PersistenceAdapter = deviceStorageAdapter
+export default function useStorageCollection(
+  adapter: StorageAdapter = deviceStorageAdapter
 ) {
   const [savedDesigns, setSavedDesigns] = useState<SavedToStorageDesign[]>([]);
 
   const loadNewDesign = useCurrentDesign((s) => s.loadNew);
-  const setStatus = useCurrentDesign((s) => s.setStatus);
-  const markSavedDomain = useCurrentDesign((s) => s.markSaved);
-  const recordLastSaved = useCurrentDesign((s) => s.recordLastSaved);
+  const markStoredDomain = useCurrentDesign((s) => s.acknowledgeStoredVersion);
   const createdThemeOptions = useCreatedThemeOption();
   const { addGlobalVisualEdit } = useVisualEditActions();
-  const { applyChanges: applyCodeOverrides } = useCodeOverridesActions();
+  const { applyModifications: applyCodeOverrides } = useCodeOverridesActions();
   const setActiveColorScheme = useCurrentDesign((s) => s.setActiveColorScheme);
+
+  const setStatus = useStorage((s) => s.setStatus);
+  const recordLastStored = useStorage((s) => s.recordLastStored);
 
   const saveCurrent = useCallback(
     async (opts?: { title?: string; includeSession?: boolean }) => {
@@ -95,10 +80,10 @@ export default function useDesignStorage(
 
         await adapter.write(next);
         setSavedDesigns(next);
-        // mark domain as saved (savedVersion = version)
-        markSavedDomain();
-        // record persistence success + timestamp
-        recordLastSaved();
+        // mark domain as stored
+        markStoredDomain();
+        // record storage success + timestamp
+        recordLastStored();
         return newItem.id;
       }
 
@@ -115,13 +100,13 @@ export default function useDesignStorage(
       const next = [newItem, ...before].slice(0, MAX_SAVED);
       await adapter.write(next);
       setSavedDesigns(next);
-      // mark domain as saved (savedVersion = version)
-      markSavedDomain();
-      // record persistence success + timestamp
-      recordLastSaved();
+      // mark domain as stored
+      markStoredDomain();
+      // record storage success + timestamp
+      recordLastStored();
       return newItem.id;
     },
-    [adapter, setStatus, createdThemeOptions, markSavedDomain, recordLastSaved]
+    [adapter, createdThemeOptions, markStoredDomain, recordLastStored, setStatus]
   );
 
   const removeSaved = useCallback(
@@ -135,7 +120,7 @@ export default function useDesignStorage(
         setSavedDesigns(next);
         return true;
       } catch (e) {
-        setStatus("error");
+        setStatus("error", String(e));
         throw e;
       } finally {
         setStatus("idle");
@@ -276,12 +261,12 @@ export default function useDesignStorage(
         }
       }
 
-      // mark loaded state as saved in domain and persistence
-      markSavedDomain();
-      recordLastSaved();
+      // mark loaded state as stored in domain and storage
+      markStoredDomain();
+      recordLastStored();
       return true;
     } catch (e) {
-      setStatus("error");
+      setStatus("error", String(e));
       throw e;
     }
   };
@@ -334,6 +319,22 @@ export default function useDesignStorage(
       window.removeEventListener("storage", onStorage);
     };
   }, [adapter]);
+
+  // Register save delegate so `useStorage` can expose a simple `save()` API.
+  useEffect(() => {
+    try {
+      useStorage.getState().setSaveDelegate(saveCurrent);
+    } catch {
+      // ignore in environments without window / getState
+    }
+    return () => {
+      try {
+        useStorage.getState().setSaveDelegate(undefined);
+      } catch {
+        // ignore
+      }
+    };
+  }, [saveCurrent]);
 
   return {
     savedDesigns,

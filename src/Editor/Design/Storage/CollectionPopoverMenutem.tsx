@@ -17,7 +17,7 @@ type Props = {
   onDuplicate?: (id: string) => void;
 };
 
-export default function StoredDesignListItem({
+export default function CollectionPopoverMenutem({
   design,
   onLoad,
   onRemove,

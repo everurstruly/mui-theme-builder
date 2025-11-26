@@ -40,5 +40,3 @@ export const deviceStorageAdapter: StorageAdapter = {
     }
   },
 };
-
-export default deviceStorageAdapter;

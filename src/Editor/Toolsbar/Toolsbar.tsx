@@ -6,7 +6,7 @@ import CurrentDesignActionMenu from "./CurrentDesignActionMenu";
 import CurrentDesignStatus from "../Design/Current/Status";
 import { AppBar, Stack, Divider, Toolbar, type SxProps } from "@mui/material";
 import PropertiesPanelHeader from "../Properties/PropertiesPanelHeader";
-import SaveToStoreButton from "../Design/Storage/SaveToStoreButton";
+import StoreCurrentButton from "../Design/Storage/StoreCurrentButton";
 
 export default function EditorToolsbar() {
   return (
@@ -55,7 +55,7 @@ function DesktopToolbarContent() {
         <CurrentDesignActionMenu sx={{ columnGap: 2 }} />
 
         <Stack direction={"row"} alignItems={"inherit"} columnGap={2} mx={2}>
-          <SaveToStoreButton />
+          <StoreCurrentButton />
           <ModificationHistoryButtons />
           <ExportButton />
         </Stack>

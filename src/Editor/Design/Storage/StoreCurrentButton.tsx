@@ -1,14 +1,14 @@
-import useDesignStorage from "./useDesignStorage";
+import useStorageCollection from "./useStorageCollection";
 import useHasUnsavedModifications from "../Current/useHasUnsavedModifications";
 import { SaveRounded } from "@mui/icons-material";
 import { Button, Snackbar } from "@mui/material";
 import { useState } from "react";
 
-export default function SaveToStoreButton() {
+export default function StoreCurrentButton() {
   const [shouldShowNotification, showNotification] = useState(false);
   const hasUnsavedModifications = useHasUnsavedModifications();
 
-  const { saveCurrent } = useDesignStorage();
+  const { saveCurrent } = useStorageCollection();
 
   const handleSaveModifications = async () => {
     await saveCurrent();

@@ -1,10 +1,10 @@
 import * as React from "react";
 import Button from "@mui/material/Button";
 import { Popover } from "@mui/material";
-import SavedDesignPopoverMenuContent from "./StoreDesignPopoverMenuContent";
+import CollectionPopoverMenuContent from "./CollectionPopoverMenuContent";
 import { BookmarkBorderOutlined } from "@mui/icons-material";
 
-export default function StoreDesignPopoverMenuButton() {
+export default function CollectionPopoverMenuButton() {
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
 
   const handleClickOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -43,7 +43,7 @@ export default function StoreDesignPopoverMenuButton() {
           },
         }}
       >
-        <SavedDesignPopoverMenuContent onClose={handleClose} />
+        <CollectionPopoverMenuContent onClose={handleClose} />
       </Popover>
     </>
   );

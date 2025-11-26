@@ -10,21 +10,21 @@ import {
   Card,
   Stack,
 } from "@mui/material";
-import useDesignStorage from "./useDesignStorage";
+import useStorageCollection from "./useStorageCollection";
 import React from "react";
 import { ListOutlined } from "@mui/icons-material";
-import StoredDesignListItem from "./StoredDesignListItem";
+import CollectionPopoverMenutem from "./CollectionPopoverMenutem";
 import useHasUnsavedModifications from "../Current/useHasUnsavedModifications";
 
-type SavedDesignPopoverMenuContentProps = {
+type CollectionPopoverMenuContentProps = {
   onClose?: () => void;
 };
 
-function SavedDesignPopoverMenuContent({
+function CollectionPopoverMenuContent({
   onClose,
-}: SavedDesignPopoverMenuContentProps) {
+}: CollectionPopoverMenuContentProps) {
   const { savedDesigns, loadSaved, removeSaved, duplicateSaved } =
-    useDesignStorage();
+    useStorageCollection();
   const hasUnsaved = useHasUnsavedModifications();
   const [confirmOpen, setConfirmOpen] = React.useState(false);
   const [pendingId, setPendingId] = React.useState<string | null>(null);
@@ -114,7 +114,7 @@ function SavedDesignPopoverMenuContent({
       ) : (
         <List dense sx={{ px: 0 }}>
           {savedDesigns.map((s) => (
-            <StoredDesignListItem
+            <CollectionPopoverMenutem
               key={s.id}
               design={s}
               onLoad={handleLoad}
@@ -145,4 +145,4 @@ function SavedDesignPopoverMenuContent({
   );
 }
 
-export default SavedDesignPopoverMenuContent;
+export default CollectionPopoverMenuContent;
