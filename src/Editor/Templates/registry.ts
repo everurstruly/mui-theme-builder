@@ -3,7 +3,7 @@ import materialTheme from "./material";
 import modernTheme from "./modern";
 import minimalTheme from "./minimal";
 import ios26 from "./collections/ios26";
-import { deepMerge } from "../Design/shared";
+import { deepMerge } from "../Design/compiler";
 
 export type TemplateMetadata = {
   id: string;

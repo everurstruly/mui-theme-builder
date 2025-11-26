@@ -8,10 +8,10 @@ import {
   Box,
   alpha,
 } from "@mui/material";
-import type { SavedDesign } from "./useDesignStorage";
+import type { SavedToStorageDesign } from "./useDesignStorage";
 
 type Props = {
-  design: SavedDesign;
+  design: SavedToStorageDesign;
   onLoad: (id: string) => void;
   onRemove: (e: React.MouseEvent, id: string) => void;
   onDuplicate?: (id: string) => void;
@@ -91,9 +91,9 @@ export default function StoredDesignListItem({
   );
 }
 
-function getPaletteColors(design: SavedDesign): string[] {
+function getPaletteColors(design: SavedToStorageDesign): string[] {
   try {
-    const raw = design.snapshot?.baseThemeCode;
+    const raw = design.themeOptionsCode;
     if (!raw) return ["#1976d2", "#dc004e", "#ff9800"];
 
     let parsed: any;
@@ -141,9 +141,9 @@ function getPaletteColors(design: SavedDesign): string[] {
   }
 }
 
-function getPrimarySecondary(design: SavedDesign) {
+function getPrimarySecondary(design: SavedToStorageDesign) {
   try {
-    const raw = design.snapshot?.baseThemeCode;
+    const raw = design.themeOptionsCode;
     if (!raw) return { primary: "#1976d2", secondary: "#9e9e9e" };
     let parsed: any;
     try {
@@ -178,12 +178,12 @@ function getPrimarySecondary(design: SavedDesign) {
   }
 }
 
-function getCardBackground(design: SavedDesign) {
+function getCardBackground(design: SavedToStorageDesign) {
   const { primary } = getPrimarySecondary(design);
   if (primary) return alpha(primary, 0.05);
 }
 
-function getCardBorder(design: SavedDesign) {
+function getCardBorder(design: SavedToStorageDesign) {
   const { secondary } = getPrimarySecondary(design);
   if (secondary) return alpha(secondary, 0.12);
 }

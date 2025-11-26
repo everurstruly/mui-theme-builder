@@ -1,6 +1,6 @@
 import { Typography, TextField, ListItem, Stack } from "@mui/material";
-import { useEditWithVisualTool } from "../../../Design";
 import OptionListItemResetButton from "../../OptionListItemResetButton";
+import useEditWithVisualTool from "../../../Design/Current/useEditWithVisualTool";
 
 export type FontStyleFieldOptionProps = {
   name: string;

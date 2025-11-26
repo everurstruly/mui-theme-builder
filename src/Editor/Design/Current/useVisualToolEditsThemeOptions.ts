@@ -1,7 +1,7 @@
-import createThemeOptionsFromEdits from "../themeCompiler/transformation/editsToTheme";
 import type { ThemeOptions } from "@mui/material";
 import { useMemo } from "react";
 import useDesignStore from "./currentStore";
+import { createThemeOptionsFromEdits } from "../compiler";
 
 /**
  * Hook for accessing merged theme preview without code overrides.

@@ -1,10 +1,10 @@
 import { Typography, TextField, ListItem, Stack } from "@mui/material";
 import SliderInput from "../../SliderInput";
-import { useEditWithVisualTool } from "../../../Design";
 import { useState, useEffect } from "react";
 import OptionListItemResetButton from "../../OptionListItemResetButton";
 import useDesignCreatedTheme from "../../../Design/Current/useCreatedTheme";
-import { getNestedValue } from "../../../Design/shared";
+import useEditWithVisualTool from "../../../Design/Current/useEditWithVisualTool";
+import { getNestedValue } from "../../../Design/compiler";
 
 export type FontStyleRangedOptionProps = {
   name: string;

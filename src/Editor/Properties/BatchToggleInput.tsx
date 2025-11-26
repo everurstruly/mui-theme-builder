@@ -1,8 +1,10 @@
 import { Box, ListItemButton, Tooltip } from "@mui/material";
 import ListItemText from "@mui/material/ListItemText";
-import { useThemeDesignStore, type SerializableValue } from "../Design";
+import { useVisualEditActions } from "../Design/Current/useVisualEditActions";
 import { useMemo } from "react";
 import { AddOutlined, InfoOutline, RemoveOutlined } from "@mui/icons-material";
+import useDesignStore from "../Design/Current/currentStore";
+import type { SerializableValue } from "../Design/compiler";
 
 export type BatchToggleInputProps = {
   label: string;
@@ -19,14 +21,13 @@ export type BatchToggleInputProps = {
  * Enabled state is determined by checking if ALL paths match their expected values.
  */
 export default function BatchToggleInput(props: BatchToggleInputProps) {
-  const setVisualEdit = useThemeDesignStore((s) => s.addVisualToolEdit);
-  const removeVisualEdit = useThemeDesignStore((s) => s.removeVisualToolEdit);
-  const baseVisualToolEdits = useThemeDesignStore(
+  const { addGlobalVisualEdit, removeGlobalVisualEdit } = useVisualEditActions();
+  const baseVisualToolEdits = useDesignStore(
     (s) => s.colorSchemeIndependentVisualToolEdits
   );
-  const lightMode = useThemeDesignStore((s) => s.light);
-  const darkMode = useThemeDesignStore((s) => s.dark);
-  const activeColorScheme = useThemeDesignStore((s) => s.activeColorScheme);
+  const lightMode = useDesignStore((s) => s.colorSchemes.light);
+  const darkMode = useDesignStore((s) => s.colorSchemes.dark);
+  const activeColorScheme = useDesignStore((s) => s.activeColorScheme);
 
   // Get the appropriate visual edits based on active color scheme
   const activeVisualToolEdits = useMemo(() => {
@@ -46,12 +47,12 @@ export default function BatchToggleInput(props: BatchToggleInputProps) {
     if (isEnabled) {
       // Remove all edits
       Object.keys(props.edits).forEach((path) => {
-        removeVisualEdit(path);
+        removeGlobalVisualEdit(path);
       });
     } else {
       // Apply all edits
       Object.entries(props.edits).forEach(([path, value]) => {
-        setVisualEdit(path, value);
+        addGlobalVisualEdit(path, value);
       });
     }
   };

@@ -1,9 +1,9 @@
 import { ListItem, Typography, Stack, type SelectChangeEvent } from "@mui/material";
 import FontFamilyOptionInput from "./FontFamilyOptionInput";
-import { useEditWithVisualTool } from "../../../Design";
 import OptionListItemResetButton from "../../OptionListItemResetButton";
 import useDesignCreatedTheme from "../../../Design/Current/useCreatedTheme";
-import { useDesignStore } from "../../../Design/Current/designStore";
+import { useVisualEditActions } from "../../../Design/Current/useVisualEditActions";
+import useEditWithVisualTool from "../../../Design/Current/useEditWithVisualTool";
 
 export type FontFamilyOptionProps = {
   title: string;
@@ -29,8 +29,7 @@ export default function FontFamilyOption({
     typography: { fontFamily },
   } = useDesignCreatedTheme();
 
-  const removeVisualToolEdit = useDesignStore((s) => s.removeVisualToolEdit);
-  const addVisualToolEdit = useDesignStore((s) => s.addVisualToolEdit);
+  const { addGlobalVisualEdit, removeGlobalVisualEdit } = useVisualEditActions();
 
   const { value, hasVisualEdit, hasCodeOverride } =
     useEditWithVisualTool(path);
@@ -44,17 +43,17 @@ export default function FontFamilyOption({
     const fontFamilyValue = formatFontFamilyWithFallback(selectedFont);
 
     if (path === "typography.h1.fontFamily") {
-      headingPaths.forEach((p) => addVisualToolEdit(p, fontFamilyValue));
+      headingPaths.forEach((p) => addGlobalVisualEdit(p, fontFamilyValue));
     } else {
-      addVisualToolEdit(path, fontFamilyValue);
+      addGlobalVisualEdit(path, fontFamilyValue);
     }
   };
   
   const handleReset = () => {
     if (path === "typography.h1.fontFamily") {
-      headingPaths.forEach((p) => removeVisualToolEdit(p));
+      headingPaths.forEach((p) => removeGlobalVisualEdit(p));
     } else {
-      removeVisualToolEdit(path);
+      removeGlobalVisualEdit(path);
     }
   };
 

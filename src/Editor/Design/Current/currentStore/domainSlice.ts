@@ -21,7 +21,7 @@
  */
 
 import type { StateCreator } from 'zustand';
-import type { ThemeDsl } from '../../themeCompiler/types';
+import type { ThemeDsl } from "../../compiler";
 
 // ===== Types =====
 

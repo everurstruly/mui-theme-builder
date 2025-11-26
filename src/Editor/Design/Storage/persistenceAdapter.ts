@@ -1,8 +1,8 @@
-import type { SavedDesign } from "./useDesignStorage";
+import type { SavedToStorageDesign } from "./useDesignStorage";
 
 export interface PersistenceAdapter {
-  read(): Promise<SavedDesign[]>;
-  write(items: SavedDesign[]): Promise<void>;
+  read(): Promise<SavedToStorageDesign[]>;
+  write(items: SavedToStorageDesign[]): Promise<void>;
   clear(): Promise<void>;
 }
 
@@ -16,13 +16,13 @@ export const deviceStorageAdapter: PersistenceAdapter = {
       if (!raw) return [];
       const parsed = JSON.parse(raw);
       if (!Array.isArray(parsed)) return [];
-      return parsed as SavedDesign[];
+      return parsed as SavedToStorageDesign[];
     } catch {
       return [];
     }
   },
 
-  async write(items: SavedDesign[]) {
+  async write(items: SavedToStorageDesign[]) {
     try {
       if (typeof window === "undefined" || !window.localStorage) return;
       localStorage.setItem(STORAGE_KEY, JSON.stringify(items));

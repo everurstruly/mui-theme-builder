@@ -1,224 +1,290 @@
 import { useCallback, useEffect, useState } from "react";
-import { useDesignStore } from "../Current/designStore";
+import { useDesignStore } from "../Current/currentStore";
+import useCreatedThemeOption from "../Current/useCreatedThemeOption";
+import { useVisualEditActions } from "../Current/useVisualEditActions";
+import useCodeOverridesActions from "../Current/useCodeOverridesActions";
 import type { PersistenceAdapter } from "./persistenceAdapter";
 import deviceStorageAdapter from "./persistenceAdapter";
 
 const MAX_SAVED = 50;
 
-export interface SavedDesign {
+export interface SavedSessionData {
+  activeColorScheme?: "light" | "dark";
+  colorSchemeIndependentVisualToolEdits?: Record<string, any>;
+  light?: { visualToolEdits?: Record<string, any> };
+  dark?: { visualToolEdits?: Record<string, any> };
+  codeOverridesSource?: string;
+}
+
+export interface SavedToStorageDesign {
   id: string;
   title: string;
   createdAt: number;
   updatedAt?: number;
-  snapshot: {
-    baseThemeCode?: string;
-    baseThemeMetadata?: any;
-    title?: string;
-    activeColorScheme?: string;
-    colorSchemeIndependentVisualToolEdits?: Record<string, any>;
-    light?: { visualToolEdits?: Record<string, any> };
-    dark?: { visualToolEdits?: Record<string, any> };
-    codeOverridesSource?: string;
-  };
+  themeOptionsCode: string;
+  session?: SavedSessionData;
 }
 
 export default function useDesignStorage(
   adapter: PersistenceAdapter = deviceStorageAdapter
 ) {
-  const [savedDesigns, setSavedDesigns] = useState<SavedDesign[]>([]);
+  const [savedDesigns, setSavedDesigns] = useState<SavedToStorageDesign[]>([]);
 
-  useEffect(() => {
-    let mounted = true;
-    adapter.read().then((items) => {
-      if (mounted) setSavedDesigns(items);
-    });
-
-    // listen for storage events to keep multiple tabs in sync
-    const onStorage = () => adapter.read().then((items) => setSavedDesigns(items));
-    window.addEventListener("storage", onStorage as any);
-    return () => {
-      mounted = false;
-      window.removeEventListener("storage", onStorage as any);
-    };
-  }, [adapter]);
+  const loadNewDesign = useDesignStore((s) => s.loadNew);
+  const setStatus = useDesignStore((s) => s.setStatus);
+  const markSavedDomain = useDesignStore((s) => s.markSaved);
+  const recordLastSaved = useDesignStore((s) => s.recordLastSaved);
+  const createdThemeOptions = useCreatedThemeOption();
+  const { addGlobalVisualEdit } = useVisualEditActions();
+  const { applyChanges: applyCodeOverrides } = useCodeOverridesActions();
+  const setActiveColorScheme = useDesignStore((s) => s.setActiveColorScheme);
 
   const saveCurrent = useCallback(
-    async (opts?: { title?: string }) => {
-      const id =
-        Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 8);
+    async (opts?: { title?: string; includeSession?: boolean }) => {
+      setStatus("loading");
+
       const state = useDesignStore.getState();
+      const title = opts?.title ?? state.title ?? "Untitled";
 
-      const snapshot = {
-        baseThemeCode: state.baseThemeCode,
-        baseThemeMetadata: state.baseThemeMetadata,
-        title: opts?.title ?? state.title,
-        activeColorScheme: state.activeColorScheme,
-        colorSchemeIndependentVisualToolEdits:
-          state.colorSchemeIndependentVisualToolEdits,
-        light: { visualToolEdits: state.light.visualToolEdits },
-        dark: { visualToolEdits: state.dark.visualToolEdits },
-        codeOverridesSource: state.codeOverridesSource,
-      };
+      // Primary data: the merged/created ThemeOptions as JSON string
+      const themeOptionsCode = JSON.stringify(createdThemeOptions, null, 2);
 
-      const item: SavedDesign = {
-        id,
-        title: snapshot.title || "Untitled",
-        createdAt: Date.now(),
-        snapshot,
-      };
+      // Optional session data for restoring editor state
+      const session =
+        opts?.includeSession !== false
+          ? {
+              activeColorScheme: state.activeColorScheme,
+              colorSchemeIndependentVisualToolEdits:
+                state.colorSchemeIndependentVisualToolEdits,
+              light: {
+                visualToolEdits: state.colorSchemes?.light?.visualToolEdits || {},
+              },
+              dark: {
+                visualToolEdits: state.colorSchemes?.dark?.visualToolEdits || {},
+              },
+              codeOverridesSource: state.codeOverridesSource,
+            }
+          : undefined;
 
       const before = await adapter.read();
-      const next = [item, ...before].slice(0, MAX_SAVED);
-      await adapter.write(next);
-      setSavedDesigns(next);
 
-      // mark design as saved
-      try {
-        useDesignStore.setState({ hasUnsavedChanges: false });
-      } catch (e) {
-        void e;
-        // ignore
+      // Check for existing saved design with same themeOptionsCode and title
+      const existingIndex = before.findIndex(
+        (d) => d.themeOptionsCode === themeOptionsCode && d.title === title
+      );
+
+      let newItem: SavedToStorageDesign;
+
+      if (existingIndex !== -1) {
+        // Update existing
+        const existing = before[existingIndex];
+        newItem = {
+          ...existing,
+          themeOptionsCode,
+          session: session ?? existing.session,
+          updatedAt: Date.now(),
+          title,
+        };
+
+        // Move updated item to front
+        const next = [
+          newItem,
+          ...before.slice(0, existingIndex),
+          ...before.slice(existingIndex + 1),
+        ].slice(0, MAX_SAVED);
+
+        await adapter.write(next);
+        setSavedDesigns(next);
+        // mark domain as saved (savedVersion = version)
+        markSavedDomain();
+        // record persistence success + timestamp
+        recordLastSaved();
+        return newItem.id;
       }
 
-      return id;
+      // Create new
+      const id = crypto.randomUUID();
+      newItem = {
+        id,
+        title,
+        createdAt: Date.now(),
+        themeOptionsCode,
+        session,
+      };
+
+      const next = [newItem, ...before].slice(0, MAX_SAVED);
+      await adapter.write(next);
+      setSavedDesigns(next);
+      // mark domain as saved (savedVersion = version)
+      markSavedDomain();
+      // record persistence success + timestamp
+      recordLastSaved();
+      return newItem.id;
     },
-    [adapter]
+    [adapter, setStatus, createdThemeOptions, markSavedDomain, recordLastSaved]
   );
 
   const removeSaved = useCallback(
     async (id: string) => {
+      setStatus("loading");
+      try {
+        const before = await adapter.read();
+        const next = before.filter((d) => d.id !== id);
+        if (next.length === before.length) return false;
+        await adapter.write(next);
+        setSavedDesigns(next);
+        return true;
+      } catch (e) {
+        setStatus("error");
+        throw e;
+      } finally {
+        setStatus("idle");
+      }
+    },
+    [adapter, setStatus]
+  );
+
+  const duplicateSaved = useCallback(
+    async (id: string) => {
       const before = await adapter.read();
-      const next = before.filter((d) => d.id !== id);
-      if (next.length === before.length) return false;
+      const found = before.find((d) => d.id === id);
+
+      if (!found) {
+        return null;
+      }
+
+      const rawTitle = found.title || "Untitled";
+      const normalizedBase =
+        rawTitle.replace(/\s*\(copy(?:\s*\d+)?\)\s*$/i, "").trim() || "Untitled";
+
+      function escapeRegExp(s: string) {
+        return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      }
+
+      const copyPattern = new RegExp(
+        `^${escapeRegExp(normalizedBase)}\\s*\\(copy(?:\\s*\\d+)?\\)$`,
+        "i"
+      );
+      const existingCopies = before
+        .map((d) => d.title)
+        .filter(Boolean)
+        .filter((t) => !!t && copyPattern.test(t));
+
+      let copyTitle = `${normalizedBase} (copy)`;
+      if (existingCopies.length > 0) {
+        // find highest numbered copy
+        let max = 0;
+        for (const t of existingCopies) {
+          const m = t!.match(/\(copy(?:\s*(\d+))?\)$/i);
+          if (m) {
+            const n = m[1] ? parseInt(m[1], 10) : 1;
+            if (n > max) max = n;
+          }
+        }
+        const next = max === 0 ? 2 : max + 1;
+        copyTitle = `${normalizedBase} (copy ${next})`;
+      }
+
+      const copy: SavedToStorageDesign = {
+        id: Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 8),
+        title: copyTitle,
+        createdAt: Date.now(),
+        themeOptionsCode: found.themeOptionsCode,
+        session: found.session
+          ? JSON.parse(JSON.stringify(found.session))
+          : undefined,
+      };
+
+      const next = [copy, ...before].slice(0, MAX_SAVED);
       await adapter.write(next);
       setSavedDesigns(next);
-      return true;
+      return copy.id;
     },
     [adapter]
   );
 
-  const duplicateSaved = useCallback(async (id: string) => {
-    const before = await adapter.read();
-    const found = before.find((d) => d.id === id);
-    if (!found) return null;
-    // compute a unique title for the copy: "Title (copy)" or "Title (copy N)"
-    // normalize base title by removing any existing "(copy)" suffix so we don't produce "A (copy)(copy)"
-    const rawTitle = found.title || "Untitled";
-    const normalizedBase = rawTitle.replace(/\s*\(copy(?:\s*\d+)?\)\s*$/i, "").trim() || "Untitled";
+  const loadSaved = async (id: string) => {
+    try {
+      setStatus("loading");
+      const found = savedDesigns.find((d) => d.id === id);
 
-    function escapeRegExp(s: string) {
-      return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    }
+      if (!found) {
+        setStatus("error");
+        return false;
+      }
 
-    const copyPattern = new RegExp(`^${escapeRegExp(normalizedBase)}\\s*\\(copy(?:\\s*\\d+)?\\)$`, "i");
-    const existingCopies = before
-      .map((d) => d.title)
-      .filter(Boolean)
-      .filter((t) => !!t && copyPattern.test(t));
+      // 1) Load the themeOptionsCode as the base theme
+      loadNewDesign(found.themeOptionsCode, {
+        title: found.title,
+        sourceTemplateId: found.id,
+      });
 
-    let copyTitle = `${normalizedBase} (copy)`;
-    if (existingCopies.length > 0) {
-      // find highest numbered copy
-      let max = 0;
-      for (const t of existingCopies) {
-        const m = t!.match(/\(copy(?:\s*(\d+))?\)$/i);
-        if (m) {
-          const n = m[1] ? parseInt(m[1], 10) : 1;
-          if (n > max) max = n;
+      // 2) Restore session data if present
+      const session = found.session;
+      if (session) {
+        // Re-apply color-scheme-independent visual edits
+        if (session.colorSchemeIndependentVisualToolEdits) {
+          Object.entries(session.colorSchemeIndependentVisualToolEdits).forEach(
+            ([k, v]) => {
+              try {
+                addGlobalVisualEdit(k, v as any);
+              } catch (e) {
+                void e;
+              }
+            }
+          );
         }
-      }
-      const next = max === 0 ? 2 : max + 1;
-      copyTitle = `${normalizedBase} (copy ${next})`;
-    }
 
-    const copy: SavedDesign = {
-      id: Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 8),
-      title: copyTitle,
-      createdAt: Date.now(),
-      snapshot: JSON.parse(JSON.stringify(found.snapshot)),
-    };
-    const next = [copy, ...before].slice(0, MAX_SAVED);
-    await adapter.write(next);
-    setSavedDesigns(next);
-    return copy.id;
-  }, [adapter]);
+        // Re-apply light mode visual edits
+        if (session.light?.visualToolEdits) {
+          Object.entries(session.light.visualToolEdits).forEach(([k, v]) => {
+            try {
+              addGlobalVisualEdit(k, v as any);
+            } catch (e) {
+              void e;
+            }
+          });
+        }
 
-  const getSaved = useCallback(
-    (id: string) => savedDesigns.find((s) => s.id === id),
-    [savedDesigns]
-  );
+        // Re-apply dark mode visual edits
+        if (session.dark?.visualToolEdits) {
+          Object.entries(session.dark.visualToolEdits).forEach(([k, v]) => {
+            try {
+              addGlobalVisualEdit(k, v as any);
+            } catch (e) {
+              void e;
+            }
+          });
+        }
 
-  const loadSaved = useCallback(
-    async (id: string) => {
-      const found = (await adapter.read()).find((d) => d.id === id);
-      if (!found) return false;
-
-      const s = found.snapshot || {};
-
-      // 1. set base theme + metadata + title
-      if (s.baseThemeCode) {
-        useDesignStore.getState().setBaseTheme(s.baseThemeCode, {
-          sourceTemplateId: s.baseThemeMetadata?.sourceTemplateId,
-          title: s.title,
-        });
-      }
-
-      // 2. clear visual edits and code overrides
-      useDesignStore.getState().removeAllVisualToolsEdits("all");
-      useDesignStore.getState().removeAllCodeOverrides();
-
-      // 3. re-apply visual edits
-      const add = useDesignStore.getState().addVisualToolEdit;
-      if (s.colorSchemeIndependentVisualToolEdits) {
-        Object.entries(s.colorSchemeIndependentVisualToolEdits).forEach(([k, v]) => {
+        // Apply code overrides if present
+        if (session.codeOverridesSource) {
           try {
-            add(k, v);
+            applyCodeOverrides(session.codeOverridesSource);
           } catch (e) {
             void e;
-            /* ignore per-path errors */
           }
-        });
-      }
+        }
 
-      if (s.light?.visualToolEdits) {
-        Object.entries(s.light.visualToolEdits).forEach(([k, v]) => {
+        // Set active color scheme if present
+        if (session.activeColorScheme) {
           try {
-            add(k, v);
-          } catch (e) { void e; }
-        });
+            setActiveColorScheme(session.activeColorScheme);
+          } catch (e) {
+            void e;
+          }
+        }
       }
 
-      if (s.dark?.visualToolEdits) {
-        Object.entries(s.dark.visualToolEdits).forEach(([k, v]) => {
-          try {
-            add(k, v);
-          } catch (e) { void e; }
-        });
-      }
-
-      // 4. apply code overrides if present
-      if (s.codeOverridesSource) {
-        try {
-          useDesignStore.getState().applyCodeOverrides(s.codeOverridesSource);
-        } catch (e) { void e; }
-      }
-
-      // 5. set active color scheme if present
-      if (s.activeColorScheme) {
-        try {
-          useDesignStore.getState().setActiveColorScheme(s.activeColorScheme as any);
-        } catch (e) { void e; }
-      }
-
-      // ensure unsaved flag is false after load
-      try {
-        useDesignStore.setState({ hasUnsavedChanges: false });
-      } catch (e) { void e; }
-
+      // mark loaded state as saved in domain and persistence
+      markSavedDomain();
+      recordLastSaved();
       return true;
-    },
-    [adapter]
-  );
+    } catch (e) {
+      setStatus("error");
+      throw e;
+    }
+  };
 
   const exportAll = useCallback(
     async () => JSON.stringify(await adapter.read(), null, 2),
@@ -227,18 +293,13 @@ export default function useDesignStorage(
 
   const importAll = useCallback(
     async (json: string, opts?: { merge?: boolean }) => {
-      try {
-        const parsed = JSON.parse(json);
-        if (!Array.isArray(parsed)) return { imported: 0, skipped: 0 };
-        const before = await adapter.read();
-        const merged = opts?.merge ? [...parsed, ...before] : parsed;
-        const next = (merged as SavedDesign[]).slice(0, MAX_SAVED);
-        await adapter.write(next);
-        setSavedDesigns(next);
-        return { imported: next.length, skipped: 0 };
-      } catch {
-        return { imported: 0, skipped: 0 };
-      }
+      const parsed = JSON.parse(json);
+      if (!Array.isArray(parsed)) return { imported: 0, skipped: 0 };
+      const before = await adapter.read();
+      const merged = opts?.merge ? [...parsed, ...before] : parsed;
+      const next = (merged as SavedToStorageDesign[]).slice(0, MAX_SAVED);
+      await adapter.write(next);
+      setSavedDesigns(next);
     },
     [adapter]
   );
@@ -246,6 +307,32 @@ export default function useDesignStorage(
   const clearAll = useCallback(async () => {
     await adapter.clear();
     setSavedDesigns([]);
+  }, [adapter]);
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function init() {
+      if (mounted) {
+        const items = await adapter.read();
+        setSavedDesigns(items);
+      }
+    }
+
+    init();
+
+    // listen for storage events to keep multiple tabs in sync
+    const onStorage = async () => {
+      const items = await adapter.read();
+      setSavedDesigns(items);
+    };
+
+    window.addEventListener("storage", onStorage);
+
+    return () => {
+      mounted = false;
+      window.removeEventListener("storage", onStorage);
+    };
   }, [adapter]);
 
   return {
@@ -257,6 +344,5 @@ export default function useDesignStorage(
     exportAll,
     importAll,
     clearAll,
-    getSaved,
-  } as const;
+  };
 }

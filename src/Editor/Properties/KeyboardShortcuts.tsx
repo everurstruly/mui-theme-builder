@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useDesignStore } from "../Design/Current/designStore";
+import { useDesignStore } from "../Design/Current/currentStore";
 
 export default function EditorGlobalKeyboardShortcuts() {
   const selected = useDesignStore((s) => s.selectedExperienceId);

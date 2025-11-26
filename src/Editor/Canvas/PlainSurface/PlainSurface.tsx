@@ -1,11 +1,12 @@
 import previewsRegistry from "../../Previews/registry";
-import { useCreatedTheme, useThemeDesignStore } from "../../Design";
 import { useRef, useState, useEffect, type RefObject } from "react";
 import { Box, CssBaseline, Paper, Stack, ThemeProvider } from "@mui/material";
 import {
   useBreakpointSimulation,
   spoofThemeBreakpoints,
 } from "./BreakpointSimulation";
+import useDesignStore from "../../Design/Current/currentStore";
+import useCreatedTheme from "../../Design/Current/useCreatedTheme";
 
 export type PlainSurfaceControls = {
   containerRef: RefObject<HTMLDivElement | null>;
@@ -24,7 +25,7 @@ export default function PlainSurface({
 }: PlainSurfaceControls) {
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  const previewId = useThemeDesignStore((state) => state.activePreviewId);
+  const previewId = useDesignStore((s) => s.activePreviewId);
   const PreviewComponent = previewsRegistry[previewId]?.component;
 
   const [availableWidth, setAvailableWidth] = useState<number>(0);

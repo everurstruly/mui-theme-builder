@@ -1,12 +1,6 @@
 import CodeMirror from "@uiw/react-codemirror";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, Typography, Button, Alert, Stack, Box } from "@mui/material";
-import {
-  useCodeOverridesState,
-  useCodeOverridesActions,
-  useCodeOverridesValidation,
-  type ValidationError,
-} from "../../Design";
 import { javascript } from "@codemirror/lang-javascript";
 import { autocompletion, CompletionContext } from "@codemirror/autocomplete";
 import { completionKeymap } from "@codemirror/autocomplete";
@@ -14,6 +8,12 @@ import { keymap, EditorView, ViewPlugin } from "@codemirror/view";
 import { defaultKeymap, historyKeymap, indentWithTab } from "@codemirror/commands";
 import { searchKeymap } from "@codemirror/search";
 import { muiThemeCompletions } from "./muiThemeCompletions";
+import useCodeOverridesState from "../../Design/Current/useCodeOverridesState";
+import useCodeOverridesActions from "../../Design/Current/useCodeOverridesActions";
+import {
+  validateCodeBeforeEvaluation,
+  type ValidationError,
+} from "../../Design/compiler";
 
 const HEADER_TEMPLATE = `
 const theme: ThemeOptions = {`;
@@ -44,11 +44,13 @@ export default function CodeEditor() {
   // Use focused hooks instead of monolithic useCodeEditorPanel
   const { source, error, hasOverrides } = useCodeOverridesState();
   const { applyChanges, clearOverrides } = useCodeOverridesActions();
-  const { validate } = useCodeOverridesValidation();
+  const validate = validateCodeBeforeEvaluation;
 
   // Track validation errors separately from evaluation errors
   const [validationErrors, setValidationErrors] = useState<ValidationError[]>([]);
-  const [validationWarnings, setValidationWarnings] = useState<ValidationError[]>([]);
+  const [validationWarnings, setValidationWarnings] = useState<ValidationError[]>(
+    []
+  );
   // Editor body holds just the inner contents of the theme object
   const [editorBody, setEditorBody] = useState<string>(() =>
     source ? extractBody(source) : DEFAULT_BODY_CONTENT
@@ -82,7 +84,7 @@ export default function CodeEditor() {
       setEditorBody(DEFAULT_BODY_CONTENT);
       return;
     }
-    
+
     // Always use extractBody() to handle both formats correctly:
     // - Full template: "const theme: ThemeOptions = { ... };"
     // - Raw object: "{ ... }"
@@ -114,7 +116,7 @@ export default function CodeEditor() {
       // Snapshot the previous body so we can undo a failed apply
       lastEditorBodyRef.current = editorBody;
       setEditorBody(newBody);
-      
+
       // Clear validation errors when user edits
       setValidationErrors([]);
       setValidationWarnings([]);
@@ -122,12 +124,13 @@ export default function CodeEditor() {
     [editorBody]
   );
 
-    // Keep a ref to the active EditorView so we can dispatch changes (preserves
-    // undo/selection) when applying formatted content. We attach it via a small
-    // ViewPlugin added to the editor extensions below.
-    const editorViewRef = useRef<EditorView | null>(null);
+  // Keep a ref to the active EditorView so we can dispatch changes (preserves
+  // undo/selection) when applying formatted content. We attach it via a small
+  // ViewPlugin added to the editor extensions below.
+  const editorViewRef = useRef<EditorView | null>(null);
 
-    const attachViewPlugin = useMemo(() =>
+  const attachViewPlugin = useMemo(
+    () =>
       ViewPlugin.fromClass(
         class {
           view: EditorView;
@@ -140,29 +143,33 @@ export default function CodeEditor() {
           }
         }
       ),
-      []
-    );
+    []
+  );
 
-    // Helper: format using Prettier. Lazy-loads the standalone Prettier and the
-    // appropriate parser (typescript or babel) on first use.
-    const formatWithPrettier = useCallback(async (code: string) => {
+  // Helper: format using Prettier. Lazy-loads the standalone Prettier and the
+  // appropriate parser (typescript or babel) on first use.
+  const formatWithPrettier = useCallback(async (code: string) => {
+    try {
+      let prettierModule: unknown;
+      let parserBabelModule: unknown;
+      let parserTsModule: unknown;
       try {
-        let prettierModule: unknown;
-        let parserBabelModule: unknown;
-        let parserTsModule: unknown;
-        try {
-          // Dynamic imports; use ts-ignore to avoid type-resolution errors in the editor environment
-          // @ts-expect-error - dynamic import of optional dependency
-          prettierModule = await import("prettier/standalone");
-          // @ts-expect-error - dynamic import of optional dependency
-          parserBabelModule = await import("prettier/parser-babel");
-          // @ts-expect-error - dynamic import of optional dependency
-          parserTsModule = await import("prettier/parser-typescript");
-        } catch {
-          return code;
-        }
+        // Dynamic imports; use ts-ignore to avoid type-resolution errors in the editor environment
+        // @ts-expect-error - dynamic import of optional dependency
+        prettierModule = await import("prettier/standalone");
+        // @ts-expect-error - dynamic import of optional dependency
+        parserBabelModule = await import("prettier/parser-babel");
+        // @ts-expect-error - dynamic import of optional dependency
+        parserTsModule = await import("prettier/parser-typescript");
+      } catch {
+        return code;
+      }
 
-  const prettier = (prettierModule as unknown as { default: { format: (c: string, o: unknown) => string } }).default;
+      const prettier = (
+        prettierModule as unknown as {
+          default: { format: (c: string, o: unknown) => string };
+        }
+      ).default;
       const isProbablyTs = /:\s*ThemeOptions|interface\s|type\s|<\w+>/.test(code);
       const parser = isProbablyTs ? "typescript" : "babel";
       const plugins = isProbablyTs
@@ -174,10 +181,10 @@ export default function CodeEditor() {
         plugins,
         singleQuote: true,
       });
-      } catch {
-        return code;
-      }
-    }, []);
+    } catch {
+      return code;
+    }
+  }, []);
 
   const handleApply = useCallback(async () => {
     // Use the full editor content (header + body + footer) as the stored source
@@ -244,7 +251,9 @@ export default function CodeEditor() {
       const isModS = (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s";
       if (!isModS) return;
       const view = editorViewRef.current;
-      const editorHasFocus = view ? view.dom.contains(document.activeElement) : false;
+      const editorHasFocus = view
+        ? view.dom.contains(document.activeElement)
+        : false;
       if (editorHasFocus) return; // editor will handle it (or already did)
       e.preventDefault();
       // fire apply (don't await here to keep handler sync)
@@ -279,8 +288,7 @@ export default function CodeEditor() {
     },
     []
   );
-  
-  
+
   return (
     <Stack height="100%">
       {/* Show validation errors (pre-evaluation) */}
@@ -294,7 +302,7 @@ export default function CodeEditor() {
           }}
         >
           <Typography variant="caption" fontWeight={600} display="block" mb={0.5}>
-            Validation Error{validationErrors.length > 1 ? 's' : ''}:
+            Validation Error{validationErrors.length > 1 ? "s" : ""}:
           </Typography>
           {validationErrors.map((err, idx) => (
             <Typography
@@ -303,7 +311,7 @@ export default function CodeEditor() {
               component="div"
               sx={{ whiteSpace: "pre-wrap", fontFamily: "monospace" }}
             >
-              {err.line && err.column ? `Line ${err.line}:${err.column} - ` : ''}
+              {err.line && err.column ? `Line ${err.line}:${err.column} - ` : ""}
               {err.message}
             </Typography>
           ))}
@@ -341,7 +349,7 @@ export default function CodeEditor() {
           }}
         >
           <Typography variant="caption" fontWeight={600} display="block" mb={0.5}>
-            Warning{validationWarnings.length > 1 ? 's' : ''}:
+            Warning{validationWarnings.length > 1 ? "s" : ""}:
           </Typography>
           {validationWarnings.map((warn, idx) => (
             <Typography
@@ -350,7 +358,7 @@ export default function CodeEditor() {
               component="div"
               sx={{ whiteSpace: "pre-wrap", fontFamily: "monospace" }}
             >
-              {warn.line && warn.column ? `Line ${warn.line}:${warn.column} - ` : ''}
+              {warn.line && warn.column ? `Line ${warn.line}:${warn.column} - ` : ""}
               {warn.message}
             </Typography>
           ))}
@@ -387,7 +395,13 @@ export default function CodeEditor() {
             // Prevent browser/save shortcut when editor has focus by handling Mod-s inside CodeMirror
             keymap.of([
               // Capture Cmd/Ctrl+S and mark handled so browser won't open "Save Page"
-              { key: "Mod-s", run: () => { handleApply(); return true; } },
+              {
+                key: "Mod-s",
+                run: () => {
+                  handleApply();
+                  return true;
+                },
+              },
               ...defaultKeymap,
               ...searchKeymap,
               ...historyKeymap,
@@ -405,7 +419,11 @@ export default function CodeEditor() {
                     const full = view.state.doc.toString();
                     const formatted = await formatWithPrettier(full);
                     view.dispatch({
-                      changes: { from: 0, to: view.state.doc.length, insert: formatted },
+                      changes: {
+                        from: 0,
+                        to: view.state.doc.length,
+                        insert: formatted,
+                      },
                       userEvent: "input",
                     });
                     try {
@@ -469,7 +487,7 @@ function Toolbar({
       <Link
         href="https://mui.com/material-ui/guides/building-extensible-themes/"
         fontSize="small"
-        sx={{ paddingInlineEnd: 1, }}
+        sx={{ paddingInlineEnd: 1 }}
       >
         Docs
       </Link>
@@ -477,7 +495,7 @@ function Toolbar({
       <Link
         href="https://mui.com/material-ui/guides/building-extensible-themes/"
         fontSize="small"
-        sx={{ paddingInlineEnd: 1, }}
+        sx={{ paddingInlineEnd: 1 }}
       >
         Tips
       </Link>

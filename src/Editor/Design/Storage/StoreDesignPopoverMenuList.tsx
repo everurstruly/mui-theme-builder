@@ -11,10 +11,10 @@ import {
   Stack,
 } from "@mui/material";
 import useDesignStorage from "./useDesignStorage";
-import { useDesignStore } from "../Current/designStore";
 import React from "react";
 import { ListOutlined } from "@mui/icons-material";
 import StoredDesignListItem from "./StoredDesignListItem";
+import useHasUnsavedChanges from "../Current/useHasUnsavedChanges";
 
 type SavedDesignPopoverMenuListProps = {
   onClose?: () => void;
@@ -23,7 +23,7 @@ type SavedDesignPopoverMenuListProps = {
 function SavedDesignPopoverMenuList({ onClose }: SavedDesignPopoverMenuListProps) {
   const { savedDesigns, loadSaved, removeSaved, duplicateSaved } =
     useDesignStorage();
-  const hasUnsaved = useDesignStore((s) => s.hasUnsavedChanges);
+  const hasUnsaved = useHasUnsavedChanges();
   const [confirmOpen, setConfirmOpen] = React.useState(false);
   const [pendingId, setPendingId] = React.useState<string | null>(null);
 

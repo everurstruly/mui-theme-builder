@@ -1,6 +1,6 @@
 import Typography from "@mui/material/Typography";
 import { editorDesignExperiences } from "../editorDesignExperience";
-import { useDesignStore } from "../Design/Current/designStore";
+import { useDesignStore } from "../Design/Current/currentStore";
 
 export default function ExplorerPanelHeader() {
   const selectedTabId = useDesignStore((state) => state.selectedExperienceId);

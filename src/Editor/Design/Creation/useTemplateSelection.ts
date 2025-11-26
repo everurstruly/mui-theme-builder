@@ -1,7 +1,8 @@
 import { useState, useCallback, useMemo } from "react";
 import { useTemplateStore, type TemplateMetadata } from "./useTemplateStore";
-import { serializeThemeOptions } from "../domainSpecificLanguage/codeParser";
-import { useThemeDesignStore } from "..";
+import { serializeThemeOptions } from "../compiler";
+import useHasUnsavedChanges from "../Current/useHasUnsavedChanges";
+import useDesignStore from "../Current/currentStore";
 
 export type UseTemplateSelectionOptions = {
   autoConfirm?: boolean;
@@ -10,25 +11,25 @@ export type UseTemplateSelectionOptions = {
 
 export type PendingChange = { templateId: string } | null;
 
+const BLANK_PENDING_ID = "__blank__";
+
 export default function useTemplateSelection(options?: UseTemplateSelectionOptions) {
   const autoConfirm = options?.autoConfirm ?? false;
   const defaultScheme = options?.defaultScheme ?? "light";
-
   const { getAllTemplates, getTemplateById, templatesRegistry } = useTemplateStore();
 
   const templates = useMemo(() => getAllTemplates(), [getAllTemplates]);
-
-  const selectedTemplateId = useThemeDesignStore(
+  const selectedTemplateId = useDesignStore(
     (s) => s.baseThemeMetadata?.sourceTemplateId
   );
 
-  const hasUnsavedChanges = useThemeDesignStore((s) => s.hasUnsavedChanges);
-  const loadNew = useThemeDesignStore((s) => s.loadNew);
+  const hasUnsavedChanges = useHasUnsavedChanges();
+  const loadNew = useDesignStore((s) => s.loadNew);
 
   const [pendingChange, setPendingChange] = useState<PendingChange>(null);
-  const [shouldKeepUnsavedChanges, setShouldKeepUnsavedChanges] = useState<
-    boolean | null
-  >(hasUnsavedChanges ? null : true);
+  const [shouldKeepUnsavedChanges, setShouldKeepUnsavedChanges] = useState(
+    hasUnsavedChanges ? null : true
+  );
 
   const clearPending = useCallback(() => {
     setPendingChange(null);
@@ -38,19 +39,18 @@ export default function useTemplateSelection(options?: UseTemplateSelectionOptio
   const discardAndApply = useCallback(
     (templateId: string) => {
       const template = getTemplateById(templateId);
-      if (!template) return;
+
+      if (!template) {
+        return;
+      }
 
       const themeCode = serializeThemeOptions(template.themeOptions);
       loadNew(themeCode, { sourceTemplateId: templateId, title: template.label });
-
-      // clear pending state
       setPendingChange(null);
       setShouldKeepUnsavedChanges(false);
     },
     [getTemplateById, loadNew]
   );
-
-  const BLANK_PENDING_ID = "__blank__";
 
   const applyBlank = useCallback(() => {
     loadNew("{}", { sourceTemplateId: "", title: "Untitled Design" });
@@ -59,7 +59,6 @@ export default function useTemplateSelection(options?: UseTemplateSelectionOptio
   }, [loadNew]);
 
   const applyKeepingUnsaved = useCallback(() => {
-    // Default: keep current base theme and simply clear pending state.
     setPendingChange(null);
     setShouldKeepUnsavedChanges(true);
   }, []);
@@ -132,15 +131,29 @@ export default function useTemplateSelection(options?: UseTemplateSelectionOptio
     if (chosen) selectTemplate(chosen);
   }, [templates, selectedTemplateId, selectTemplate]);
 
-  function getColorSamples(templateOrId: TemplateMetadata | string): string[] {
-    const template: TemplateMetadata | undefined = typeof templateOrId === "string"
-      ? getTemplateById(templateOrId)
-      : templateOrId;
+  const selectBlank = useCallback(() => {
+    if (hasUnsavedChanges) {
+      setPendingChange({ templateId: BLANK_PENDING_ID });
+      setShouldKeepUnsavedChanges(null);
+      return;
+    }
 
-    if (!template) return ["#1976d2", "#dc004e", "#ff9800"];
+    applyBlank();
+  }, [hasUnsavedChanges, applyBlank]);
+
+  function getColorSamples(templateOrId: TemplateMetadata | string): string[] {
+    const template =
+      typeof templateOrId === "string"
+        ? getTemplateById(templateOrId)
+        : templateOrId;
+
+    if (!template) {
+      return ["#1976d2", "#dc004e", "#ff9800"];
+    }
 
     const themeOptions = template.themeOptions as any;
     const colors: string[] = [];
+    const colorKeys = ["primary", "secondary", "error", "warning", "info"] as const;
 
     if (
       themeOptions?.colorSchemes &&
@@ -154,7 +167,6 @@ export default function useTemplateSelection(options?: UseTemplateSelectionOptio
         unknown
       >;
 
-      const colorKeys = ["primary", "secondary", "error", "warning", "info"] as const;
       for (const key of colorKeys) {
         const color = palette[key];
         if (color && typeof color === "object" && "main" in color) {
@@ -183,16 +195,6 @@ export default function useTemplateSelection(options?: UseTemplateSelectionOptio
 
     return colors.slice(0, 6);
   }
-
-  const selectBlank = useCallback(() => {
-    if (hasUnsavedChanges) {
-      setPendingChange({ templateId: BLANK_PENDING_ID });
-      setShouldKeepUnsavedChanges(null);
-      return;
-    }
-
-    applyBlank();
-  }, [hasUnsavedChanges, applyBlank]);
 
   return {
     templates,

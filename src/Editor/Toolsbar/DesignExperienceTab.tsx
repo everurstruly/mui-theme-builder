@@ -1,7 +1,7 @@
 import * as React from "react";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import { useDesignStore } from "../Design/Current/designStore";
+import { useDesignStore } from "../Design/Current/currentStore";
 import {
   editorDesignExperiences,
   type EditorDesignExperienceId,

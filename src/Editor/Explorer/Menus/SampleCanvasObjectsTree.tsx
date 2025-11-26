@@ -2,14 +2,14 @@ import Box from "@mui/material/Box";
 import { SimpleTreeView } from "@mui/x-tree-view/SimpleTreeView";
 import { TreeItem } from "@mui/x-tree-view/TreeItem";
 import { buildSamplesTree, type TreeNode } from "../../Previews/registry";
-import { useThemeDesignStore } from "../../Design";
 import * as React from "react";
+import useDesignStore from "../../Design/Current/currentStore";
 
 export default function SampleCanvasObjectsTree() {
   // Build once; tree is static for session
   const samplesTree = React.useMemo(() => buildSamplesTree(), []);
-  const activePreviewId = useThemeDesignStore((state) => state.activePreviewId);
-  const selectPreview = useThemeDesignStore((state) => state.selectPreview);
+  const activePreviewId = useDesignStore((state) => state.activePreviewId);
+  const selectPreview = useDesignStore((state) => state.selectPreview);
 
   const handleSelectSample = (sampleId: string) => {
     selectPreview(sampleId);
