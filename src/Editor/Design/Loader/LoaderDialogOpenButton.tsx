@@ -1,10 +1,10 @@
 import * as React from "react";
 import Button from "@mui/material/Button";
-import CreationDialog from "./CreationDialog";
+import CreationDialog from "./LoaderDialog";
 import { Popover } from "@mui/material";
 import { Add } from "@mui/icons-material";
 
-export default function OpenCreationDialogButton() {
+export default function LoaderDialogOpenButton() {
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
 
   const handleClickOpen = (event: React.MouseEvent<HTMLElement>) => {

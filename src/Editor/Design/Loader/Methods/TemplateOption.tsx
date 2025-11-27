@@ -16,7 +16,7 @@ import {
   KeyboardArrowRight,
   ShuffleOutlined,
 } from "@mui/icons-material";
-import useTemplateSelection from "../useTemplateSelection";
+import useTemplateLoader from "../useTemplateLoader";
 import ColorSchemeToggle from "../../Edit/ColorSchemeToggle";
 
 export default function TemplateOption({ onClose }: { onClose: () => void }) {
@@ -30,7 +30,7 @@ export default function TemplateOption({ onClose }: { onClose: () => void }) {
     selectRandomTemplate,
     getColorSamples,
     clearPending,
-  } = useTemplateSelection({ autoConfirm: false });
+  } = useTemplateLoader({ autoConfirm: false });
 
   function cancelChangeOperation() {
     clearPending();

@@ -2,10 +2,10 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import type { SelectChangeEvent } from "@mui/material/Select";
-import useTemplateSelection from "./useTemplateSelection";
+import useTemplateLoader from "./useTemplateLoader";
 
-export default function TemplateCreationMobileSelectMenu() {
-  const { templates, selectedTemplateId, selectTemplate } = useTemplateSelection();
+export default function TemplateLoaderMobileSelectMenu() {
+  const { templates, selectedTemplateId, selectTemplate } = useTemplateLoader();
 
   const handleChange = (event: SelectChangeEvent<string>) => {
     const themeId = event.target.value as string;

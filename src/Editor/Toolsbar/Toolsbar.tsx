@@ -1,4 +1,4 @@
-import TemplateCreationMobileSelectMenu from "../Design/Creation/TemplateCreationMobileSelectMenu";
+import TemplateLoaderMobileSelectMenu from "../Design/Loader/TemplateLoaderMobileSelectMenu";
 import ExportCommand from "../Design/Edit/ExportCommand";
 import ModificationHistoryButtons from "../Design/Edit/ModificationHistoryButtons";
 import DesignMobileActionMenu from "./DesignMobileActionMenu";
@@ -94,7 +94,7 @@ function MobileToolbarContent() {
       alignItems={"center"}
       paddingInline={{ sm: "12px" }}
     >
-      <TemplateCreationMobileSelectMenu />
+      <TemplateLoaderMobileSelectMenu />
       <DesignMobileActionMenu />
     </Stack>
   );

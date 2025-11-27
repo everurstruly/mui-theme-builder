@@ -13,7 +13,7 @@ export type PendingChange = { templateId: string } | null;
 
 const BLANK_PENDING_ID = "__blank__";
 
-export default function useTemplateSelection(options?: UseTemplateSelectionOptions) {
+export default function useTemplateLoader(options?: UseTemplateSelectionOptions) {
   const { getAllTemplates, getTemplateById, templatesRegistry } = useTemplates();
 
   const autoConfirm = options?.autoConfirm ?? false;
