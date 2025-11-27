@@ -3,7 +3,6 @@ import { useDebouncyEffect } from "use-debouncy";
 import useDesignerToolEdit from "../../Design/Edit/useDesignerToolEdit";
 import { useEdit } from "../../Design/Edit/useEdit";
 import { readableColor } from "polished";
-import { setPreviewValue, clearPreviewValue, getPreviewValue } from "../../Design/Edit/previewHub";
 
 type Options = {
   /** How long to debounce auto-applies (ms). Default: 165 */
@@ -35,7 +34,10 @@ export default function useColorPickerEdit(path: string, options?: Options) {
   } = useDesignerToolEdit(path, activeScheme);
 
   // Using module-level preview hub for transient previews (no store writes)
-  const previewValue = getPreviewValue(path);
+  // Read transient preview from the store's preview slice
+  const previewValue = useEdit((s) => s.previews?.[path]);
+  const setPreview = useEdit((s) => s.setPreview);
+  const clearPreview = useEdit((s) => s.clearPreview);
 
   // -- Local UI state
   const anchorRef = useRef<HTMLDivElement | null>(null);
@@ -49,8 +51,8 @@ export default function useColorPickerEdit(path: string, options?: Options) {
     () => {
       if (!autoApply) return;
       if (tempColor && tempColor !== (value as string)) {
-        // Update preview hub (rAF-scheduled notify) instead of mutating main store.
-        setPreviewValue(path, tempColor);
+        // Update preview slice (rAF-batched) instead of mutating main store.
+        setPreview(path, tempColor);
         lastAppliedColorRef.current = tempColor;
       }
     },
@@ -88,7 +90,7 @@ export default function useColorPickerEdit(path: string, options?: Options) {
       if (!toApply) return;
       // Commit to the real store and clear the transient preview for this path.
       setValue(toApply);
-      clearPreviewValue(path);
+      clearPreview(path);
       lastAppliedColorRef.current = toApply;
     },
     [setValue, tempColor, path]
@@ -162,6 +164,8 @@ export default function useColorPickerEdit(path: string, options?: Options) {
       isControlledByFunction,
       isModified,
       setValue,
+      // NOTE: setPreview/clearPreview are stable selectors and do not
+      // need to be listed as deps. previewValue is read elsewhere.
     ]
   );
 }

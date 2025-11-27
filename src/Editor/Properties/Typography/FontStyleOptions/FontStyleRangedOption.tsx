@@ -2,7 +2,7 @@ import { Typography, TextField, ListItem, Stack } from "@mui/material";
 import SliderInput from "../../SliderInput";
 import { useState, useEffect } from "react";
 import { useDebouncyEffect } from "use-debouncy";
-import { setPreviewValue, clearPreviewValue } from "../../../Design/Edit/previewHub";
+import useEdit from "../../../Design/Edit/useEdit";
 import OptionListItemResetButton from "../../OptionListItemResetButton";
 import useDesignerToolEdit from "../../../Design/Edit/useDesignerToolEdit";
 
@@ -51,14 +51,17 @@ export default function FontStyleRangedOption(props: FontStyleRangedOptionProps)
     const normalizedValue = val / 20; // Convert slider value back to line height
     setInputValue(String(normalizedValue));
     // Immediate transient preview for smooth live canvas updates
-    setPreviewValue(props.path, normalizedValue);
+    const setPreview = useEdit.getState().setPreview;
+    setPreview(props.path, normalizedValue);
   };
 
   const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
     const num = Number(event.target.value);
-    if (!Number.isNaN(num)) setPreviewValue(props.path, num);
-    else clearPreviewValue(props.path);
+    const setPreview = useEdit.getState().setPreview;
+    const clearPreview = useEdit.getState().clearPreview;
+    if (!Number.isNaN(num)) setPreview(props.path, num);
+    else clearPreview(props.path);
   };
 
   const handleBlur = () => {
@@ -66,20 +69,23 @@ export default function FontStyleRangedOption(props: FontStyleRangedOptionProps)
     if (Number.isNaN(numValue)) return;
     // commit immediately on blur
     setValue(numValue);
-    clearPreviewValue(props.path);
+    const clearPreview = useEdit.getState().clearPreview;
+    clearPreview(props.path);
   };
 
   const handleSliderCommit = (_event: Event | React.SyntheticEvent, newValue: number | number[]) => {
     const v = Array.isArray(newValue) ? newValue[0] : newValue;
     const normalized = v / 20;
     setValue(normalized);
-    clearPreviewValue(props.path);
+    const clearPreview = useEdit.getState().clearPreview;
+    clearPreview(props.path);
   };
 
   // Ensure we clear any transient preview if this component unmounts
   useEffect(() => {
     return () => {
-      clearPreviewValue(props.path);
+      const clearPreview = useEdit.getState().clearPreview;
+      clearPreview(props.path);
     };
   }, [props.path]);
 

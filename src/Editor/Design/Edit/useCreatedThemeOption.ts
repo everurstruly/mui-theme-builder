@@ -1,7 +1,7 @@
 import { type ThemeOptions } from "@mui/material";
-import { useMemo, useEffect, useState } from "react";
+import { useMemo } from "react";
 import useEdit from "./useEdit";
-import { subscribeToPreviews, getAllPreviews } from "./previewHub";
+
 import {
   createThemeOptionsFromEdits,
   deepMerge,
@@ -31,14 +31,9 @@ export default function useCreatedThemeOption(
 
   const targetScheme = colorScheme ?? activeColorScheme;
 
-  // Track preview hub notifications to re-run memo when previews change.
-  const [tick, setTick] = useState(0);
-  useEffect(() => {
-    const unsub = subscribeToPreviews(() => setTick((t) => t + 1));
-    return () => {
-      unsub();
-    };
-  }, []);
+  // Read transient previews from the store; previewVersion batching ensures
+  // these updates are coalesced and won't flood renders.
+  const previews = useEdit((s) => s.previews);
 
   return useMemo(() => {
     // Compute scheme-specific visual edits inside the memo so the
@@ -50,9 +45,8 @@ export default function useCreatedThemeOption(
     } else {
       visualToolEdits = darkModeVisual ?? {};
     }
-    // Ensure `tick` is referenced so hooks/exhaustive-deps allows it
-    // as an intentional trigger for previews updates.
-    void tick;
+    // Ensure previews is referenced so memo re-runs when previews change.
+    void previews;
     // Parse base theme code to ThemeOptions
     const baseTheme = parseThemeCode(baseThemeCode);
     if (!baseTheme) {
@@ -74,12 +68,12 @@ export default function useCreatedThemeOption(
     }
 
     // Resolve all layers
-    // Merge transient preview edits (from previewHub) on top of persistent
-    // visual edits so previews are reflected immediately without committing
-    // to history or mutating the main store.
-    const previewEdits = getAllPreviews();
-    const mergedBaseVisual = { ...baseVisualToolEdits, ...(previewEdits || {}) };
-    const mergedSchemeVisual = { ...visualToolEdits, ...(previewEdits || {}) };
+    // Merge transient preview edits (from the preview slice) on top of
+    // persistent visual edits so previews are reflected immediately
+    // without committing to history or mutating the main store.
+    const previewEdits = previews || {};
+    const mergedBaseVisual = { ...baseVisualToolEdits, ...previewEdits };
+    const mergedSchemeVisual = { ...visualToolEdits, ...previewEdits };
 
     return createThemeOptionsFromEdits({
       template,
@@ -95,7 +89,7 @@ export default function useCreatedThemeOption(
     lightModeVisual,
     darkModeVisual,
     targetScheme,
-    tick,
+    previews,
   ]);
 }
 
