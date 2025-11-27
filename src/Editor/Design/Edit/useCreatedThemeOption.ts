@@ -26,23 +26,18 @@ export default function useCreatedThemeOption(
     (s) => s.colorSchemeIndependentVisualToolEdits
   );
   const codeOverridesDsl = useEdit((s) => s.codeOverridesDsl);
-  const lightMode = useEdit((s) => s.colorSchemes.light);
-  const darkMode = useEdit((s) => s.colorSchemes.dark);
+  const lightModeVisual = useEdit((s) => s.colorSchemes.light?.visualToolEdits);
+  const darkModeVisual = useEdit((s) => s.colorSchemes.dark?.visualToolEdits);
 
   const targetScheme = colorScheme ?? activeColorScheme;
-  const { visualToolEdits } = targetScheme === "light" ? lightMode : darkMode;
+  const visualToolEdits = targetScheme === "light" ? lightModeVisual || {} : darkModeVisual || {};
 
   // Track preview hub notifications to re-run memo when previews change.
-  const [, setTick] = useState(0);
+  const [tick, setTick] = useState(0);
   useEffect(() => {
     const unsub = subscribeToPreviews(() => setTick((t) => t + 1));
     return () => {
-      // unsubscribe may return boolean; ignore return value
-      try {
-        unsub();
-      } catch (e) {
-        // noop
-      }
+      unsub();
     };
   }, []);
 
@@ -88,6 +83,7 @@ export default function useCreatedThemeOption(
     codeOverridesDsl,
     visualToolEdits,
     targetScheme,
+    tick,
   ]);
 }
 

@@ -25,15 +25,16 @@ export default function BatchToggleInput(props: BatchToggleInputProps) {
   const baseVisualToolEdits = useEdit(
     (s) => s.colorSchemeIndependentVisualToolEdits
   );
-  const lightMode = useEdit((s) => s.colorSchemes.light);
-  const darkMode = useEdit((s) => s.colorSchemes.dark);
+  // Narrow selectors: subscribe only to visualToolEdits maps, not full scheme objects
+  const lightModeVisual = useEdit((s) => s.colorSchemes.light?.visualToolEdits);
+  const darkModeVisual = useEdit((s) => s.colorSchemes.dark?.visualToolEdits);
   const activeColorScheme = useEdit((s) => s.activeColorScheme);
 
   // Get the appropriate visual edits based on active color scheme
   const activeVisualToolEdits = useMemo(() => {
-    const modeEdits = activeColorScheme === "light" ? lightMode : darkMode;
-    return { ...baseVisualToolEdits, ...modeEdits.visualToolEdits };
-  }, [baseVisualToolEdits, lightMode, darkMode, activeColorScheme]);
+    const modeEdits = activeColorScheme === "light" ? lightModeVisual || {} : darkModeVisual || {};
+    return { ...baseVisualToolEdits, ...modeEdits };
+  }, [baseVisualToolEdits, lightModeVisual, darkModeVisual, activeColorScheme]);
 
   // Check if all edits are currently applied
   const isEnabled = useMemo(() => {
