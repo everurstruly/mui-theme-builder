@@ -7,9 +7,14 @@ export interface UseStorageState {
   storageProgressError: string | null;
   lastSavedTimestamp: number | null;
 
+  // The id of the last saved item (if any). Used to verify that the
+  // current editor content corresponds to the stored item.
+  lastSavedId?: string | null;
+
   // Actions
   setStatus: (status: StorageStatus, error?: string) => void;
-  recordLastStored: () => void;
+  recordLastStored: (id?: string | null) => void;
+  setLastSavedId: (id?: string | null) => void;
   resetStorage: () => void;
 }
 
@@ -22,8 +27,12 @@ export const useStorage = create<UseStorageState>((set: (partial: Partial<UseSto
     set({ storageProgress: status, storageProgressError: error || null });
   },
 
-  recordLastStored: () => {
-    set({ storageProgress: "success", storageProgressError: null, lastSavedTimestamp: Date.now() });
+  recordLastStored: (id?: string | null) => {
+    set({ storageProgress: "success", storageProgressError: null, lastSavedTimestamp: Date.now(), lastSavedId: id ?? null });
+  },
+
+  setLastSavedId: (id?: string | null) => {
+    set({ lastSavedId: id ?? null });
   },
 
   resetStorage: () => {

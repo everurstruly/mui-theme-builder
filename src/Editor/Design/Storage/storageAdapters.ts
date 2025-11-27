@@ -1,4 +1,5 @@
 import type { SavedToStorageDesign } from "./types";
+import fs from "./fs";
 
 export interface StorageAdapter {
   read(): Promise<SavedToStorageDesign[]>;
@@ -6,17 +7,10 @@ export interface StorageAdapter {
   clear(): Promise<void>;
 }
 
-const STORAGE_KEY = "mui-theme-builder.savedDesigns.v1";
-
 export const deviceStorageAdapter: StorageAdapter = {
   async read() {
     try {
-      if (typeof window === "undefined" || !window.localStorage) return [];
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return [];
-      const parsed = JSON.parse(raw);
-      if (!Array.isArray(parsed)) return [];
-      return parsed as SavedToStorageDesign[];
+      return await fs.list();
     } catch {
       return [];
     }
@@ -24,8 +18,7 @@ export const deviceStorageAdapter: StorageAdapter = {
 
   async write(items: SavedToStorageDesign[]) {
     try {
-      if (typeof window === "undefined" || !window.localStorage) return;
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+      await fs.overwriteAll(items);
     } catch {
       // ignore
     }
@@ -33,8 +26,7 @@ export const deviceStorageAdapter: StorageAdapter = {
 
   async clear() {
     try {
-      if (typeof window === "undefined" || !window.localStorage) return;
-      localStorage.removeItem(STORAGE_KEY);
+      await fs.clear();
     } catch {
       // ignore
     }

@@ -1,8 +1,14 @@
 import useEdit from "../Edit/useEdit";
 import useStorage from "./useStorage";
+import { detectTitleConflict, findItemIndex, generateCopyTitle } from "./fsTitle";
+import { buildSessionData } from "./sessionBuilder";
+import { insertItem, updateItem, limitList, generateId } from "./fsOps";
+import { restoreSession } from "./sessionRestorer";
 import useCreatedThemeOption from "../Edit/useCreatedThemeOption";
 import useDeveloperToolActions from "../Edit/useDeveloperToolActions";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
+import { useStorageSync } from "./useStorageSync";
+import { useEditorStoreSync } from "./useEditorStoreSync";
 import { useEditWithDesignerTools } from "../Edit/useEditWithDesignerTools";
 import type { StorageAdapter } from "./storageAdapters";
 import { deviceStorageAdapter } from "./storageAdapters";
@@ -23,9 +29,10 @@ export default function useStorageCollection(
 
   const setStatus = useStorage((s) => s.setStatus);
   const recordLastStored = useStorage((s) => s.recordLastStored);
+  const setLastSavedId = useStorage((s) => s.setLastSavedId);
 
   const saveCurrent = useCallback(
-    async (opts?: { title?: string; includeSession?: boolean }) => {
+    async (opts?: { title?: string; includeSession?: boolean; overwriteExisting?: boolean }) => {
       setStatus("loading");
 
       const state = useEdit.getState();
@@ -35,32 +42,28 @@ export default function useStorageCollection(
       const themeOptionsCode = JSON.stringify(createdThemeOptions, null, 2);
 
       // Optional session data for restoring editor state
-      const session =
-        opts?.includeSession !== false
-          ? {
-              activeColorScheme: state.activeColorScheme,
-              colorSchemeIndependentVisualToolEdits:
-                state.colorSchemeIndependentVisualToolEdits,
-              light: {
-                visualToolEdits: state.colorSchemes?.light?.visualToolEdits || {},
-              },
-              dark: {
-                visualToolEdits: state.colorSchemes?.dark?.visualToolEdits || {},
-              },
-              codeOverridesSource: state.codeOverridesSource,
-            }
-          : undefined;
+      const session = opts?.includeSession !== false ? buildSessionData(state) : undefined;
 
       const before = await adapter.read();
-
-      // Check for existing saved design with the same title (case-sensitive).
-      // Titles are treated as unique identifiers for saved items.
-      const existingIndex = before.findIndex((d) => d.title === title);
-
       let newItem: SavedToStorageDesign;
 
+      const currentSourceId = (useEdit.getState() as any).baseThemeMetadata?.sourceTemplateId as
+        | string
+        | undefined;
+
+      const conflict = detectTitleConflict(before, title, currentSourceId);
+      if (conflict) {
+        try {
+          setStatus("idle");
+        } catch (e) {
+          void e;
+        }
+        throw new Error(`TITLE_CONFLICT:${conflict.id}`);
+      }
+
+      const existingIndex = findItemIndex(before, title, currentSourceId, opts?.overwriteExisting);
+
       if (existingIndex !== -1) {
-        // Update existing
         const existing = before[existingIndex];
         newItem = {
           ...existing,
@@ -70,24 +73,16 @@ export default function useStorageCollection(
           title,
         };
 
-        // Move updated item to front
-        const next = [
-          newItem,
-          ...before.slice(0, existingIndex),
-          ...before.slice(existingIndex + 1),
-        ].slice(0, MAX_SAVED);
-
+        const next = limitList(updateItem(before, existingIndex, newItem), MAX_SAVED);
         await adapter.write(next);
         setSavedDesigns(next);
-        // mark domain as stored
         acknowledgeStoredVersion();
-        // record storage success + timestamp
-        recordLastStored();
+        recordLastStored(newItem.id);
         return newItem.id;
       }
 
       // Create new
-      const id = crypto.randomUUID();
+      const id = generateId();
       newItem = {
         id,
         title,
@@ -96,13 +91,21 @@ export default function useStorageCollection(
         session,
       };
 
-      const next = [newItem, ...before].slice(0, MAX_SAVED);
+      const next = limitList(insertItem(before, newItem), MAX_SAVED);
       await adapter.write(next);
       setSavedDesigns(next);
-      // mark domain as stored
+
+      // Make the newly-created saved item the editor's source so the UI
+      // recognizes it as coming from storage.
+      try {
+        const state = useEdit.getState();
+        state.setBaseTheme(state.baseThemeCode, { sourceTemplateId: id, title });
+      } catch (e) {
+        void e;
+      }
+
       acknowledgeStoredVersion();
-      // record storage success + timestamp
-      recordLastStored();
+      recordLastStored(newItem.id);
       return newItem.id;
     },
     [
@@ -114,6 +117,30 @@ export default function useStorageCollection(
     ]
   );
 
+  const handlePostDeleteEditorUpdate = useCallback(
+    (deletedId: string, nextList: SavedToStorageDesign[]) => {
+      try {
+        const state = useEdit.getState();
+        const currentSourceId = (state as any).baseThemeMetadata?.sourceTemplateId as string | undefined;
+
+        if (currentSourceId === deletedId) {
+          if (nextList.length > 0) {
+            const first = nextList[0];
+            loadNewDesign(first.themeOptionsCode, {
+              title: first.title,
+              sourceTemplateId: first.id,
+            });
+          } else {
+            loadNewDesign("", { title: "Untitled" });
+          }
+        }
+      } catch (e) {
+        void e;
+      }
+    },
+    [loadNewDesign]
+  );
+
   const removeSaved = useCallback(
     async (id: string) => {
       setStatus("loading");
@@ -123,26 +150,8 @@ export default function useStorageCollection(
         if (next.length === before.length) return false;
         await adapter.write(next);
         setSavedDesigns(next);
-
-        // If the deleted design is the one currently open in the editor,
-        // load the next saved design (if any) or fall back to an untitled blank.
-        try {
-          const state = useEdit.getState();
-          const currentSourceId = (state as any).sourceTemplateId as string | undefined;
-          if (currentSourceId === id) {
-            if (next.length > 0) {
-              const first = next[0];
-              loadNewDesign(first.themeOptionsCode, {
-                title: first.title,
-                sourceTemplateId: first.id,
-              });
-            } else {
-              loadNewDesign("", { title: "Untitled" });
-            }
-          }
-        } catch (e) {
-          void e;
-        }
+        // Delegate application flow (editor update) to a helper
+        handlePostDeleteEditorUpdate(id, next);
 
         return true;
       } catch (e) {
@@ -152,7 +161,7 @@ export default function useStorageCollection(
         setStatus("idle");
       }
     },
-    [adapter, setStatus, loadNewDesign]
+    [adapter, setStatus, handlePostDeleteEditorUpdate]
   );
 
   const duplicateSaved = useCallback(
@@ -165,45 +174,14 @@ export default function useStorageCollection(
       }
 
       const rawTitle = found.title || "Untitled";
-      const normalizedBase =
-        rawTitle.replace(/\s*\(copy(?:\s*\d+)?\)\s*$/i, "").trim() || "Untitled";
-
-      function escapeRegExp(s: string) {
-        return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-      }
-
-      const copyPattern = new RegExp(
-        `^${escapeRegExp(normalizedBase)}\\s*\\(copy(?:\\s*\\d+)?\\)$`,
-        "i"
-      );
-      const existingCopies = before
-        .map((d) => d.title)
-        .filter(Boolean)
-        .filter((t) => !!t && copyPattern.test(t));
-
-      let copyTitle = `${normalizedBase} (copy)`;
-      if (existingCopies.length > 0) {
-        // find highest numbered copy
-        let max = 0;
-        for (const t of existingCopies) {
-          const m = t!.match(/\(copy(?:\s*(\d+))?\)$/i);
-          if (m) {
-            const n = m[1] ? parseInt(m[1], 10) : 1;
-            if (n > max) max = n;
-          }
-        }
-        const next = max === 0 ? 2 : max + 1;
-        copyTitle = `${normalizedBase} (copy ${next})`;
-      }
+      const copyTitle = generateCopyTitle(before, rawTitle);
 
       const copy: SavedToStorageDesign = {
-        id: Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 8),
+        id: generateId(),
         title: copyTitle,
         createdAt: Date.now(),
         themeOptionsCode: found.themeOptionsCode,
-        session: found.session
-          ? JSON.parse(JSON.stringify(found.session))
-          : undefined,
+        session: found.session ? JSON.parse(JSON.stringify(found.session)) : undefined,
       };
 
       const next = [copy, ...before].slice(0, MAX_SAVED);
@@ -233,62 +211,15 @@ export default function useStorageCollection(
       // 2) Restore session data if present
       const session = found.session;
       if (session) {
-        // Re-apply color-scheme-independent visual edits
-        if (session.colorSchemeIndependentVisualToolEdits) {
-          Object.entries(session.colorSchemeIndependentVisualToolEdits).forEach(
-            ([k, v]) => {
-              try {
-                addGlobalVisualEdit(k, v as any);
-              } catch (e) {
-                void e;
-              }
-            }
-          );
-        }
-
-        // Re-apply light mode visual edits
-        if (session.light?.visualToolEdits) {
-          Object.entries(session.light.visualToolEdits).forEach(([k, v]) => {
-            try {
-              addGlobalVisualEdit(k, v as any);
-            } catch (e) {
-              void e;
-            }
-          });
-        }
-
-        // Re-apply dark mode visual edits
-        if (session.dark?.visualToolEdits) {
-          Object.entries(session.dark.visualToolEdits).forEach(([k, v]) => {
-            try {
-              addGlobalVisualEdit(k, v as any);
-            } catch (e) {
-              void e;
-            }
-          });
-        }
-
-        // Apply code overrides if present
-        if (session.codeOverridesSource) {
-          try {
-            applyModifications(session.codeOverridesSource);
-          } catch (e) {
-            void e;
-          }
-        }
-
-        // Set active color scheme if present
-        if (session.activeColorScheme) {
-          try {
-            setActiveColorScheme(session.activeColorScheme);
-          } catch (e) {
-            void e;
-          }
-        }
+        restoreSession(session, {
+          addGlobalVisualEdit,
+          applyModifications,
+          setActiveColorScheme,
+        });
       }
 
       acknowledgeStoredVersion();
-      recordLastStored();
+      recordLastStored(found.id);
       return true;
     } catch (e) {
       setStatus("error", String(e));
@@ -319,31 +250,12 @@ export default function useStorageCollection(
     setSavedDesigns([]);
   }, [adapter]);
 
-  useEffect(() => {
-    let mounted = true;
+  useStorageSync(adapter, setSavedDesigns);
 
-    async function init() {
-      if (mounted) {
-        const items = await adapter.read();
-        setSavedDesigns(items);
-      }
-    }
-
-    init();
-
-    // listen for storage events to keep multiple tabs in sync
-    const onStorage = async () => {
-      const items = await adapter.read();
-      setSavedDesigns(items);
-    };
-
-    window.addEventListener("storage", onStorage);
-
-    return () => {
-      mounted = false;
-      window.removeEventListener("storage", onStorage);
-    };
-  }, [adapter]);
+  // Keep lastSavedId in sync with the editor's current source id. Subscribe
+  // to changes in the editor store so the UI reflects whether the currently
+  // open design actually corresponds to an item in storage.
+  useEditorStoreSync(savedDesigns, setLastSavedId);
 
   return {
     savedDesigns,
