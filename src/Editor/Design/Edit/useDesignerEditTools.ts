@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { useEdit } from "./useEdit";
 
-export function useEditWithDesignerTools() {
+export function useDesignerEditTools() {
   const addGlobal = useEdit((s) => s.addGlobalVisualEdit);
   const addScheme = useEdit((s) => s.addSchemeVisualEdit);
   const removeGlobal = useEdit((s) => s.removeGlobalVisualEdit);
@@ -41,4 +41,4 @@ export function useEditWithDesignerTools() {
   };
 }
 
-export type DesignerEditTools = ReturnType<typeof useEditWithDesignerTools>;
+export type DesignerEditTools = ReturnType<typeof useDesignerEditTools>;

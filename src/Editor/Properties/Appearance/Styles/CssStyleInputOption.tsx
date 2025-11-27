@@ -1,6 +1,6 @@
 import { Typography, TextField, ListItem, Stack } from "@mui/material";
 import OptionListItemResetButton from "../../OptionListItemResetButton";
-import useEditWithDesignerTool from "../../../Design/Edit/useEditWithDesignerTool";
+import useDesignerToolEdit from "../../../Design/Edit/useDesignerToolEdit";
 
 export type CssStyleInputOptionProps = {
   name: string;
@@ -10,7 +10,7 @@ export type CssStyleInputOptionProps = {
 
 export default function CssStyleInputOption(props: CssStyleInputOptionProps) {
   const { value, resolvedValue, setValue, reset, canReset, hasCodeOverride } =
-    useEditWithDesignerTool(props.path);
+    useDesignerToolEdit(props.path);
 
   const displayValue = value ?? resolvedValue;
   const valueIsDynamicallyCalculated = typeof displayValue === "function";

@@ -117,7 +117,7 @@ export interface ThemeDesignHistoryActions {
   getCodeHistory: () => { past: CodeHistoryEntry[]; future: CodeHistoryEntry[] };
 }
 
-export type ThemeDesignHistorySlice = ThemeDesignHistoryState & ThemeDesignHistoryActions;
+export type DesignEditHistorySlice = ThemeDesignHistoryState & ThemeDesignHistoryActions;
 
 // ===== Constants =====
 
@@ -129,7 +129,7 @@ export const createHistorySlice: StateCreator<
   any,
   [],
   [],
-  ThemeDesignHistorySlice
+  DesignEditHistorySlice
 > = (set, get) => ({
   // Initial state
   visualHistoryPast: [],

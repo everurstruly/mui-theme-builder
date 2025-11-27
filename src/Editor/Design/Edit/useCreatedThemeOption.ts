@@ -30,7 +30,6 @@ export default function useCreatedThemeOption(
   const darkModeVisual = useEdit((s) => s.colorSchemes.dark?.visualToolEdits);
 
   const targetScheme = colorScheme ?? activeColorScheme;
-  const visualToolEdits = targetScheme === "light" ? lightModeVisual || {} : darkModeVisual || {};
 
   // Track preview hub notifications to re-run memo when previews change.
   const [tick, setTick] = useState(0);
@@ -42,6 +41,18 @@ export default function useCreatedThemeOption(
   }, []);
 
   return useMemo(() => {
+    // Compute scheme-specific visual edits inside the memo so the
+    // dependency list doesn't depend on a new object created by the
+    // conditional expression on every render.
+    let visualToolEdits;
+    if (targetScheme === "light") {
+      visualToolEdits = lightModeVisual ?? {};
+    } else {
+      visualToolEdits = darkModeVisual ?? {};
+    }
+    // Ensure `tick` is referenced so hooks/exhaustive-deps allows it
+    // as an intentional trigger for previews updates.
+    void tick;
     // Parse base theme code to ThemeOptions
     const baseTheme = parseThemeCode(baseThemeCode);
     if (!baseTheme) {
@@ -53,14 +64,14 @@ export default function useCreatedThemeOption(
     const template = extractThemeOptionsForScheme(baseTheme, targetScheme);
 
     // Resolve DSL to executable ThemeOptions (only if DSL exists)
-    const codeOverrides =
-      Object.keys(codeOverridesDsl).length > 0
-        ? transformDslToThemeOptions(codeOverridesDsl, {
-            template,
-            colorScheme: targetScheme,
-            spacingFactor: 8, // TODO: get from template if available
-          })
-        : {};
+    let codeOverrides: Record<string, any> = {};
+    if (Object.keys(codeOverridesDsl).length > 0) {
+      codeOverrides = transformDslToThemeOptions(codeOverridesDsl, {
+        template,
+        colorScheme: targetScheme,
+        spacingFactor: 8, // TODO: get from template if available
+      });
+    }
 
     // Resolve all layers
     // Merge transient preview edits (from previewHub) on top of persistent
@@ -81,7 +92,8 @@ export default function useCreatedThemeOption(
     baseThemeCode,
     baseVisualToolEdits,
     codeOverridesDsl,
-    visualToolEdits,
+    lightModeVisual,
+    darkModeVisual,
     targetScheme,
     tick,
   ]);

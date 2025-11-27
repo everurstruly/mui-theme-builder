@@ -156,10 +156,10 @@ export interface ThemeCurrentActions {
   resetToBase: () => void;
 
   /** Mark current version as saved */
-  acknowledgeStoredVersion: () => void;
+  acknowledgeStoredModifications: () => void;
 }
 
-export type ThemeCurrentSlice = ThemeCurrentState & ThemeCurrentActions;
+export type DesignEditCurrentSlice = ThemeCurrentState & ThemeCurrentActions;
 
 // ===== Initial State Factory =====
 
@@ -177,10 +177,10 @@ function createInitialMetadata(): ThemeMetadata {
 // ===== Slice Creator =====
 
 export const createCurrentSlice: StateCreator<
-  ThemeCurrentSlice,
+  DesignEditCurrentSlice,
   [],
   [],
-  ThemeCurrentSlice
+  DesignEditCurrentSlice
 > = (set, get) => ({
   // Initial state
   title: "MUI Default",
@@ -392,7 +392,7 @@ export const createCurrentSlice: StateCreator<
     }));
   },
 
-  acknowledgeStoredVersion: () => {
+  acknowledgeStoredModifications: () => {
     set((state) => ({
       lastStoredModificationVersion: state.modificationVersion,
     }));

@@ -71,7 +71,7 @@ export default function ThemingExperienceTab({
         backgroundColor: (theme: Theme) => alpha(theme.palette.primary.main, 0.05),
       },
     }),
-    (theme: any) => ({
+    (theme) => ({
       ...(theme?.applyStyles?.("light", {
         backgroundColor: "white",
       }) ?? {}),

@@ -9,11 +9,11 @@ import { useEdit } from "./useEdit";
  *
  * @example
  * function StatusBadge() {
- *   const { hasOverrides, error } = useDeveloperToolEdits();
+ *   const { hasOverrides, error } = useDeveloperToolEdit();
  *   return hasOverrides ? <Badge color="warning">Code Active</Badge> : null;
  * }
  */
-export default function useDeveloperToolEdits() {
+export default function useDeveloperToolEdit() {
   const source = useEdit((s) => s.codeOverridesSource);
   const error = useEdit((s) => s.codeOverridesError);
   const hasOverrides = source.length > 0;

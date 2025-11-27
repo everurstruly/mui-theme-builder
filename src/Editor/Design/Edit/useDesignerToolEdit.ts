@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { useEdit } from "./useEdit";
 import { getNestedValue, type SerializableValue } from "../compiler";
 
-export default function useEditWithDesignerTool(path: string, scheme?: string | null) {
+export default function useDesignerToolEdit(path: string, scheme?: string | null) {
   const theme = useDesignCreatedTheme();
   const codeFlattened = useEdit((s) => s.codeOverridesFlattened);
   

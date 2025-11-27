@@ -38,12 +38,12 @@ export {
 } from './validation/validator';
 
 // ========== Transformation ==========
-export { transformCodeToDsl } from './transformation/codeToDsl';
-export { transformDslToThemeOptions } from './transformation/dslToTheme';
-export { default as createThemeOptionsFromEdits, type ThemeResolutionConfig } from './transformation/editsToTheme';
+export { transformCodeToDsl } from './transformation/codeStringToDsl';
+export { transformDslToThemeOptions } from './transformation/dslToThemeOptions';
+export { default as createThemeOptionsFromEdits, type ThemeResolutionConfig } from './transformation/editsToThemeOptions';
 
 // ========== Parsing ==========
-export { parseThemeCode, serializeThemeOptions } from './parsing/codeParser';
+export { parseThemeCode, serializeThemeOptions } from './parsing/codeStringParser';
 
 // ========== Utilities ==========
 export { flattenThemeObject } from './utilities/flatten';
@@ -62,7 +62,7 @@ export {
 
 // ========== Convenience Service ==========
 import { validateCodeBeforeEvaluation } from './validation/validator';
-import { transformCodeToDsl } from './transformation/codeToDsl';
+import { transformCodeToDsl } from './transformation/codeStringToDsl';
 import { flattenThemeObject } from './utilities/flatten';
 
 /**

@@ -1,6 +1,6 @@
 import { Box, ListItemButton, Tooltip } from "@mui/material";
 import ListItemText from "@mui/material/ListItemText";
-import { useEditWithDesignerTools } from "../Design/Edit/useEditWithDesignerTools";
+import { useDesignerEditTools } from "../Design/Edit/useDesignerEditTools";
 import { useMemo } from "react";
 import { AddOutlined, InfoOutline, RemoveOutlined } from "@mui/icons-material";
 import useEdit from "../Design/Edit/useEdit";
@@ -21,7 +21,7 @@ export type BatchToggleInputProps = {
  * Enabled state is determined by checking if ALL paths match their expected values.
  */
 export default function BatchToggleInput(props: BatchToggleInputProps) {
-  const { addGlobalVisualEdit, removeGlobalVisualEdit } = useEditWithDesignerTools();
+  const { addGlobalVisualEdit, removeGlobalVisualEdit } = useDesignerEditTools();
   const baseVisualToolEdits = useEdit(
     (s) => s.colorSchemeIndependentVisualToolEdits
   );

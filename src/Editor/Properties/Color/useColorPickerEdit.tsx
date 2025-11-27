@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import { useDebouncyEffect } from "use-debouncy";
-import useEditWithDesignerTool from "../../Design/Edit/useEditWithDesignerTool";
+import useDesignerToolEdit from "../../Design/Edit/useDesignerToolEdit";
 import { useEdit } from "../../Design/Edit/useEdit";
 import { readableColor } from "polished";
 import { setPreviewValue, clearPreviewValue, getPreviewValue } from "../../Design/Edit/previewHub";
@@ -32,7 +32,7 @@ export default function useColorPickerEdit(path: string, options?: Options) {
     hasVisualEdit,
     hasCodeOverride,
     isModified,
-  } = useEditWithDesignerTool(path, activeScheme);
+  } = useDesignerToolEdit(path, activeScheme);
 
   // Using module-level preview hub for transient previews (no store writes)
   const previewValue = getPreviewValue(path);

@@ -1,16 +1,16 @@
 import { create } from "zustand";
-import { createCurrentSlice, type ThemeCurrentSlice } from "./currentSlice";
+import { createCurrentSlice, type DesignEditCurrentSlice } from "./currentSlice";
 import {
   createInterfaceSlice,
-  type ThemeDesignInterfaceSlice,
+  type DesignEditInterfaceSlice,
 } from "./interfaceSlice";
-import { createHistorySlice, type ThemeDesignHistorySlice } from "./historySlice";
+import { createHistorySlice, type DesignEditHistorySlice } from "./historySlice";
 
-export type ThemeDesignStore = ThemeCurrentSlice &
-  ThemeDesignInterfaceSlice &
-  ThemeDesignHistorySlice;
+export type DesignEditStore = DesignEditCurrentSlice &
+  DesignEditInterfaceSlice &
+  DesignEditHistorySlice;
 
-export const useEdit = create<ThemeDesignStore>()((...a) => {
+export const useEdit = create<DesignEditStore>()((...a) => {
   return {
     ...createCurrentSlice(...a),
     ...createInterfaceSlice(...a),

@@ -5,11 +5,11 @@ import { buildSessionData } from "./sessionBuilder";
 import { insertItem, updateItem, limitList, generateId } from "./fsOps";
 import { restoreSession } from "./sessionRestorer";
 import useCreatedThemeOption from "../Edit/useCreatedThemeOption";
-import useDeveloperToolActions from "../Edit/useDeveloperToolActions";
+import useDeveloperToolActions from "../Edit/useDeveloperEditTools";
 import { useCallback, useState } from "react";
 import { useStorageSync } from "./useStorageSync";
 import { useEditorStoreSync } from "./useEditorStoreSync";
-import { useEditWithDesignerTools } from "../Edit/useEditWithDesignerTools";
+import { useDesignerEditTools } from "../Edit/useDesignerEditTools";
 import type { StorageAdapter } from "./storageAdapters";
 import { deviceStorageAdapter } from "./storageAdapters";
 import type { SavedToStorageDesign } from "./types";
@@ -21,9 +21,9 @@ export default function useStorageCollection(
   const [savedDesigns, setSavedDesigns] = useState<SavedToStorageDesign[]>([]);
 
   const loadNewDesign = useEdit((s) => s.loadNew);
-  const acknowledgeStoredVersion = useEdit((s) => s.acknowledgeStoredVersion);
+  const acknowledgeStoredVersion = useEdit((s) => s.acknowledgeStoredModifications);
   const setActiveColorScheme = useEdit((s) => s.setActiveColorScheme);
-  const { addGlobalVisualEdit } = useEditWithDesignerTools();
+  const { addGlobalVisualEdit } = useDesignerEditTools();
   const { applyModifications } = useDeveloperToolActions();
   const createdThemeOptions = useCreatedThemeOption();
 

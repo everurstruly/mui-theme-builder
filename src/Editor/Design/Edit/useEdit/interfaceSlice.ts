@@ -45,16 +45,16 @@ export interface ThemeDesignInterfaceActions {
   selectExperience: (experienceId: EditorDesignExperienceId) => void;
 }
 
-export type ThemeDesignInterfaceSlice = ThemeDesignInterfaceState &
+export type DesignEditInterfaceSlice = ThemeDesignInterfaceState &
   ThemeDesignInterfaceActions;
 
 // ===== Slice Creator =====
 
 export const createInterfaceSlice: StateCreator<
-  ThemeDesignInterfaceSlice,
+  DesignEditInterfaceSlice,
   [],
   [],
-  ThemeDesignInterfaceSlice
+  DesignEditInterfaceSlice
 > = (set) => ({
   // Initial state
   activeColorScheme: "light",

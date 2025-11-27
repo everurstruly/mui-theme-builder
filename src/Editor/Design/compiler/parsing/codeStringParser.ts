@@ -1,6 +1,6 @@
 import type { ThemeOptions } from "@mui/material";
-import { transformCodeToDsl } from "../transformation/codeToDsl";
-import { transformDslToThemeOptions } from "../transformation/dslToTheme";
+import { transformCodeToDsl } from "../transformation/codeStringToDsl";
+import { transformDslToThemeOptions } from "../transformation/dslToThemeOptions";
 import type { ThemeDsl, DslResolutionContext } from "../types";
 
 /**

@@ -1,6 +1,6 @@
 import { Typography, TextField, ListItem, Stack } from "@mui/material";
 import OptionListItemResetButton from "../../OptionListItemResetButton";
-import useEditWithDesignerTool from "../../../Design/Edit/useEditWithDesignerTool";
+import useDesignerToolEdit from "../../../Design/Edit/useDesignerToolEdit";
 
 export type FontStyleFieldOptionProps = {
   name: string;
@@ -10,7 +10,7 @@ export type FontStyleFieldOptionProps = {
 
 export default function FontStyleFieldOption(props: FontStyleFieldOptionProps) {
   const { value, resolvedValue, hasCodeOverride, setValue, reset, canReset } =
-    useEditWithDesignerTool(props.path);
+    useDesignerToolEdit(props.path);
 
   const currentValue = value ?? resolvedValue;
 

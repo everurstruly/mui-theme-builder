@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useDebouncyEffect } from "use-debouncy";
 import { setPreviewValue, clearPreviewValue } from "../../../Design/Edit/previewHub";
 import OptionListItemResetButton from "../../OptionListItemResetButton";
-import useEditWithDesignerTool from "../../../Design/Edit/useEditWithDesignerTool";
+import useDesignerToolEdit from "../../../Design/Edit/useDesignerToolEdit";
 
 export type FontStyleRangedOptionProps = {
   name: string;
@@ -14,7 +14,7 @@ export type FontStyleRangedOptionProps = {
 
 export default function FontStyleRangedOption(props: FontStyleRangedOptionProps) {
   const { value, resolvedValue, hasVisualEdit, hasCodeOverride, setValue, reset } =
-    useEditWithDesignerTool(props.path);
+    useDesignerToolEdit(props.path);
 
   // Prefer explicit resolvedValue from the edit hook rather than grabbing
   // the entire theme here — avoids expensive theme creation and broad
