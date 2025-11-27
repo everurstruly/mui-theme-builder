@@ -7,7 +7,7 @@ import {
   Button,
   TextField,
 } from "@mui/material";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 interface Props {
   open: boolean;
