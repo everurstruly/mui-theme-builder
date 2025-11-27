@@ -47,6 +47,7 @@ function Context() {
 
   const handleRename = () => {
     setRenameOpen(true);
+    setRenameValue(title);
     handleMenuClose();
   };
 
