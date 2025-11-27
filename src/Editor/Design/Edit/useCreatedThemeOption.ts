@@ -1,6 +1,7 @@
 import { type ThemeOptions } from "@mui/material";
-import { useMemo } from "react";
+import { useMemo, useEffect, useState } from "react";
 import useEdit from "./useEdit";
+import { subscribeToPreviews, getAllPreviews } from "./previewHub";
 import {
   createThemeOptionsFromEdits,
   deepMerge,
@@ -31,6 +32,20 @@ export default function useCreatedThemeOption(
   const targetScheme = colorScheme ?? activeColorScheme;
   const { visualToolEdits } = targetScheme === "light" ? lightMode : darkMode;
 
+  // Track preview hub notifications to re-run memo when previews change.
+  const [, setTick] = useState(0);
+  useEffect(() => {
+    const unsub = subscribeToPreviews(() => setTick((t) => t + 1));
+    return () => {
+      // unsubscribe may return boolean; ignore return value
+      try {
+        unsub();
+      } catch (e) {
+        // noop
+      }
+    };
+  }, []);
+
   return useMemo(() => {
     // Parse base theme code to ThemeOptions
     const baseTheme = parseThemeCode(baseThemeCode);
@@ -53,10 +68,17 @@ export default function useCreatedThemeOption(
         : {};
 
     // Resolve all layers
+    // Merge transient preview edits (from previewHub) on top of persistent
+    // visual edits so previews are reflected immediately without committing
+    // to history or mutating the main store.
+    const previewEdits = getAllPreviews();
+    const mergedBaseVisual = { ...baseVisualToolEdits, ...(previewEdits || {}) };
+    const mergedSchemeVisual = { ...visualToolEdits, ...(previewEdits || {}) };
+
     return createThemeOptionsFromEdits({
       template,
-      baseVisualToolEdits,
-      colorSchemeVisualToolEdits: visualToolEdits,
+      baseVisualToolEdits: mergedBaseVisual,
+      colorSchemeVisualToolEdits: mergedSchemeVisual,
       codeOverrides: codeOverrides,
       colorScheme: targetScheme,
     });

@@ -3,6 +3,7 @@ import { useDebouncyEffect } from "use-debouncy";
 import useEditWithDesignerTool from "../../Design/Edit/useEditWithDesignerTool";
 import { useEdit } from "../../Design/Edit/useEdit";
 import { readableColor } from "polished";
+import { setPreviewValue, clearPreviewValue, getPreviewValue } from "../../Design/Edit/previewHub";
 
 type Options = {
   /** How long to debounce auto-applies (ms). Default: 165 */
@@ -33,6 +34,9 @@ export default function useColorPickerEdit(path: string, options?: Options) {
     isModified,
   } = useEditWithDesignerTool(path, activeScheme);
 
+  // Using module-level preview hub for transient previews (no store writes)
+  const previewValue = getPreviewValue(path);
+
   // -- Local UI state
   const anchorRef = useRef<HTMLDivElement | null>(null);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
@@ -45,12 +49,13 @@ export default function useColorPickerEdit(path: string, options?: Options) {
     () => {
       if (!autoApply) return;
       if (tempColor && tempColor !== (value as string)) {
-        setValue(tempColor);
+        // Update preview hub (rAF-scheduled notify) instead of mutating main store.
+        setPreviewValue(path, tempColor);
         lastAppliedColorRef.current = tempColor;
       }
     },
     debounceMs,
-    [tempColor, value, autoApply]
+    [tempColor, value, autoApply, path]
   );
 
   // If the value changed externally (reset / applied from elsewhere), clear
@@ -81,14 +86,19 @@ export default function useColorPickerEdit(path: string, options?: Options) {
     (c?: string) => {
       const toApply = c ?? tempColor;
       if (!toApply) return;
+      // Commit to the real store and clear the transient preview for this path.
       setValue(toApply);
+      clearPreviewValue(path);
       lastAppliedColorRef.current = toApply;
     },
-    [setValue, tempColor]
+    [setValue, tempColor, path]
   );
 
   // -- Derived UI values (memoized)
-  const mainColor = useMemo(() => String(tempColor || value || resolvedValue || "#000000"), [tempColor, value, resolvedValue]);
+  const mainColor = useMemo(
+    () => String(tempColor || previewValue || value || resolvedValue || "#000000"),
+    [tempColor, previewValue, value, resolvedValue]
+  );
 
   const readableColorStr = useMemo(() => readableColor(mainColor), [mainColor]);
   const borderColor = "divider";
