@@ -1,10 +1,10 @@
 import { Typography, TextField, ListItem, Stack } from "@mui/material";
 import SliderInput from "../../SliderInput";
 import { useState, useEffect } from "react";
+import { useDebouncyEffect } from "use-debouncy";
+import { setPreviewValue, clearPreviewValue } from "../../../Design/Edit/previewHub";
 import OptionListItemResetButton from "../../OptionListItemResetButton";
-import useDesignCreatedTheme from "../../../Design/Edit/useCreatedTheme";
 import useEditWithDesignerTool from "../../../Design/Edit/useEditWithDesignerTool";
-import { getNestedValue } from "../../../Design/compiler";
 
 export type FontStyleRangedOptionProps = {
   name: string;
@@ -13,13 +13,13 @@ export type FontStyleRangedOptionProps = {
 };
 
 export default function FontStyleRangedOption(props: FontStyleRangedOptionProps) {
-  const theme = useDesignCreatedTheme();
-  const autoResolvedValue = getNestedValue(theme, props.path);
-
-  const { value, hasVisualEdit, hasCodeOverride, setValue, reset } =
+  const { value, resolvedValue, hasVisualEdit, hasCodeOverride, setValue, reset } =
     useEditWithDesignerTool(props.path);
 
-  const currentValue = value ?? autoResolvedValue;
+  // Prefer explicit resolvedValue from the edit hook rather than grabbing
+  // the entire theme here — avoids expensive theme creation and broad
+  // subscriptions that cause re-renders.
+  const currentValue = value ?? resolvedValue;
   const canResetValue = hasVisualEdit || hasCodeOverride;
 
   const [inputValue, setInputValue] = useState(String(currentValue));
@@ -29,21 +29,59 @@ export default function FontStyleRangedOption(props: FontStyleRangedOptionProps)
     setInputValue(String(currentValue));
   }, [currentValue]);
 
+  // Local interactions update `inputValue` immediately; commit to the
+  // shared edit store with a small debounce to avoid spamming writes while
+  // the user drags the slider.
+  useDebouncyEffect(
+    () => {
+      const num = Number(inputValue);
+      if (!Number.isNaN(num)) {
+        // Commit to the real store after the debounce delay. Transient
+        // previews are updated immediately from the handlers below so
+        // the canvas remains responsive.
+        setValue(num);
+      }
+    },
+    120,
+    [inputValue]
+  );
+
   const handleSliderChange = (_event: Event, newValue: number | number[]) => {
     const val = Array.isArray(newValue) ? newValue[0] : newValue;
     const normalizedValue = val / 20; // Convert slider value back to line height
-    setValue(normalizedValue);
     setInputValue(String(normalizedValue));
+    // Immediate transient preview for smooth live canvas updates
+    setPreviewValue(props.path, normalizedValue);
   };
 
   const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
+    const num = Number(event.target.value);
+    if (!Number.isNaN(num)) setPreviewValue(props.path, num);
+    else clearPreviewValue(props.path);
   };
 
   const handleBlur = () => {
     const numValue = Number(inputValue);
-    setValue(isNaN(numValue) ? inputValue : numValue);
+    if (Number.isNaN(numValue)) return;
+    // commit immediately on blur
+    setValue(numValue);
+    clearPreviewValue(props.path);
   };
+
+  const handleSliderCommit = (_event: Event | React.SyntheticEvent, newValue: number | number[]) => {
+    const v = Array.isArray(newValue) ? newValue[0] : newValue;
+    const normalized = v / 20;
+    setValue(normalized);
+    clearPreviewValue(props.path);
+  };
+
+  // Ensure we clear any transient preview if this component unmounts
+  useEffect(() => {
+    return () => {
+      clearPreviewValue(props.path);
+    };
+  }, [props.path]);
 
   return (
     <ListItem
@@ -74,9 +112,10 @@ export default function FontStyleRangedOption(props: FontStyleRangedOptionProps)
       </Stack>
 
       <SliderInput
-        defaultValue={parseFloat(String(currentValue)) * 20}
+        value={parseFloat(String(inputValue || currentValue)) * 20}
         arialLabel={props.name}
         onChange={handleSliderChange}
+        onChangeCommitted={handleSliderCommit}
         disabled={hasCodeOverride}
       />
 

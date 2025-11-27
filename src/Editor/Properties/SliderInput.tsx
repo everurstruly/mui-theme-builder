@@ -57,22 +57,30 @@ const IOSSlider = styled(Slider)(({ theme }) => ({
 }));
 
 type SliderInputProps = {
+  /** Controlled value (optional). If provided the slider is controlled. */
+  value?: number;
+  /** Uncontrolled initial value. Use only when `value` is not provided. */
   defaultValue?: number;
   arialLabel?: string;
   onChange?: (event: Event, value: number | number[]) => void;
+  /** Fired when the user finishes an interaction (mouse up / touch end) */
+  onChangeCommitted?: (event: Event | React.SyntheticEvent, value: number | number[]) => void;
   disabled?: boolean;
 };
 
-export default function SliderInput({ defaultValue, arialLabel, onChange, disabled }: SliderInputProps) {
+export default function SliderInput({ value, defaultValue, arialLabel, onChange, onChangeCommitted, disabled }: SliderInputProps) {
+  const valueProps = value !== undefined ? { value } : { defaultValue };
+
   return (
     <IOSSlider
       aria-label={arialLabel}
-      defaultValue={defaultValue}
+      {...valueProps}
       valueLabelDisplay="auto"
-      valueLabelFormat={(value) => `${value}px`}
+      valueLabelFormat={(v) => `${v}px`}
       min={0}
       max={100}
       onChange={onChange}
+      onChangeCommitted={onChangeCommitted}
       disabled={disabled}
     />
   );
