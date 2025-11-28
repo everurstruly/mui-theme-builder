@@ -1,124 +1,87 @@
-import { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import { useDebouncyEffect } from "use-debouncy";
 import useDesignerToolEdit from "../../Design/Edit/useDesignerToolEdit";
 import { useEdit } from "../../Design/Edit/useEdit";
-import { readableColor } from "polished";
+import { useRef, useState, useMemo, useCallback } from "react";
 
 type Options = {
-  /** How long to debounce auto-applies (ms). Default: 165 */
   debounceMs?: number;
-  /** If true, onChange will update local temp only and commit occurs elsewhere. */
+  
+  /** If false, onChange will not sync the color picking widget/interface with the actual source value. */
   autoApply?: boolean;
 };
 
-/**
- * Hook that encapsulates the color-picker editing UX.
- * - Maintains a local `tempColor` for immediate UI feedback
- * - Optionally auto-applies (debounced) temp changes to the visual edit store
- * - Manages popover anchor/ref and exposes convenient handlers for consumers
- */
 export default function useColorPickerEdit(path: string, options?: Options) {
-  const debounceMs = options?.debounceMs ?? 165;
-  const autoApply = options?.autoApply ?? true;
-
-  // -- Source: visual edit store wrapper
+  const debounceMs = options?.debounceMs ?? 140;
+  const autoSyncTransientWithValue = options?.autoApply ?? true;
   const activeScheme = useEdit((s) => s.activeColorScheme);
   const {
     value,
-    resolvedValue,
     setValue,
+    resolvedValue,
+    canReset,
     reset,
-    hasVisualEdit,
     hasCodeOverride,
     isModified,
   } = useDesignerToolEdit(path, activeScheme);
 
-  // Using module-level preview hub for transient previews (no store writes)
-  // Read transient preview from the store's preview slice
-  const previewValue = useEdit((s) => s.previews?.[path]);
-  const setPreview = useEdit((s) => s.setPreview);
-  const clearPreview = useEdit((s) => s.clearPreview);
-
   // -- Local UI state
   const anchorRef = useRef<HTMLDivElement | null>(null);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-  const [tempColor, setTempColor] = useState<string>("");
-  const lastAppliedColorRef = useRef<string>("");
+  const [transientColor, seTtransientColor] = useState(value);
 
-  // -- Auto-apply: when user changes tempColor we optionally apply to the store
-  // using a debounced effect so rapid drags don't spam the store.
-  useDebouncyEffect(
-    () => {
-      if (!autoApply) return;
-      if (tempColor && tempColor !== (value as string)) {
-        // Update preview slice (rAF-batched) instead of mutating main store.
-        setPreview(path, tempColor);
-        lastAppliedColorRef.current = tempColor;
-      }
-    },
-    debounceMs,
-    [tempColor, value, autoApply, path]
-  );
+  const color = resolvedValue || "#000";
+  const borderColor = "divider";
+  const readableForegroundColor = generateReadableColor(color);
+  const hasDelegatedControl = !!hasCodeOverride;
 
-  // If the value changed externally (reset / applied from elsewhere), clear
-  // the temp buffer so UI reflects the current authoritative value.
-  useEffect(() => {
-    if (tempColor && (value as string) !== lastAppliedColorRef.current) {
-      setTempColor("");
-      lastAppliedColorRef.current = value as string;
-    }
-  }, [value, tempColor]);
-
-  // -- Handlers (stable identities for consumers)
   const openPicker = useCallback(() => {
-    if (hasCodeOverride) return; // disabled when code-controlled
-    lastAppliedColorRef.current = (value as string) || "";
-    setTempColor((value as string) || "");
+    if (hasCodeOverride) {
+      return; // disabled when code-controlled
+    }
+
+    seTtransientColor(value);
     setAnchorEl(anchorRef.current);
   }, [hasCodeOverride, value]);
 
-  const closePicker = useCallback(() => setAnchorEl(null), []);
+  const closePicker = useCallback(() => {
+    if (
+      autoSyncTransientWithValue &&
+      transientColor &&
+      transientColor !== (value as string)
+    ) {
+      setValue(transientColor);
+    }
+
+    setAnchorEl(null);
+  }, [autoSyncTransientWithValue, transientColor, value, setValue]);
 
   const onColorChange = useCallback((color: { hex: string }) => {
-    // fast local update only
-    setTempColor(color.hex);
+    seTtransientColor(color.hex);
   }, []);
 
-  const applyTempColorImmediately = useCallback(
-    (c?: string) => {
-      const toApply = c ?? tempColor;
-      if (!toApply) return;
-      // Commit to the real store and clear the transient preview for this path.
-      setValue(toApply);
-      clearPreview(path);
-      lastAppliedColorRef.current = toApply;
+  useDebouncyEffect(
+    () => {
+      if (!autoSyncTransientWithValue) {
+        return;
+      }
+
+      // nothing to do if tempColor already equals the current store value
+      if (!transientColor || transientColor === value) {
+        return;
+      }
+
+      setValue(transientColor);
     },
-    [setValue, tempColor, path]
+    debounceMs,
+    [transientColor]
   );
 
-  // -- Derived UI values (memoized)
-  const mainColor = useMemo(
-    () => String(tempColor || previewValue || value || resolvedValue || "#000000"),
-    [tempColor, previewValue, value, resolvedValue]
-  );
-
-  const readableColorStr = useMemo(() => readableColor(mainColor), [mainColor]);
-  const borderColor = "divider";
-
-  const canResetValue = !!hasVisualEdit || !!hasCodeOverride;
-  const isControlledByFunction = !!hasCodeOverride;
-
-  // Return a stable object - consumers can destructure what they need.
   return useMemo(
     () => ({
       // source values
-      value,
-      resolvedValue,
-
-      // local editing state
-      tempColor,
-      setTempColor,
-      applyTempColorImmediately,
+      color,
+      readableForegroundColor,
+      borderColor,
 
       // popover anchor + controls
       anchorRef,
@@ -128,44 +91,35 @@ export default function useColorPickerEdit(path: string, options?: Options) {
       closePicker,
       onColorChange,
 
-      // refs
-      lastAppliedColorRef,
-
-      // UI helpers
-      mainColor,
-      readableColor: readableColorStr,
-      borderColor,
-
       // control state
-      canResetValue,
+      canReset,
       reset,
-      isControlledByFunction,
+      hasDelegatedControl,
       isModified,
-
-      // low-level setter
-      setValue,
     }),
     [
-      value,
-      resolvedValue,
-      tempColor,
-      setTempColor,
-      applyTempColorImmediately,
+      color,
       anchorEl,
       openPicker,
       closePicker,
       onColorChange,
-      lastAppliedColorRef,
-      mainColor,
-      readableColorStr,
+      readableForegroundColor,
       borderColor,
-      canResetValue,
+      canReset,
       reset,
-      isControlledByFunction,
+      hasDelegatedControl,
       isModified,
-      setValue,
-      // NOTE: setPreview/clearPreview are stable selectors and do not
-      // need to be listed as deps. previewValue is read elsewhere.
     ]
   );
+}
+
+function generateReadableColor(bgColor: string): string {
+  // Simple algorithm to determine readable color (black or white) based on background color brightness
+  // This can be replaced with a more sophisticated approach if needed
+  const color = bgColor.charAt(0) === "#" ? bgColor.substring(1, 7) : bgColor;
+  const r = parseInt(color.substring(0, 2), 16);
+  const g = parseInt(color.substring(2, 4), 16);
+  const b = parseInt(color.substring(4, 6), 16);
+  const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+  return brightness > 125 ? "#000000" : "#FFFFFF";
 }
