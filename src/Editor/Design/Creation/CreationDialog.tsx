@@ -1,11 +1,9 @@
 import * as React from "react";
-import TemplateOption from "./Methods/TemplateOption";
-import { Box, Tabs, Tab, Stack } from "@mui/material";
-// import PasteOption from "./NewDesignOptions/PasteOption";
+import { Box, Tabs, Tab, Stack, lighten } from "@mui/material";
+import TemplateMethod from "./Template/TemplateMethod";
 
 const modes = [
-  { value: "template", label: "Built-in Templates", Component: TemplateOption },
-  // { value: "paste", label: "Paste Code", Component: PasteOption },
+  { value: "template", label: "Built-in Templates", Component: TemplateMethod },
 ];
 
 type ModeValue = (typeof modes)[number]["value"];
@@ -30,8 +28,6 @@ export default function CreationDialog({ onClose }: { onClose: () => void }) {
           position: "sticky",
           top: 0,
           zIndex: 1,
-          borderBottom: 1,
-          borderColor: "divider",
         }}
       >
         <Tabs
@@ -40,7 +36,8 @@ export default function CreationDialog({ onClose }: { onClose: () => void }) {
           variant="fullWidth"
           aria-label="New design creation method"
           sx={{
-            backgroundColor: (theme) => theme.palette.background.paper,
+            backgroundColor: (theme) =>
+              lighten(theme.palette.background.paper, 0.05),
           }}
         >
           {modes.map((modeOption) => (
@@ -54,7 +51,7 @@ export default function CreationDialog({ onClose }: { onClose: () => void }) {
         </Tabs>
       </Stack>
 
-      <Box role="region" sx={{ p: 2 }}>
+      <Box role="region" sx={{ px: 2 }}>
         {modes.map(
           ({ value, Component }) =>
             mode === value && <Component key={value} onClose={onClose} />

@@ -1,10 +1,10 @@
 import * as React from "react";
 import Button from "@mui/material/Button";
-import CreationDialog from "./LoaderDialog";
+import CreationDialog from "./CreationDialog";
 import { Popover, useMediaQuery } from "@mui/material";
 import { Add } from "@mui/icons-material";
 
-export default function LoaderDialogOpenButton() {
+export default function CreationDialogOpenButton() {
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
   const isDesktop = useMediaQuery("(min-width:400px)");
 
@@ -38,7 +38,7 @@ export default function LoaderDialogOpenButton() {
         transformOrigin={{ vertical: "top", horizontal: "left" }}
         slotProps={{
           root: {
-            sx: { mt: 2 },
+            sx: { mt: 2, ml: 1 },
           },
           paper: {
             sx: { width: 320, borderRadius: 4 },

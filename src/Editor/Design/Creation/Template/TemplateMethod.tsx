@@ -1,12 +1,8 @@
 import {
   Box,
   Button,
-  Dialog,
-  DialogContent,
-  DialogTitle,
   List,
   ListItemButton,
-  ListItemText,
   Stack,
   Toolbar,
   Typography,
@@ -16,23 +12,27 @@ import {
   KeyboardArrowRight,
   ShuffleOutlined,
 } from "@mui/icons-material";
-import useTemplateLoader from "../useTemplateLoader";
+import useTemplateMethod from "./useTemplateMethod";
 import ColorSchemeToggle from "../../Edit/ColorSchemeToggle";
+import CreationIntentConfirmationDialog from "../CreationIntentConfirmationDialog";
 
-export default function TemplateOption({ onClose }: { onClose: () => void }) {
+export default function TemplateMethod({ onClose }: { onClose: () => void }) {
   const {
     templates: allTemplates,
     selectedTemplateId,
-    selectBlank,
-    pendingChange,
-    selectTemplate,
-    confirmSwitch,
+    requestSelectBlank,
+    requestSelectTemplate,
     selectRandomTemplate,
     getColorSamples,
     clearPending,
-  } = useTemplateLoader({ autoConfirm: false });
+    dialogOpen,
+    onDiscard,
+    onKeep,
+    onCancel,
+  } = useTemplateMethod({ onClose, autoConfirm: false });
 
   function cancelChangeOperation() {
+    // clear pending and keep the loader open (TemplatesLoader consumer decides)
     clearPending();
     onClose();
   }
@@ -42,11 +42,11 @@ export default function TemplateOption({ onClose }: { onClose: () => void }) {
   }
 
   const handleSelectTemplate = (templateId: string) => {
-    selectTemplate(templateId);
+    requestSelectTemplate(templateId);
   };
 
   const handleWithoutTemplate = () => {
-    selectBlank();
+    requestSelectBlank();
     onClose();
   };
 
@@ -56,7 +56,7 @@ export default function TemplateOption({ onClose }: { onClose: () => void }) {
         variant="dense"
         sx={{
           position: "sticky",
-          top: "52px",
+          top: "50px",
           zIndex: 1,
           mx: -3, // FIXME: Sync with parent padding
           justifyContent: "space-between",
@@ -77,14 +77,18 @@ export default function TemplateOption({ onClose }: { onClose: () => void }) {
         <ListItemButton
           dense
           sx={{
-            borderRadius: 2,
+            borderRadius: 3,
             mb: 1,
             columnGap: 1,
+            paddingInline: 2,
+            paddingBlock: 2,
             backgroundColor: "background.default",
           }}
           onClick={handleWithoutTemplate}
         >
-          <ListItemText>Create without a template</ListItemText>
+          <Typography variant="body2" sx={{ flexGrow: 1 }}>
+            Create without a template
+          </Typography>
           <KeyboardArrowRight color="action" fontSize="small" />
         </ListItemButton>
 
@@ -143,51 +147,22 @@ export default function TemplateOption({ onClose }: { onClose: () => void }) {
         })}
       </List>
 
-      <Dialog
-        open={Boolean(pendingChange)}
-        onClose={() => cancelChangeOperation()}
-        sx={{ top: "-20%" }}
-        slotProps={{
-          paper: {
-            sx: {
-              borderRadius: 4,
-            },
-          },
+      <CreationIntentConfirmationDialog
+        open={Boolean(dialogOpen)}
+        onDiscard={() => {
+          // discard unsaved and proceed
+          onDiscard();
         }}
-      >
-        <DialogTitle sx={{ textAlign: "center", py: 4 }}>
-          <Typography variant="h6">Wait! You've Unsaved Modifications</Typography>
-          <Typography
-            variant="body2"
-            color="textSecondary"
-            sx={{ maxWidth: "42ch", py: 1 }}
-          >
-            Switching templates will override your work unless you choose to keep
-            them.
-          </Typography>
-        </DialogTitle>
-
-        <DialogContent>
-          <Stack
-            direction="row"
-            spacing={3}
-            sx={{ justifyContent: "center", mb: 1 }}
-          >
-            <Button color="warning" onClick={() => confirmSwitch(false)}>
-              Discard Modifications
-            </Button>
-
-            <Button
-              onClick={() => {
-                confirmSwitch(true);
-                cancelChangeOperation();
-              }}
-            >
-              Keep them & Stay
-            </Button>
-          </Stack>
-        </DialogContent>
-      </Dialog>
+        onKeep={() => {
+          // keep unsaved modifications
+          onKeep();
+        }}
+        onCancel={() => {
+          onCancel();
+          // also close the loader UI
+          cancelChangeOperation();
+        }}
+      />
     </>
   );
 }

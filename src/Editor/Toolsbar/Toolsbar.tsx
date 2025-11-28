@@ -5,7 +5,7 @@ import DesignActionMenu from "./DesignActionMenu";
 import CurrentDesignContext from "../Design/Edit/Context";
 import PropertiesPanelHeader from "../Properties/PropertiesPanelHeader";
 import StoreCurrentButton from "../Design/Storage/StoreCurrentButton";
-import LoaderDialogOpenButton from "../Design/Loader/LoaderDialogOpenButton";
+import CreationDialogOpenButton from "../Design/Creation/CreationDialogOpenButton";
 import { AppBar, Stack, Divider, Toolbar, type SxProps, Box } from "@mui/material";
 
 export default function EditorToolsbar() {
@@ -107,7 +107,7 @@ function MobileToolbarContent() {
         marginInlineStart={"auto"}
         px={1}
       >
-        <LoaderDialogOpenButton />
+        <CreationDialogOpenButton />
         <DesignMobileActionMenu />
       </Box>
     </Stack>

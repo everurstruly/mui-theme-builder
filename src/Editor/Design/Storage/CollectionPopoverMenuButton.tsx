@@ -36,10 +36,10 @@ export default function CollectionPopoverMenuButton() {
         transformOrigin={{ vertical: "top", horizontal: "left" }}
         slotProps={{
           root: {
-            sx: { mt: 2 },
+            sx: { mt: 2, ml: 1 },
           },
           paper: {
-            sx: { width: 320, borderRadius: 4 },
+            sx: { maxWidth: 360, borderRadius: 4 },
           },
         }}
       >

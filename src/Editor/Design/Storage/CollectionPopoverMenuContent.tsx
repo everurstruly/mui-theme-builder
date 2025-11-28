@@ -69,10 +69,14 @@ function CollectionPopoverMenuContent({
   return (
     <Stack
       sx={{
-        p: 2,
+        pt: 2,
+        pb: 3,
+        px: 3,
         minHeight: "40vh",
         maxHeight: "60vh",
         overflow: "auto",
+        scrollbarWidth: "thin",
+        scrollbarColor: "rgba(0,0,0,0.2) transparent",
         width: 320,
       }}
     >
