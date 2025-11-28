@@ -44,7 +44,6 @@ export default function ColorOptionGroupItem(props: ColorOptionGroupItemProps) {
           ref={foregroundEdit.anchorRef}
           onClick={foregroundEdit.openPicker}
           component={Button}
-          color="primary"
           sx={{
             display: props.foreground ?? "none",
             cursor: foregroundEdit.hasDelegatedControl ? "not-allowed" : "pointer",

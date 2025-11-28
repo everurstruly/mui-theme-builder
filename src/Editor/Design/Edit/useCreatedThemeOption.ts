@@ -16,10 +16,10 @@ import {
  * @param colorScheme - Target color scheme (defaults to active scheme)
  * @returns Resolved ThemeOptions ready for createTheme()
  */
+
 export default function useCreatedThemeOption(
   colorScheme?: "light" | "dark"
 ): ThemeOptions {
-  // Subscribe to all relevant state slices with selectors
   const activeColorScheme = useEdit((s) => s.activeColorScheme);
   const baseThemeCode = useEdit((s) => s.baseThemeCode);
   const baseVisualToolEdits = useEdit(
@@ -31,54 +31,21 @@ export default function useCreatedThemeOption(
 
   const targetScheme = colorScheme ?? activeColorScheme;
 
-  // Read transient previews from the store; previewVersion batching ensures
-  // these updates are coalesced and won't flood renders.
-  const previews = useEdit((s) => s.previews);
-
   return useMemo(() => {
-    // Compute scheme-specific visual edits inside the memo so the
-    // dependency list doesn't depend on a new object created by the
-    // conditional expression on every render.
-    let visualToolEdits;
-    if (targetScheme === "light") {
-      visualToolEdits = lightModeVisual ?? {};
-    } else {
-      visualToolEdits = darkModeVisual ?? {};
-    }
-    // Ensure previews is referenced so memo re-runs when previews change.
-    void previews;
-    // Parse base theme code to ThemeOptions
-    const baseTheme = parseThemeCode(baseThemeCode);
-    if (!baseTheme) {
-      console.error("Failed to parse base theme code");
-      return {};
-    }
-
-    // Extract scheme-specific options if template uses colorSchemes
-    const template = extractThemeOptionsForScheme(baseTheme, targetScheme);
-
-    // Resolve DSL to executable ThemeOptions (only if DSL exists)
-    let codeOverrides: Record<string, any> = {};
-    if (Object.keys(codeOverridesDsl).length > 0) {
-      codeOverrides = transformDslToThemeOptions(codeOverridesDsl, {
-        template,
-        colorScheme: targetScheme,
-        spacingFactor: 8, // TODO: get from template if available
-      });
-    }
-
-    // Resolve all layers
-    // Merge transient preview edits (from the preview slice) on top of
-    // persistent visual edits so previews are reflected immediately
-    // without committing to history or mutating the main store.
-    const previewEdits = previews || {};
-    const mergedBaseVisual = { ...baseVisualToolEdits, ...previewEdits };
-    const mergedSchemeVisual = { ...visualToolEdits, ...previewEdits };
+    const baseTheme = parseThemeCode(baseThemeCode) ?? {};
+    const baseThemeOption = extractThemeOptionsForScheme(baseTheme, targetScheme);
+    const designerToolEdits =
+      targetScheme === "light" ? lightModeVisual : darkModeVisual ?? {};
+    const codeOverrides = transformDslToThemeOptions(codeOverridesDsl, {
+      template: baseThemeOption,
+      colorScheme: targetScheme,
+      spacingFactor: 8, // TODO: get from template if available
+    });
 
     return createThemeOptionsFromEdits({
-      template,
-      baseVisualToolEdits: mergedBaseVisual,
-      colorSchemeVisualToolEdits: mergedSchemeVisual,
+      template: baseThemeOption,
+      baseVisualToolEdits,
+      colorSchemeVisualToolEdits: designerToolEdits,
       codeOverrides: codeOverrides,
       colorScheme: targetScheme,
     });
@@ -89,7 +56,6 @@ export default function useCreatedThemeOption(
     lightModeVisual,
     darkModeVisual,
     targetScheme,
-    previews,
   ]);
 }
 
