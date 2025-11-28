@@ -17,12 +17,12 @@ export default function ColorOptionGroupItem(props: ColorOptionGroupItemProps) {
   const openShadesDrawer = useShadesDrawerStore(
     (s: UseShadesDrawerState) => s.openFor
   );
-  const colorEdit = useColorPickerEdit(props.fill);
+  const backgroundEdit = useColorPickerEdit(props.fill);
   const foregroundEdit = useColorPickerEdit(props.foreground || "");
-  const canResetValue = colorEdit.canResetValue || foregroundEdit.canResetValue;
+  const canResetValue = backgroundEdit.canReset || foregroundEdit.canReset;
 
   function resetValue() {
-    colorEdit.reset();
+    backgroundEdit.reset();
     foregroundEdit.reset();
   }
 
@@ -36,8 +36,8 @@ export default function ColorOptionGroupItem(props: ColorOptionGroupItemProps) {
           height: 114,
           borderRadius: 4,
           border: 4,
-          borderColor: colorEdit.borderColor,
-          backgroundColor: colorEdit.mainColor,
+          borderColor: backgroundEdit.borderColor,
+          backgroundColor: backgroundEdit.color,
         }}
       >
         <Box
@@ -47,20 +47,15 @@ export default function ColorOptionGroupItem(props: ColorOptionGroupItemProps) {
           color="primary"
           sx={{
             display: props.foreground ?? "none",
-            cursor: foregroundEdit.isControlledByFunction
-              ? "not-allowed"
-              : "pointer",
-            opacity: foregroundEdit.isControlledByFunction ? 0.5 : 1,
+            cursor: foregroundEdit.hasDelegatedControl ? "not-allowed" : "pointer",
+            opacity: foregroundEdit.hasDelegatedControl ? 0.5 : 1,
+            color: foregroundEdit.color,
+            backgroundColor: alpha(foregroundEdit.readableForegroundColor, 0.05),
             position: "absolute",
             top: 0,
             left: 0,
             columnGap: 0.5,
             rowGap: 0.2,
-            color: foregroundEdit.mainColor,
-            backgroundColor: alpha(colorEdit.readableColor, 0.05),
-
-            // flexDirection: "column",
-            // alignItems: "flex-start",
           }}
         >
           <PhotoSizeSelectActualOutlined fontSize="small" />
@@ -70,15 +65,15 @@ export default function ColorOptionGroupItem(props: ColorOptionGroupItemProps) {
         </Box>
 
         <Box
-          ref={colorEdit.anchorRef}
-          onClick={colorEdit.openPicker}
+          ref={backgroundEdit.anchorRef}
+          onClick={backgroundEdit.openPicker}
           component={Button}
           color="primary"
           sx={{
-            color: colorEdit.readableColor,
-            cursor: colorEdit.isControlledByFunction ? "not-allowed" : "pointer",
-            opacity: colorEdit.isControlledByFunction ? 0.5 : 1,
-            backgroundColor: alpha(colorEdit.readableColor, 0.05),
+            cursor: backgroundEdit.hasDelegatedControl ? "not-allowed" : "pointer",
+            opacity: backgroundEdit.hasDelegatedControl ? 0.5 : 1,
+            color: backgroundEdit.readableForegroundColor,
+            backgroundColor: alpha(backgroundEdit.readableForegroundColor, 0.05),
             position: "absolute",
             minWidth: "auto",
             alignItems: "flex-end",
@@ -95,12 +90,12 @@ export default function ColorOptionGroupItem(props: ColorOptionGroupItemProps) {
         <Button
           onClick={() => openShadesDrawer(props.shades ?? [], undefined, props.name)}
           sx={{
+            color: backgroundEdit.readableForegroundColor,
+            backgroundColor: alpha(backgroundEdit.readableForegroundColor, 0.05),
             display: !props.shades || !props?.shades?.length ? "none" : undefined,
             position: "absolute",
             bottom: 0,
             left: 0,
-            color: colorEdit.readableColor,
-            backgroundColor: alpha(colorEdit.readableColor, 0.05),
           }}
         >
           <ViewCompact fontSize="small" sx={{ mb: "2px" }} />
@@ -122,19 +117,16 @@ export default function ColorOptionGroupItem(props: ColorOptionGroupItemProps) {
           }}
         >
           <Sketch
-            color={
-              (foregroundEdit.tempColor ||
-                (foregroundEdit.value as string)) as string
-            }
+            color={foregroundEdit.color}
             onChange={foregroundEdit.onColorChange}
             disableAlpha={false}
           />
         </Popover>
 
         <Popover
-          open={colorEdit.open}
-          anchorEl={colorEdit.anchorEl}
-          onClose={colorEdit.closePicker}
+          open={backgroundEdit.open}
+          anchorEl={backgroundEdit.anchorEl}
+          onClose={backgroundEdit.closePicker}
           anchorOrigin={{
             vertical: "bottom",
             horizontal: "left",
@@ -145,8 +137,8 @@ export default function ColorOptionGroupItem(props: ColorOptionGroupItemProps) {
           }}
         >
           <Sketch
-            color={(colorEdit.tempColor || (colorEdit.value as string)) as string}
-            onChange={colorEdit.onColorChange}
+            color={backgroundEdit.color}
+            onChange={backgroundEdit.onColorChange}
             disableAlpha={false}
           />
         </Popover>
