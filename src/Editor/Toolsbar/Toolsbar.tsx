@@ -1,12 +1,12 @@
-import TemplateLoaderMobileSelectMenu from "../Design/Loader/TemplateLoaderMobileSelectMenu";
 import ExportCommand from "../Design/Edit/ExportCommand";
 import ModificationHistoryButtons from "../Design/Edit/ModificationHistoryButtons";
 import DesignMobileActionMenu from "./DesignMobileActionMenu";
 import DesignActionMenu from "./DesignActionMenu";
 import CurrentDesignContext from "../Design/Edit/Context";
-import { AppBar, Stack, Divider, Toolbar, type SxProps } from "@mui/material";
 import PropertiesPanelHeader from "../Properties/PropertiesPanelHeader";
 import StoreCurrentButton from "../Design/Storage/StoreCurrentButton";
+import LoaderDialogOpenButton from "../Design/Loader/LoaderDialogOpenButton";
+import { AppBar, Stack, Divider, Toolbar, type SxProps, Box } from "@mui/material";
 
 export default function EditorToolsbar() {
   return (
@@ -92,10 +92,21 @@ function MobileToolbarContent() {
       display={{ md: "none" }}
       direction="row"
       alignItems={"center"}
-      paddingInline={{ sm: "12px" }}
+      columnGap={1.5}
+      paddingInline={{ xs: ".125rem", sm: "12px" }}
     >
-      <TemplateLoaderMobileSelectMenu />
-      <DesignMobileActionMenu />
+      <CurrentDesignContext sx={{ minWidth: 0, maxWidth: "var(--explorer-panel-width)" }} />
+
+      <Box
+        display={"inherit"}
+        alignItems={"inherit"}
+        justifyContent={"inherit"}
+        columnGap={"inherit"}
+        marginInlineStart={"auto"}
+      >
+        <LoaderDialogOpenButton />
+        <DesignMobileActionMenu />
+      </Box>
     </Stack>
   );
 }

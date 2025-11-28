@@ -11,13 +11,14 @@ import {
   TextField,
   Snackbar,
   Alert,
+  type SxProps,
 } from "@mui/material";
 import React from "react";
 import useHasStoredAllModifications from "./useHasStoredAllModifications";
 import { useEdit } from "./useEdit";
 import useStorage from "../Storage/useStorage";
 
-function Context() {
+function Context({ sx }: { sx?: SxProps }) {
   const title = useEdit((s) => s.title);
   const setTitle = useEdit((s) => s.setTitle);
   const storageStatus = useStorage((s) => s.storageProgress);
@@ -81,6 +82,7 @@ function Context() {
           alignItems: "center",
           justifyContent: "space-between",
           columnGap: 1,
+          ...sx,
         }}
         endIcon={<MoreVertOutlined fontSize="small" />}
       >

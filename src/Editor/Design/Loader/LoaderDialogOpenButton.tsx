@@ -1,11 +1,12 @@
 import * as React from "react";
 import Button from "@mui/material/Button";
 import CreationDialog from "./LoaderDialog";
-import { Popover } from "@mui/material";
+import { Popover, useMediaQuery } from "@mui/material";
 import { Add } from "@mui/icons-material";
 
 export default function LoaderDialogOpenButton() {
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
+  const isDesktop = useMediaQuery("(min-width:600px)");
 
   const handleClickOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget as HTMLElement);
@@ -22,10 +23,11 @@ export default function LoaderDialogOpenButton() {
         onClick={handleClickOpen}
         sx={{
           columnGap: 0.5,
+          minWidth: 0,
         }}
       >
         <Add sx={{ fontSize: "1rem !important" }} />
-        Create
+        {isDesktop && "Create"}
       </Button>
 
       <Popover
