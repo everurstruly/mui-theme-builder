@@ -93,16 +93,19 @@ function MobileToolbarContent() {
       direction="row"
       alignItems={"center"}
       columnGap={1.5}
-      paddingInline={{ xs: ".125rem", sm: "12px" }}
+      paddingInline={{ sm: "12px" }}
     >
-      <CurrentDesignContext sx={{ minWidth: 0, maxWidth: "var(--explorer-panel-width)" }} />
+      <CurrentDesignContext
+        sx={{ minWidth: 0, maxWidth: "var(--explorer-panel-width)" }}
+      />
 
       <Box
         display={"inherit"}
         alignItems={"inherit"}
         justifyContent={"inherit"}
-        columnGap={"inherit"}
+        columnGap={{ xs: 1, sm: 3 }}
         marginInlineStart={"auto"}
+        px={1}
       >
         <LoaderDialogOpenButton />
         <DesignMobileActionMenu />

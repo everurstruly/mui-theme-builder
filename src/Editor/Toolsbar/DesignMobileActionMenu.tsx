@@ -4,14 +4,13 @@ import ChangeHistoryActions from "../Design/Edit/ModificationHistoryButtons";
 import MenuItem from "@mui/material/MenuItem";
 import {
   ContentCopy,
+  DriveFileRenameOutline,
   RedoOutlined,
-  SaveAsRounded,
   SaveOutlined,
   UndoOutlined,
 } from "@mui/icons-material";
 import {
   Divider,
-  IconButton,
   ListItemIcon,
   ListItemText,
   Typography,
@@ -19,6 +18,7 @@ import {
   useTheme,
   Menu,
   Stack,
+  Button,
 } from "@mui/material";
 
 export default function DesignMobileActionMenu() {
@@ -55,16 +55,16 @@ export default function DesignMobileActionMenu() {
   // Popover menu
   return (
     <>
-      <IconButton
+      <Button
         id="basic-button"
         aria-controls={"basic-menu"}
         aria-haspopup="true"
         aria-expanded={isPopoverMenuOpened ? "true" : undefined}
         onClick={handleClickMenuItem}
-        sx={{ minWidth: 0 }}
+        sx={{ minWidth: 0, columnGap: 0.5 }}
       >
-        <SaveAsRounded />
-      </IconButton>
+        <DriveFileRenameOutline sx={{ fontSize: "1rem !important" }} />
+      </Button>
 
       <Menu
         anchorEl={anchorEl}

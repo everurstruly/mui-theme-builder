@@ -6,7 +6,7 @@ import { Add } from "@mui/icons-material";
 
 export default function LoaderDialogOpenButton() {
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
-  const isDesktop = useMediaQuery("(min-width:600px)");
+  const isDesktop = useMediaQuery("(min-width:400px)");
 
   const handleClickOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget as HTMLElement);
