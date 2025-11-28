@@ -4,21 +4,22 @@ import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import IconButton from "@mui/material/IconButton";
+import FlashStateContent from "../../../lib/FlashStateButton";
+import useCreatedThemeOption from "./useCreatedThemeOption";
 import { Close, ContentCopyOutlined } from "@mui/icons-material";
 import { Stack, Box, Typography, Paper, Tabs, Tab } from "@mui/material";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
-import FlashStateContent from "../../../lib/FlashStateButton";
-import useCreatedThemeOption from "./useCreatedThemeOption";
 
 type ExportType = "themeOptions" | "themeObject";
 type ExportFormat = "js" | "ts" | "json";
 
 export default function ExportCommand() {
+  const themeOptions = useCreatedThemeOption();
+
   const [open, setOpen] = React.useState(false);
   const [exportType, setExportType] = React.useState<ExportType>("themeOptions");
   const [exportFormat] = React.useState<ExportFormat>("ts");
-  const themeOptions = useCreatedThemeOption();
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -189,6 +190,7 @@ export default function ExportCommand() {
               }}
             >
               <Tabs
+                value="themeOptions"
                 sx={{
                   px: 2,
                   marginInlineEnd: "auto",

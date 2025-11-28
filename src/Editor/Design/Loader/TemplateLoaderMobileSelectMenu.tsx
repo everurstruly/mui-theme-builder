@@ -5,11 +5,14 @@ import type { SelectChangeEvent } from "@mui/material/Select";
 import useTemplateLoader from "./useTemplateLoader";
 
 export default function TemplateLoaderMobileSelectMenu() {
-  const { templates, selectedTemplateId, selectTemplate } = useTemplateLoader();
+  const {
+    templates,
+    selectedTemplateId = "__DEFAULT__",
+    selectTemplate,
+  } = useTemplateLoader();
 
   const handleChange = (event: SelectChangeEvent<string>) => {
     const themeId = event.target.value as string;
-    // Apply immediately, discarding unsaved changes — caller can change opts if needed
     selectTemplate(themeId, { keepUnsavedModifications: false });
   };
 
@@ -20,8 +23,8 @@ export default function TemplateLoaderMobileSelectMenu() {
       color="primary"
     >
       <Select
-        labelId="theme-select-label"
         id="theme-select"
+        labelId="theme-select-label"
         value={selectedTemplateId}
         onChange={handleChange}
         sx={{
@@ -36,6 +39,7 @@ export default function TemplateLoaderMobileSelectMenu() {
           },
         }}
       >
+        <MenuItem value="__DEFAULT__">Default</MenuItem>
         {templates.map((template) => (
           <MenuItem key={template.id} value={template.id}>
             {template.label}
@@ -45,4 +49,3 @@ export default function TemplateLoaderMobileSelectMenu() {
     </FormControl>
   );
 }
-
