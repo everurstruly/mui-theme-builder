@@ -22,10 +22,16 @@
 
 import type { StateCreator } from "zustand";
 import type { ThemeDsl } from "../../compiler";
+import { serializeThemeOptions } from "../../compiler";
+import templatesRegistry from "../../../Templates/registry";
+
+// Helper: store-owned default base theme code
+function getDefaultBaseThemeCode(): string {
+  return serializeThemeOptions(templatesRegistry.material.themeOptions);
+}
 
 // Helper: compute a deterministic content hash (JSON string) for dirty checking
 // Only includes the serializable parts relevant to storage/dirty checks.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function computeContentHash(state: any): string {
   const content = {
     baseTheme: state.baseThemeCode,
@@ -185,13 +191,6 @@ function createInitialColorSchemeEdits(): ColorSchemeEdits {
   return { visualToolEdits: {} };
 }
 
-function createInitialMetadata(): ThemeMetadata {
-  return {
-    createdAtTimestamp: Date.now(),
-    lastModifiedTimestamp: Date.now(),
-  };
-}
-
 // ===== Slice Creator =====
 
 export const createCurrentSlice: StateCreator<
@@ -201,10 +200,14 @@ export const createCurrentSlice: StateCreator<
   DesignEditCurrentSlice
 > = (set, get) => ({
   // (Content hash helper moved to top-level `computeContentHash`)
-  // Initial state
-  title: "MUI Default",
-  baseThemeCode: "",
-  baseThemeMetadata: createInitialMetadata(),
+  // Initial state - store supplies its own default baseline
+  title: templatesRegistry.material.label,
+  baseThemeCode: getDefaultBaseThemeCode(),
+  baseThemeMetadata: {
+    sourceTemplateId: "material",
+    createdAtTimestamp: Date.now(),
+    lastModifiedTimestamp: Date.now(),
+  },
   colorSchemeIndependentVisualToolEdits: {},
   colorSchemes: {
     light: createInitialColorSchemeEdits(),
@@ -216,7 +219,7 @@ export const createCurrentSlice: StateCreator<
   codeOverridesError: null,
   // Initial content hash computed from the initial state fields used in hashing
   contentHash: computeContentHash({
-    baseThemeCode: "",
+    baseThemeCode: getDefaultBaseThemeCode(),
     colorSchemeIndependentVisualToolEdits: {},
     colorSchemes: {
       light: { visualToolEdits: {} },
@@ -225,7 +228,7 @@ export const createCurrentSlice: StateCreator<
     codeOverridesFlattened: {},
   }),
   lastStoredContentHash: computeContentHash({
-    baseThemeCode: "",
+    baseThemeCode: getDefaultBaseThemeCode(),
     colorSchemeIndependentVisualToolEdits: {},
     colorSchemes: {
       light: { visualToolEdits: {} },
@@ -505,17 +508,20 @@ export const createCurrentSlice: StateCreator<
   },
 
   loadNew: (themeCodeOrDsl, metadata) => {
+    // If caller doesn't provide a theme, store will use its internal default.
     const codeString = themeCodeOrDsl
       ? typeof themeCodeOrDsl === "string"
         ? themeCodeOrDsl
         : JSON.stringify(themeCodeOrDsl)
-      : "";
+      : getDefaultBaseThemeCode();
+
     set((state) => {
       const newState = {
-        title: metadata?.title || "MUI Default",
+        title: metadata?.title || templatesRegistry.material.label,
         baseThemeCode: codeString,
         baseThemeMetadata: {
-          sourceTemplateId: metadata?.sourceTemplateId,
+          sourceTemplateId:
+            metadata?.sourceTemplateId ?? (themeCodeOrDsl ? undefined : "material"),
           createdAtTimestamp: Date.now(),
           lastModifiedTimestamp: Date.now(),
         },

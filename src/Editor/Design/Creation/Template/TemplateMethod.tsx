@@ -46,8 +46,11 @@ export default function TemplateMethod({ onClose }: { onClose: () => void }) {
   };
 
   const handleWithoutTemplate = () => {
-    requestSelectBlank();
-    onClose();
+    const applied = requestSelectBlank();
+    // Only close the creation UI if the store applied the blank design
+    // immediately. If confirmation is pending (unsaved changes), keep the
+    // creation dialog open so the user can confirm.
+    if (applied) onClose();
   };
 
   return (

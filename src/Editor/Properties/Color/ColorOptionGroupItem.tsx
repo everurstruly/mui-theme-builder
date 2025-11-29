@@ -21,6 +21,25 @@ export default function ColorOptionGroupItem(props: ColorOptionGroupItemProps) {
   const foregroundEdit = useColorPickerEdit(props.foreground || "");
   const canResetValue = backgroundEdit.canReset || foregroundEdit.canReset;
 
+  // Defensive/coercion guards: ensure values passed into MUI `sx` and color
+  // props are the primitive types expected (mostly `string`). Some edits
+  // can temporarily hold unexpected shapes (arrays, `true`, objects) which
+  // cause TypeScript errors and runtime style problems.
+  const safeBackgroundColor =
+    typeof backgroundEdit.color === "string" ? backgroundEdit.color : undefined;
+  const safeForegroundColor =
+    typeof foregroundEdit.color === "string" ? foregroundEdit.color : undefined;
+  const safeForegroundReadable =
+    typeof foregroundEdit.readableForegroundColor === "string"
+      ? foregroundEdit.readableForegroundColor
+      : undefined;
+  const safeBackgroundReadable =
+    typeof backgroundEdit.readableForegroundColor === "string"
+      ? backgroundEdit.readableForegroundColor
+      : undefined;
+  const safeBorderColor =
+    typeof backgroundEdit.borderColor === "string" ? backgroundEdit.borderColor : undefined;
+
   function resetValue() {
     backgroundEdit.reset();
     foregroundEdit.reset();
@@ -36,8 +55,8 @@ export default function ColorOptionGroupItem(props: ColorOptionGroupItemProps) {
           height: 114,
           borderRadius: 4,
           border: 4,
-          borderColor: backgroundEdit.borderColor,
-          backgroundColor: backgroundEdit.color,
+          borderColor: safeBorderColor,
+          backgroundColor: safeBackgroundColor,
         }}
       >
         <Box
@@ -45,11 +64,13 @@ export default function ColorOptionGroupItem(props: ColorOptionGroupItemProps) {
           onClick={foregroundEdit.openPicker}
           component={Button}
           sx={{
-            display: props.foreground ?? "none",
+            display: props.foreground ? undefined : "none",
             cursor: foregroundEdit.hasDelegatedControl ? "not-allowed" : "pointer",
             opacity: foregroundEdit.hasDelegatedControl ? 0.5 : 1,
-            color: foregroundEdit.color,
-            backgroundColor: alpha(foregroundEdit.readableForegroundColor, 0.05),
+            color: safeForegroundColor,
+            backgroundColor: safeForegroundReadable
+              ? alpha(safeForegroundReadable, 0.05)
+              : undefined,
             position: "absolute",
             top: 0,
             left: 0,
@@ -71,8 +92,10 @@ export default function ColorOptionGroupItem(props: ColorOptionGroupItemProps) {
           sx={{
             cursor: backgroundEdit.hasDelegatedControl ? "not-allowed" : "pointer",
             opacity: backgroundEdit.hasDelegatedControl ? 0.5 : 1,
-            color: backgroundEdit.readableForegroundColor,
-            backgroundColor: alpha(backgroundEdit.readableForegroundColor, 0.05),
+            color: safeBackgroundReadable,
+            backgroundColor: safeBackgroundReadable
+              ? alpha(safeBackgroundReadable, 0.05)
+              : undefined,
             position: "absolute",
             minWidth: "auto",
             alignItems: "flex-end",
@@ -89,8 +112,10 @@ export default function ColorOptionGroupItem(props: ColorOptionGroupItemProps) {
         <Button
           onClick={() => openShadesDrawer(props.shades ?? [], undefined, props.name)}
           sx={{
-            color: backgroundEdit.readableForegroundColor,
-            backgroundColor: alpha(backgroundEdit.readableForegroundColor, 0.05),
+            color: safeBackgroundReadable,
+            backgroundColor: safeBackgroundReadable
+              ? alpha(safeBackgroundReadable, 0.05)
+              : undefined,
             display: !props.shades || !props?.shades?.length ? "none" : undefined,
             position: "absolute",
             bottom: 0,
@@ -105,7 +130,7 @@ export default function ColorOptionGroupItem(props: ColorOptionGroupItemProps) {
           open={foregroundEdit.open}
           anchorEl={foregroundEdit.anchorEl}
           onClose={foregroundEdit.closePicker}
-          sx={{ display: props.foreground ?? "none" }}
+          sx={{ display: props.foreground ? undefined : "none" }}
           anchorOrigin={{
             vertical: "bottom",
             horizontal: "left",
@@ -116,7 +141,7 @@ export default function ColorOptionGroupItem(props: ColorOptionGroupItemProps) {
           }}
         >
           <Sketch
-            color={foregroundEdit.color}
+            color={foregroundEdit.color as any}
             onChange={foregroundEdit.onColorChange}
             disableAlpha={false}
           />
@@ -136,7 +161,7 @@ export default function ColorOptionGroupItem(props: ColorOptionGroupItemProps) {
           }}
         >
           <Sketch
-            color={backgroundEdit.color}
+            color={backgroundEdit.color as any}
             onChange={backgroundEdit.onColorChange}
             disableAlpha={false}
           />

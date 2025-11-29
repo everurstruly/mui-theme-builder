@@ -60,7 +60,8 @@ function Context({ sx }: { sx?: SxProps }) {
   };
 
   const handleDeleteConfirm = () => {
-    loadNew("{}", {});
+    // Let the store reset to its own default baseline
+    loadNew();
     setDeleteConfirmOpen(false);
     setSnack({ severity: "info", message: "Deleted current design" });
   };

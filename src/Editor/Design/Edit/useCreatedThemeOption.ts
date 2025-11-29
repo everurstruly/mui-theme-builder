@@ -1,13 +1,9 @@
 import { type ThemeOptions } from "@mui/material";
 import { useMemo } from "react";
 import useEdit from "./useEdit";
+import { useThemeCompilerCache } from "./useThemeCompilerCache";
 
-import {
-  createThemeOptionsFromEdits,
-  deepMerge,
-  parseThemeCode,
-  transformDslToThemeOptions,
-} from "../compiler";
+import { deepMerge } from "../compiler";
 
 /**
  * Internal hook that resolves ThemeOptions from all layers.
@@ -20,43 +16,14 @@ import {
 export default function useCreatedThemeOption(
   colorScheme?: "light" | "dark"
 ): ThemeOptions {
-  const activeColorScheme = useEdit((s) => s.activeColorScheme);
-  const baseThemeCode = useEdit((s) => s.baseThemeCode);
-  const baseVisualToolEdits = useEdit(
-    (s) => s.colorSchemeIndependentVisualToolEdits
-  );
-  const codeOverridesDsl = useEdit((s) => s.codeOverridesDsl);
-  const lightModeVisual = useEdit((s) => s.colorSchemes.light?.visualToolEdits);
-  const darkModeVisual = useEdit((s) => s.colorSchemes.dark?.visualToolEdits);
+  const compiledTheme = useThemeCompilerCache();
 
+  const activeColorScheme = useEdit((s) => s.activeColorScheme);
   const targetScheme = colorScheme ?? activeColorScheme;
 
   return useMemo(() => {
-    const baseTheme = parseThemeCode(baseThemeCode) ?? {};
-    const baseThemeOption = extractThemeOptionsForScheme(baseTheme, targetScheme);
-    const designerToolEdits =
-      targetScheme === "light" ? lightModeVisual : darkModeVisual ?? {};
-    const codeOverrides = transformDslToThemeOptions(codeOverridesDsl, {
-      template: baseThemeOption,
-      colorScheme: targetScheme,
-      spacingFactor: 8, // TODO: get from template if available
-    });
-
-    return createThemeOptionsFromEdits({
-      template: baseThemeOption,
-      baseVisualToolEdits,
-      colorSchemeVisualToolEdits: designerToolEdits,
-      codeOverrides: codeOverrides,
-      colorScheme: targetScheme,
-    });
-  }, [
-    baseThemeCode,
-    baseVisualToolEdits,
-    codeOverridesDsl,
-    lightModeVisual,
-    darkModeVisual,
-    targetScheme,
-  ]);
+    return extractThemeOptionsForScheme(compiledTheme, targetScheme);
+  }, [compiledTheme, targetScheme]);
 }
 
 /**

@@ -38,7 +38,7 @@ export default function CreationIntentConfirmationDialog(
       }}
     >
       <DialogTitle id="load-confirmation-title" sx={{ textAlign: "center", py: 4 }}>
-        <Typography variant="h5">Wait! You've Unsaved Changes</Typography>
+        <Typography variant="h5" component="div">Wait! You've Unsaved Changes</Typography>
         <Typography
           id="load-confirmation-description"
           variant="body2"

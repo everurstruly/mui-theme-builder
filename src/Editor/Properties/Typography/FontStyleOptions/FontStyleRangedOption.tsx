@@ -13,12 +13,22 @@ export type FontStyleRangedOptionProps = {
 const ratioToPxMultiplier = 20;
 
 export default function FontStyleRangedOption(props: FontStyleRangedOptionProps) {
-  const { resolvedValue, hasCodeOverride, setValue, reset, canReset } =
-    useDesignerToolEdit(props.path);
+  const {
+    value: effectiveValue,
+    resolvedValue,
+    hasCodeOverride,
+    setValue,
+    reset,
+    canReset,
+  } = useDesignerToolEdit(props.path);
 
-  const [inputHtmlRatioValue, setInputHtmlRatioValue] = useState(resolvedValue);
+  // Initialize the input from the effective value, falling back to the
+  // resolved/template value and then a sensible default of "1".
+  const initialInput = String(effectiveValue ?? resolvedValue ?? "1");
+  const [inputHtmlRatioValue, setInputHtmlRatioValue] = useState(initialInput);
+
   const sliderValue = Math.round(
-    parseFloat(inputHtmlRatioValue) * ratioToPxMultiplier
+    parseFloat(inputHtmlRatioValue || "1") * ratioToPxMultiplier
   );
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,7 +38,9 @@ export default function FontStyleRangedOption(props: FontStyleRangedOptionProps)
       return;
     }
 
+    // Update transient UI state and write immediately for live preview
     setInputHtmlRatioValue(value);
+    setValue(value);
   };
 
   function handleInputBlur() {
@@ -40,7 +52,11 @@ export default function FontStyleRangedOption(props: FontStyleRangedOptionProps)
   }
 
   const handleSliderChange = (_: Event, newValue: number | number[]) => {
-    setInputHtmlRatioValue(calcInputValueFromSliderValue(newValue));
+    const val = calcInputValueFromSliderValue(newValue);
+    const valStr = String(val);
+    setInputHtmlRatioValue(valStr);
+    // live update for direct preview
+    setValue(val);
   };
 
   const handleSliderCommit = (_: any, newValue: number | number[]) => {

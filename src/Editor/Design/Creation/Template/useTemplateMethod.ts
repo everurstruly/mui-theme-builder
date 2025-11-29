@@ -50,7 +50,8 @@ export default function useTemplateMethod(options?: UseTemplateSelectionOptions)
   );
 
   const loadBlankDesign = useCallback(() => {
-    loadNew("{}", { sourceTemplateId: "", title: "Untitled Design" });
+    // Let the store supply its own default baseline when no theme is provided.
+    loadNew();
   }, [loadNew]);
 
   // `templateSwitchIntent` represents the user's intent to switch templates
@@ -136,14 +137,17 @@ export default function useTemplateMethod(options?: UseTemplateSelectionOptions)
   );
 
   // Request selecting a blank design. Mirrors requestSelectTemplate behaviour.
-  const requestSelectBlank = useCallback(() => {
+  // Returns true when the blank design was applied immediately; false when a
+  // confirmation is required (pending).
+  const requestSelectBlank = useCallback((): boolean => {
     if (hasUnsavedModifications) {
       setTemplateSwitchIntent({ templateId: BLANK_PENDING_ID });
       setConfirmationDecision(null);
-      return;
+      return false;
     }
 
     applyBlankNow();
+    return true;
   }, [hasUnsavedModifications, applyBlankNow]);
 
   // Confirm the pending selection. keepUnsavedModifications determines whether to

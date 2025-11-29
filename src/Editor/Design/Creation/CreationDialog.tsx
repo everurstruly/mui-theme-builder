@@ -31,8 +31,8 @@ export default function CreationDialog({ onClose }: { onClose: () => void }) {
         }}
       >
         <Tabs
-          // value={mode}
-          onChange={(_, value) => setMode(value)}
+          value={mode}
+          onChange={(_, value) => setMode(value as ModeValue)}
           variant="fullWidth"
           aria-label="New design creation method"
           sx={{

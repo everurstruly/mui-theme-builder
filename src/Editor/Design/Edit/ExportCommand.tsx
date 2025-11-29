@@ -190,7 +190,7 @@ export default function ExportCommand() {
               }}
             >
               <Tabs
-                value="themeOptions"
+                value={exportType}
                 sx={{
                   px: 2,
                   marginInlineEnd: "auto",
