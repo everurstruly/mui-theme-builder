@@ -23,6 +23,21 @@
 import type { StateCreator } from "zustand";
 import type { ThemeDsl } from "../../compiler";
 
+// Helper: compute a deterministic content hash (JSON string) for dirty checking
+// Only includes the serializable parts relevant to storage/dirty checks.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function computeContentHash(state: any): string {
+  const content = {
+    baseTheme: state.baseThemeCode,
+    visualEdits: {
+      global: state.colorSchemeIndependentVisualToolEdits,
+      schemes: state.colorSchemes,
+    },
+    codeOverrides: state.codeOverridesFlattened,
+  };
+  return JSON.stringify(content);
+}
+
 // ===== Types =====
 
 export type SerializableValue =
@@ -87,11 +102,14 @@ export interface ThemeCurrentState {
   /** Code override error, if any */
   codeOverridesError: string | null;
 
-  /** Version counter - incremented on any domain change */
-  modificationVersion: number;
+  /** Content hash of the serializable parts of the design */
+  contentHash: string;
 
-  /** Last saved version - for dirty checking */
-  lastStoredModificationVersion: number;
+  /** Last stored content hash - for dirty checking */
+  lastStoredContentHash: string;
+
+  /** Per-path modification timestamps (ms since epoch) */
+  modificationTimestamps: Record<string, number>;
 }
 
 /**
@@ -182,6 +200,7 @@ export const createCurrentSlice: StateCreator<
   [],
   DesignEditCurrentSlice
 > = (set, get) => ({
+  // (Content hash helper moved to top-level `computeContentHash`)
   // Initial state
   title: "MUI Default",
   baseThemeCode: "",
@@ -195,14 +214,40 @@ export const createCurrentSlice: StateCreator<
   codeOverridesDsl: {},
   codeOverridesFlattened: {},
   codeOverridesError: null,
-  modificationVersion: 0,
-  lastStoredModificationVersion: 0,
+  // Initial content hash computed from the initial state fields used in hashing
+  contentHash: computeContentHash({
+    baseThemeCode: "",
+    colorSchemeIndependentVisualToolEdits: {},
+    colorSchemes: {
+      light: { visualToolEdits: {} },
+      dark: { visualToolEdits: {} },
+    },
+    codeOverridesFlattened: {},
+  }),
+  lastStoredContentHash: computeContentHash({
+    baseThemeCode: "",
+    colorSchemeIndependentVisualToolEdits: {},
+    colorSchemes: {
+      light: { visualToolEdits: {} },
+      dark: { visualToolEdits: {} },
+    },
+    codeOverridesFlattened: {},
+  }),
+  modificationTimestamps: {},
 
   // Actions
   setTitle: (title: string) => {
-    set({
-      title,
-      modificationVersion: get().modificationVersion + 1,
+    set((state) => {
+      const newState = { title };
+      const contentHash = computeContentHash({ ...state, ...newState });
+      return {
+        ...newState,
+        contentHash,
+        modificationTimestamps: {
+          ...state.modificationTimestamps,
+          title: Date.now(),
+        },
+      };
     });
   },
 
@@ -212,51 +257,99 @@ export const createCurrentSlice: StateCreator<
         ? themeCodeOrDsl
         : JSON.stringify(themeCodeOrDsl);
 
-    set((state) => ({
-      baseThemeCode: codeString,
-      baseThemeMetadata: {
-        ...state.baseThemeMetadata,
-        ...metadata,
-        lastModifiedTimestamp: Date.now(),
-      },
-      title: metadata?.title ?? state.title,
-      modificationVersion: state.modificationVersion + 1,
-    }));
+    set((state) => {
+      const newState = {
+        baseThemeCode: codeString,
+        baseThemeMetadata: {
+          ...state.baseThemeMetadata,
+          ...metadata,
+          lastModifiedTimestamp: Date.now(),
+        },
+        title: metadata?.title ?? state.title,
+      };
+
+      const contentHash = computeContentHash({ ...state, ...newState });
+
+      return {
+        ...newState,
+        contentHash,
+        modificationTimestamps: {
+          ...state.modificationTimestamps,
+          baseThemeCode: Date.now(),
+        },
+      };
+    });
   },
 
   addGlobalVisualEdit: (path, value) => {
-    set((state) => ({
-      colorSchemeIndependentVisualToolEdits: {
+    set((state) => {
+      const current = state.colorSchemeIndependentVisualToolEdits[path];
+      if (current === value) return state; // Skip if no change
+
+      const newEdits = {
         ...state.colorSchemeIndependentVisualToolEdits,
         [path]: value,
-      },
-      modificationVersion: state.modificationVersion + 1,
-    }));
+      };
+
+      const newState = { colorSchemeIndependentVisualToolEdits: newEdits };
+      const contentHash = computeContentHash({ ...state, ...newState });
+
+      return {
+        ...newState,
+        contentHash,
+        modificationTimestamps: {
+          ...state.modificationTimestamps,
+          ["global:" + path]: Date.now(),
+        },
+      };
+    });
   },
 
   addSchemeVisualEdit: (scheme, path, value) => {
-    set((state) => ({
-      colorSchemes: {
+    set((state) => {
+      const schemeObj = state.colorSchemes[scheme] || { visualToolEdits: {} };
+      const current = schemeObj.visualToolEdits[path];
+      if (current === value) return state;
+
+      const newSchemes = {
         ...state.colorSchemes,
         [scheme]: {
-          ...state.colorSchemes[scheme],
+          ...schemeObj,
           visualToolEdits: {
-            ...(state.colorSchemes[scheme]?.visualToolEdits || {}),
+            ...(schemeObj.visualToolEdits || {}),
             [path]: value,
           },
         },
-      },
-      modificationVersion: state.modificationVersion + 1,
-    }));
+      };
+
+      const newState = { colorSchemes: newSchemes };
+      const contentHash = computeContentHash({ ...state, ...newState });
+
+      return {
+        colorSchemes: newSchemes,
+        contentHash,
+        modificationTimestamps: {
+          ...state.modificationTimestamps,
+          ["scheme:" + scheme + ":" + path]: Date.now(),
+        },
+      };
+    });
   },
 
   removeGlobalVisualEdit: (path) => {
     set((state) => {
       const newEdits = { ...state.colorSchemeIndependentVisualToolEdits };
+      if (!(path in newEdits)) return state;
       delete newEdits[path];
+      const newState = { colorSchemeIndependentVisualToolEdits: newEdits };
+      const contentHash = computeContentHash({ ...state, ...newState });
       return {
         colorSchemeIndependentVisualToolEdits: newEdits,
-        modificationVersion: state.modificationVersion + 1,
+        contentHash,
+        modificationTimestamps: {
+          ...state.modificationTimestamps,
+          ["global:" + path]: Date.now(),
+        },
       };
     });
   },
@@ -266,17 +359,29 @@ export const createCurrentSlice: StateCreator<
       const schemeEdits = state.colorSchemes[scheme];
       if (!schemeEdits) return state;
 
+      if (!(path in schemeEdits.visualToolEdits)) return state;
+
       const newEdits = { ...schemeEdits.visualToolEdits };
       delete newEdits[path];
-      return {
-        colorSchemes: {
-          ...state.colorSchemes,
-          [scheme]: {
-            ...schemeEdits,
-            visualToolEdits: newEdits,
-          },
+
+      const newSchemes = {
+        ...state.colorSchemes,
+        [scheme]: {
+          ...schemeEdits,
+          visualToolEdits: newEdits,
         },
-        modificationVersion: state.modificationVersion + 1,
+      };
+
+      const newState = { colorSchemes: newSchemes };
+      const contentHash = computeContentHash({ ...state, ...newState });
+
+      return {
+        colorSchemes: newSchemes,
+        contentHash,
+        modificationTimestamps: {
+          ...state.modificationTimestamps,
+          ["scheme:" + scheme + ":" + path]: Date.now(),
+        },
       };
     });
   },
@@ -301,51 +406,102 @@ export const createCurrentSlice: StateCreator<
 
   clearVisualEdits: (scope, scheme) => {
     if (scope === "global") {
-      set((state) => ({
-        colorSchemeIndependentVisualToolEdits: {},
-        modificationVersion: state.modificationVersion + 1,
-      }));
+      set((state) => {
+        const newState = { colorSchemeIndependentVisualToolEdits: {} };
+        const contentHash = computeContentHash({ ...state, ...newState });
+        return {
+          colorSchemeIndependentVisualToolEdits: {},
+          contentHash,
+          modificationTimestamps: {
+            ...state.modificationTimestamps,
+            ["visual:global:clear"]: Date.now(),
+          },
+        };
+      });
     } else if (scope === "current-scheme") {
-      set((state) => ({
-        colorSchemes: {
+      set((state) => {
+        const newSchemes = {
           ...state.colorSchemes,
           [scheme]: {
             ...state.colorSchemes[scheme],
             visualToolEdits: {},
           },
-        },
-        modificationVersion: state.modificationVersion + 1,
-      }));
+        };
+        const newState = { colorSchemes: newSchemes };
+        const contentHash = computeContentHash({ ...state, ...newState });
+        return {
+          colorSchemes: newSchemes,
+          contentHash,
+          modificationTimestamps: {
+            ...state.modificationTimestamps,
+            ["visual:scheme:clear:" + scheme]: Date.now(),
+          },
+        };
+      });
     } else {
-      set((state) => ({
-        colorSchemeIndependentVisualToolEdits: {},
-        colorSchemes: {
-          light: createInitialColorSchemeEdits(),
-          dark: createInitialColorSchemeEdits(),
-        },
-        modificationVersion: state.modificationVersion + 1,
-      }));
+      set((state) => {
+        const newState = {
+          colorSchemeIndependentVisualToolEdits: {},
+          colorSchemes: {
+            light: createInitialColorSchemeEdits(),
+            dark: createInitialColorSchemeEdits(),
+          },
+        };
+        const contentHash = computeContentHash({ ...state, ...newState });
+        return {
+          colorSchemeIndependentVisualToolEdits: {},
+          colorSchemes: {
+            light: createInitialColorSchemeEdits(),
+            dark: createInitialColorSchemeEdits(),
+          },
+          contentHash,
+          modificationTimestamps: {
+            ...state.modificationTimestamps,
+            ["visual:all:clear"]: Date.now(),
+          },
+        };
+      });
     }
   },
 
   setCodeOverrides: (source, dsl, flattened, error) => {
-    set((state) => ({
-      codeOverridesSource: source,
-      codeOverridesDsl: dsl,
-      codeOverridesFlattened: flattened,
-      codeOverridesError: error,
-      modificationVersion: state.modificationVersion + 1,
-    }));
+    set((state) => {
+      const newState = {
+        codeOverridesSource: source,
+        codeOverridesDsl: dsl,
+        codeOverridesFlattened: flattened,
+        codeOverridesError: error,
+      };
+      const contentHash = computeContentHash({ ...state, ...newState });
+      return {
+        ...newState,
+        contentHash,
+        modificationTimestamps: {
+          ...state.modificationTimestamps,
+          codeOverrides: Date.now(),
+        },
+      };
+    });
   },
 
   clearCodeOverrides: () => {
-    set((state) => ({
-      codeOverridesSource: "",
-      codeOverridesDsl: {},
-      codeOverridesFlattened: {},
-      codeOverridesError: null,
-      modificationVersion: state.modificationVersion + 1,
-    }));
+    set((state) => {
+      const newState = {
+        codeOverridesSource: "",
+        codeOverridesDsl: {},
+        codeOverridesFlattened: {},
+        codeOverridesError: null,
+      };
+      const contentHash = computeContentHash({ ...state, ...newState });
+      return {
+        ...newState,
+        contentHash,
+        modificationTimestamps: {
+          ...state.modificationTimestamps,
+          ["codeOverrides:clear"]: Date.now(),
+        },
+      };
+    });
   },
 
   loadNew: (themeCodeOrDsl, metadata) => {
@@ -354,47 +510,68 @@ export const createCurrentSlice: StateCreator<
         ? themeCodeOrDsl
         : JSON.stringify(themeCodeOrDsl)
       : "";
+    set((state) => {
+      const newState = {
+        title: metadata?.title || "MUI Default",
+        baseThemeCode: codeString,
+        baseThemeMetadata: {
+          sourceTemplateId: metadata?.sourceTemplateId,
+          createdAtTimestamp: Date.now(),
+          lastModifiedTimestamp: Date.now(),
+        },
+        colorSchemeIndependentVisualToolEdits: {},
+        colorSchemes: {
+          light: createInitialColorSchemeEdits(),
+          dark: createInitialColorSchemeEdits(),
+        },
+        codeOverridesSource: "",
+        codeOverridesDsl: {},
+        codeOverridesFlattened: {},
+        codeOverridesError: null,
+      } as any;
 
-    set({
-      title: metadata?.title || "MUI Default",
-      baseThemeCode: codeString,
-      baseThemeMetadata: {
-        sourceTemplateId: metadata?.sourceTemplateId,
-        createdAtTimestamp: Date.now(),
-        lastModifiedTimestamp: Date.now(),
-      },
-      colorSchemeIndependentVisualToolEdits: {},
-      colorSchemes: {
-        light: createInitialColorSchemeEdits(),
-        dark: createInitialColorSchemeEdits(),
-      },
-      codeOverridesSource: "",
-      codeOverridesDsl: {},
-      codeOverridesFlattened: {},
-      codeOverridesError: null,
-      modificationVersion: 0,
-      lastStoredModificationVersion: 0,
+      const contentHash = computeContentHash({ ...state, ...newState });
+
+      return {
+        ...newState,
+        contentHash,
+        lastStoredContentHash: contentHash,
+        modificationTimestamps: {
+          ...state.modificationTimestamps,
+          loadNew: Date.now(),
+        },
+      } as any;
     });
   },
 
   resetToBase: () => {
-    set((state) => ({
-      colorSchemeIndependentVisualToolEdits: {},
-      colorSchemes: {
-        light: createInitialColorSchemeEdits(),
-        dark: createInitialColorSchemeEdits(),
-      },
-      codeOverridesSource: "",
-      codeOverridesDsl: {},
-      codeOverridesFlattened: {},
-      codeOverridesError: null,
-      modificationVersion: state.modificationVersion + 1,
-    }));
+    set((state) => {
+      const newState = {
+        colorSchemeIndependentVisualToolEdits: {},
+        colorSchemes: {
+          light: createInitialColorSchemeEdits(),
+          dark: createInitialColorSchemeEdits(),
+        },
+        codeOverridesSource: "",
+        codeOverridesDsl: {},
+        codeOverridesFlattened: {},
+        codeOverridesError: null,
+      };
+      const contentHash = computeContentHash({ ...state, ...newState });
+      return {
+        ...newState,
+        contentHash,
+        modificationTimestamps: {
+          ...state.modificationTimestamps,
+          resetToBase: Date.now(),
+        },
+      };
+    });
   },
 
   acknowledgeStoredModifications: () => {
     set((state) => ({
-      lastStoredModificationVersion: state.modificationVersion,
+      lastStoredContentHash: state.contentHash,
     }));
   },
 });
