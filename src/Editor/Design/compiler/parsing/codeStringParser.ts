@@ -146,7 +146,6 @@ export const HEADER_TEMPLATE = `const theme: ThemeOptions = {`;
 export const DEFAULT_BODY_CONTENT = ` 
   palette: {
   }, 
-  // View the documentation for available theme options:
   components: {
   },
 `;

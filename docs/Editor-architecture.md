@@ -82,15 +82,6 @@ Purpose: A technical reference for the Theme Editor internals — how theme inpu
 - Flatten util: `src/Editor/Design/compiler/utilities/flatten.ts`
 - Storage collection: `src/Editor/Design/Storage/useStorageCollection.ts`
 
----
-
-If you'd like, I can now either:
-- (A) open a PR that implements the `codeOverridesFlattened` population (small change) and add a unit test, or
-- (B) commit this doc into the repo (I already added it), or
-- (C) expand the doc with a sequence diagram or step-by-step code walkthrough for `useThemeCompilerCache`.
-
-Which would you like next?
-
 **Sequence Diagram**
 
 ```mermaid

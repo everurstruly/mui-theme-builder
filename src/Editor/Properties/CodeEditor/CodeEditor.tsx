@@ -1,6 +1,7 @@
 import CodeMirror from "@uiw/react-codemirror";
+import Toolbar from "./Toolbar";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Link, Typography, Button, Alert, Stack, Box } from "@mui/material";
+import { Stack, Box } from "@mui/material";
 import { javascript } from "@codemirror/lang-javascript";
 import { autocompletion, CompletionContext } from "@codemirror/autocomplete";
 import { completionKeymap } from "@codemirror/autocomplete";
@@ -11,7 +12,7 @@ import { muiThemeCompletions } from "./muiThemeCompletions";
 import useDeveloperToolEdit from "../../Design/Edit/useDeveloperToolEdit";
 import useDeveloperToolActions from "../../Design/Edit/useDeveloperEditTools";
 import {
-  validateCodeBeforeEvaluation,
+  themeCompiler,
   type ValidationError,
 } from "../../Design/compiler";
 import {
@@ -19,12 +20,13 @@ import {
   extractBody,
   DEFAULT_BODY_CONTENT,
 } from "../../Design/compiler/parsing/codeStringParser";
+import AlertBar from "./AlertBar";
 
 export default function CodeEditor() {
   // Use focused hooks instead of monolithic useCodeEditorPanel
   const { source, error, hasOverrides } = useDeveloperToolEdit();
   const { applyModifications, clearOverrides } = useDeveloperToolActions();
-  const validate = validateCodeBeforeEvaluation;
+  const validate = themeCompiler.validateThemeCode;
 
   // Track validation errors separately from evaluation errors
   const [validationErrors, setValidationErrors] = useState<ValidationError[]>([]);
@@ -261,79 +263,14 @@ export default function CodeEditor() {
 
   return (
     <Stack height="100%">
-      {/* Show validation errors (pre-evaluation) */}
-      {validationErrors.length > 0 && (
-        <Alert
-          severity="error"
-          onClose={() => setValidationErrors([])}
-          sx={{
-            pl: 1.5,
-            py: 1,
-          }}
-        >
-          <Typography variant="caption" fontWeight={600} display="block" mb={0.5}>
-            Validation Error{validationErrors.length > 1 ? "s" : ""}:
-          </Typography>
-          {validationErrors.map((err, idx) => (
-            <Typography
-              key={idx}
-              variant="caption"
-              component="div"
-              sx={{ whiteSpace: "pre-wrap", fontFamily: "monospace" }}
-            >
-              {err.line && err.column ? `Line ${err.line}:${err.column} - ` : ""}
-              {err.message}
-            </Typography>
-          ))}
-        </Alert>
-      )}
-
-      {/* Show evaluation errors (post-evaluation from store) */}
-      {error && !validationErrors.length && (
-        <Alert
-          severity="error"
-          onClose={handleReset}
-          sx={{
-            pl: 1.5,
-            py: 1,
-          }}
-        >
-          <Typography
-            variant="caption"
-            component="pre"
-            sx={{ whiteSpace: "pre-wrap", m: 0, p: 0 }}
-          >
-            {error}
-          </Typography>
-        </Alert>
-      )}
-
-      {/* Show warnings (non-blocking) */}
-      {validationWarnings.length > 0 && !validationErrors.length && (
-        <Alert
-          severity="warning"
-          onClose={() => setValidationWarnings([])}
-          sx={{
-            pl: 1.5,
-            py: 1,
-          }}
-        >
-          <Typography variant="caption" fontWeight={600} display="block" mb={0.5}>
-            Warning{validationWarnings.length > 1 ? "s" : ""}:
-          </Typography>
-          {validationWarnings.map((warn, idx) => (
-            <Typography
-              key={idx}
-              variant="caption"
-              component="div"
-              sx={{ whiteSpace: "pre-wrap", fontFamily: "monospace" }}
-            >
-              {warn.line && warn.column ? `Line ${warn.line}:${warn.column} - ` : ""}
-              {warn.message}
-            </Typography>
-          ))}
-        </Alert>
-      )}
+      <AlertBar
+        validationErrors={validationErrors}
+        setValidationErrors={setValidationErrors}
+        validationWarnings={validationWarnings}
+        setValidationWarnings={setValidationWarnings}
+        error={error}
+        handleReset={handleReset}
+      />
 
       <Toolbar
         onApply={handleApply}
@@ -352,7 +289,12 @@ export default function CodeEditor() {
 
           // Ensure CodeMirror occupies the available space and uses an
           // internal scroller instead of growing the parent container.
-          "& .cm-editor": { flexGrow: 1, height: "100%", minHeight: 0, fontSize: "12px" },
+          "& .cm-editor": {
+            flexGrow: 1,
+            height: "100%",
+            minHeight: 0,
+            fontSize: "12px",
+          },
           "& .cm-content": { pr: 2 },
           "& .cm-scroller": {
             overflowY: "auto",
@@ -445,80 +387,6 @@ export default function CodeEditor() {
           }}
         />
       </Box>
-    </Stack>
-  );
-}
-
-function Toolbar({
-  onApply,
-  onDiscard,
-  onClear,
-  hasUnsaved,
-  hasOverrides,
-}: {
-  onApply: () => void;
-  onDiscard: () => void;
-  onClear: () => void;
-  hasUnsaved: boolean;
-  hasOverrides: boolean;
-}) {
-  return (
-    <Stack
-      direction="row"
-      px={1.5}
-      columnGap={1}
-      alignItems="center"
-      py={1}
-      minHeight={"var(--activity-bar-height)"}
-    >
-      <Link
-        href="https://mui.com/material-ui/guides/building-extensible-themes/"
-        fontSize="small"
-        target="_blank"
-        rel="noopener noreferrer"
-        sx={{ paddingInlineEnd: 1 }}
-      >
-        Docs
-      </Link>
-
-      <Link
-        href="https://mui.com/material-ui/guides/building-extensible-themes/"
-        fontSize="small"
-        target="_blank"
-        rel="noopener noreferrer"
-        sx={{ paddingInlineEnd: 1 }}
-      >
-        Tips
-      </Link>
-
-      <Button
-        variant="contained"
-        size="small"
-        onClick={onApply}
-        disabled={!hasUnsaved}
-        sx={{ marginLeft: "auto !important" }}
-      >
-        Apply
-      </Button>
-
-      <Button
-        variant="outlined"
-        size="small"
-        onClick={onDiscard}
-        disabled={!hasUnsaved}
-      >
-        Discard
-      </Button>
-
-      <Button
-        variant="outlined"
-        size="small"
-        color="error"
-        onClick={onClear}
-        disabled={!hasOverrides}
-      >
-        Reset
-      </Button>
     </Stack>
   );
 }
