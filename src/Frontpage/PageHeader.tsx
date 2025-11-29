@@ -67,7 +67,7 @@ export default function PageHeader() {
           >
             {menuLinks.map(({ label, href }) => (
               <Button
-                component={href.startsWith("/") ? Link : Button}
+                component={Link}
                 key={href}
                 to={href}
                 size="small"
