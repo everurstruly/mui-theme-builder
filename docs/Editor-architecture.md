@@ -21,6 +21,26 @@ Purpose: A technical reference for the Theme Editor internals — how theme inpu
   4. Merge order and result: `createThemeOptionsFromEdits()` + `transformDslToThemeOptions()` produce the final `ThemeOptions` used by previews (`src/Editor/Design/Edit/useThemeCompilerCache.ts`).
   5. `useCreatedThemeOption` resolves the final `ThemeOptions` per color scheme for `createTheme()` and preview components (`src/Editor/Design/Edit/useCreatedThemeOption.ts`).
 
+**Theme resolution (summary)**
+
+- Formula (concise):
+
+  baseTheme (partial) + visual edits + code overrides = themeOptions (partial)
+
+  themeOptions (partial) -> `createTheme(themeOptions)` -> Theme (complete)
+
+- Explanation:
+  - `baseTheme` is a possibly partial ThemeOptions/DSL coming from templates or stored code.
+  - `visual edits` are per-path overrides created via the UI (stored as flat path → value maps) and are applied on top of the base theme.
+  - `code overrides` are user-entered JavaScript/DSL edits that are transformed into a safe DSL and then resolved into ThemeOptions; they may be partial and only override specific paths.
+  - The merge result is a partial `themeOptions` object that contains only the settings that differ from the library defaults. `createTheme(themeOptions)` fills in defaults and derived values and returns a complete, runtime `Theme` object used by MUI components and previews.
+
+- Practical notes / implications:
+  - Validation and safety checks operate at the code→DSL→ThemeOptions boundary (the compiler). Keeping that logic centralized ensures the editor and storage only accept safe, well-formed inputs.
+  - `codeOverridesFlattened` (a dot-path map derived from the resolved ThemeOptions) lets property panels quickly detect whether a particular path is overridden by code vs visual edits.
+  - Storage persists the `themeOptions` (DSL/JSON) so it can be re-parsed deterministically; runtime `Theme` objects are not stored — they are produced on demand via `createTheme()` when needed.
+  - Because `themeOptions` is partial, the order of merges matters (base → edits → code overrides) and is implemented in the compiler and `useThemeCompilerCache` so previews remain deterministic.
+
 **Data shapes**
 - Base Theme: `baseThemeCode` (string; serialized ThemeOptions/DSL) stored in `currentSlice`.
 - Visual Edits: `colorSchemeIndependentVisualToolEdits: Record<string, SerializableValue>` and `colorSchemes: Record<string, { visualToolEdits: Record<string, SerializableValue> }>` in `currentSlice`.
@@ -71,6 +91,25 @@ Purpose: A technical reference for the Theme Editor internals — how theme inpu
 3. Workerize parsing and DSL transformations (Acorn + AST walk) to avoid jank during heavy edits.
 4. Add a `StorageService.markSaved()` helper that performs `acknowledgeStoredModifications()` + `recordStoragePoint()` atomically to eliminate ordering bugs.
 5. Add tests for: per-path code override detection; history undo/redo around save points; storage conflict scenarios.
+
+**Recent updates (what I changed while working on this repo)**
+
+- Centralized editor normalization/parsing helpers: `buildEditableCodeBodyContent`, `extractBody`, and `DEFAULT_BODY_CONTENT` moved (and exported) from the editor into
+  `src/Editor/Design/compiler/parsing/codeStringParser.ts` so the compiler is the source of truth for accepted code shapes.
+- Strict pre-validation: `src/Editor/Design/compiler/validation/validator.ts` now rejects any extraneous top-level tokens outside a single `const theme = { ... };` declaration. This enforces the editor's restricted input model (helps prevent accidental or malicious top-level code).
+- Populated `codeOverridesFlattened`: the developer tools were updated so that after transforming code → DSL → ThemeOptions the resulting ThemeOptions are flattened (via `flattenThemeObject`) and passed into `currentSlice.setCodeOverrides(...)`. This fixes per-path override detection used by property panels.
+- CodeEditor UX: reverted the earlier experimental header/footer externalization — the editor now stores and edits the full content (header + body + footer) inline in CodeMirror to match user preference. Paste/format/apply flows were adapted to format the full content and keep undo/selection behavior.
+- Alert UI: `src/Editor/Properties/CodeEditor/AlertBar.tsx` was fixed to correctly show evaluation errors (it previously used `Error()` accidentally). Types for validation errors were aligned to the compiler `ValidationError` type.
+- Layout stability: `src/Editor/Properties/CodeEditor/CodeEditor.tsx` and `src/Editor/Properties/CodeEditor/codemirror.css` updated so the editor container and CodeMirror scroller constrain height (preventing the editor from growing/shrinking the parent layout).
+
+These changes are intended to centralize parsing/validation in the compiler module and to restore a predictable, non-janky editor UX while keeping validation strict and visible.
+
+**Updated immediate next steps (high-priority)**
+- Add unit tests for `extractBody()` and `validateCodeBeforeEvaluation()` to lock in the strict validation behavior and avoid regressions.
+- Add unit tests for `useDeveloperEditTools.applyModifications()` to assert `codeOverridesFlattened` is populated and used by `useDesignerToolEdit` lookups.
+- Run the dev server and QA the Code Editor flows (paste → format → apply; save/restore session; per-path override detection).
+
+If you'd like, I can implement those tests next and then run the dev server to validate runtime behavior.
 
 **Appendix: Quick references**
 - `currentSlice` (domain state): `src/Editor/Design/Edit/useEdit/currentSlice.ts`
