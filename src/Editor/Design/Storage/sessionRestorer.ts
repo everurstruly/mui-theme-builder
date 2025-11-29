@@ -42,17 +42,20 @@ export function restoreSession(session: SavedSessionData, helpers: RestoreHelper
       });
     }
 
-    if (session.codeOverridesSource) {
+    // Restore color scheme first so code overrides are resolved against the
+    // intended scheme when they are applied (placeholders like breakpoints/
+    // palette tokens may resolve differently per-scheme).
+    if (session.activeColorScheme) {
       try {
-        applyModifications(session.codeOverridesSource);
+        setActiveColorScheme(session.activeColorScheme);
       } catch (e) {
         void e;
       }
     }
 
-    if (session.activeColorScheme) {
+    if (session.codeOverridesSource) {
       try {
-        setActiveColorScheme(session.activeColorScheme);
+        applyModifications(session.codeOverridesSource);
       } catch (e) {
         void e;
       }

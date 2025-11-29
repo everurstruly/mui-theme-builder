@@ -14,31 +14,11 @@ import {
   validateCodeBeforeEvaluation,
   type ValidationError,
 } from "../../Design/compiler";
-
-const HEADER_TEMPLATE = `
-const theme: ThemeOptions = {`;
-
-const DEFAULT_BODY_CONTENT = `  
-  components: {
-    // Add component style overrides here
-  },
-`;
-
-const FOOTER_TEMPLATE = `};`;
-
-// Build full content from body
-const buildEditableCodeBodyContent = (body: string) =>
-  `${HEADER_TEMPLATE}${body}${FOOTER_TEMPLATE}`;
-
-// Extract body using a regex that allows an optional TypeScript type annotation
-// (e.g. `const theme: ThemeOptions = {`) and captures everything up to the closing `};`
-const extractBody = (fullContent: string): string => {
-  const match = /const\s+theme(?:\s*:\s*[^=]+)?\s*=\s*\{([\s\S]*?)\};/m.exec(
-    fullContent
-  );
-  if (!match || !match[1] || match[1].trim() === "") return DEFAULT_BODY_CONTENT;
-  return match[1].replace(/\n\s+$/g, "");
-};
+import {
+  buildEditableCodeBodyContent,
+  extractBody,
+  DEFAULT_BODY_CONTENT,
+} from "../../Design/compiler/parsing/codeStringParser";
 
 export default function CodeEditor() {
   // Use focused hooks instead of monolithic useCodeEditorPanel
@@ -51,71 +31,65 @@ export default function CodeEditor() {
   const [validationWarnings, setValidationWarnings] = useState<ValidationError[]>(
     []
   );
-  // Editor body holds just the inner contents of the theme object
+  // Editor holds the full editable content (header + body + footer).
+  // `editorBody` is derived from the full content for convenience.
+  const initialFull = source
+    ? /^\s*\{/.test(source)
+      ? buildEditableCodeBodyContent(extractBody(source))
+      : source
+    : buildEditableCodeBodyContent(DEFAULT_BODY_CONTENT);
+
+  const [fullContent, setFullContent] = useState<string>(() => initialFull);
   const [editorBody, setEditorBody] = useState<string>(() =>
-    source ? extractBody(source) : DEFAULT_BODY_CONTENT
+    extractBody(initialFull)
   );
 
   // Keep a snapshot of the previous editor body so we can undo the last change
   // if evaluation fails. This mirrors a single undo step.
-  const lastEditorBodyRef = useRef<string>(
-    source ? extractBody(source) : DEFAULT_BODY_CONTENT
-  );
+  const lastEditorBodyRef = useRef<string>(extractBody(initialFull));
 
   useEffect(() => {
     lastEditorBodyRef.current = editorBody;
   }, [editorBody]);
 
-  // Track unsaved changes relative to the incoming `source`
+  // Track unsaved changes relative to the incoming `source` (compare wrapped full content)
   const hasUnsavedModifications = useMemo(() => {
-    const current = source ? extractBody(source) : DEFAULT_BODY_CONTENT;
-    return editorBody !== current;
-  }, [editorBody, source]);
+    const normalize = (s: string) => s.replace(/\r\n/g, "\n").trim();
+    const sourceFull = source
+      ? /^\s*\{/.test(source)
+        ? buildEditableCodeBodyContent(extractBody(source))
+        : source
+      : buildEditableCodeBodyContent(DEFAULT_BODY_CONTENT);
+    return normalize(fullContent) !== normalize(sourceFull);
+  }, [fullContent, source]);
 
-  // Full content shown in the editor
-  const fullContent = useMemo(
-    () => buildEditableCodeBodyContent(editorBody),
-    [editorBody]
-  );
-
-  // Keep editorBody in sync when external `source` changes
+  // Keep fullContent and editorBody in sync when external `source` changes
   useEffect(() => {
     if (!source) {
-      setEditorBody(DEFAULT_BODY_CONTENT);
+      const base = buildEditableCodeBodyContent(DEFAULT_BODY_CONTENT);
+      setFullContent(base);
+      setEditorBody(extractBody(base));
       return;
     }
 
-    // Always use extractBody() to handle both formats correctly:
-    // - Full template: "const theme: ThemeOptions = { ... };"
-    // - Raw object: "{ ... }"
-    const extracted = extractBody(source);
-    setEditorBody(extracted);
+    const full = /^\s*\{/.test(source)
+      ? buildEditableCodeBodyContent(extractBody(source))
+      : source;
+    setFullContent(full);
+    setEditorBody(extractBody(full));
   }, [source]);
 
-  // Handle edits from CodeMirror. Prevent header/footer edits by checking they remain unchanged.
+  // Handle edits from CodeMirror. Editor contains the full content.
   const handleChange = useCallback(
     (value: string) => {
-      const actual = value.split("\n");
-
-      // Quick sanity: header must match and footer must match (compare trimmed)
-      const headerLines = HEADER_TEMPLATE.split("\n");
-      for (let i = 0; i < headerLines.length; i++) {
-        if ((actual[i] || "").trim() !== (headerLines[i] || "").trim()) {
-          return; // reject edits that modify header
-        }
-      }
-
-      if (
-        (actual[actual.length - 1] || "").trim() !== (FOOTER_TEMPLATE || "").trim()
-      ) {
-        return; // reject footer edits
-      }
-
-      // If valid, extract body and update state
-      const newBody = extractBody(value);
       // Snapshot the previous body so we can undo a failed apply
       lastEditorBodyRef.current = editorBody;
-      setEditorBody(newBody);
+      setFullContent(value);
+      try {
+        setEditorBody(extractBody(value));
+      } catch {
+        // ignore extraction failures while typing
+      }
 
       // Clear validation errors when user edits
       setValidationErrors([]);
@@ -188,36 +162,32 @@ export default function CodeEditor() {
 
   const handleApply = useCallback(async () => {
     // Use the full editor content (header + body + footer) as the stored source
-    const fullContent = buildEditableCodeBodyContent(editorBody);
+    const currentFull = fullContent;
 
     // Format using Prettier before validating/applying. If formatting fails,
     // fall back to the raw content. Use lazy-loading formatter.
-    let formattedFull = fullContent;
+    let formattedFull = currentFull;
     try {
-      formattedFull = await formatWithPrettier(fullContent);
+      formattedFull = await formatWithPrettier(currentFull);
     } catch {
       // If prettier fails, continue with unformatted content.
     }
 
     // If we have the EditorView, dispatch a single change so CodeMirror keeps
-    // selection/undo history. Otherwise fall back to setEditorBody.
+    // selection/undo history.
     const view = editorViewRef.current;
     if (view) {
       view.dispatch({
         changes: { from: 0, to: view.state.doc.length, insert: formattedFull },
         userEvent: "input",
       });
-      try {
-        setEditorBody(extractBody(formattedFull));
-      } catch {
-        // ignore
-      }
-    } else {
-      try {
-        setEditorBody(extractBody(formattedFull));
-      } catch {
-        // ignore
-      }
+    }
+
+    try {
+      setFullContent(formattedFull);
+      setEditorBody(extractBody(formattedFull));
+    } catch {
+      // ignore extraction failures
     }
 
     // Step 1: Pre-validate before evaluation (validation expects either full content or object literal)
@@ -240,7 +210,7 @@ export default function CodeEditor() {
 
     // Step 2: Apply changes (will trigger evaluation in store)
     applyModifications(formattedFull);
-  }, [applyModifications, editorBody, validate, formatWithPrettier]);
+  }, [applyModifications, fullContent, validate, formatWithPrettier]);
 
   // Global handler: if user presses Mod+S while the editor is NOT focused,
   // still trigger Apply/format. This makes Ctrl/Cmd+S work even when focus
@@ -375,11 +345,22 @@ export default function CodeEditor() {
 
       <Box
         sx={{
-          flex: 1,
+          height: "100%",
+          flexGrow: 1,
           minHeight: 0,
+          display: "flex",
 
-          "& .cm-editor": { height: "100%", fontSize: "12px" },
-          "& .cm-content": { pr: 2 }, // fix: improves readability by preventing content being too close to edge
+          // Ensure CodeMirror occupies the available space and uses an
+          // internal scroller instead of growing the parent container.
+          "& .cm-editor": { flexGrow: 1, height: "100%", minHeight: 0, fontSize: "12px" },
+          "& .cm-content": { pr: 2 },
+          "& .cm-scroller": {
+            overflowY: "auto",
+            maxHeight: "100%",
+            height: "100%",
+            scrollbarWidth: "thin",
+            scrollbarColor: "#000",
+          },
         }}
       >
         <CodeMirror
@@ -416,18 +397,20 @@ export default function CodeEditor() {
                 // Let the paste happen in the DOM, then format and normalize.
                 setTimeout(async () => {
                   try {
-                    const full = view.state.doc.toString();
-                    const formatted = await formatWithPrettier(full);
+                    // view.state.doc contains the full content; format and replace
+                    const doc = view.state.doc.toString();
+                    const formattedFull = await formatWithPrettier(doc);
                     view.dispatch({
                       changes: {
                         from: 0,
                         to: view.state.doc.length,
-                        insert: formatted,
+                        insert: formattedFull,
                       },
                       userEvent: "input",
                     });
                     try {
-                      setEditorBody(extractBody(formatted));
+                      setFullContent(formattedFull);
+                      setEditorBody(extractBody(formattedFull));
                     } catch {
                       // ignore
                     }
@@ -441,7 +424,11 @@ export default function CodeEditor() {
             attachViewPlugin,
           ]}
           theme="dark"
-          style={{ height: "100%", paddingInline: "2px" }}
+          style={{
+            width: "100%",
+            height: "100%",
+            paddingInline: "3px",
+          }}
           basicSetup={{
             lineNumbers: true,
             highlightActiveLineGutter: false,
@@ -487,6 +474,8 @@ function Toolbar({
       <Link
         href="https://mui.com/material-ui/guides/building-extensible-themes/"
         fontSize="small"
+        target="_blank"
+        rel="noopener noreferrer"
         sx={{ paddingInlineEnd: 1 }}
       >
         Docs
@@ -495,6 +484,8 @@ function Toolbar({
       <Link
         href="https://mui.com/material-ui/guides/building-extensible-themes/"
         fontSize="small"
+        target="_blank"
+        rel="noopener noreferrer"
         sx={{ paddingInlineEnd: 1 }}
       >
         Tips

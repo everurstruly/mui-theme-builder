@@ -139,3 +139,27 @@ export function isValidThemeCode(code: string): boolean {
     }
   }
 }
+
+// ----- Convenience helpers for editor normalization -----
+export const HEADER_TEMPLATE = `const theme: ThemeOptions = {`;
+
+export const DEFAULT_BODY_CONTENT = ` 
+  palette: {
+  }, 
+  // View the documentation for available theme options:
+  components: {
+  },
+`;
+
+export const FOOTER_TEMPLATE = `};`;
+
+export const buildEditableCodeBodyContent = (body: string) =>
+  `${HEADER_TEMPLATE}${body}${FOOTER_TEMPLATE}`;
+
+export const extractBody = (fullContent: string): string => {
+  const match = /const\s+theme(?:\s*:\s*[^=]+)?\s*=\s*\{([\s\S]*?)\};/m.exec(
+    fullContent
+  );
+  if (!match || !match[1] || match[1].trim() === "") return DEFAULT_BODY_CONTENT;
+  return match[1].replace(/\n\s+$/g, "");
+};

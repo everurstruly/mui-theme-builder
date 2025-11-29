@@ -92,6 +92,24 @@ export function validateCodeBeforeEvaluation(source: string): ValidationResult {
   const objectMatch = /const\s+theme(?:\s*:\s*[^=]+)?\s*=\s*\{([\s\S]*?)\};/m.exec(source);
   const parseSource = objectMatch ? `{${objectMatch[1]}}` : source;
 
+  // If we matched a `const theme = { ... };` declaration, ensure there is
+  // nothing else in the source outside that declaration. This enforces a
+  // strict editing model: the editor must contain only the theme declaration
+  // (no other top-level statements). Extraneous text like `sdfsdf;` will
+  // cause validation to fail.
+  if (objectMatch) {
+    const before = source.slice(0, objectMatch.index);
+    const after = source.slice(objectMatch.index + objectMatch[0].length);
+    if (/\S/.test(before) || /\S/.test(after)) {
+      errors.push({
+        message:
+          'Only a single `const theme = { ... };` declaration is allowed. Extraneous top-level code found.',
+        severity: 'error',
+      });
+      return { valid: false, errors, warnings };
+    }
+  }
+
   let ast: ReturnType<typeof parse>;
   try {
     // Wrap in parentheses to support object literals

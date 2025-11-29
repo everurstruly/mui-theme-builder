@@ -1,6 +1,10 @@
 import { useMemo } from "react";
 import useEdit from "./useEdit";
-import { transformCodeToDsl } from "../compiler";
+import { transformCodeToDsl, transformDslToThemeOptions, flattenThemeObject, parseThemeCode } from "../compiler";
+
+// Simple in-memory cache to avoid recomputing flattened maps for identical inputs.
+// Key is JSON.stringify(dsl) + '::' + baseThemeCode + '::' + activeColorScheme
+const flattenedCache = new Map<string, Record<string, any>>();
 
 /**
  * Hook for accessing code overrides actions.
@@ -29,7 +33,46 @@ export default function useDeveloperToolActions() {
         if (result.error) {
           setCodeOverrides(code, {}, {}, result.error);
         } else {
-          setCodeOverrides(code, result.dsl, {}, null);
+          try {
+            // Build resolution context from current editor base template
+            const state = useEdit.getState();
+            const baseTemplate = parseThemeCode(state.baseThemeCode) ?? {};
+            const activeScheme = (state as any).activeColorScheme ?? "light";
+
+            // Cache key must include DSL + base template (string) + scheme because
+            // resolved values depend on the template and active color scheme.
+            const dslString = JSON.stringify(result.dsl || {});
+            const cacheKey = `${dslString}::${state.baseThemeCode}::${activeScheme}`;
+
+            let flattened: Record<string, any> | undefined = flattenedCache.get(cacheKey);
+            if (!flattened) {
+              const context = {
+                template: baseTemplate,
+                colorScheme: activeScheme,
+                spacingFactor: 8,
+              } as any;
+
+              // Resolve DSL -> ThemeOptions and then flatten for quick path lookups
+              const themeOptions = transformDslToThemeOptions(result.dsl, context);
+              flattened = flattenThemeObject(themeOptions || {});
+              try {
+                flattenedCache.set(cacheKey, flattened);
+              } catch {
+                // ignore cache failures (e.g., circular references causing stringify issues)
+              }
+            }
+
+            setCodeOverrides(code, result.dsl, flattened, null);
+          } catch (e) {
+            // Fallback: still set DSL but keep flattened empty and record error for visibility
+            try {
+              setCodeOverrides(code, result.dsl, {}, null);
+            } catch {
+              // ignore
+            }
+            // Log so we can debug if transform/flatten fails in unexpected cases
+            console.error("Failed to compute flattened code overrides:", e);
+          }
         }
       },
 
