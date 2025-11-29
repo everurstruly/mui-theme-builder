@@ -22,6 +22,7 @@ export default function useStorageCollection(
 
   const loadNewDesign = useEdit((s) => s.loadNew);
   const acknowledgeStoredVersion = useEdit((s) => s.acknowledgeStoredModifications);
+  const recordStoragePoint = useEdit((s) => (s as any).recordStoragePoint);
   const setActiveColorScheme = useEdit((s) => s.setActiveColorScheme);
   const { addGlobalVisualEdit } = useDesignerEditTools();
   const { applyModifications } = useDeveloperToolActions();
@@ -78,6 +79,12 @@ export default function useStorageCollection(
         setSavedDesigns(next);
         acknowledgeStoredVersion();
         recordLastStored(newItem.id);
+        try {
+          const contentHash = useEdit.getState().contentHash;
+          recordStoragePoint?.(contentHash);
+        } catch {
+          // non-fatal
+        }
         return newItem.id;
       }
 
@@ -106,6 +113,12 @@ export default function useStorageCollection(
 
       acknowledgeStoredVersion();
       recordLastStored(newItem.id);
+      try {
+        const contentHash = useEdit.getState().contentHash;
+        recordStoragePoint?.(contentHash);
+      } catch {
+        // ignore
+      }
       return newItem.id;
     },
     [
@@ -114,6 +127,7 @@ export default function useStorageCollection(
       acknowledgeStoredVersion,
       recordLastStored,
       setStatus,
+      recordStoragePoint,
     ]
   );
 
@@ -220,6 +234,12 @@ export default function useStorageCollection(
 
       acknowledgeStoredVersion();
       recordLastStored(found.id);
+      try {
+        const contentHash = useEdit.getState().contentHash;
+        recordStoragePoint?.(contentHash);
+      } catch {
+        // ignore
+      }
       return true;
     } catch (e) {
       setStatus("error", String(e));

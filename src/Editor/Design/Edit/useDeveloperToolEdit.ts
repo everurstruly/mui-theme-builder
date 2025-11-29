@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useEdit } from "./useEdit";
+import useEdit from "./useEdit";
 
 /**
  * Hook for accessing code overrides state.

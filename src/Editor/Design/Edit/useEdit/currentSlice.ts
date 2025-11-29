@@ -24,6 +24,7 @@ import type { StateCreator } from "zustand";
 import type { ThemeDsl } from "../../compiler";
 import { serializeThemeOptions } from "../../compiler";
 import templatesRegistry from "../../../Templates/registry";
+import { createAddPatch, createRemovePatch } from "./historySlice";
 
 // Helper: store-owned default base theme code
 function getDefaultBaseThemeCode(): string {
@@ -289,6 +290,14 @@ export const createCurrentSlice: StateCreator<
       const current = state.colorSchemeIndependentVisualToolEdits[path];
       if (current === value) return state; // Skip if no change
 
+      // Record history patch for this change
+      try {
+        const patch = createAddPatch(path, value, current, undefined, true);
+        (get() as any).recordVisualChange?.([patch]);
+      } catch {
+        // non-fatal; continue
+      }
+
       const newEdits = {
         ...state.colorSchemeIndependentVisualToolEdits,
         [path]: value,
@@ -313,6 +322,14 @@ export const createCurrentSlice: StateCreator<
       const schemeObj = state.colorSchemes[scheme] || { visualToolEdits: {} };
       const current = schemeObj.visualToolEdits[path];
       if (current === value) return state;
+
+      // Record history patch for scheme-specific change
+      try {
+        const patch = createAddPatch(path, value, current, scheme as any, false);
+        (get() as any).recordVisualChange?.([patch]);
+      } catch {
+        // ignore
+      }
 
       const newSchemes = {
         ...state.colorSchemes,
@@ -343,7 +360,16 @@ export const createCurrentSlice: StateCreator<
     set((state) => {
       const newEdits = { ...state.colorSchemeIndependentVisualToolEdits };
       if (!(path in newEdits)) return state;
+      const oldValue = newEdits[path];
       delete newEdits[path];
+
+      // Record removal patch
+      try {
+        const patch = createRemovePatch(path, oldValue, undefined, true);
+        (get() as any).recordVisualChange?.([patch]);
+      } catch {
+        // ignore
+      }
       const newState = { colorSchemeIndependentVisualToolEdits: newEdits };
       const contentHash = computeContentHash({ ...state, ...newState });
       return {
@@ -365,7 +391,16 @@ export const createCurrentSlice: StateCreator<
       if (!(path in schemeEdits.visualToolEdits)) return state;
 
       const newEdits = { ...schemeEdits.visualToolEdits };
+      const oldValue = newEdits[path];
       delete newEdits[path];
+
+      // Record removal patch for scheme edit
+      try {
+        const patch = createRemovePatch(path, oldValue, scheme as any, false);
+        (get() as any).recordVisualChange?.([patch]);
+      } catch {
+        // ignore
+      }
 
       const newSchemes = {
         ...state.colorSchemes,
@@ -469,6 +504,15 @@ export const createCurrentSlice: StateCreator<
 
   setCodeOverrides: (source, dsl, flattened, error) => {
     set((state) => {
+      const previousSource = state.codeOverridesSource;
+
+      // Record code history (previous source) for undo
+      try {
+        (get() as any).recordCodeChange?.(previousSource);
+      } catch {
+        // ignore
+      }
+
       const newState = {
         codeOverridesSource: source,
         codeOverridesDsl: dsl,

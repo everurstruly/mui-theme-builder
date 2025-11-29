@@ -1,7 +1,7 @@
 import { Box, ListItem, Popover, Typography } from "@mui/material";
 import { Sketch } from "@uiw/react-color";
 import { useState, useRef, useEffect } from "react";
-import { useEdit } from "../../../Design/Edit/useEdit";
+import useEdit from "../../../Design/Edit/useEdit";
 import { useDebouncyEffect } from "use-debouncy";
 import OptionListItemResetButton from "../../OptionListItemResetButton";
 import useDesignerToolEdit from "../../../Design/Edit/useDesignerToolEdit";

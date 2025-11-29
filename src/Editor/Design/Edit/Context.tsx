@@ -1,6 +1,6 @@
 import React from "react";
 import useStorage from "../Storage/useStorage";
-import { useEdit } from "./useEdit";
+import useEdit from "./useEdit";
 import { UnfoldMore } from "@mui/icons-material";
 import {
   Typography,

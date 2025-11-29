@@ -1,6 +1,6 @@
 import { useDebouncyEffect } from "use-debouncy";
 import useDesignerToolEdit from "../../Design/Edit/useDesignerToolEdit";
-import { useEdit } from "../../Design/Edit/useEdit";
+import useEdit from "../../Design/Edit/useEdit";
 import { useRef, useState, useMemo, useCallback } from "react";
 
 type Options = {
@@ -31,7 +31,9 @@ export default function useColorPickerEdit(path: string, options?: Options) {
 
   const color = resolvedValue || "#000";
   const borderColor = "divider";
-  const readableForegroundColor = generateReadableColor(color);
+  // Guard the resolved value to ensure a string is passed to the readable color helper
+  const safeColor = typeof color === "string" ? color : "#000";
+  const readableForegroundColor = generateReadableColor(safeColor);
   const hasDelegatedControl = !!hasCodeOverride;
 
   const openPicker = useCallback(() => {

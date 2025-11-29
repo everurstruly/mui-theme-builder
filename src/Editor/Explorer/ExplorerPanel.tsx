@@ -2,7 +2,7 @@ import Drawer from "@mui/material/Drawer";
 import useEditorUiStore from "../useEditor";
 import ExplorerPanelHeader from "./ExplorerPanelHeader";
 import ExplorerPanelBody from "./ExplorerPanelBody";
-import { useEdit } from "../Design/Edit/useEdit";
+import useEdit from "../Design/Edit/useEdit";
 
 export default function EditorExplorerPanel() {
   return (

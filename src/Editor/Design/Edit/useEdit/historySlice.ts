@@ -55,6 +55,12 @@ export interface HistoryEntry {
   
   /** Timestamp for debugging */
   timestamp: number;
+  
+  /** Content hash representing state at this entry (optional) */
+  contentHash?: string;
+
+  /** Marks this entry as a save point so undo/redo can skip or treat specially */
+  isSavePoint?: boolean;
 }
 
 /**
@@ -66,6 +72,12 @@ export interface CodeHistoryEntry {
   
   /** Timestamp */
   timestamp: number;
+  
+  /** Content hash representing state at this entry (optional) */
+  contentHash?: string;
+
+  /** Marks this entry as a save point */
+  isSavePoint?: boolean;
 }
 
 /**
@@ -94,6 +106,10 @@ export interface ThemeDesignHistoryActions {
   
   /** Record a code override change */
   recordCodeChange: (previousSource: string) => void;
+  /** Record a save point in visual history */
+  recordStoragePoint: (contentHash: string) => void;
+  /** Record a save point in code history */
+  recordCodeStoragePoint: (contentHash: string) => void;
   
   /** Get undo/redo availability */
   canUndoVisual: () => boolean;
@@ -152,6 +168,21 @@ export const createHistorySlice: StateCreator<
     }));
   },
 
+  recordStoragePoint: (contentHash: string) => {
+    set((state: any) => ({
+      visualHistoryPast: [
+        ...state.visualHistoryPast,
+        {
+          patches: [],
+          timestamp: Date.now(),
+          contentHash,
+          isSavePoint: true,
+        },
+      ].slice(-MAX_HISTORY_SIZE),
+      visualHistoryFuture: [], // clear redo stack on storage
+    }));
+  },
+
   recordCodeChange: (previousSource) => {
   set((state: any) => ({
       codeHistoryPast: [
@@ -162,6 +193,21 @@ export const createHistorySlice: StateCreator<
         },
       ].slice(-MAX_HISTORY_SIZE),
       codeHistoryFuture: [], // Clear redo stack on new change
+    }));
+  },
+
+  recordCodeStoragePoint: (contentHash: string) => {
+    set((state: any) => ({
+      codeHistoryPast: [
+        ...state.codeHistoryPast,
+        {
+          source: '',
+          timestamp: Date.now(),
+          contentHash,
+          isSavePoint: true,
+        },
+      ].slice(-MAX_HISTORY_SIZE),
+      codeHistoryFuture: [],
     }));
   },
 
@@ -194,46 +240,77 @@ export const createHistorySlice: StateCreator<
   undoVisualToolEdit: () => {
     const past = get().visualHistoryPast;
     if (!past || past.length === 0) return;
-    const prev = past[past.length - 1];
+
+    // Find the most recent non-save-point entry to undo
+    let undoIndex = past.length - 1;
+    while (undoIndex >= 0 && past[undoIndex].isSavePoint) {
+      undoIndex--;
+    }
+    if (undoIndex < 0) return; // nothing to undo
+
+    const entryToUndo = past[undoIndex];
+
+    // Apply inverse patches
+    entryToUndo.patches.forEach((patch: HistoryPatch) => {
+      if (patch.op === 'add') {
+        // inverse of add is remove
+        if (patch.isGlobal) {
+          get().removeGlobalVisualEdit(patch.path);
+        } else {
+          get().removeSchemeVisualEdit(patch.scheme!, patch.path);
+        }
+      } else if (patch.op === 'remove') {
+        // inverse of remove is add with oldValue
+        if (patch.isGlobal) {
+          get().addGlobalVisualEdit(patch.path, patch.oldValue!);
+        } else {
+          get().addSchemeVisualEdit(patch.scheme!, patch.path, patch.oldValue!);
+        }
+      }
+    });
+
+    // Move undone entry and any later entries to the future (redo) stack
     set((state: any) => ({
-      visualHistoryPast: state.visualHistoryPast.slice(0, -1),
+      visualHistoryPast: state.visualHistoryPast.slice(0, undoIndex),
       visualHistoryFuture: [
         ...state.visualHistoryFuture,
-        {
-          baseVisualToolEdits: state.colorSchemeIndependentVisualToolEdits,
-          light: state.colorSchemes?.light?.visualToolEdits || {},
-          dark: state.colorSchemes?.dark?.visualToolEdits || {},
-        },
+        ...state.visualHistoryPast.slice(undoIndex),
       ].slice(-MAX_HISTORY_SIZE),
-      colorSchemeIndependentVisualToolEdits: prev.baseVisualToolEdits,
-      colorSchemes: {
-        ...state.colorSchemes,
-        light: { ...state.colorSchemes.light, visualToolEdits: prev.light },
-        dark: { ...state.colorSchemes.dark, visualToolEdits: prev.dark },
-      },
     }));
   },
 
   redoVisualToolEdit: () => {
-  const future = get().visualHistoryFuture;
-  if (!future || future.length === 0) return;
-  const next = future[future.length - 1];
-  set((state: any) => ({
-      visualHistoryFuture: state.visualHistoryFuture.slice(0, -1),
+    const future = get().visualHistoryFuture;
+    if (!future || future.length === 0) return;
+
+    // Find the first non-save-point entry in future to redo
+    let redoIndex = 0;
+    while (redoIndex < future.length && future[redoIndex].isSavePoint) {
+      redoIndex++;
+    }
+    if (redoIndex >= future.length) return; // nothing to redo
+
+    const entryToRedo = future[redoIndex];
+
+    // Apply patches forward
+    entryToRedo.patches.forEach((patch: HistoryPatch) => {
+      if (patch.op === 'add') {
+        if (patch.isGlobal) {
+          get().addGlobalVisualEdit(patch.path, patch.newValue!);
+        } else {
+          get().addSchemeVisualEdit(patch.scheme!, patch.path, patch.newValue!);
+        }
+      }
+      // remove ops are already reflected by the current state
+    });
+
+    // Move the redone entry and any preceding save points to past
+    set((state: any) => ({
       visualHistoryPast: [
         ...state.visualHistoryPast,
-        {
-          baseVisualToolEdits: state.colorSchemeIndependentVisualToolEdits,
-          light: state.colorSchemes?.light?.visualToolEdits || {},
-          dark: state.colorSchemes?.dark?.visualToolEdits || {},
-        },
+        ...state.visualHistoryFuture.slice(0, redoIndex + 1),
       ].slice(-MAX_HISTORY_SIZE),
-      colorSchemeIndependentVisualToolEdits: next.baseVisualToolEdits,
-      colorSchemes: {
-        ...state.colorSchemes,
-        light: { ...state.colorSchemes.light, visualToolEdits: next.light },
-        dark: { ...state.colorSchemes.dark, visualToolEdits: next.dark },
-      },
+      visualHistoryFuture: state.visualHistoryFuture.slice(redoIndex + 1),
     }));
   },
 
@@ -255,12 +332,23 @@ export const createHistorySlice: StateCreator<
   undoCodeOverride: () => {
     const past = get().codeHistoryPast;
     if (!past || past.length === 0) return;
-    const prevSource = past[past.length - 1];
+
+    // Find most recent non-save-point entry
+    let undoIndex = past.length - 1;
+    while (undoIndex >= 0 && past[undoIndex].isSavePoint) {
+      undoIndex--;
+    }
+    if (undoIndex < 0) return;
+
+    const entryToUndo = past[undoIndex];
+
     set((state: any) => ({
-      codeHistoryPast: state.codeHistoryPast.slice(0, -1),
-      codeHistoryFuture: [...state.codeHistoryFuture, state.codeOverridesSource].slice(-MAX_HISTORY_SIZE),
-      codeOverridesSource: prevSource,
-      // Do not attempt to re-run transformations here (avoids circular imports/require). Clear DSL and let callers re-transform if needed.
+      codeHistoryPast: state.codeHistoryPast.slice(0, undoIndex),
+      codeHistoryFuture: [
+        ...state.codeHistoryFuture,
+        ...state.codeHistoryPast.slice(undoIndex),
+      ].slice(-MAX_HISTORY_SIZE),
+      codeOverridesSource: entryToUndo.source,
       codeOverridesDsl: {},
     }));
   },
@@ -268,13 +356,24 @@ export const createHistorySlice: StateCreator<
   redoCodeOverride: () => {
     const future = get().codeHistoryFuture;
     if (!future || future.length === 0) return;
-    const nextSource = future[future.length - 1];
+
+    // Find first non-save-point entry in future
+    let redoIndex = 0;
+    while (redoIndex < future.length && future[redoIndex].isSavePoint) {
+      redoIndex++;
+    }
+    if (redoIndex >= future.length) return;
+
+    const entryToRedo = future[redoIndex];
+
     set((state: any) => ({
-      codeHistoryFuture: state.codeHistoryFuture.slice(0, -1),
-        codeHistoryPast: [...state.codeHistoryPast, state.codeOverridesSource].slice(-MAX_HISTORY_SIZE),
-        codeOverridesSource: nextSource,
-        // Do not attempt to re-run transformations here. Keep DSL empty; callers may re-run transform.
-        codeOverridesDsl: {},
+      codeHistoryPast: [
+        ...state.codeHistoryPast,
+        ...state.codeHistoryFuture.slice(0, redoIndex + 1),
+      ].slice(-MAX_HISTORY_SIZE),
+      codeHistoryFuture: state.codeHistoryFuture.slice(redoIndex + 1),
+      codeOverridesSource: entryToRedo.source,
+      codeOverridesDsl: {},
     }));
   },
 });

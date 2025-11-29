@@ -32,6 +32,7 @@ export default function StoreCurrentButton() {
   const handleSaveModifications = useCallback(async () => {
     try {
       await saveCurrent();
+      // Storage layer handles acknowledging stored modifications
       showNotification(true);
     } catch (e: any) {
       if (!conflictHandler.handleConflictError(e)) {

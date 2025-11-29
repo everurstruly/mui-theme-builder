@@ -1,5 +1,5 @@
 import { useMemo, useCallback } from "react";
-import { useEdit } from "./useEdit";
+import useEdit from "./useEdit";
 import { getNestedValue, type SerializableValue } from "../compiler";
 import { useThemeCompilerCache } from "./useThemeCompilerCache";
 

@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useEdit } from "../Design/Edit/useEdit";
+import useEdit from "../Design/Edit/useEdit";
 
 export default function EditorGlobalKeyboardShortcuts() {
   const selected = useEdit((s) => s.selectedExperienceId);

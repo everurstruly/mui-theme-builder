@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useEdit } from "./useEdit";
+import useEdit from "./useEdit";
 
 export function useDesignerEditTools() {
   const addGlobal = useEdit((s) => s.addGlobalVisualEdit);
