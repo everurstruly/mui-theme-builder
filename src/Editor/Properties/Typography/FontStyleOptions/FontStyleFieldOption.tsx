@@ -1,6 +1,6 @@
 import { Typography, TextField, ListItem, Stack } from "@mui/material";
 import OptionListItemResetButton from "../../OptionListItemResetButton";
-import useDesignerToolEdit from "../../../Design/Edit/useDesignerToolEdit";
+import useThemeEdit from "../../../Design/Edit/useThemeEdit";
 
 export type FontStyleFieldOptionProps = {
   name: string;
@@ -9,10 +9,11 @@ export type FontStyleFieldOptionProps = {
 };
 
 export default function FontStyleFieldOption(props: FontStyleFieldOptionProps) {
-  const { value, resolvedValue, hasCodeOverride, setValue, reset, canReset } =
-    useDesignerToolEdit(props.path);
+  const { value, userEdit, isCodeControlled, setValue, reset } =
+    useThemeEdit(props.path);
 
-  const currentValue = value ?? resolvedValue;
+  const currentValue = value;
+  const canReset = !!userEdit || !!isCodeControlled;
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = event.target.value;
@@ -59,7 +60,7 @@ export default function FontStyleFieldOption(props: FontStyleFieldOptionProps) {
         variant="outlined"
         value={currentValue}
         onChange={handleChange}
-        disabled={hasCodeOverride}
+        disabled={isCodeControlled}
         sx={{
           flexBasis: props.orientation === "vertical" ? "100%" : "auto",
 

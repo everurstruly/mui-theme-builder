@@ -3,7 +3,7 @@ import FontFamilyOptionInput from "./FontFamilyOptionInput";
 import OptionListItemResetButton from "../../OptionListItemResetButton";
 import useDesignCreatedTheme from "../../../Design/Edit/useCreatedTheme";
 import { useDesignerEditTools } from "../../../Design/Edit/useDesignerEditTools";
-import useDesignerToolEdit from "../../../Design/Edit/useDesignerToolEdit";
+import useThemeEdit from "../../../Design/Edit/useThemeEdit";
 
 export type FontFamilyOptionProps = {
   title: string;
@@ -31,12 +31,11 @@ export default function FontFamilyOption({
 
   const { addGlobalVisualEdit, removeGlobalVisualEdit } = useDesignerEditTools();
 
-  const { value, hasVisualEdit, hasCodeOverride } =
-    useDesignerToolEdit(path);
+  const { value, userEdit, isCodeControlled } = useThemeEdit(path);
 
   const autoResolvedValue = fontFamily;
   const resolvedValue = (value as string) ?? autoResolvedValue;
-  const canResetValue = hasVisualEdit || hasCodeOverride;
+  const canResetValue = !!userEdit || !!isCodeControlled;
 
   const handleChange = (event: SelectChangeEvent) => {
     const selectedFont = event.target.value;
@@ -99,7 +98,7 @@ export default function FontFamilyOption({
 
       <FontFamilyOptionInput
         id={`font-family-select-${title}`}
-        disabled={disabled || hasCodeOverride}
+        disabled={disabled || isCodeControlled}
         value={extractPrimaryFont(resolvedValue)}
         onChange={handleChange}
       />

@@ -2,7 +2,7 @@ import { Typography, TextField, ListItem, Stack } from "@mui/material";
 import { useState } from "react";
 import SliderInput from "../../SliderInput";
 import OptionListItemResetButton from "../../OptionListItemResetButton";
-import useDesignerToolEdit from "../../../Design/Edit/useDesignerToolEdit";
+import useThemeEdit from "../../../Design/Edit/useThemeEdit";
 
 export type FontStyleRangedOptionProps = {
   name: string;
@@ -13,18 +13,12 @@ export type FontStyleRangedOptionProps = {
 const ratioToPxMultiplier = 20;
 
 export default function FontStyleRangedOption(props: FontStyleRangedOptionProps) {
-  const {
-    value: effectiveValue,
-    resolvedValue,
-    hasCodeOverride,
-    setValue,
-    reset,
-    canReset,
-  } = useDesignerToolEdit(props.path);
+  const { value, userEdit, isCodeControlled, setValue, reset } =
+    useThemeEdit(props.path);
 
-  // Initialize the input from the effective value, falling back to the
-  // resolved/template value and then a sensible default of "1".
-  const initialInput = String(effectiveValue ?? resolvedValue ?? "1");
+  // Initialize the input from the effective value (actual theme), falling
+  // back to a sensible default of "1".
+  const initialInput = String(value ?? "1");
   const [inputHtmlRatioValue, setInputHtmlRatioValue] = useState(initialInput);
 
   const sliderValue = Math.round(
@@ -81,7 +75,7 @@ export default function FontStyleRangedOption(props: FontStyleRangedOptionProps)
     >
       <Stack direction="row" alignItems="center" spacing={0.75}>
         <OptionListItemResetButton
-          canResetValue={canReset}
+          canResetValue={!!userEdit || !!isCodeControlled}
           resetValue={reset}
           label={"Default"}
         />
@@ -98,7 +92,7 @@ export default function FontStyleRangedOption(props: FontStyleRangedOptionProps)
         value={sliderValue}
         onChange={handleSliderChange}
         onChangeCommitted={handleSliderCommit}
-        disabled={hasCodeOverride}
+        disabled={isCodeControlled}
       />
 
       <TextField
@@ -107,7 +101,7 @@ export default function FontStyleRangedOption(props: FontStyleRangedOptionProps)
         value={inputHtmlRatioValue}
         onChange={handleInputChange}
         onBlur={handleInputBlur}
-        disabled={hasCodeOverride}
+        disabled={isCodeControlled}
         sx={{
           flexBasis: props.orientation === "vertical" ? "100%" : "auto",
 

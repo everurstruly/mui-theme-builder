@@ -29,6 +29,7 @@
     "@mui/x-tree-view": "^8.15.0",
     "@types/acorn": "^6.0.4",
     "@types/react-helmet": "^6.1.11",
+    "@types/tinycolor2": "^1.4.6",
     "@uiw/react-codemirror": "^4.23.0",
     "@uiw/react-color": "^2.9.2",
     "@vitejs/plugin-react": "4.5.0",
@@ -45,6 +46,7 @@
     "react-syntax-highlighter": "^16.1.0",
     "recharts": "^2.7.0",
     "stringify-object": "^3.3.0",
+    "tinycolor2": "^1.6.0",
     "use-debouncy": "^5.1.6",
     "zundo": "^2.3.0",
     "zustand": "^5.0.8"

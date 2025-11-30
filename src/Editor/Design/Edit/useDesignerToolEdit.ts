@@ -1,13 +1,13 @@
 import { useMemo, useCallback } from "react";
 import useEdit from "./useEdit";
+import useCreatedTheme from "./useCreatedTheme";
 import { getNestedValue, type SerializableValue } from "../compiler";
-import { useThemeCompilerCache } from "./useThemeCompilerCache";
 
 export default function useDesignerToolEdit(path: string, scheme?: string | null) {
   const isSchemeSpecific = scheme != null;
 
-  // USE CACHE FOR FASTER BASE VALUE LOOKUPS
-  const compilerCache = useThemeCompilerCache();
+  // 🎯 CRITICAL FIX: Use actual MUI theme instead of intermediate compiler cache
+  const actualTheme = useCreatedTheme((scheme || undefined) as 'light' | 'dark' | undefined);
 
   // NARROWER SUBSCRIPTIONS - only subscribe to relevant paths
   const codeValue = useEdit(useCallback((s) => s.codeOverridesFlattened[path], [path]));
@@ -16,28 +16,23 @@ export default function useDesignerToolEdit(path: string, scheme?: string | null
     useCallback((s) => s.colorSchemes[scheme || ""]?.visualToolEdits[path], [scheme, path])
   );
 
-  // Compose the authoritative 'value' (code overrides take precedence,
-  // then visual edits, then the base/template value)
+  // Compose the authoritative 'value' (visual edits take precedence here for panels)
   const editValue = isSchemeSpecific ? schemeEdit : globalEdit;
-  // Get base value from cache (faster than full theme resolution)
-  const baseValue = useMemo(() => {
-    const theme = compilerCache;
-    return getNestedValue(theme, path) as SerializableValue | undefined;
-  }, [compilerCache, path]);
 
-  // Ensure effectiveValue always falls back to the base/template value when
-  // no code override or visual edit exists.
-  const effectiveValue = (codeValue ?? editValue ?? baseValue) as
-    | SerializableValue
-    | undefined;
+  // 🎯 CRITICAL FIX: Get base value from ACTUAL MUI theme
+  const baseValue = useMemo(() => {
+    return getNestedValue(actualTheme, path) as SerializableValue | undefined;
+  }, [actualTheme, path]);
+
+  // Effective value is now the computed theme value
+  const effectiveValue = baseValue;
 
   // Determine whether a visual edit or code override exists
   const hasVisualEdit = typeof editValue === "string" || !!editValue;
   const hasCodeOverride = !!codeValue;
-
   const canReset = hasVisualEdit || hasCodeOverride;
 
-  // Get the appropriate actions (stable function identities from store)
+  // Get the appropriate actions
   const addGlobalEdit = useEdit((s) => s.addGlobalVisualEdit);
   const addSchemeEdit = useEdit((s) => s.addSchemeVisualEdit);
   const removeGlobalEdit = useEdit((s) => s.removeGlobalVisualEdit);
@@ -45,10 +40,9 @@ export default function useDesignerToolEdit(path: string, scheme?: string | null
 
   return useMemo(
     () => ({
-      // `value` is the effective value consumers should display/use
+      // 🎯 value is now the ACTUAL computed MUI theme value
       value: effectiveValue,
-      // `resolvedValue` kept as the base/template-derived value for reference
-      resolvedValue: baseValue,
+      // Remove resolvedValue as it's redundant - baseValue is the template-derived value
       baseValue,
       hasCodeOverride,
       hasVisualEdit,
@@ -65,8 +59,8 @@ export default function useDesignerToolEdit(path: string, scheme?: string | null
     }),
     [
       effectiveValue,
-      scheme,
       baseValue,
+      scheme,
       hasCodeOverride,
       hasVisualEdit,
       canReset,
