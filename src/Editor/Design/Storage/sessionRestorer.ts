@@ -1,7 +1,7 @@
 import type { SavedSessionData } from "./types";
 
 type RestoreHelpers = {
-  addGlobalVisualEdit: (key: string, value: any) => void;
+  addGlobalDesignerEdit: (key: string, value: any) => void;
   applyModifications: (src: string) => void;
   setActiveColorScheme: (s: "light" | "dark") => void;
 };
@@ -9,33 +9,33 @@ type RestoreHelpers = {
 export function restoreSession(session: SavedSessionData, helpers: RestoreHelpers) {
   if (!session) return;
 
-  const { addGlobalVisualEdit, applyModifications, setActiveColorScheme } = helpers;
+  const { addGlobalDesignerEdit, applyModifications, setActiveColorScheme } = helpers;
 
   try {
-    if (session.colorSchemeIndependentVisualToolEdits) {
-      Object.entries(session.colorSchemeIndependentVisualToolEdits).forEach(([k, v]) => {
+    if (session.neutralEdits) {
+      Object.entries(session.neutralEdits).forEach(([k, v]) => {
         try {
-          addGlobalVisualEdit(k, v as any);
+          addGlobalDesignerEdit(k, v as any);
         } catch (e) {
           void e;
         }
       });
     }
 
-    if (session.light?.visualToolEdits) {
-      Object.entries(session.light.visualToolEdits).forEach(([k, v]) => {
+    if (session.light?.designer) {
+      Object.entries(session.light.designer).forEach(([k, v]) => {
         try {
-          addGlobalVisualEdit(k, v as any);
+          addGlobalDesignerEdit(k, v as any);
         } catch (e) {
           void e;
         }
       });
     }
 
-    if (session.dark?.visualToolEdits) {
-      Object.entries(session.dark.visualToolEdits).forEach(([k, v]) => {
+    if (session.dark?.designer) {
+      Object.entries(session.dark.designer).forEach(([k, v]) => {
         try {
-          addGlobalVisualEdit(k, v as any);
+          addGlobalDesignerEdit(k, v as any);
         } catch (e) {
           void e;
         }

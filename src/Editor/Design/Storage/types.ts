@@ -1,8 +1,8 @@
 export interface SavedSessionData {
   activeColorScheme?: "light" | "dark";
-  colorSchemeIndependentVisualToolEdits?: Record<string, any>;
-  light?: { visualToolEdits?: Record<string, any> };
-  dark?: { visualToolEdits?: Record<string, any> };
+  neutralEdits?: Record<string, any>;
+  light?: { designer?: Record<string, any> };
+  dark?: { designer?: Record<string, any> };
   codeOverridesSource?: string;
 }
 

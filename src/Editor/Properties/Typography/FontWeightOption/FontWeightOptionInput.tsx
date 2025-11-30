@@ -4,7 +4,7 @@ import {
   MenuItem,
   type SelectChangeEvent,
 } from "@mui/material";
-import useThemeEdit from "../../../Design/Edit/useThemeEdit";
+import useEditProperty from "../../../Design/Edit/useEditProperty";
 
 type FontWeightOptionInputProps = {
   id: string;
@@ -46,7 +46,7 @@ const fontWeightValues = [
 ];
 
 export default function FontWeightOptionInput(props: FontWeightOptionInputProps) {
-  const { setValue } = useThemeEdit(props.path);
+  const { setValue } = useEditProperty(props.path);
 
   const handleChange = (event: SelectChangeEvent) => {
     setValue(Number(event.target.value));

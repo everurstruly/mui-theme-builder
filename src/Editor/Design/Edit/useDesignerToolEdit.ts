@@ -10,10 +10,10 @@ export default function useDesignerToolEdit(path: string, scheme?: string | null
   const actualTheme = useCreatedTheme((scheme || undefined) as 'light' | 'dark' | undefined);
 
   // NARROWER SUBSCRIPTIONS - only subscribe to relevant paths
-  const codeValue = useEdit(useCallback((s) => s.codeOverridesFlattened[path], [path]));
-  const globalEdit = useEdit(useCallback((s) => s.colorSchemeIndependentVisualToolEdits[path], [path]));
+  const codeValue = useEdit(useCallback((s) => s.codeOverridesEdits[path], [path]));
+  const globalEdit = useEdit(useCallback((s) => s.neutralEdits[path], [path]));
   const schemeEdit = useEdit(
-    useCallback((s) => s.colorSchemes[scheme || ""]?.visualToolEdits[path], [scheme, path])
+    useCallback((s) => s.schemeEdits[scheme || ""]?.designer[path], [scheme, path])
   );
 
   // Compose the authoritative 'value' (visual edits take precedence here for panels)
@@ -28,15 +28,15 @@ export default function useDesignerToolEdit(path: string, scheme?: string | null
   const effectiveValue = baseValue;
 
   // Determine whether a visual edit or code override exists
-  const hasVisualEdit = typeof editValue === "string" || !!editValue;
+  const hasDesignerEdit = typeof editValue === "string" || !!editValue;
   const hasCodeOverride = !!codeValue;
-  const canReset = hasVisualEdit || hasCodeOverride;
+  const canReset = hasDesignerEdit || hasCodeOverride;
 
   // Get the appropriate actions
-  const addGlobalEdit = useEdit((s) => s.addGlobalVisualEdit);
-  const addSchemeEdit = useEdit((s) => s.addSchemeVisualEdit);
-  const removeGlobalEdit = useEdit((s) => s.removeGlobalVisualEdit);
-  const removeSchemeEdit = useEdit((s) => s.removeSchemeVisualEdit);
+  const addGlobalEdit = useEdit((s) => s.addGlobalDesignerEdit);
+  const addSchemeEdit = useEdit((s) => s.addSchemeDesignerEdit);
+  const removeGlobalEdit = useEdit((s) => s.removeGlobalDesignerEdit);
+  const removeSchemeEdit = useEdit((s) => s.removeSchemeDesignerEdit);
 
   return useMemo(
     () => ({
@@ -45,9 +45,9 @@ export default function useDesignerToolEdit(path: string, scheme?: string | null
       // Remove resolvedValue as it's redundant - baseValue is the template-derived value
       baseValue,
       hasCodeOverride,
-      hasVisualEdit,
+      hasDesignerEdit,
       canReset,
-      isModified: hasCodeOverride || hasVisualEdit,
+      isModified: hasCodeOverride || hasDesignerEdit,
       setValue: (v: SerializableValue) =>
         isSchemeSpecific
           ? addSchemeEdit(scheme as string, path, v)
@@ -62,7 +62,7 @@ export default function useDesignerToolEdit(path: string, scheme?: string | null
       baseValue,
       scheme,
       hasCodeOverride,
-      hasVisualEdit,
+      hasDesignerEdit,
       canReset,
       isSchemeSpecific,
       addGlobalEdit,

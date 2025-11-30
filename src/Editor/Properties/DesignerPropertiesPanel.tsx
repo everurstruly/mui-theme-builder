@@ -1,18 +1,18 @@
 import useEditorStore from "../useEditor";
-import PropertyTabs from "./PropertyTabs";
+import PropertiesTabs from "./PropertiesTabs";
 import ColorProperty from "./Color/Color";
 import TypographyProperty from "./Typography/Typography";
 import AppearanceProperty from "./Appearance/Appearance";
 import { Box, Typography, Paper, type SxProps } from "@mui/material";
 
-export const panelPaddingInlineRem = 2.8;
+const panelPaddingInlineRem = 2.8;
 const thinScrollbar = {
   scrollbarWidth: "thin",
   scrollbarColor: "rgba(0,0,0,0.5) transparent",
 };
 
 export default function DesignerPropertiesPanel({ sx }: { sx?: SxProps<any> }) {
-  const selectedPropertyTab = useEditorStore((s) => s.selectedPropertyTab);
+  const selectedPropertiesTab = useEditorStore((s) => s.selectedPropertiesTab);
 
   return (
     <Paper
@@ -22,6 +22,7 @@ export default function DesignerPropertiesPanel({ sx }: { sx?: SxProps<any> }) {
         overflow: "auto",
         height: `100%`,
         px: 0,
+        borderRadius: 0,
         ...thinScrollbar,
         ...(Array.isArray(sx) ? sx : [sx]),
       }}
@@ -39,20 +40,19 @@ export default function DesignerPropertiesPanel({ sx }: { sx?: SxProps<any> }) {
           borderBottom: (theme) => `1px solid ${theme.palette.divider}`,
         }}
       >
-        <PropertyTabs />
+        <PropertiesTabs />
       </Paper>
 
       <Box
         paddingInline={panelPaddingInlineRem}
+        paddingTop={2}
         paddingBottom={12}
         minHeight={"100%"}
-        height={"100%"}
         display={"flex"}
-        data-bro-what-the-fuck="hi"
       >
-        {selectedPropertyTab === "palette" && <ColorProperty />}
-        {selectedPropertyTab === "typography" && <TypographyProperty />}
-        {selectedPropertyTab === "appearance" && <AppearanceProperty />}
+        {selectedPropertiesTab === "palette" && <ColorProperty />}
+        {selectedPropertiesTab === "typography" && <TypographyProperty />}
+        {selectedPropertiesTab === "appearance" && <AppearanceProperty />}
       </Box>
 
       {/* <DynamicResourceGeneratorFab

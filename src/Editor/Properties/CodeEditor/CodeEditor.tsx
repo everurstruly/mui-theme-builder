@@ -237,7 +237,20 @@ export default function CodeEditor() {
   }, [handleApply]);
 
   const handleDiscard = useCallback(() => {
-    setEditorBody(source ? extractBody(source) : DEFAULT_BODY_CONTENT);
+    // Build the wrapped full content the same way the incoming `source`
+    // is normalized in the effect above, then update both fullContent
+    // (which CodeMirror displays) and editorBody (extracted body).
+    const base = source
+      ? /^\s*\{/.test(source)
+        ? buildEditableCodeBodyContent(extractBody(source))
+        : source
+      : buildEditableCodeBodyContent(DEFAULT_BODY_CONTENT);
+    setFullContent(base);
+    try {
+      setEditorBody(extractBody(base));
+    } catch {
+      // ignore extraction failures
+    }
     // Clear validation errors when discarding
     setValidationErrors([]);
     setValidationWarnings([]);
@@ -245,7 +258,15 @@ export default function CodeEditor() {
 
   const handleReset = useCallback(() => {
     clearOverrides();
-    setEditorBody(DEFAULT_BODY_CONTENT);
+    // Immediately reflect the default body in the editor by wrapping
+    // it into the editable full content and updating both states.
+    const base = buildEditableCodeBodyContent(DEFAULT_BODY_CONTENT);
+    setFullContent(base);
+    try {
+      setEditorBody(extractBody(base));
+    } catch {
+      // ignore
+    }
     // Clear validation errors when resetting
     setValidationErrors([]);
     setValidationWarnings([]);

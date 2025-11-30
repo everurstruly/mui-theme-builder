@@ -1,198 +1,12 @@
-/**
- * Current Slice - Pure Theme Design Model
- *
- * Responsibilities:
- * - Store base theme representation (DSL format)
- * - Store visual tool edits (UI-driven modifications)
- * - Store code overrides (developer-driven modifications)
- * - Maintain theme metadata and provenance
- *
- * Does NOT contain:
- * - UI state (activeColorScheme, selectedPreview, etc.)
- * - History/undo/redo logic
- * - Storage status
- * - Compiler/transformation logic
- * - Runtime decisions (no isColorSchemePath checks)
- *
- * Actions are DUMB mutations:
- * - Caller provides all context (scheme, path, value)
- * - No service calls (themeCompiler)
- * - No conditional routing
- */
-
 import type { StateCreator } from "zustand";
-import type { ThemeDsl } from "../../compiler";
 import { serializeThemeOptions } from "../../compiler";
+import type {
+  ColorSchemeEdits,
+  DesignEditCurrentSlice,
+  ThemeCurrentState,
+} from "./types";
 import templatesRegistry from "../../../Templates/registry";
 import { createAddPatch, createRemovePatch } from "./historySlice";
-
-// Helper: store-owned default base theme code
-function getDefaultBaseThemeCode(): string {
-  return serializeThemeOptions(templatesRegistry.material.themeOptions);
-}
-
-// Helper: compute a deterministic content hash (JSON string) for dirty checking
-// Only includes the serializable parts relevant to storage/dirty checks.
-export function computeContentHash(state: any): string {
-  const content = {
-    baseTheme: state.baseThemeCode,
-    visualEdits: {
-      global: state.colorSchemeIndependentVisualToolEdits,
-      schemes: state.colorSchemes,
-    },
-    codeOverrides: state.codeOverridesFlattened,
-  };
-  return JSON.stringify(content);
-}
-
-// ===== Types =====
-
-export type SerializableValue =
-  | string
-  | number
-  | boolean
-  | undefined
-  | null
-  | SerializableValue[]
-  | { [key: string]: SerializableValue };
-
-/**
- * Color-scheme-specific modifications.
- * Only palette.* and shadows paths are color-scheme scoped.
- */
-export interface ColorSchemeEdits {
-  /** Visual edits for color-scheme paths (palette.*, shadows) */
-  visualToolEdits: Record<string, SerializableValue>;
-}
-
-/**
- * Base theme metadata for provenance tracking.
- */
-export interface ThemeMetadata {
-  sourceTemplateId?: string;
-  createdAtTimestamp: number;
-  lastModifiedTimestamp: number;
-}
-
-/**
- * Domain state - pure theme design model.
- */
-export interface ThemeCurrentState {
-  /** Human-readable design title */
-  title: string;
-
-  /** Base theme as JSON string (DSL format) */
-  baseThemeCode: string;
-
-  /** Base theme metadata */
-  baseThemeMetadata: ThemeMetadata;
-
-  /** Global visual edits (typography, spacing, shape, breakpoints, etc.) */
-  colorSchemeIndependentVisualToolEdits: Record<string, SerializableValue>;
-
-  /**
-   * Color scheme-specific edits (palette.*, shadows).
-   * Supports any scheme name: 'light', 'dark', 'high-contrast', 'sepia', etc.
-   * Future-proofs for MUI v6+ custom color schemes.
-   */
-  colorSchemes: Record<string, ColorSchemeEdits>;
-
-  /** Code overrides source (raw JavaScript/TypeScript) */
-  codeOverridesSource: string;
-
-  /** Code overrides as DSL (safe, serializable) */
-  codeOverridesDsl: ThemeDsl;
-
-  /** Code overrides flattened for path lookups */
-  codeOverridesFlattened: Record<string, SerializableValue>;
-
-  /** Code override error, if any */
-  codeOverridesError: string | null;
-
-  /** Content hash of the serializable parts of the design */
-  contentHash: string;
-
-  /** Last stored content hash - for dirty checking */
-  lastStoredContentHash: string;
-
-  /** Per-path modification timestamps (ms since epoch) */
-  modificationTimestamps: Record<string, number>;
-}
-
-/**
- * Domain actions - mutations on the theme design model.
- */
-export interface ThemeCurrentActions {
-  /** Set design title */
-  setTitle: (title: string) => void;
-
-  /** Set or update base theme */
-  setBaseTheme: (
-    themeCodeOrDsl: string | ThemeDsl,
-    metadata?: Partial<ThemeMetadata> & { title?: string }
-  ) => void;
-
-  /** Add or update a global visual edit (typography, spacing, shape, etc.) */
-  addGlobalVisualEdit: (path: string, value: SerializableValue) => void;
-
-  /** Add or update a scheme-specific visual edit (palette.*, shadows) */
-  addSchemeVisualEdit: (
-    scheme: string,
-    path: string,
-    value: SerializableValue
-  ) => void;
-
-  /** Remove a global visual edit */
-  removeGlobalVisualEdit: (path: string) => void;
-
-  /** Remove a scheme-specific visual edit */
-  removeSchemeVisualEdit: (scheme: string, path: string) => void;
-
-  /** Get a global visual edit value */
-  getGlobalVisualEdit: (path: string) => SerializableValue;
-
-  /** Get a scheme-specific visual edit value */
-  getSchemeVisualEdit: (scheme: string, path: string) => SerializableValue;
-
-  /** Clear visual edits */
-  clearVisualEdits: (
-    scope: "global" | "current-scheme" | "all",
-    scheme: string
-  ) => void;
-
-  /** Set code overrides (pre-transformed by caller) */
-  setCodeOverrides: (
-    source: string,
-    dsl: ThemeDsl,
-    flattened: Record<string, SerializableValue>,
-    error: string | null
-  ) => void;
-
-  /** Clear code overrides */
-  clearCodeOverrides: () => void;
-
-  /** Load a completely new design */
-  loadNew: (
-    themeCodeOrDsl?: string | ThemeDsl,
-    metadata?: Partial<ThemeMetadata> & { title?: string }
-  ) => void;
-
-  /** Reset to base theme (clear all edits) */
-  resetToBase: () => void;
-
-  /** Mark current version as saved */
-  acknowledgeStoredModifications: () => void;
-}
-
-export type DesignEditCurrentSlice = ThemeCurrentState & ThemeCurrentActions;
-
-// ===== Initial State Factory =====
-
-function createInitialColorSchemeEdits(): ColorSchemeEdits {
-  return { visualToolEdits: {} };
-}
-
-// ===== Slice Creator =====
 
 export const createCurrentSlice: StateCreator<
   DesignEditCurrentSlice,
@@ -200,49 +14,32 @@ export const createCurrentSlice: StateCreator<
   [],
   DesignEditCurrentSlice
 > = (set, get) => ({
-  // (Content hash helper moved to top-level `computeContentHash`)
-  // Initial state - store supplies its own default baseline
   title: templatesRegistry.material.label,
-  baseThemeCode: getDefaultBaseThemeCode(),
-  baseThemeMetadata: {
-    sourceTemplateId: "material",
+  baseThemeOptionSource: generateDefaultBaseThemeOption(),
+  baseThemeOptionSourceMetadata: {
+    templateId: "material",
     createdAtTimestamp: Date.now(),
     lastModifiedTimestamp: Date.now(),
   },
-  colorSchemeIndependentVisualToolEdits: {},
-  colorSchemes: {
-    light: createInitialColorSchemeEdits(),
-    dark: createInitialColorSchemeEdits(),
+
+  neutralEdits: {},
+  schemeEdits: {
+    light: createInitialSchemeEdits(),
+    dark: createInitialSchemeEdits(),
   },
+
   codeOverridesSource: "",
   codeOverridesDsl: {},
-  codeOverridesFlattened: {},
+  codeOverridesEdits: {},
   codeOverridesError: null,
-  // Initial content hash computed from the initial state fields used in hashing
-  contentHash: computeContentHash({
-    baseThemeCode: getDefaultBaseThemeCode(),
-    colorSchemeIndependentVisualToolEdits: {},
-    colorSchemes: {
-      light: { visualToolEdits: {} },
-      dark: { visualToolEdits: {} },
-    },
-    codeOverridesFlattened: {},
-  }),
-  lastStoredContentHash: computeContentHash({
-    baseThemeCode: getDefaultBaseThemeCode(),
-    colorSchemeIndependentVisualToolEdits: {},
-    colorSchemes: {
-      light: { visualToolEdits: {} },
-      dark: { visualToolEdits: {} },
-    },
-    codeOverridesFlattened: {},
-  }),
+
+  contentHash: generateInitialContentHash(),
+  lastStoredContentHash: generateInitialContentHash(),
   modificationTimestamps: {},
 
-  // Actions
   setTitle: (title: string) => {
     set((state) => {
-      const newState = { title };
+      const newState: Partial<DesignEditCurrentSlice> = { title };
       const contentHash = computeContentHash({ ...state, ...newState });
       return {
         ...newState,
@@ -255,17 +52,17 @@ export const createCurrentSlice: StateCreator<
     });
   },
 
-  setBaseTheme: (themeCodeOrDsl, metadata) => {
+  setBaseThemeOption: (themeCodeOrDsl, metadata) => {
     const codeString =
       typeof themeCodeOrDsl === "string"
         ? themeCodeOrDsl
         : JSON.stringify(themeCodeOrDsl);
 
     set((state) => {
-      const newState = {
-        baseThemeCode: codeString,
-        baseThemeMetadata: {
-          ...state.baseThemeMetadata,
+      const newState: Partial<DesignEditCurrentSlice> = {
+        baseThemeOptionSource: codeString,
+        baseThemeOptionSourceMetadata: {
+          ...state.baseThemeOptionSourceMetadata,
           ...metadata,
           lastModifiedTimestamp: Date.now(),
         },
@@ -279,15 +76,15 @@ export const createCurrentSlice: StateCreator<
         contentHash,
         modificationTimestamps: {
           ...state.modificationTimestamps,
-          baseThemeCode: Date.now(),
+          baseThemeOptionSource: Date.now(),
         },
       };
     });
   },
 
-  addGlobalVisualEdit: (path, value) => {
+  addGlobalDesignerEdit: (path, value) => {
     set((state) => {
-      const current = state.colorSchemeIndependentVisualToolEdits[path];
+      const current = state.neutralEdits[path];
       if (current === value) return state; // Skip if no change
 
       // Record history patch for this change
@@ -299,11 +96,11 @@ export const createCurrentSlice: StateCreator<
       }
 
       const newEdits = {
-        ...state.colorSchemeIndependentVisualToolEdits,
+        ...state.neutralEdits,
         [path]: value,
       };
 
-      const newState = { colorSchemeIndependentVisualToolEdits: newEdits };
+      const newState: Partial<DesignEditCurrentSlice> = { neutralEdits: newEdits };
       const contentHash = computeContentHash({ ...state, ...newState });
 
       return {
@@ -317,10 +114,10 @@ export const createCurrentSlice: StateCreator<
     });
   },
 
-  addSchemeVisualEdit: (scheme, path, value) => {
+  addSchemeDesignerEdit: (scheme, path, value) => {
     set((state) => {
-      const schemeObj = state.colorSchemes[scheme] || { visualToolEdits: {} };
-      const current = schemeObj.visualToolEdits[path];
+      const schemeObj = state.schemeEdits[scheme] || { designer: {} };
+      const current = schemeObj.designer[path];
       if (current === value) return state;
 
       // Record history patch for scheme-specific change
@@ -331,22 +128,22 @@ export const createCurrentSlice: StateCreator<
         // ignore
       }
 
-      const newSchemes = {
-        ...state.colorSchemes,
+      const newSchemes: DesignEditCurrentSlice["schemeEdits"] = {
+        ...state.schemeEdits,
         [scheme]: {
           ...schemeObj,
-          visualToolEdits: {
-            ...(schemeObj.visualToolEdits || {}),
+          designer: {
+            ...(schemeObj.designer || {}),
             [path]: value,
           },
         },
       };
 
-      const newState = { colorSchemes: newSchemes };
+      const newState: Partial<DesignEditCurrentSlice> = { schemeEdits: newSchemes };
       const contentHash = computeContentHash({ ...state, ...newState });
 
       return {
-        colorSchemes: newSchemes,
+        schemeEdits: newSchemes,
         contentHash,
         modificationTimestamps: {
           ...state.modificationTimestamps,
@@ -356,9 +153,9 @@ export const createCurrentSlice: StateCreator<
     });
   },
 
-  removeGlobalVisualEdit: (path) => {
+  removeGlobalDesignerEdit: (path) => {
     set((state) => {
-      const newEdits = { ...state.colorSchemeIndependentVisualToolEdits };
+      const newEdits = { ...state.neutralEdits };
       if (!(path in newEdits)) return state;
       const oldValue = newEdits[path];
       delete newEdits[path];
@@ -370,10 +167,10 @@ export const createCurrentSlice: StateCreator<
       } catch {
         // ignore
       }
-      const newState = { colorSchemeIndependentVisualToolEdits: newEdits };
+      const newState: Partial<DesignEditCurrentSlice> = { neutralEdits: newEdits };
       const contentHash = computeContentHash({ ...state, ...newState });
       return {
-        colorSchemeIndependentVisualToolEdits: newEdits,
+        neutralEdits: newEdits,
         contentHash,
         modificationTimestamps: {
           ...state.modificationTimestamps,
@@ -383,14 +180,14 @@ export const createCurrentSlice: StateCreator<
     });
   },
 
-  removeSchemeVisualEdit: (scheme, path) => {
+  removeSchemeDesignerEdit: (scheme, path) => {
     set((state) => {
-      const schemeEdits = state.colorSchemes[scheme];
+      const schemeEdits = state.schemeEdits[scheme];
       if (!schemeEdits) return state;
 
-      if (!(path in schemeEdits.visualToolEdits)) return state;
+      if (!(path in schemeEdits.designer)) return state;
 
-      const newEdits = { ...schemeEdits.visualToolEdits };
+      const newEdits = { ...schemeEdits.designer };
       const oldValue = newEdits[path];
       delete newEdits[path];
 
@@ -402,19 +199,19 @@ export const createCurrentSlice: StateCreator<
         // ignore
       }
 
-      const newSchemes = {
-        ...state.colorSchemes,
+      const newSchemes: DesignEditCurrentSlice["schemeEdits"] = {
+        ...state.schemeEdits,
         [scheme]: {
           ...schemeEdits,
-          visualToolEdits: newEdits,
+          designer: newEdits,
         },
       };
 
-      const newState = { colorSchemes: newSchemes };
+      const newState: Partial<DesignEditCurrentSlice> = { schemeEdits: newSchemes };
       const contentHash = computeContentHash({ ...state, ...newState });
 
       return {
-        colorSchemes: newSchemes,
+        schemeEdits: newSchemes,
         contentHash,
         modificationTimestamps: {
           ...state.modificationTimestamps,
@@ -424,31 +221,31 @@ export const createCurrentSlice: StateCreator<
     });
   },
 
-  getGlobalVisualEdit: (path) => {
-    return get().colorSchemeIndependentVisualToolEdits[path];
+  getGlobalDesignerEdit: (path) => {
+    return get().neutralEdits[path];
   },
 
-  getSchemeVisualEdit: (scheme, path) => {
-    const schemeEdits = get().colorSchemes[scheme];
-    return schemeEdits?.visualToolEdits[path];
+  getSchemeDesignerEdit: (scheme, path) => {
+    const schemeEdits = get().schemeEdits[scheme];
+    return schemeEdits?.designer[path];
   },
 
   // Backward compatibility helper - merges global + scheme edits
-  getVisualToolEdit: (path: string, scheme: string) => {
+  getDeveloperToolEdit: (path: string, scheme: string) => {
     const state = get();
     return {
-      ...state.colorSchemeIndependentVisualToolEdits,
-      ...(state.colorSchemes[scheme]?.visualToolEdits || {}),
+      ...state.neutralEdits,
+      ...(state.schemeEdits[scheme]?.designer || {}),
     }[path];
   },
 
-  clearVisualEdits: (scope, scheme) => {
+  clearDesignerEdits: (scope, scheme) => {
     if (scope === "global") {
       set((state) => {
-        const newState = { colorSchemeIndependentVisualToolEdits: {} };
+        const newState: Partial<DesignEditCurrentSlice> = { neutralEdits: {} };
         const contentHash = computeContentHash({ ...state, ...newState });
         return {
-          colorSchemeIndependentVisualToolEdits: {},
+          neutralEdits: {},
           contentHash,
           modificationTimestamps: {
             ...state.modificationTimestamps,
@@ -458,17 +255,19 @@ export const createCurrentSlice: StateCreator<
       });
     } else if (scope === "current-scheme") {
       set((state) => {
-        const newSchemes = {
-          ...state.colorSchemes,
+        const newSchemes: DesignEditCurrentSlice["schemeEdits"] = {
+          ...state.schemeEdits,
           [scheme]: {
-            ...state.colorSchemes[scheme],
-            visualToolEdits: {},
+            ...state.schemeEdits[scheme],
+            designer: {},
           },
         };
-        const newState = { colorSchemes: newSchemes };
+        const newState: Partial<DesignEditCurrentSlice> = {
+          schemeEdits: newSchemes,
+        };
         const contentHash = computeContentHash({ ...state, ...newState });
         return {
-          colorSchemes: newSchemes,
+          schemeEdits: newSchemes,
           contentHash,
           modificationTimestamps: {
             ...state.modificationTimestamps,
@@ -478,19 +277,19 @@ export const createCurrentSlice: StateCreator<
       });
     } else {
       set((state) => {
-        const newState = {
-          colorSchemeIndependentVisualToolEdits: {},
-          colorSchemes: {
-            light: createInitialColorSchemeEdits(),
-            dark: createInitialColorSchemeEdits(),
+        const newState: Partial<DesignEditCurrentSlice> = {
+          neutralEdits: {},
+          schemeEdits: {
+            light: createInitialSchemeEdits(),
+            dark: createInitialSchemeEdits(),
           },
         };
         const contentHash = computeContentHash({ ...state, ...newState });
         return {
-          colorSchemeIndependentVisualToolEdits: {},
-          colorSchemes: {
-            light: createInitialColorSchemeEdits(),
-            dark: createInitialColorSchemeEdits(),
+          neutralEdits: {},
+          schemeEdits: {
+            light: createInitialSchemeEdits(),
+            dark: createInitialSchemeEdits(),
           },
           contentHash,
           modificationTimestamps: {
@@ -513,10 +312,10 @@ export const createCurrentSlice: StateCreator<
         // ignore
       }
 
-      const newState = {
+      const newState: Partial<DesignEditCurrentSlice> = {
         codeOverridesSource: source,
         codeOverridesDsl: dsl,
-        codeOverridesFlattened: flattened,
+        codeOverridesEdits: flattened,
         codeOverridesError: error,
       };
       const contentHash = computeContentHash({ ...state, ...newState });
@@ -533,10 +332,10 @@ export const createCurrentSlice: StateCreator<
 
   clearCodeOverrides: () => {
     set((state) => {
-      const newState = {
+      const newState: Partial<DesignEditCurrentSlice> = {
         codeOverridesSource: "",
         codeOverridesDsl: {},
-        codeOverridesFlattened: {},
+        codeOverridesEdits: {},
         codeOverridesError: null,
       };
       const contentHash = computeContentHash({ ...state, ...newState });
@@ -557,26 +356,26 @@ export const createCurrentSlice: StateCreator<
       ? typeof themeCodeOrDsl === "string"
         ? themeCodeOrDsl
         : JSON.stringify(themeCodeOrDsl)
-      : getDefaultBaseThemeCode();
+      : generateDefaultBaseThemeOption();
 
     set((state) => {
-      const newState = {
+      const newState: Partial<DesignEditCurrentSlice> = {
         title: metadata?.title || templatesRegistry.material.label,
-        baseThemeCode: codeString,
-        baseThemeMetadata: {
-          sourceTemplateId:
-            metadata?.sourceTemplateId ?? (themeCodeOrDsl ? undefined : "material"),
+        baseThemeOptionSource: codeString,
+        baseThemeOptionSourceMetadata: {
+          templateId:
+            metadata?.templateId ?? (themeCodeOrDsl ? undefined : "material"),
           createdAtTimestamp: Date.now(),
           lastModifiedTimestamp: Date.now(),
         },
-        colorSchemeIndependentVisualToolEdits: {},
-        colorSchemes: {
-          light: createInitialColorSchemeEdits(),
-          dark: createInitialColorSchemeEdits(),
+        neutralEdits: {},
+        schemeEdits: {
+          light: createInitialSchemeEdits(),
+          dark: createInitialSchemeEdits(),
         },
         codeOverridesSource: "",
         codeOverridesDsl: {},
-        codeOverridesFlattened: {},
+        codeOverridesEdits: {},
         codeOverridesError: null,
       } as any;
 
@@ -596,15 +395,15 @@ export const createCurrentSlice: StateCreator<
 
   resetToBase: () => {
     set((state) => {
-      const newState = {
-        colorSchemeIndependentVisualToolEdits: {},
-        colorSchemes: {
-          light: createInitialColorSchemeEdits(),
-          dark: createInitialColorSchemeEdits(),
+      const newState: Partial<DesignEditCurrentSlice> = {
+        neutralEdits: {},
+        schemeEdits: {
+          light: createInitialSchemeEdits(),
+          dark: createInitialSchemeEdits(),
         },
         codeOverridesSource: "",
         codeOverridesDsl: {},
-        codeOverridesFlattened: {},
+        codeOverridesEdits: {},
         codeOverridesError: null,
       };
       const contentHash = computeContentHash({ ...state, ...newState });
@@ -625,3 +424,34 @@ export const createCurrentSlice: StateCreator<
     }));
   },
 });
+
+function generateDefaultBaseThemeOption(): string {
+  return serializeThemeOptions(templatesRegistry.material.themeOptions);
+}
+
+// Helper: compute a deterministic content hash (JSON string) for dirty checking
+// Only includes the serializable parts relevant to storage/dirty checks.
+export function computeContentHash(state: Partial<ThemeCurrentState>): string {
+  return JSON.stringify({
+    base: state.baseThemeOptionSource,
+    neutral: state.neutralEdits,
+    schemes: state.schemeEdits,
+    codeOverrides: state.codeOverridesEdits,
+  });
+}
+
+function createInitialSchemeEdits(): ColorSchemeEdits {
+  return { designer: {} };
+}
+
+function generateInitialContentHash() {
+  return computeContentHash({
+    baseThemeOptionSource: generateDefaultBaseThemeOption(),
+    codeOverridesEdits: {},
+    neutralEdits: {},
+    schemeEdits: {
+      light: { designer: {} },
+      dark: { designer: {} },
+    },
+  });
+}

@@ -1,6 +1,6 @@
 import { Typography, TextField, ListItem, Stack } from "@mui/material";
 import OptionListItemResetButton from "../../OptionListItemResetButton";
-import useThemeEdit from "../../../Design/Edit/useThemeEdit";
+import useEditProperty from "../../../Design/Edit/useEditProperty";
 
 export type CssStyleInputOptionProps = {
   name: string;
@@ -10,7 +10,7 @@ export type CssStyleInputOptionProps = {
 
 export default function CssStyleInputOption(props: CssStyleInputOptionProps) {
   const { value, userEdit, isCodeControlled, setValue, reset } =
-    useThemeEdit(props.path);
+    useEditProperty(props.path);
 
   const displayValue = value;
   const canReset = !!userEdit || !!isCodeControlled;

@@ -2,42 +2,42 @@ import { useCallback } from "react";
 import useEdit from "./useEdit";
 
 export function useDesignerEditTools() {
-  const addGlobal = useEdit((s) => s.addGlobalVisualEdit);
-  const addScheme = useEdit((s) => s.addSchemeVisualEdit);
-  const removeGlobal = useEdit((s) => s.removeGlobalVisualEdit);
-  const removeScheme = useEdit((s) => s.removeSchemeVisualEdit);
-  const removeAll = useEdit((s) => s.clearVisualEdits);
+  const addGlobal = useEdit((s) => s.addGlobalDesignerEdit);
+  const addScheme = useEdit((s) => s.addSchemeDesignerEdit);
+  const removeGlobal = useEdit((s) => s.removeGlobalDesignerEdit);
+  const removeScheme = useEdit((s) => s.removeSchemeDesignerEdit);
+  const removeAll = useEdit((s) => s.clearDesignerEdits);
 
-  const addGlobalVisualEdit = useCallback(
+  const addGlobalDesignerEdit = useCallback(
     (path: string, value: any) => addGlobal(path, value),
     [addGlobal]
   );
-  const addSchemeVisualEdit = useCallback(
+  const addSchemeDesignerEdit = useCallback(
     (scheme: string, path: string, value: any) => addScheme(scheme, path, value),
     [addScheme]
   );
 
-  const removeGlobalVisualEdit = useCallback(
+  const removeGlobalDesignerEdit = useCallback(
     (path: string) => removeGlobal(path),
     [removeGlobal]
   );
-  const removeSchemeVisualEdit = useCallback(
+  const removeSchemeDesignerEdit = useCallback(
     (scheme: string, path: string) => removeScheme(scheme, path),
     [removeScheme]
   );
 
-  const removeAllVisualEdits = useCallback(
+  const removeAllDesignerEdits = useCallback(
     (scope: "global" | "current-scheme" | "all", scheme: string) =>
       removeAll(scope, scheme),
     [removeAll]
   );
 
   return {
-    addGlobalVisualEdit,
-    addSchemeVisualEdit,
-    removeGlobalVisualEdit,
-    removeSchemeVisualEdit,
-    removeAllVisualEdits,
+    addGlobalDesignerEdit,
+    addSchemeDesignerEdit,
+    removeGlobalDesignerEdit,
+    removeSchemeDesignerEdit,
+    removeAllDesignerEdits,
   };
 }
 

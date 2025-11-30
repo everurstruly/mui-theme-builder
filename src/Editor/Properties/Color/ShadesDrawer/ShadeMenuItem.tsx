@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Box, ListItem, Typography } from "@mui/material";
 import { useDebouncyEffect } from "use-debouncy";
 import OptionListItemResetButton from "../../OptionListItemResetButton";
-import useThemeEdit from "../../../Design/Edit/useThemeEdit";
+import useEditProperty from "../../../Design/Edit/useEditProperty";
 import ColorPickerPopover from "../ColorPickerPopover";
 
 type ShadesListItemProps = {
@@ -17,7 +17,7 @@ export default function ShadeListItem({ title, path }: ShadesListItemProps) {
     setValue,
     reset: resetValue,
     isCodeControlled,
-  } = useThemeEdit(path);
+  } = useEditProperty(path);
 
   const canResetValue = !!userEdit || !!isCodeControlled;
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);

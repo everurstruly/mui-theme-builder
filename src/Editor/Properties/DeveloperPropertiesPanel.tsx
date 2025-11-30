@@ -1,27 +1,18 @@
-import { Suspense, lazy, useMemo } from "react";
+import BeforeCodesourceDiffView from "./CodeEditor/BeforeCodesourceDiffView";
+import { useMemo } from "react";
 import { Box } from "@mui/material";
 import { PanelGroup, Panel, PanelResizeHandle } from "react-resizable-panels";
-
-const CodeEditor = lazy(() =>
-  import("./CodeEditor").then((m) => ({ default: m.CodeEditor }))
-);
-const ThemePreview = lazy(() =>
-  import("./CodeEditor").then((m) => ({ default: m.DiffView }))
-);
+import { CodeEditor } from "./CodeEditor";
 
 export default function DeveloperPropertiesPanel() {
   return (
     <PanelGroup direction="vertical">
       <Panel defaultSize={80} minSize={30}>
-        <Suspense fallback={<div aria-hidden />}>
-          <CodeEditor />
-        </Suspense>
+        <CodeEditor />
       </Panel>
       <DeveloperPanelWindowsResizeHandle />
       <Panel minSize={14}>
-        <Suspense fallback={<div aria-hidden />}>
-          <ThemePreview />
-        </Suspense>
+        <BeforeCodesourceDiffView />
       </Panel>
     </PanelGroup>
   );

@@ -1,15 +1,14 @@
 import useEditorStore, { designProperties } from "../useEditor";
 import { Tabs, Tab, alpha } from "@mui/material";
 
-interface PropertyTabsProps {
-  /** Optional: override the padding for each tab */
+interface PropertiesTabsProps {
   sx?: any;
   tabSx?: any;
 }
 
-export default function PropertyTabs({ sx, tabSx }: PropertyTabsProps) {
-  const selected = useEditorStore((s) => s.selectedPropertyTab);
-  const selectTab = useEditorStore((s) => s.selectPropertyTab);
+export default function PropertiesTabs({ sx, tabSx }: PropertiesTabsProps) {
+  const selected = useEditorStore((s) => s.selectedPropertiesTab);
+  const selectTab = useEditorStore((s) => s.selectPropertiesTab);
 
   return (
     <Tabs
@@ -44,9 +43,9 @@ export default function PropertyTabs({ sx, tabSx }: PropertyTabsProps) {
           key={prop.value}
           label={prop.label}
           value={prop.value}
-          // disableRipple
           sx={{
             minWidth: 0,
+            height: "var(--activity-bar-height)",
             fontSize: "12px",
             fontWeight: "semibold",
             textTransform: "none",

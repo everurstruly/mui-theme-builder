@@ -24,7 +24,7 @@ export default function useStorageCollection(
   const acknowledgeStoredVersion = useEdit((s) => s.acknowledgeStoredModifications);
   const recordStoragePoint = useEdit((s) => (s as any).recordStoragePoint);
   const setActiveColorScheme = useEdit((s) => s.setActiveColorScheme);
-  const { addGlobalVisualEdit } = useDesignerEditTools();
+  const { addGlobalDesignerEdit } = useDesignerEditTools();
   const { applyModifications } = useDeveloperToolActions();
   const createdThemeOptions = useCreatedThemeOption();
 
@@ -33,7 +33,11 @@ export default function useStorageCollection(
   const setLastSavedId = useStorage((s) => s.setLastSavedId);
 
   const saveCurrent = useCallback(
-    async (opts?: { title?: string; includeSession?: boolean; overwriteExisting?: boolean }) => {
+    async (opts?: {
+      title?: string;
+      includeSession?: boolean;
+      overwriteExisting?: boolean;
+    }) => {
       setStatus("loading");
 
       const state = useEdit.getState();
@@ -43,14 +47,14 @@ export default function useStorageCollection(
       const themeOptionsCode = JSON.stringify(createdThemeOptions, null, 2);
 
       // Optional session data for restoring editor state
-      const session = opts?.includeSession !== false ? buildSessionData(state) : undefined;
+      const session =
+        opts?.includeSession !== false ? buildSessionData(state) : undefined;
 
       const before = await adapter.read();
       let newItem: SavedToStorageDesign;
 
-      const currentSourceId = (useEdit.getState() as any).baseThemeMetadata?.sourceTemplateId as
-        | string
-        | undefined;
+      const currentSourceId = (useEdit.getState() as any).baseThemeMetadata
+        ?.templateId as string | undefined;
 
       const conflict = detectTitleConflict(before, title, currentSourceId);
       if (conflict) {
@@ -62,7 +66,12 @@ export default function useStorageCollection(
         throw new Error(`TITLE_CONFLICT:${conflict.id}`);
       }
 
-      const existingIndex = findItemIndex(before, title, currentSourceId, opts?.overwriteExisting);
+      const existingIndex = findItemIndex(
+        before,
+        title,
+        currentSourceId,
+        opts?.overwriteExisting
+      );
 
       if (existingIndex !== -1) {
         const existing = before[existingIndex];
@@ -74,7 +83,10 @@ export default function useStorageCollection(
           title,
         };
 
-        const next = limitList(updateItem(before, existingIndex, newItem), MAX_SAVED);
+        const next = limitList(
+          updateItem(before, existingIndex, newItem),
+          MAX_SAVED
+        );
         await adapter.write(next);
         setSavedDesigns(next);
         acknowledgeStoredVersion();
@@ -106,7 +118,10 @@ export default function useStorageCollection(
       // recognizes it as coming from storage.
       try {
         const state = useEdit.getState();
-        state.setBaseTheme(state.baseThemeCode, { sourceTemplateId: id, title });
+        state.setBaseThemeOption(state.baseThemeOptionSource, {
+          templateId: id,
+          title,
+        });
       } catch (e) {
         void e;
       }
@@ -135,14 +150,16 @@ export default function useStorageCollection(
     (deletedId: string, nextList: SavedToStorageDesign[]) => {
       try {
         const state = useEdit.getState();
-        const currentSourceId = (state as any).baseThemeMetadata?.sourceTemplateId as string | undefined;
+        const currentSourceId = (state as any).baseThemeMetadata?.templateId as
+          | string
+          | undefined;
 
         if (currentSourceId === deletedId) {
           if (nextList.length > 0) {
             const first = nextList[0];
             loadNewDesign(first.themeOptionsCode, {
               title: first.title,
-              sourceTemplateId: first.id,
+              templateId: first.id,
             });
           } else {
             loadNewDesign("", { title: "Untitled" });
@@ -195,7 +212,9 @@ export default function useStorageCollection(
         title: copyTitle,
         createdAt: Date.now(),
         themeOptionsCode: found.themeOptionsCode,
-        session: found.session ? JSON.parse(JSON.stringify(found.session)) : undefined,
+        session: found.session
+          ? JSON.parse(JSON.stringify(found.session))
+          : undefined,
       };
 
       const next = [copy, ...before].slice(0, MAX_SAVED);
@@ -219,14 +238,14 @@ export default function useStorageCollection(
       // 1) Load the themeOptionsCode as the base theme
       loadNewDesign(found.themeOptionsCode, {
         title: found.title,
-        sourceTemplateId: found.id,
+        templateId: found.id,
       });
 
       // 2) Restore session data if present
       const session = found.session;
       if (session) {
         restoreSession(session, {
-          addGlobalVisualEdit,
+          addGlobalDesignerEdit,
           applyModifications,
           setActiveColorScheme,
         });

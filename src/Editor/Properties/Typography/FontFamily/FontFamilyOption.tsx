@@ -3,7 +3,7 @@ import FontFamilyOptionInput from "./FontFamilyOptionInput";
 import OptionListItemResetButton from "../../OptionListItemResetButton";
 import useDesignCreatedTheme from "../../../Design/Edit/useCreatedTheme";
 import { useDesignerEditTools } from "../../../Design/Edit/useDesignerEditTools";
-import useThemeEdit from "../../../Design/Edit/useThemeEdit";
+import useEditProperty from "../../../Design/Edit/useEditProperty";
 
 export type FontFamilyOptionProps = {
   title: string;
@@ -29,9 +29,9 @@ export default function FontFamilyOption({
     typography: { fontFamily },
   } = useDesignCreatedTheme();
 
-  const { addGlobalVisualEdit, removeGlobalVisualEdit } = useDesignerEditTools();
+  const { addGlobalDesignerEdit, removeGlobalDesignerEdit } = useDesignerEditTools();
 
-  const { value, userEdit, isCodeControlled } = useThemeEdit(path);
+  const { value, userEdit, isCodeControlled } = useEditProperty(path);
 
   const autoResolvedValue = fontFamily;
   const resolvedValue = (value as string) ?? autoResolvedValue;
@@ -42,17 +42,17 @@ export default function FontFamilyOption({
     const fontFamilyValue = formatFontFamilyWithFallback(selectedFont);
 
     if (path === "typography.h1.fontFamily") {
-      headingPaths.forEach((p) => addGlobalVisualEdit(p, fontFamilyValue));
+      headingPaths.forEach((p) => addGlobalDesignerEdit(p, fontFamilyValue));
     } else {
-      addGlobalVisualEdit(path, fontFamilyValue);
+      addGlobalDesignerEdit(path, fontFamilyValue);
     }
   };
   
   const handleReset = () => {
     if (path === "typography.h1.fontFamily") {
-      headingPaths.forEach((p) => removeGlobalVisualEdit(p));
+      headingPaths.forEach((p) => removeGlobalDesignerEdit(p));
     } else {
-      removeGlobalVisualEdit(path);
+      removeGlobalDesignerEdit(path);
     }
   };
 

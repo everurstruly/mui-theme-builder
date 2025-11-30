@@ -1,5 +1,5 @@
 import { useDebouncyEffect } from "use-debouncy";
-import useThemeEdit from "../../Design/Edit/useThemeEdit";
+import useThemeEdit from "../../Design/Edit/useEditProperty";
 import { useRef, useState, useMemo, useCallback, useEffect } from "react";
 import generateReadableColorShade from "../../../utils/generateReadableColorShade";
 

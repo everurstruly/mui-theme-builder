@@ -2,7 +2,7 @@ import { Typography, TextField, ListItem, Stack } from "@mui/material";
 import { useState } from "react";
 import SliderInput from "../../SliderInput";
 import OptionListItemResetButton from "../../OptionListItemResetButton";
-import useThemeEdit from "../../../Design/Edit/useThemeEdit";
+import useEditProperty from "../../../Design/Edit/useEditProperty";
 
 export type FontStyleRangedOptionProps = {
   name: string;
@@ -14,7 +14,7 @@ const ratioToPxMultiplier = 20;
 
 export default function FontStyleRangedOption(props: FontStyleRangedOptionProps) {
   const { value, userEdit, isCodeControlled, setValue, reset } =
-    useThemeEdit(props.path);
+    useEditProperty(props.path);
 
   // Initialize the input from the effective value (actual theme), falling
   // back to a sensible default of "1".

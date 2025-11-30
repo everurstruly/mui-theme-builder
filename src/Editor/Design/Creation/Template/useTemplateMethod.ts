@@ -44,7 +44,7 @@ export default function useTemplateMethod(options?: UseTemplateSelectionOptions)
       if (!template) return;
 
       const themeCode = serializeThemeOptions(template.themeOptions);
-      loadNew(themeCode, { sourceTemplateId: templateId, title: template.label });
+      loadNew(themeCode, { templateId: templateId, title: template.label });
     },
     [loadNew]
   );

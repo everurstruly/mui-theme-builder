@@ -1,7 +1,7 @@
 import React from "react";
 import { AutoAwesome } from "@mui/icons-material";
 import type { SxProps } from "@mui/material";
-import type { PropertyTab } from "../useEditor";
+import type { PropertiesTab } from "../useEditor";
 
 type ResourceGenerator = {
   color?: string;
@@ -12,7 +12,7 @@ type ResourceGenerator = {
 };
 
 export const propertyToResourceGeneratorMap: Partial<
-  Record<PropertyTab, ResourceGenerator>
+  Record<PropertiesTab, ResourceGenerator>
 > = {
   palette: {
     color: "info",

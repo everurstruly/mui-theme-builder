@@ -17,9 +17,11 @@ export const designProperties = [
   { label: "Effects", value: "effects" },
 ] as const;
 
-export type PropertyTab = (typeof designProperties)[number]["value"];
+export const editorExperiences = ["designer", "developer"];
+
+export type PropertiesTab = (typeof designProperties)[number]["value"];
 export type EditorPanels = (typeof panels)[number];
-export type EditorExperience = "designer" | "developer";
+export type EditorExperience = (typeof editorExperiences)[number];
 
 export const useEditorStore = create(
   combine(
@@ -27,7 +29,7 @@ export const useEditorStore = create(
       mouseOverCanvas: false,
       mouseOverPropertiesPanel: false,
       selectedExperience: "designer" as EditorExperience,
-      selectedPropertyTab: "palette" as PropertyTab,
+      selectedPropertiesTab: "palette" as PropertiesTab,
       sidebarPanelsBeforeHide: [] as EditorPanels[],
       hiddenPanels: [
         "library",
@@ -42,9 +44,9 @@ export const useEditorStore = create(
         set({ selectedExperience: experience });
       },
 
-      selectPropertyTab: (tab: PropertyTab) => {
+      selectPropertiesTab: (tab: PropertiesTab) => {
         set(() => ({
-          selectedPropertyTab: tab,
+          selectedPropertiesTab: tab,
         }));
       },
 

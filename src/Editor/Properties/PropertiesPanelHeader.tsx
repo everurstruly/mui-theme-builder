@@ -1,7 +1,6 @@
 import ColorSchemeToggle from "../Design/Edit/ColorSchemeToggle";
-import DeveloperModeSwitch from "./DeveloperModeSwitch";
+import EditorExperienceTab from "../ExperienceTab";
 import { Box, Stack, type SxProps } from "@mui/material";
-import { panelPaddingInlineRem } from "./DesignerPropertiesPanel";
 
 export default function PropertiesPanelHeader({ sx }: { sx?: SxProps }) {
   return (
@@ -9,7 +8,7 @@ export default function PropertiesPanelHeader({ sx }: { sx?: SxProps }) {
       direction={"row"}
       alignItems={"center"}
       justifyContent={"space-between"}
-      sx={{ px: panelPaddingInlineRem, ...sx }}
+      sx={{ ...sx }}
       gap={2}
     >
       <Box display="inherit" columnGap={"inherit"}>
@@ -17,7 +16,7 @@ export default function PropertiesPanelHeader({ sx }: { sx?: SxProps }) {
       </Box>
 
       <Box display="inherit" columnGap={"inherit"}>
-        <DeveloperModeSwitch />
+        <EditorExperienceTab />
       </Box>
     </Stack>
   );

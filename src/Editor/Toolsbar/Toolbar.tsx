@@ -1,12 +1,14 @@
 import ExportCommand from "../Design/Edit/ExportCommand";
 import ModificationHistoryButtons from "../Design/Edit/ModificationHistoryButtons";
 import DesignMobileActionMenu from "./DesignMobileActionMenu";
-import DesignActionMenu from "./DesignActionMenu";
 import CurrentDesignContext from "../Design/Edit/Context";
 import PropertiesPanelHeader from "../Properties/PropertiesPanelHeader";
 import StoreCurrentButton from "../Design/Storage/StoreCurrentButton";
 import CreationDialogOpenButton from "../Design/Creation/CreationDialogOpenButton";
+import CollectionPopoverMenuButton from "../Design/Storage/CollectionPopoverMenuButton";
 import { AppBar, Stack, Divider, Toolbar, type SxProps, Box } from "@mui/material";
+
+const inlineGapRem = 2;
 
 export default function EditorToolsbar() {
   return (
@@ -27,7 +29,7 @@ function DesktopToolbarContent() {
       borderColor={"divider"}
       display={{ xs: "none", md: "flex" }}
       sx={{
-        px: { md: 1, lg: "0px" },
+        px: { md: inlineGapRem, lg: "0px" },
         height: "var(--toolbar-height)",
         backgroundColor: (theme) => theme.palette.background.paper,
       }}
@@ -38,7 +40,7 @@ function DesktopToolbarContent() {
         justifyContent={"space-between"}
         maxWidth={"var(--explorer-panel-width)"}
         width={"100%"}
-        px={{ md: 1.5 }}
+        px={{ md: inlineGapRem }}
       >
         <CurrentDesignContext />
       </Stack>
@@ -49,12 +51,15 @@ function DesktopToolbarContent() {
         justifyContent={"space-between"}
         direction={"row"}
         marginInline={"auto"}
-        paddingInline={1.5}
-        columnGap={2}
+        paddingInline={inlineGapRem}
+        columnGap={inlineGapRem}
       >
-        <DesignActionMenu sx={{ columnGap: 2 }} />
+        <Stack direction={"row"} sx={{ columnGap: inlineGapRem }}>
+          <CollectionPopoverMenuButton />
+          <CreationDialogOpenButton />
+        </Stack>
 
-        <Stack direction={"row"} alignItems={"inherit"} columnGap={2}>
+        <Stack direction={"row"} alignItems={"inherit"} columnGap={inlineGapRem}>
           <StoreCurrentButton />
           <ModificationHistoryButtons />
           <ExportCommand />
@@ -74,7 +79,8 @@ function DesktopToolbarContent() {
         flexShrink={0}
         width={{ lg: "var(--properties-panel-width)" }}
         height={"100%"}
-        columnGap={1.5}
+        columnGap={inlineGapRem}
+        paddingInline={inlineGapRem}
         display={{ xs: "none", lg: "flex" }}
       >
         <PropertiesPanelHeader sx={{ flexGrow: 1 }} />

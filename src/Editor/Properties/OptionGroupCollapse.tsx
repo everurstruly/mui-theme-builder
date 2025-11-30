@@ -59,6 +59,7 @@ export default function OptionGroupCollapse({
           }
         }}
         sx={{
+          flexGrow: 1,
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",

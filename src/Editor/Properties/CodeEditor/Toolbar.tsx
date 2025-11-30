@@ -11,7 +11,7 @@ type ToolbarProps = {
 };
 
 export default function Toolbar(props: ToolbarProps) {
-  const { onApply, onClear, hasUnsaved, hasOverrides } = props;
+  const { onApply, onClear, hasUnsaved } = props;
   return (
     <Stack
       direction="row"
@@ -52,7 +52,6 @@ export default function Toolbar(props: ToolbarProps) {
               size="small"
               color="error"
               onClick={onClear}
-              disabled={!hasOverrides}
             >
               <RestartAltRounded />
             </IconButton>

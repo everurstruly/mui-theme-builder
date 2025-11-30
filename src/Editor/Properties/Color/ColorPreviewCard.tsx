@@ -1,6 +1,9 @@
-import React from "react";
 import { Box, Card, Button, alpha } from "@mui/material";
-import { PaletteOutlined, ViewCompact, FormatColorFillRounded } from "@mui/icons-material";
+import {
+  PaletteOutlined,
+  ViewCompact,
+  FormatColorFillRounded,
+} from "@mui/icons-material";
 
 type Props = {
   previewBackground?: string | undefined;
@@ -33,7 +36,6 @@ export default function ColorPreviewCard({
   showStates,
   onOpenShades,
 }: Props) {
-
   return (
     <Card
       elevation={0}
@@ -56,7 +58,9 @@ export default function ColorPreviewCard({
           cursor: foregroundDisabled ? "not-allowed" : "pointer",
           opacity: foregroundDisabled ? 0.5 : 1,
           color: previewForeground,
-          backgroundColor: previewForegroundReadable ? alpha(previewForegroundReadable, 0.05) : undefined,
+          backgroundColor: previewForegroundReadable
+            ? alpha(previewForegroundReadable, 0.05)
+            : undefined,
           position: "absolute",
           top: 0,
           left: 0,
@@ -76,7 +80,9 @@ export default function ColorPreviewCard({
           cursor: backgroundDisabled ? "not-allowed" : "pointer",
           opacity: backgroundDisabled ? 0.5 : 1,
           color: previewForegroundReadable,
-          backgroundColor: previewForegroundReadable ? alpha(previewForegroundReadable, 0.07) : undefined,
+          backgroundColor: previewForegroundReadable
+            ? alpha(previewForegroundReadable, 0.07)
+            : undefined,
           position: "absolute",
           minWidth: "auto",
           alignItems: "flex-end",
@@ -89,13 +95,16 @@ export default function ColorPreviewCard({
       >
         <PaletteOutlined />
       </Box>
-      {showStates ? (
+
+      {!showStates ? null : (
         <Box sx={{ position: "absolute", bottom: 0, left: 0 }}>
           <Button
             onClick={onOpenShades}
             sx={{
               color: previewForegroundReadable,
-              backgroundColor: previewForegroundReadable ? alpha(previewForegroundReadable, 0.07) : undefined,
+              backgroundColor: previewForegroundReadable
+                ? alpha(previewForegroundReadable, 0.07)
+                : undefined,
               display: "inline-flex",
               alignItems: "center",
               gap: 0.5,
@@ -105,7 +114,7 @@ export default function ColorPreviewCard({
             States
           </Button>
         </Box>
-      ) : null}
+      )}
     </Card>
   );
 }

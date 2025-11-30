@@ -255,16 +255,16 @@ export const createHistorySlice: StateCreator<
       if (patch.op === 'add') {
         // inverse of add is remove
         if (patch.isGlobal) {
-          get().removeGlobalVisualEdit(patch.path);
+          get().removeGlobalDesignerEdit(patch.path);
         } else {
-          get().removeSchemeVisualEdit(patch.scheme!, patch.path);
+          get().removeSchemeDesignerEdit(patch.scheme!, patch.path);
         }
       } else if (patch.op === 'remove') {
         // inverse of remove is add with oldValue
         if (patch.isGlobal) {
-          get().addGlobalVisualEdit(patch.path, patch.oldValue!);
+          get().addGlobalDesignerEdit(patch.path, patch.oldValue!);
         } else {
-          get().addSchemeVisualEdit(patch.scheme!, patch.path, patch.oldValue!);
+          get().addSchemeDesignerEdit(patch.scheme!, patch.path, patch.oldValue!);
         }
       }
     });
@@ -296,9 +296,9 @@ export const createHistorySlice: StateCreator<
     entryToRedo.patches.forEach((patch: HistoryPatch) => {
       if (patch.op === 'add') {
         if (patch.isGlobal) {
-          get().addGlobalVisualEdit(patch.path, patch.newValue!);
+          get().addGlobalDesignerEdit(patch.path, patch.newValue!);
         } else {
-          get().addSchemeVisualEdit(patch.scheme!, patch.path, patch.newValue!);
+          get().addSchemeDesignerEdit(patch.scheme!, patch.path, patch.newValue!);
         }
       }
       // remove ops are already reflected by the current state

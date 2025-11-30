@@ -9,7 +9,7 @@ export function useEditorStoreSync(
   useEffect(() => {
     // initial check based on current editor state
     const checkAndSetId = () => {
-      const current = (useEdit.getState() as any).baseThemeMetadata?.sourceTemplateId as string | undefined;
+      const current = (useEdit.getState() as any).baseThemeMetadata?.templateId as string | undefined;
       if (!current) {
         setLastSavedId(null);
       } else {
@@ -19,9 +19,9 @@ export function useEditorStoreSync(
 
     checkAndSetId();
 
-    // Subscribe to editor changes for sourceTemplateId
+    // Subscribe to editor changes for templateId
     const unsubscribe = useEdit.subscribe((s: any) => {
-      const sourceId = s.baseThemeMetadata?.sourceTemplateId as string | undefined;
+      const sourceId = s.baseThemeMetadata?.templateId as string | undefined;
       if (!sourceId) {
         setLastSavedId(null);
       } else {

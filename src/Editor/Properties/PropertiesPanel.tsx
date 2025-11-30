@@ -102,9 +102,15 @@ function MobilePanelDrawer() {
           },
         })}
       >
-        <PropertiesPanelHeader sx={{ paddingInline: { sx: 1.5 } }} />
-
-        <Divider />
+        <PropertiesPanelHeader
+          sx={{
+            px: { xs: 2.5 },
+            py: 1.5,
+            borderBottom: 1,
+            borderColor: "divider",
+            backgroundColor: (theme) => theme.palette.background.paper,
+          }}
+        />
         <PropertiesPanelBody />
       </Drawer>
 

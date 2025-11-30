@@ -1,9 +1,14 @@
 import { useMemo } from "react";
 import useEdit from "./useEdit";
-import { transformCodeToDsl, transformDslToThemeOptions, flattenThemeObject, parseThemeCode } from "../compiler";
+import {
+  transformCodeToDsl,
+  transformDslToThemeOptions,
+  flattenThemeObject,
+  parseThemeCode,
+} from "../compiler";
 
 // Simple in-memory cache to avoid recomputing flattened maps for identical inputs.
-// Key is JSON.stringify(dsl) + '::' + baseThemeCode + '::' + activeColorScheme
+// Key is JSON.stringify(dsl) + '::' + baseThemeOptionSource + '::' + activeColorScheme
 const flattenedCache = new Map<string, Record<string, any>>();
 
 /**
@@ -36,15 +41,16 @@ export default function useDeveloperToolActions() {
           try {
             // Build resolution context from current editor base template
             const state = useEdit.getState();
-            const baseTemplate = parseThemeCode(state.baseThemeCode) ?? {};
+            const baseTemplate = parseThemeCode(state.baseThemeOptionSource) ?? {};
             const activeScheme = (state as any).activeColorScheme ?? "light";
 
             // Cache key must include DSL + base template (string) + scheme because
             // resolved values depend on the template and active color scheme.
             const dslString = JSON.stringify(result.dsl || {});
-            const cacheKey = `${dslString}::${state.baseThemeCode}::${activeScheme}`;
+            const cacheKey = `${dslString}::${state.baseThemeOptionSource}::${activeScheme}`;
 
-            let flattened: Record<string, any> | undefined = flattenedCache.get(cacheKey);
+            let flattened: Record<string, any> | undefined =
+              flattenedCache.get(cacheKey);
             if (!flattened) {
               const context = {
                 template: baseTemplate,

@@ -21,13 +21,13 @@ export type BatchToggleInputProps = {
  * Enabled state is determined by checking if ALL paths match their expected values.
  */
 export default function BatchToggleInput(props: BatchToggleInputProps) {
-  const { addGlobalVisualEdit, removeGlobalVisualEdit } = useDesignerEditTools();
+  const { addGlobalDesignerEdit, removeGlobalDesignerEdit } = useDesignerEditTools();
   const baseVisualToolEdits = useEdit(
-    (s) => s.colorSchemeIndependentVisualToolEdits
+    (s) => s.neutralEdits
   );
   // Narrow selectors: subscribe only to visualToolEdits maps, not full scheme objects
-  const lightModeVisual = useEdit((s) => s.colorSchemes.light?.visualToolEdits);
-  const darkModeVisual = useEdit((s) => s.colorSchemes.dark?.visualToolEdits);
+  const lightModeVisual = useEdit((s) => s.schemeEdits.light?.designer);
+  const darkModeVisual = useEdit((s) => s.schemeEdits.dark?.designer);
   const activeColorScheme = useEdit((s) => s.activeColorScheme);
 
   // Get the appropriate visual edits based on active color scheme
@@ -48,12 +48,12 @@ export default function BatchToggleInput(props: BatchToggleInputProps) {
     if (isEnabled) {
       // Remove all edits
       Object.keys(props.edits).forEach((path) => {
-        removeGlobalVisualEdit(path);
+        removeGlobalDesignerEdit(path);
       });
     } else {
       // Apply all edits
       Object.entries(props.edits).forEach(([path, value]) => {
-        addGlobalVisualEdit(path, value);
+        addGlobalDesignerEdit(path, value);
       });
     }
   };

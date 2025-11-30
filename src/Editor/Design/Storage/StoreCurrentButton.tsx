@@ -17,14 +17,16 @@ export default function StoreCurrentButton() {
   const isSaving = storageProgress === "loading";
   // Current editor's source template id (if any) is stored on baseThemeMetadata
   const currentSourceId = useEdit(
-    (s) => (s as any).baseThemeMetadata?.sourceTemplateId as string | undefined
+    (s) => (s as any).baseThemeMetadata?.templateId as string | undefined
   );
   // Consider the design currently stored when the domain reports no unsaved
   // modifications, the last storage attempt succeeded, and the current
   // editor source corresponds to the saved item id.
   const isCurrentlyStored =
-    hasStoredAllModifications && storageProgress === "success" &&
-    currentSourceId != null && lastSavedId === currentSourceId;
+    hasStoredAllModifications &&
+    storageProgress === "success" &&
+    currentSourceId != null &&
+    lastSavedId === currentSourceId;
 
   const { saveCurrent, savedDesigns } = useStorageCollection();
   const title = useEdit((s) => s.title);
@@ -70,12 +72,10 @@ export default function StoreCurrentButton() {
         value="save"
         aria-label="Save design"
         color="info"
-        variant="outlined"
         disabled={isSaving || isCurrentlyStored}
-        // startIcon={<SaveRounded />}
-            onClick={handleSaveModifications}
+        onClick={handleSaveModifications}
       >
-          {isSaving ? "Saving..." : isCurrentlyStored ? "Saved" : "Save to Device"}
+        {isSaving ? "Saving..." : isCurrentlyStored ? "Saved" : "Save to Device"}
       </Button>
 
       <ConfirmOverwriteDialog

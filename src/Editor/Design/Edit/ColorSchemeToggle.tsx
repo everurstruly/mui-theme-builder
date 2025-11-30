@@ -52,7 +52,7 @@ export default function ColorSchemeToggle() {
               // backgroundColor: (theme) => alpha(theme.palette.common.black, 0.02),
               borderRadius: 2,
               p: 1, // TODO: match the size of other activity bar actions/buttons
-              px: 1.4,
+              px: 1.5,
 
               // "&.Mui-selected": {
               //   color: "primary.main",
