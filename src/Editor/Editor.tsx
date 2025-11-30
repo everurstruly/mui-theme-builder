@@ -1,5 +1,5 @@
 import EditorCanvas from "./Canvas/Canvas";
-import EditorToolsbar from "./Toolsbar/Toolsbar";
+import EditorToolsbar from "./Toolsbar/Toolbar";
 import EditorPropertiesPanel from "./Properties/PropertiesPanel";
 import EditorExplorerPanel from "./Explorer/ExplorerPanel";
 import { GlobalStyles, Paper, Stack } from "@mui/material";

@@ -1,8 +1,8 @@
 import { Button } from "@mui/material";
-import useEditorUiStore from "../useEditor";
+import useEditorStore from "../useEditor";
 
 function CollapsedPreviewsMenu() {
-  const hiddenPanels = useEditorUiStore((state) => state.hiddenPanels);
+  const hiddenPanels = useEditorStore((state) => state.hiddenPanels);
   const isExplorerPanelHidden = () => hiddenPanels.includes("explorer");
 
   if (!isExplorerPanelHidden()) {

@@ -73,13 +73,11 @@ function DesktopToolbarContent() {
         justifyContent={"space-between"}
         flexShrink={0}
         width={{ lg: "var(--properties-panel-width)" }}
-        paddingInline={{ md: 1.5 }}
         height={"100%"}
         columnGap={1.5}
         display={{ xs: "none", lg: "flex" }}
-        paddingInlineEnd={{ lg: 2 }}
       >
-        <PropertiesPanelHeader />
+        <PropertiesPanelHeader sx={{ flexGrow: 1 }} />
       </Stack>
     </Stack>
   );
