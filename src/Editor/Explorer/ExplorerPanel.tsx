@@ -1,5 +1,5 @@
 import Drawer from "@mui/material/Drawer";
-import useEditorUiStore from "../useEditor";
+import useEditorStore from "../useEditor";
 import ExplorerPanelHeader from "./ExplorerPanelHeader";
 import ExplorerPanelBody from "./ExplorerPanelBody";
 import useEdit from "../Design/Edit/useEdit";
@@ -14,10 +14,10 @@ export default function EditorExplorerPanel() {
 }
 
 function DesktopActivitiesDrawer() {
-  const hiddenPanels = useEditorUiStore((state) => state.hiddenPanels);
+  const hiddenPanels = useEditorStore((state) => state.hiddenPanels);
   const isVisible = !hiddenPanels.includes("explorer");
 
-  const withHidePanel = useEditorUiStore((state) => state.hidePanel);
+  const withHidePanel = useEditorStore((state) => state.hidePanel);
   const hidePanel = () => withHidePanel("explorer");
 
   return (
@@ -68,13 +68,13 @@ function DesktopActivitiesDrawer() {
 
 function MobileActivitiesDrawer() {
   const display = { xs: "block", sm: "none" };
-  const hiddenPanels = useEditorUiStore((state) => state.hiddenPanels);
+  const hiddenPanels = useEditorStore((state) => state.hiddenPanels);
   const isVisible = !hiddenPanels.includes("explorer.mobile");
   const selectedTabId = useEdit(
     (state) => state.selectedExperienceId
   );
 
-  const withHidePanel = useEditorUiStore((state) => state.hidePanel);
+  const withHidePanel = useEditorStore((state) => state.hidePanel);
   const hidePanel = () => withHidePanel("explorer.mobile");
 
   return (

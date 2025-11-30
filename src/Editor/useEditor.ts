@@ -7,24 +7,47 @@ const sidebarPanels = [
   "properties.mobile",
   "explorer.mobile",
 ];
-const panels = ["library", ...sidebarPanels];
-export type EditorUiPanels = (typeof panels)[number];
 
-export const useEditorUiStore = create(
+const panels = ["library", ...sidebarPanels];
+
+export const designProperties = [
+  { label: "Color", value: "palette" },
+  { label: "Font", value: "typography" },
+  { label: "Sizes", value: "appearance" },
+  { label: "Effects", value: "effects" },
+] as const;
+
+export type PropertyTab = (typeof designProperties)[number]["value"];
+export type EditorPanels = (typeof panels)[number];
+export type EditorExperience = "designer" | "developer";
+
+export const useEditorStore = create(
   combine(
     {
       mouseOverCanvas: false,
       mouseOverPropertiesPanel: false,
-      sidebarPanelsBeforeHide: [] as EditorUiPanels[],
+      selectedExperience: "designer" as EditorExperience,
+      selectedPropertyTab: "palette" as PropertyTab,
+      sidebarPanelsBeforeHide: [] as EditorPanels[],
       hiddenPanels: [
         "library",
         "properties.mobile",
         "explorer",
         "explorer.mobile",
-      ] as EditorUiPanels[],
+      ] as EditorPanels[],
     },
 
     (set, get) => ({
+      selectExperience: (experience: EditorExperience) => {
+        set({ selectedExperience: experience });
+      },
+
+      selectPropertyTab: (tab: PropertyTab) => {
+        set(() => ({
+          selectedPropertyTab: tab,
+        }));
+      },
+
       setMouseOverPropertiesPanel: (isMouseOver: boolean) => {
         set(() => ({
           mouseOverPropertiesPanel: isMouseOver,
@@ -37,7 +60,7 @@ export const useEditorUiStore = create(
         }));
       },
 
-      hidePanel: (panel: EditorUiPanels) => {
+      hidePanel: (panel: EditorPanels) => {
         set((state) => ({
           hiddenPanels: Array.from(new Set([...state.hiddenPanels, panel])),
         }));
@@ -74,7 +97,7 @@ export const useEditorUiStore = create(
         }));
       },
 
-      showPanel: (panel: EditorUiPanels) => {
+      showPanel: (panel: EditorPanels) => {
         set((state) => ({
           hiddenPanels: state.hiddenPanels.filter((p) => p !== panel),
         }));
@@ -83,4 +106,4 @@ export const useEditorUiStore = create(
   )
 );
 
-export default useEditorUiStore;
+export default useEditorStore;

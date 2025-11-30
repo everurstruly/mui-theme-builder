@@ -9,11 +9,14 @@ export default function useCreatedThemeOption(
 ): ThemeOptions {
   const baseThemeCode = useEdit((s) => s.baseThemeCode);
   const baseVisualToolEdits = useEdit((s) => s.colorSchemeIndependentVisualToolEdits);
-  const colorSchemes = useEdit((s) => s.colorSchemes);
   const codeOverridesDsl = useEdit((s) => s.codeOverridesDsl);
   const activeColorScheme = useEdit((s) => s.activeColorScheme);
-  
+
   const targetScheme = colorScheme ?? activeColorScheme;
+
+  // Subscribe only to the active color scheme slice instead of the entire
+  // `colorSchemes` object so changes to other schemes don't trigger recompute.
+  const colorSchemeForTarget = useEdit((s) => s.colorSchemes?.[targetScheme] ?? {});
   
   // 🎯 ADD CACHING here instead of separate hook
   const cacheRef = useRef<{ cacheKey: string; themeOptions: ThemeOptions }>({ 
@@ -25,7 +28,7 @@ export default function useCreatedThemeOption(
     const cacheKey = JSON.stringify({
       baseThemeCode,
       baseVisualToolEdits,
-      colorSchemes,
+      colorSchemeForTarget,
       codeOverridesDsl,
       targetScheme,
     });
@@ -63,14 +66,14 @@ export default function useCreatedThemeOption(
     const themeOptions = createThemeOptionsFromEdits({
       template: baseTemplate,
       baseVisualToolEdits,
-      colorSchemeVisualToolEdits: colorSchemes[targetScheme]?.visualToolEdits ?? {},
+      colorSchemeVisualToolEdits: (colorSchemeForTarget as any)?.visualToolEdits ?? {},
       codeOverrides,
       colorScheme: targetScheme,
     });
 
     cacheRef.current = { cacheKey, themeOptions };
     return themeOptions;
-  }, [baseThemeCode, baseVisualToolEdits, colorSchemes, codeOverridesDsl, targetScheme]);
+  }, [baseThemeCode, baseVisualToolEdits, colorSchemeForTarget, codeOverridesDsl, targetScheme]);
 }
 
 // extractThemeOptionsForScheme intentionally removed — logic consolidated into useCreatedThemeOption

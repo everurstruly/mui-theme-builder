@@ -1,7 +1,7 @@
 import React from "react";
 import useStorage from "../Storage/useStorage";
 import useEdit from "./useEdit";
-import { UnfoldMore } from "@mui/icons-material";
+import { MoreVertRounded } from "@mui/icons-material";
 import {
   Typography,
   Menu,
@@ -104,7 +104,7 @@ function Context({ sx }: { sx?: SxProps }) {
               columnGap: 0.5,
             }}
           >
-            {title} <UnfoldMore color="primary" sx={{ fontSize: "14px" }} />
+            {title} <MoreVertRounded sx={{ fontSize: "14px" }} />
           </Typography>
         </Typography>
       </Button>

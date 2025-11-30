@@ -1,8 +1,9 @@
 import { useEffect } from "react";
 import useEdit from "../Design/Edit/useEdit";
+import useEditorStore from "../useEditor";
 
 export default function EditorGlobalKeyboardShortcuts() {
-  const selected = useEdit((s) => s.selectedExperienceId);
+  const selected = useEditorStore((s) => s.selectedExperience);
   const undoVisual = useEdit((s) => s.undoVisualToolEdit);
   const redoVisual = useEdit((s) => s.redoVisualToolEdit);
   const undoCode = useEdit((s) => s.undoCodeOverride);
@@ -16,10 +17,12 @@ export default function EditorGlobalKeyboardShortcuts() {
       if (key !== "z") return;
       e.preventDefault();
       const isRedo = e.shiftKey;
-      if (selected === "components") {
-        if (isRedo) redoCode(); else undoCode();
+      if (selected === "developer") {
+        if (isRedo) redoCode();
+        else undoCode();
       } else {
-        if (isRedo) redoVisual(); else undoVisual();
+        if (isRedo) redoVisual();
+        else undoVisual();
       }
     };
 

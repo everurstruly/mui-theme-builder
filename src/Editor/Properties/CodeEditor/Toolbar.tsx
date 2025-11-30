@@ -39,20 +39,24 @@ export default function Toolbar(props: ToolbarProps) {
         columnGap={1}
       >
         <Tooltip title="Apply code overrides">
-          <IconButton size="small" onClick={onApply} disabled={!hasUnsaved}>
-            <PlayArrowRounded />
-          </IconButton>
+          <span style={{ display: "inline-block" }}>
+            <IconButton size="small" onClick={onApply} disabled={!hasUnsaved}>
+              <PlayArrowRounded />
+            </IconButton>
+          </span>
         </Tooltip>
 
         <Tooltip title="Clear all code overrides">
-          <IconButton
-            size="small"
-            color="error"
-            onClick={onClear}
-            disabled={!hasOverrides}
-          >
-            <RestartAltRounded />
-          </IconButton>
+          <span style={{ display: "inline-block" }}>
+            <IconButton
+              size="small"
+              color="error"
+              onClick={onClear}
+              disabled={!hasOverrides}
+            >
+              <RestartAltRounded />
+            </IconButton>
+          </span>
         </Tooltip>
       </Stack>
     </Stack>

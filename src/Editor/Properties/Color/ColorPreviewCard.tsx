@@ -40,7 +40,7 @@ export default function ColorPreviewCard({
       sx={{
         position: "relative",
         width: "100%",
-        height: 114,
+        height: 116,
         borderRadius: 4,
         border: 4,
         borderColor: "divider",

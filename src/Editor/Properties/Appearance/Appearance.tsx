@@ -1,5 +1,6 @@
 import StylesAppearance from "./Styles/Styles";
 import SpacingAppearance from "./Spacing/Spacing";
+import { memo } from "react";
 
 function AppearanceProperty() {
   return (
@@ -10,4 +11,4 @@ function AppearanceProperty() {
   );
 }
 
-export default AppearanceProperty;
+export default memo(AppearanceProperty);

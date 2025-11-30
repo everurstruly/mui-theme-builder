@@ -1,48 +1,64 @@
+import React, { Suspense, lazy, memo, useMemo } from "react";
 import { Box } from "@mui/material";
 import { PanelGroup, Panel, PanelResizeHandle } from "react-resizable-panels";
-import { CodeEditor, ThemePreview } from "./CodeEditor";
 
-export default function DeveloperPropertiesPanel() {
+const CodeEditor = lazy(() => import("./CodeEditor").then((m) => ({ default: m.CodeEditor })));
+const ThemePreview = lazy(() => import("./CodeEditor").then((m) => ({ default: m.DiffView })));
+
+function DeveloperPropertiesPanel() {
   return (
     <PanelGroup direction="vertical">
       <Panel defaultSize={80} minSize={30}>
-        <CodeEditor />
+        <Suspense fallback={<div aria-hidden />}>
+          <CodeEditor />
+        </Suspense>
       </Panel>
       <DeveloperPanelWindowsResizeHandle />
       <Panel minSize={14}>
-        <ThemePreview />
+        <Suspense fallback={<div aria-hidden />}>
+          <ThemePreview />
+        </Suspense>
       </Panel>
     </PanelGroup>
   );
 }
 
-function DeveloperPanelWindowsResizeHandle() {
+const handleOuterSx = {
+  height: 12,
+  cursor: "row-resize",
+  bgcolor: "divider",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  backgroundColor: "primary.main",
+  userSelect: "none",
+};
+
+const handleInnerSx = {
+  width: 52,
+  height: 2,
+  borderRadius: 2,
+  bgcolor: "background.paper",
+};
+
+const DeveloperPanelWindowsResizeHandle = memo(function DeveloperPanelWindowsResizeHandle() {
+  // memoize sx to avoid recreating objects on every render
+  const outer = useMemo(() => handleOuterSx, []);
+  const inner = useMemo(() => handleInnerSx, []);
+
   return (
     <Box
       role="separator"
       component={PanelResizeHandle}
       aria-orientation="horizontal"
       sx={{
-        height: 12,
-        cursor: "row-resize",
-        bgcolor: "divider",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: "primary.main",
-        userSelect: "none",
+        ...outer,
         "&:hover": { bgcolor: "primary.dark" },
       }}
     >
-      <Box
-        role="visual grip"
-        sx={{
-          width: 52,
-          height: 2,
-          borderRadius: 2,
-          bgcolor: "background.paper",
-        }}
-      />
+      <Box role="visual grip" sx={inner} />
     </Box>
   );
-}
+});
+
+export default memo(DeveloperPropertiesPanel);

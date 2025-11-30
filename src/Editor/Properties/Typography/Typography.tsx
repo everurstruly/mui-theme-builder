@@ -1,8 +1,9 @@
 import ButtonTypography from "./Elements/Button";
 import FontFamilyTypography from "./FontFamily/FontFamily";
 import HeadlineTypography from "./Elements/Headline";
+import { memo } from "react";
 
-export default function TypographyProperty() {
+function TypographyProperty() {
   return (
     <>
       <FontFamilyTypography />
@@ -16,4 +17,6 @@ export default function TypographyProperty() {
     </>
   );
 }
+
+export default memo(TypographyProperty);
 

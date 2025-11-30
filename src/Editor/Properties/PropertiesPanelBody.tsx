@@ -1,32 +1,44 @@
-import useEditorUiStore from "../useEditor";
-import { Box } from "@mui/material";
-import { editorDesignExperience } from "../editorExperience";
-import useEdit from "../Design/Edit/useEdit";
+import { Box, Stack } from "@mui/material";
+import useEditorStore from "../useEditor";
+import DeveloperPropertiesPanel from "./DeveloperPropertiesPanel";
+import DesignerPropertiesPanel from "./DesignerPropertiesPanel";
 
 export default function PanelBody() {
-  const selectedExperienceId = useEdit((state) => state.selectedExperienceId);
-  const selectedExperience = editorDesignExperience[selectedExperienceId];
-
-  const setMouseOverPropertiesPanel = useEditorUiStore(
+  const selectedExperienceId = useEditorStore((state) => state.selectedExperience);
+  const setMouseOverPropertiesPanel = useEditorStore(
     (state) => state.setMouseOverPropertiesPanel
   );
 
-  if (selectedExperience.renderPropsPanel) {
-    return (
+  return (
+    <Stack
+      onMouseEnter={() => setMouseOverPropertiesPanel(true)}
+      onMouseLeave={() => setMouseOverPropertiesPanel(false)}
+      sx={{
+        height: "100%",
+        overflow: "hidden",
+
+        // create content window
+        position: "relative",
+        transform: "translateX(0px)",
+      }}
+    >
       <Box
-        onMouseEnter={() => setMouseOverPropertiesPanel(true)}
-        onMouseLeave={() => setMouseOverPropertiesPanel(false)}
         sx={{
           height: "100%",
-          overflow: "hidden",
-
-          // create content window
-          position: "relative",
-          transform: "translateX(0px)",
+          display: selectedExperienceId === "designer" ? "block" : "none",
         }}
       >
-        {selectedExperience.renderPropsPanel()}
+        <DesignerPropertiesPanel />
       </Box>
-    );
-  }
+
+      <Box
+        sx={{
+          height: "100%",
+          display: selectedExperienceId === "developer" ? "block" : "none",
+        }}
+      >
+        <DeveloperPropertiesPanel />
+      </Box>
+    </Stack>
+  );
 }

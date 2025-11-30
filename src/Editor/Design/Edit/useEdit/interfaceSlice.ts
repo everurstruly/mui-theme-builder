@@ -13,7 +13,6 @@
  */
 
 import type { StateCreator } from "zustand";
-import type { EditorDesignExperienceId } from "../../../editorExperience";
 
 // ===== Types =====
 
@@ -26,9 +25,6 @@ export interface ThemeDesignInterfaceState {
 
   /** Currently selected preview component */
   activePreviewId: string;
-
-  /** Currently selected experience/tab */
-  selectedExperienceId: EditorDesignExperienceId;
 }
 
 /**
@@ -40,9 +36,6 @@ export interface ThemeDesignInterfaceActions {
 
   /** Select a preview component */
   selectPreview: (previewId: string) => void;
-
-  /** Select an experience/tab */
-  selectExperience: (experienceId: EditorDesignExperienceId) => void;
 }
 
 export type DesignEditInterfaceSlice = ThemeDesignInterfaceState &
@@ -59,7 +52,7 @@ export const createInterfaceSlice: StateCreator<
   // Initial state
   activeColorScheme: "light",
   activePreviewId: "DevSandbox",
-  selectedExperienceId: "primitives",
+  selectedExperienceId: "designer",
 
   // Actions
   setActiveColorScheme: (scheme) => {
@@ -68,9 +61,5 @@ export const createInterfaceSlice: StateCreator<
 
   selectPreview: (previewId) => {
     set({ activePreviewId: previewId });
-  },
-
-  selectExperience: (experienceId) => {
-    set({ selectedExperienceId: experienceId });
   },
 });

@@ -2,7 +2,7 @@ export const muiThemeCompletions = [
   { label: "alpha", type: "keyword", info: "" },
   { label: "applyStyles", type: "keyword", info: "" },
   { label: "breakpoints", type: "keyword", info: "" },
-  { label: "components", type: "keyword", info: "" },
+  { label: "developer", type: "keyword", info: "" },
   { label: "containerQueries", type: "keyword", info: "" },
   { label: "darken", type: "keyword", info: "" },
   { label: "direction", type: "keyword", info: "" },

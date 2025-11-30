@@ -5,7 +5,7 @@ import { javascript } from "@codemirror/lang-javascript";
 import { EditorView, ViewPlugin } from "@codemirror/view";
 import useCreatedTheme from "../../Design/Edit/useCreatedTheme";
 
-export default function ThemeOverridesFoundation() {
+export default function BeforeCodesourceDiffView() {
   const mergedPreview = useCreatedTheme();
 
   // Render mergedPreview as JavaScript-like object literal (no quoted keys)

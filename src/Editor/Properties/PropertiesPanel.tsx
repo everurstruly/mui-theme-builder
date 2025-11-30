@@ -1,8 +1,8 @@
 import Drawer from "@mui/material/Drawer";
-import useEditorUiStore from "../useEditor";
+import useEditorStore from "../useEditor";
 import PropertiesPanelBody from "./PropertiesPanelBody";
 import { TuneOutlined } from "@mui/icons-material";
-import { Divider, Fab, Stack } from "@mui/material";
+import { Divider, Fab } from "@mui/material";
 import PropertiesPanelHeader from "./PropertiesPanelHeader";
 
 export default function EditorPropertiesPanel() {
@@ -15,10 +15,10 @@ export default function EditorPropertiesPanel() {
 }
 
 function DesktopPanelDrawer() {
-  const hiddenPanels = useEditorUiStore((state) => state.hiddenPanels);
+  const hiddenPanels = useEditorStore((state) => state.hiddenPanels);
   const isVisible = !hiddenPanels.includes("properties");
 
-  const withHidePanel = useEditorUiStore((state) => state.hidePanel);
+  const withHidePanel = useEditorStore((state) => state.hidePanel);
   const hidePanel = () => withHidePanel("properties");
 
   return (
@@ -66,13 +66,13 @@ function DesktopPanelDrawer() {
 function MobilePanelDrawer() {
   const display = { lg: "none" };
 
-  const withHidePanel = useEditorUiStore((state) => state.hidePanel);
+  const withHidePanel = useEditorStore((state) => state.hidePanel);
   const hidePanel = () => withHidePanel("properties.mobile");
 
-  const withShowPanel = useEditorUiStore((state) => state.showPanel);
+  const withShowPanel = useEditorStore((state) => state.showPanel);
   const showPanel = () => withShowPanel("properties.mobile");
 
-  const hiddenPanels = useEditorUiStore((state) => state.hiddenPanels);
+  const hiddenPanels = useEditorStore((state) => state.hiddenPanels);
   const isVisible = !hiddenPanels.includes("properties.mobile");
 
   return (
@@ -102,16 +102,7 @@ function MobilePanelDrawer() {
           },
         })}
       >
-        <Stack
-          direction="row"
-          alignItems={"center"}
-          justifyContent={"space-between"}
-          gap={1}
-          px={1.5}
-          my={2}
-        >
-          <PropertiesPanelHeader />
-        </Stack>
+        <PropertiesPanelHeader sx={{ paddingInline: { sx: 1.5 } }} />
 
         <Divider />
         <PropertiesPanelBody />

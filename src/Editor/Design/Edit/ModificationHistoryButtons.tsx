@@ -16,7 +16,7 @@ export default function ModificationHistoryButtons() {
   const canUndoCode = useEdit((s) => s.codeHistoryPast.length > 0);
   const canRedoCode = useEdit((s) => s.codeHistoryFuture.length > 0);
 
-  const isCodeExperience = selected === "components";
+  const isCodeExperience = selected === "developer";
 
   const canUndo = isCodeExperience ? canUndoCode : canUndoVisual;
   const canRedo = isCodeExperience ? canRedoCode : canRedoVisual;
@@ -32,20 +32,19 @@ export default function ModificationHistoryButtons() {
   };
 
   return (
-    <ButtonGroup size="large" aria-label="theming history actions">
+    <ButtonGroup variant="text" size="medium" aria-label="theming history actions">
       <Button
         value="undo"
         aria-label="undo"
         disabled={!canUndo}
         onClick={handleUndo}
-        // variant="outlined"
         sx={{
           minWidth: 0,
           borderRadius: 2,
           px: 1,
         }}
       >
-        <UndoRounded />
+        <UndoRounded fontSize="small" />
       </Button>
 
       <Button
@@ -53,14 +52,13 @@ export default function ModificationHistoryButtons() {
         aria-label="redo"
         disabled={!canRedo}
         onClick={handleRedo}
-        // variant="outlined"
         sx={{
           minWidth: 0,
           borderRadius: 2,
           px: 1,
         }}
       >
-        <RedoRounded />
+        <RedoRounded fontSize="small" />
       </Button>
     </ButtonGroup>
   );

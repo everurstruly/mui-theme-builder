@@ -2,6 +2,7 @@ import ColorOptionGroup from "./ColorOptionGroup";
 import ShadesDrawer from "./ShadesDrawer/ShadesDrawer";
 import { Box, Stack } from "@mui/material";
 import paletteGroupMap from "./paletteMap";
+import { memo } from "react";
 
 export type PaletteGroupItemAttribute = {
   name: string;
@@ -23,7 +24,7 @@ export type PaletteGroup = {
 
 
 
-export default function ColorProperty() {
+function ColorProperty() {
   return (
     <>
       <Stack>
@@ -41,3 +42,5 @@ export default function ColorProperty() {
     </>
   );
 }
+
+export default memo(ColorProperty);
