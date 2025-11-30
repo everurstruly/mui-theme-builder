@@ -1,15 +1,11 @@
-import { Typography, Box, Stack, Popover, Card, Button, alpha } from "@mui/material";
-import { Sketch } from "@uiw/react-color";
+import { Typography, Stack } from "@mui/material";
+import ColorPickerPopover from "./ColorPickerPopover";
 import { useShadesDrawerStore } from "./ShadesDrawer/useShadesDrawerStore";
 import type { UseShadesDrawerState } from "./ShadesDrawer/useShadesDrawerStore";
 import OptionListItemResetButton from "../OptionListItemResetButton";
-import useColorPickerEdit from "./useColorPickerEdit";
+import useColorEdit from "./useColorEdit";
 import type { PaletteGroupItem } from "./Color";
-import {
-  PaletteOutlined,
-  PhotoSizeSelectActualOutlined,
-  ViewCompact,
-} from "@mui/icons-material";
+import ColorPreviewCard from "./ColorPreviewCard";
 
 type ColorOptionGroupItemProps = PaletteGroupItem;
 
@@ -17,28 +13,15 @@ export default function ColorOptionGroupItem(props: ColorOptionGroupItemProps) {
   const openShadesDrawer = useShadesDrawerStore(
     (s: UseShadesDrawerState) => s.openFor
   );
-  const backgroundEdit = useColorPickerEdit(props.fill);
-  const foregroundEdit = useColorPickerEdit(props.foreground || "");
+  const backgroundEdit = useColorEdit(props.fill);
+  const foregroundEdit = useColorEdit(props.foreground || "");
   const canResetValue = backgroundEdit.canReset || foregroundEdit.canReset;
 
-  // Defensive/coercion guards: ensure values passed into MUI `sx` and color
-  // props are the primitive types expected (mostly `string`). Some edits
-  // can temporarily hold unexpected shapes (arrays, `true`, objects) which
-  // cause TypeScript errors and runtime style problems.
-  const safeBackgroundColor =
-    typeof backgroundEdit.color === "string" ? backgroundEdit.color : undefined;
-  const safeForegroundColor =
-    typeof foregroundEdit.color === "string" ? foregroundEdit.color : undefined;
-  const safeForegroundReadable =
-    typeof foregroundEdit.readableForegroundColor === "string"
-      ? foregroundEdit.readableForegroundColor
-      : undefined;
-  const safeBackgroundReadable =
-    typeof backgroundEdit.readableForegroundColor === "string"
-      ? backgroundEdit.readableForegroundColor
-      : undefined;
-  const safeBorderColor =
-    typeof backgroundEdit.borderColor === "string" ? backgroundEdit.borderColor : undefined;
+  const background = backgroundEdit.previewColor || backgroundEdit.color;
+  const foreground = foregroundEdit.previewColor || foregroundEdit.color;
+  const appReadableForeground =
+    backgroundEdit.previewReadableForegroundColor ||
+    backgroundEdit.readableForegroundColor;
 
   function resetValue() {
     backgroundEdit.reset();
@@ -47,126 +30,40 @@ export default function ColorOptionGroupItem(props: ColorOptionGroupItemProps) {
 
   return (
     <Stack>
-      <Card
-        elevation={0}
-        sx={{
-          position: "relative",
-          width: "100%",
-          height: 114,
-          borderRadius: 4,
-          border: 4,
-          borderColor: safeBorderColor,
-          backgroundColor: safeBackgroundColor,
-        }}
-      >
-        <Box
-          ref={foregroundEdit.anchorRef}
-          onClick={foregroundEdit.openPicker}
-          component={Button}
-          sx={{
-            display: props.foreground ? undefined : "none",
-            cursor: foregroundEdit.hasDelegatedControl ? "not-allowed" : "pointer",
-            opacity: foregroundEdit.hasDelegatedControl ? 0.5 : 1,
-            color: safeForegroundColor,
-            backgroundColor: safeForegroundReadable
-              ? alpha(safeForegroundReadable, 0.05)
-              : undefined,
-            position: "absolute",
-            top: 0,
-            left: 0,
-            columnGap: 0.5,
-            rowGap: 0.2,
-          }}
-        >
-          <PhotoSizeSelectActualOutlined fontSize="small" />
-          <Typography variant="caption" fontWeight={"bold"} sx={{ mt: "4px" }}>
-            & Text
-          </Typography>
-        </Box>
+      <ColorPreviewCard
+        previewBackground={background}
+        previewForeground={foreground}
+        previewForegroundReadable={appReadableForeground}
+        hasForeground={!!props.foreground}
+        onForegroundClick={foregroundEdit.openPicker}
+        onBackgroundClick={backgroundEdit.openPicker}
+        foregroundAnchorRef={foregroundEdit.anchorRef}
+        backgroundAnchorRef={backgroundEdit.anchorRef}
+        foregroundDisabled={foregroundEdit.hasDelegatedControl}
+        backgroundDisabled={backgroundEdit.hasDelegatedControl}
+        showStates={!!(props.shades && props.shades.length)}
+        onOpenShades={() =>
+          openShadesDrawer(props.shades ?? [], undefined, props.name)
+        }
+      />
 
-        <Box
-          ref={backgroundEdit.anchorRef}
-          onClick={backgroundEdit.openPicker}
-          component={Button}
-          color="primary"
-          sx={{
-            cursor: backgroundEdit.hasDelegatedControl ? "not-allowed" : "pointer",
-            opacity: backgroundEdit.hasDelegatedControl ? 0.5 : 1,
-            color: safeBackgroundReadable,
-            backgroundColor: safeBackgroundReadable
-              ? alpha(safeBackgroundReadable, 0.05)
-              : undefined,
-            position: "absolute",
-            minWidth: "auto",
-            alignItems: "flex-end",
-            justifyContent: "center",
-            top: "50%",
-            bottom: 0,
-            right: 0,
-            pl: 1.4,
-          }}
-        >
-          <PaletteOutlined />
-        </Box>
-
-        <Button
-          onClick={() => openShadesDrawer(props.shades ?? [], undefined, props.name)}
-          sx={{
-            color: safeBackgroundReadable,
-            backgroundColor: safeBackgroundReadable
-              ? alpha(safeBackgroundReadable, 0.05)
-              : undefined,
-            display: !props.shades || !props?.shades?.length ? "none" : undefined,
-            position: "absolute",
-            bottom: 0,
-            left: 0,
-          }}
-        >
-          <ViewCompact fontSize="small" sx={{ mb: "2px" }} />
-          States
-        </Button>
-
-        <Popover
+      {props.foreground && (
+        <ColorPickerPopover
           open={foregroundEdit.open}
           anchorEl={foregroundEdit.anchorEl}
           onClose={foregroundEdit.closePicker}
-          sx={{ display: props.foreground ? undefined : "none" }}
-          anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "left",
-          }}
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "left",
-          }}
-        >
-          <Sketch
-            color={foregroundEdit.color as any}
-            onChange={foregroundEdit.onColorChange}
-            disableAlpha={false}
-          />
-        </Popover>
+          color={foregroundEdit.color}
+          onChange={foregroundEdit.onColorChange}
+        />
+      )}
 
-        <Popover
-          open={backgroundEdit.open}
-          anchorEl={backgroundEdit.anchorEl}
-          onClose={backgroundEdit.closePicker}
-          anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "left",
-          }}
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "left",
-          }}
-        >
-          <Sketch
-            color={backgroundEdit.color as any}
-            onChange={backgroundEdit.onColorChange}
-            disableAlpha={false}
-          />
-        </Popover>
-      </Card>
+      <ColorPickerPopover
+        open={backgroundEdit.open}
+        anchorEl={backgroundEdit.anchorEl}
+        onClose={backgroundEdit.closePicker}
+        color={backgroundEdit.color}
+        onChange={backgroundEdit.onColorChange}
+      />
 
       <Stack
         direction="row-reverse"

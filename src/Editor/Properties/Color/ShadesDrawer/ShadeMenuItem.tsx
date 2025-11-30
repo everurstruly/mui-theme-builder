@@ -1,56 +1,86 @@
-import { Box, ListItem, Popover, Typography } from "@mui/material";
-import { Sketch } from "@uiw/react-color";
-import { useState, useRef, useEffect } from "react";
-import useEdit from "../../../Design/Edit/useEdit";
+import React, { useState, useRef, useEffect } from "react";
+import { Box, ListItem, Typography } from "@mui/material";
+// Sketch is used inside the centralized ColorPickerPopover component.
 import { useDebouncyEffect } from "use-debouncy";
 import OptionListItemResetButton from "../../OptionListItemResetButton";
-import useDesignerToolEdit from "../../../Design/Edit/useDesignerToolEdit";
+import useThemeEdit from "../../../Design/Edit/useThemeEdit";
+import ColorPickerPopover from "../ColorPickerPopover";
 
-export default function ShadeListItem({
+function ShadeListItem({
   title,
   path,
 }: {
   title: string;
   path: string;
 }) {
-  const activeScheme = useEdit((s) => s.activeColorScheme);
-  const {
-    value,
-    resolvedValue,
-    setValue,
-    reset: resetValue,
-    hasVisualEdit: isCustomized,
-    hasCodeOverride: isControlledByFunction,
-  } = useDesignerToolEdit(path, activeScheme);
+  const { value, userEdit, setValue, reset: resetValue, isCodeControlled } =
+    useThemeEdit(path);
 
-  const canResetValue = isCustomized || isControlledByFunction;
+  const canResetValue = !!userEdit || !!isCodeControlled;
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-  const [tempColor, setTempColor] = useState<string>("");
+  const [transientColor, setTransientColor] = useState<string>("");
   const colorBoxRef = useRef<HTMLDivElement | null>(null);
   const lastAppliedColorRef = useRef<string>("");
 
+  // Only debounce on the local temp color changes. Avoid re-running the
+  // debounced setter when `value` (the authoritative theme value) changes —
+  // that case is handled by the sync effect below which clears `tempColor`.
+  const isDraggingRef = useRef(false);
+
   useDebouncyEffect(
     () => {
-      if (tempColor && tempColor !== (value as string)) {
-        setValue(tempColor);
-        lastAppliedColorRef.current = tempColor;
+      if (transientColor && transientColor !== (value as string)) {
+        // Skip committing while the user is actively dragging; we'll commit
+        // on pointerup below to avoid flooding the store with updates.
+        if (isDraggingRef.current) return;
+
+        setValue(transientColor);
+        lastAppliedColorRef.current = transientColor;
       }
     },
     165,
-    [tempColor, value]
+    [transientColor]
   );
 
   useEffect(() => {
-    if (tempColor && (value as string) !== lastAppliedColorRef.current) {
-      setTempColor("");
+    if (transientColor && (value as string) !== lastAppliedColorRef.current) {
+      setTransientColor("");
       lastAppliedColorRef.current = value as string;
     }
-  }, [value, tempColor]);
+  }, [value, transientColor]);
+
+  // Track pointer activity inside the popover and commit once on pointerup
+  useEffect(() => {
+    if (!anchorEl) return;
+
+    const onPointerDown = () => {
+      // mark dragging started
+      isDraggingRef.current = true;
+    };
+
+    const onPointerUp = () => {
+      if (isDraggingRef.current) {
+        isDraggingRef.current = false;
+        // commit the latest tempColor immediately on pointer release
+        if (transientColor && transientColor !== (value as string)) {
+          setValue(transientColor);
+          lastAppliedColorRef.current = transientColor;
+        }
+      }
+    };
+
+    window.addEventListener("pointerdown", onPointerDown);
+    window.addEventListener("pointerup", onPointerUp);
+    return () => {
+      window.removeEventListener("pointerdown", onPointerDown);
+      window.removeEventListener("pointerup", onPointerUp);
+    };
+  }, [anchorEl, transientColor, value, setValue]);
 
   const handleOpenPicker = () => {
-    if (!isControlledByFunction) {
+    if (!isCodeControlled) {
       lastAppliedColorRef.current = value as string;
-      setTempColor(value as string);
+      setTransientColor(value as string);
       setAnchorEl(colorBoxRef.current);
     }
   };
@@ -81,30 +111,31 @@ export default function ShadeListItem({
           sx={{
             width: 32,
             height: 20,
-            bgcolor: String(tempColor || value || resolvedValue),
+            bgcolor: String(transientColor || value || ""),
             borderRadius: 1,
             border: 2,
             borderColor: "divider",
-            cursor: isControlledByFunction ? "not-allowed" : "pointer",
+            cursor: isCodeControlled ? "not-allowed" : "pointer",
             display: "inline-block",
-            opacity: isControlledByFunction ? 0.5 : 1,
+            opacity: isCodeControlled ? 0.5 : 1,
           }}
         />
 
-        <Popover
+        <ColorPickerPopover
           open={open}
           anchorEl={anchorEl}
           onClose={handleClosePicker}
-          anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-          transformOrigin={{ vertical: "top", horizontal: "left" }}
-        >
-          <Sketch
-            color={(tempColor || (value as string)) as string}
-            onChange={(c) => setTempColor((c as any).hex ?? (c as any).hex)}
-            disableAlpha={false}
-          />
-        </Popover>
+          color={(transientColor || (value as string)) as string}
+          onChange={(c) => setTransientColor((c as any).hex ?? (c as any).hex)}
+        />
       </Box>
     </ListItem>
   );
 }
+
+// Memoize individual shade items to avoid re-rendering the whole list when
+// unrelated theme changes occur. Each item only depends on `title` and
+// `path` (and its internal hook subscriptions), so React.memo is safe here.
+export const MemoizedShadeListItem = React.memo(ShadeListItem);
+
+export default MemoizedShadeListItem;

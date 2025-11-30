@@ -1,6 +1,6 @@
 import { Typography, TextField, ListItem, Stack } from "@mui/material";
 import OptionListItemResetButton from "../../OptionListItemResetButton";
-import useDesignerToolEdit from "../../../Design/Edit/useDesignerToolEdit";
+import useThemeEdit from "../../../Design/Edit/useThemeEdit";
 
 export type CssStyleInputOptionProps = {
   name: string;
@@ -9,10 +9,11 @@ export type CssStyleInputOptionProps = {
 };
 
 export default function CssStyleInputOption(props: CssStyleInputOptionProps) {
-  const { value, resolvedValue, setValue, reset, canReset, hasCodeOverride } =
-    useDesignerToolEdit(props.path);
+  const { value, userEdit, isCodeControlled, setValue, reset } =
+    useThemeEdit(props.path);
 
-  const displayValue = value ?? resolvedValue;
+  const displayValue = value;
+  const canReset = !!userEdit || !!isCodeControlled;
   const valueIsDynamicallyCalculated = typeof displayValue === "function";
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,7 +68,7 @@ export default function CssStyleInputOption(props: CssStyleInputOptionProps) {
         variant="outlined"
         value={displayValue}
         onChange={handleChange}
-        disabled={hasCodeOverride}
+        disabled={isCodeControlled}
         sx={{
           flexBasis: props.orientation === "vertical" ? "100%" : "auto",
 
