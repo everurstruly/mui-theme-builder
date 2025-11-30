@@ -1,20 +1,23 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Box, ListItem, Typography } from "@mui/material";
-// Sketch is used inside the centralized ColorPickerPopover component.
 import { useDebouncyEffect } from "use-debouncy";
 import OptionListItemResetButton from "../../OptionListItemResetButton";
 import useThemeEdit from "../../../Design/Edit/useThemeEdit";
 import ColorPickerPopover from "../ColorPickerPopover";
 
-function ShadeListItem({
-  title,
-  path,
-}: {
+type ShadesListItemProps = {
   title: string;
   path: string;
-}) {
-  const { value, userEdit, setValue, reset: resetValue, isCodeControlled } =
-    useThemeEdit(path);
+};
+
+export default function ShadeListItem({ title, path }: ShadesListItemProps) {
+  const {
+    value,
+    userEdit,
+    setValue,
+    reset: resetValue,
+    isCodeControlled,
+  } = useThemeEdit(path);
 
   const canResetValue = !!userEdit || !!isCodeControlled;
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
@@ -132,10 +135,3 @@ function ShadeListItem({
     </ListItem>
   );
 }
-
-// Memoize individual shade items to avoid re-rendering the whole list when
-// unrelated theme changes occur. Each item only depends on `title` and
-// `path` (and its internal hook subscriptions), so React.memo is safe here.
-export const MemoizedShadeListItem = React.memo(ShadeListItem);
-
-export default MemoizedShadeListItem;

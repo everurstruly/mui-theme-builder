@@ -1,14 +1,12 @@
 import StylesAppearance from "./Styles/Styles";
 import SpacingAppearance from "./Spacing/Spacing";
-import { memo } from "react";
+import { Stack } from "@mui/material";
 
-function AppearanceProperty() {
+export default function AppearanceProperty() {
   return (
-    <>
+    <Stack>
       <StylesAppearance title="Shape" />
       <SpacingAppearance title="Spacing" />
-    </>
+    </Stack>
   );
 }
-
-export default memo(AppearanceProperty);

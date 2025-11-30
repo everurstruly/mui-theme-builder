@@ -1,11 +1,11 @@
 import ButtonTypography from "./Elements/Button";
 import FontFamilyTypography from "./FontFamily/FontFamily";
 import HeadlineTypography from "./Elements/Headline";
-import { memo } from "react";
+import { Stack } from "@mui/material";
 
-function TypographyProperty() {
+export default function TypographyProperty() {
   return (
-    <>
+    <Stack>
       <FontFamilyTypography />
       <HeadlineTypography title="H1" variant="h1" />
       <HeadlineTypography title="H2" variant="h2" />
@@ -14,9 +14,6 @@ function TypographyProperty() {
       <HeadlineTypography title="H5" variant="h5" />
       <HeadlineTypography title="H6" variant="h6" />
       <ButtonTypography />
-    </>
+    </Stack>
   );
 }
-
-export default memo(TypographyProperty);
-

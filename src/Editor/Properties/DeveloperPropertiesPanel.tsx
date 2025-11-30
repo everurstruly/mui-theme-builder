@@ -1,11 +1,15 @@
-import React, { Suspense, lazy, memo, useMemo } from "react";
+import { Suspense, lazy, useMemo } from "react";
 import { Box } from "@mui/material";
 import { PanelGroup, Panel, PanelResizeHandle } from "react-resizable-panels";
 
-const CodeEditor = lazy(() => import("./CodeEditor").then((m) => ({ default: m.CodeEditor })));
-const ThemePreview = lazy(() => import("./CodeEditor").then((m) => ({ default: m.DiffView })));
+const CodeEditor = lazy(() =>
+  import("./CodeEditor").then((m) => ({ default: m.CodeEditor }))
+);
+const ThemePreview = lazy(() =>
+  import("./CodeEditor").then((m) => ({ default: m.DiffView }))
+);
 
-function DeveloperPropertiesPanel() {
+export default function DeveloperPropertiesPanel() {
   return (
     <PanelGroup direction="vertical">
       <Panel defaultSize={80} minSize={30}>
@@ -41,24 +45,23 @@ const handleInnerSx = {
   bgcolor: "background.paper",
 };
 
-const DeveloperPanelWindowsResizeHandle = memo(function DeveloperPanelWindowsResizeHandle() {
-  // memoize sx to avoid recreating objects on every render
-  const outer = useMemo(() => handleOuterSx, []);
-  const inner = useMemo(() => handleInnerSx, []);
+const DeveloperPanelWindowsResizeHandle =
+  function DeveloperPanelWindowsResizeHandle() {
+    // memoize sx to avoid recreating objects on every render
+    const outer = useMemo(() => handleOuterSx, []);
+    const inner = useMemo(() => handleInnerSx, []);
 
-  return (
-    <Box
-      role="separator"
-      component={PanelResizeHandle}
-      aria-orientation="horizontal"
-      sx={{
-        ...outer,
-        "&:hover": { bgcolor: "primary.dark" },
-      }}
-    >
-      <Box role="visual grip" sx={inner} />
-    </Box>
-  );
-});
-
-export default memo(DeveloperPropertiesPanel);
+    return (
+      <Box
+        role="separator"
+        component={PanelResizeHandle}
+        aria-orientation="horizontal"
+        sx={{
+          ...outer,
+          "&:hover": { bgcolor: "primary.dark" },
+        }}
+      >
+        <Box role="visual grip" sx={inner} />
+      </Box>
+    );
+  };

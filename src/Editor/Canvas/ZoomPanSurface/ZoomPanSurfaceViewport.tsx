@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import { memo, Component, type ReactNode } from "react";
+import { Component, type ReactNode } from "react";
 import ViewportSimulation from "./ViewportSimulation";
 import type { ThemeOptions } from "@mui/material/styles";
 
@@ -41,7 +41,7 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
   }
 }
 
-const CanvasViewport = memo(function CanvasViewport({
+const CanvasViewport = function CanvasViewport({
   previewId,
   workfileTheme,
   width,
@@ -82,7 +82,7 @@ const CanvasViewport = memo(function CanvasViewport({
       </ErrorBoundary>
     </Box>
   );
-});
+};
 
 export default CanvasViewport;
 

@@ -3,7 +3,6 @@ import OpenInNewTabControl from "./Controls/OpenInNewTabControl";
 import CameraControls from "./Controls/CameraControls";
 import AlignmentControl from "./Controls/AlignmentControl";
 import { Box } from "@mui/material";
-import { memo } from "react";
 
 export interface ZoomPanSurfaceControlsProps {
   /** Custom content to render in the left slot. Replaces default device/tab controls */
@@ -12,7 +11,7 @@ export interface ZoomPanSurfaceControlsProps {
   rightSlot?: React.ReactNode;
 }
 
-const ZoomPanSurfaceControls = memo(function ZoomPanSurfaceControls({
+const ZoomPanSurfaceControls = function ZoomPanSurfaceControls({
   leftSlot,
   rightSlot,
 }: ZoomPanSurfaceControlsProps) {
@@ -66,7 +65,6 @@ const ZoomPanSurfaceControls = memo(function ZoomPanSurfaceControls({
       </Box>
     </>
   );
-});
+};
 
 export default ZoomPanSurfaceControls;
-
