@@ -74,6 +74,23 @@ createRoot(document.getElementById("root")!).render(
                 },
               },
             },
+            MuiButtonGroup: {
+              styleOverrides: {
+                grouped: {
+                  border: "none",
+                },
+                groupedHorizontal: {
+                  "&:not(:last-of-type)": {
+                    borderRight: "none",
+                  },
+                },
+                groupedVertical: {
+                  "&:not(:last-of-type)": {
+                    borderBottom: "none",
+                  },
+                },
+              },
+            },
           },
         })
       )}
