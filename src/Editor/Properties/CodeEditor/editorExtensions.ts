@@ -29,9 +29,7 @@ export function getEditorExtensions(opts: GetExtensionsOptions) {
       {
         key: "Mod-s",
         run: () => {
-          try {
-            onApply?.();
-          } catch {}
+          onApply?.();
           return true;
         },
       },

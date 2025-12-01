@@ -1,18 +1,18 @@
 /**
  * Mock Storage Adapter (localStorage-based)
- * 
+ *
  * Simple localStorage-based implementation for testing and development.
  * Implements full StorageAdapter interface with transaction support.
  */
 
-import type { 
-  StorageAdapter, 
-  StorageTransaction, 
-  ThemeSnapshot, 
-  ThemeSnapshotMetadata 
-} from '../types';
+import type {
+  StorageAdapter,
+  StorageTransaction,
+  ThemeSnapshot,
+  ThemeSnapshotMetadata,
+} from "../types";
 
-const STORAGE_KEY = 'mui-theme-builder-snapshots-v2';
+const STORAGE_KEY = "mui-theme-builder-snapshots-v2";
 
 export class MockStorageAdapter implements StorageAdapter {
   private generateId(): string {
@@ -30,10 +30,12 @@ export class MockStorageAdapter implements StorageAdapter {
 
   async get(id: string): Promise<ThemeSnapshot | null> {
     const snapshots = await this.readAll();
-    return snapshots.find(s => s.id === id) || null;
+    return snapshots.find((s) => s.id === id) || null;
   }
 
-  async create(snapshot: Omit<ThemeSnapshot, 'id' | 'createdAt'>): Promise<ThemeSnapshot> {
+  async create(
+    snapshot: Omit<ThemeSnapshot, "id" | "createdAt">
+  ): Promise<ThemeSnapshot> {
     const snapshots = await this.readAll();
     const newSnapshot: ThemeSnapshot = {
       ...snapshot,
@@ -48,8 +50,8 @@ export class MockStorageAdapter implements StorageAdapter {
 
   async update(id: string, partial: Partial<ThemeSnapshot>): Promise<ThemeSnapshot> {
     const snapshots = await this.readAll();
-    const index = snapshots.findIndex(s => s.id === id);
-    
+    const index = snapshots.findIndex((s) => s.id === id);
+
     if (index === -1) {
       throw new Error(`Snapshot ${id} not found`);
     }
@@ -68,8 +70,8 @@ export class MockStorageAdapter implements StorageAdapter {
 
   async delete(id: string): Promise<boolean> {
     const snapshots = await this.readAll();
-    const filtered = snapshots.filter(s => s.id !== id);
-    
+    const filtered = snapshots.filter((s) => s.id !== id);
+
     if (filtered.length === snapshots.length) {
       return false; // Not found
     }
@@ -80,7 +82,7 @@ export class MockStorageAdapter implements StorageAdapter {
 
   async list(): Promise<ThemeSnapshotMetadata[]> {
     const snapshots = await this.readAll();
-    return snapshots.map(s => ({
+    return snapshots.map((s) => ({
       id: s.id,
       title: s.title,
       createdAt: s.createdAt,
@@ -92,14 +94,14 @@ export class MockStorageAdapter implements StorageAdapter {
 
   async exists(id: string): Promise<boolean> {
     const snapshots = await this.readAll();
-    return snapshots.some(s => s.id === id);
+    return snapshots.some((s) => s.id === id);
   }
 
   async findByTitle(title: string): Promise<ThemeSnapshotMetadata[]> {
     const snapshots = await this.readAll();
     return snapshots
-      .filter(s => s.title.toLowerCase() === title.toLowerCase())
-      .map(s => ({
+      .filter((s) => s.title.toLowerCase() === title.toLowerCase())
+      .map((s) => ({
         id: s.id,
         title: s.title,
         createdAt: s.createdAt,
@@ -114,7 +116,9 @@ export class MockStorageAdapter implements StorageAdapter {
     return snapshots.length;
   }
 
-  async transaction<T>(callback: (tx: StorageTransaction) => Promise<T>): Promise<T> {
+  async transaction<T>(
+    callback: (tx: StorageTransaction) => Promise<T>
+  ): Promise<T> {
     // Simple transaction: read all, execute operations, write all
     // In a real implementation, this would use proper locking
     const tx: StorageTransaction = {
@@ -124,12 +128,14 @@ export class MockStorageAdapter implements StorageAdapter {
       delete: this.delete.bind(this),
     };
 
-    try {
-      return await callback(tx);
-    } catch (error) {
-      // Rollback would happen here in a real implementation
-      throw error;
-    }
+    return await callback(tx);
+
+    // try {
+    //   return await callback(tx);
+    // } catch (error) {
+    //   // Rollback would happen here in a real implementation
+    //   throw error;
+    // }
   }
 
   async clear(): Promise<void> {
