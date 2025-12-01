@@ -24,7 +24,7 @@ export type PaletteGroup = {
 export default function ColorProperty() {
   return (
     <>
-      <Stack sx={{ flexGrow: 1 }} divider={<Divider />}>
+      <Stack sx={{ flexGrow: 1 }} divider={<Divider sx={{ borderStyle: "dashed" }} />}>
         {paletteGroupMap.map((group) => (
           <Box key={group.title}>
             <ColorOptionGroup
