@@ -1,11 +1,11 @@
-import useEditorStore from "../useEditor";
+import useEditor from "../useEditor";
 import { IconButton } from "@mui/material";
 import { ExpandOutlined, ViewSidebarOutlined } from "@mui/icons-material";
 
 function ExplorerPanelVisibilityToggle() {
-  const hiddenPanels = useEditorStore((state) => state.hiddenPanels);
-  const hidePanel = useEditorStore((state) => state.hidePanel);
-  const showPanel = useEditorStore((state) => state.showPanel);
+  const hiddenPanels = useEditor((state) => state.hiddenPanels);
+  const hidePanel = useEditor((state) => state.hidePanel);
+  const showPanel = useEditor((state) => state.showPanel);
 
   const isExplorerPanelHidden = () => hiddenPanels.includes("explorer");
 

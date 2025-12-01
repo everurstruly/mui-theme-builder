@@ -18,8 +18,8 @@ export default function Toolbar(props: ToolbarProps) {
       px={1.5}
       columnGap={1}
       alignItems="center"
-      py={1}
-      minHeight={"var(--activity-bar-height)"}
+      py={.5}
+      maxHeight={"var(--activity-bar-height)"}
     >
       <Button
         component={Link}

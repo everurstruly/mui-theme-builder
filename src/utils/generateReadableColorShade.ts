@@ -15,7 +15,8 @@ export default function generateReadableColorShade(
   const base = tinycolor(bgColor);
   
   if (!base.isValid()) {
-    throw new Error(`Invalid color: ${bgColor}`);
+    // Return safe fallback for invalid/incomplete colors
+    return "#000000";
   }
 
   const hsl = base.toHsl();
@@ -50,3 +51,10 @@ export default function generateReadableColorShade(
   // Last resort: pure black or white
   return isLight ? "#000000" : "#FFFFFF";
 }
+
+// Installation: npm install tinycolor2
+// Usage examples:
+// generateReadableColorShade("#3B82F6")
+// generateReadableColorShade("hsl(210, 100%, 65%)")
+// generateReadableColorShade("rgb(59, 130, 246)")
+// generateReadableColorShade("blue")
