@@ -1,9 +1,9 @@
 import { Box, ListItemButton, Tooltip } from "@mui/material";
 import ListItemText from "@mui/material/ListItemText";
-import { useDesignerEditTools } from "../Design/Edit/useDesignerEditTools";
+import { useDesignerEditTools } from "../Design/Current/useDesignerEditTools";
 import { useMemo } from "react";
 import { AddOutlined, InfoOutline, RemoveOutlined } from "@mui/icons-material";
-import useEdit from "../Design/Edit/useEdit";
+import useCurrent from "../Design/Current/useCurrent";
 import type { SerializableValue } from "../Design/compiler";
 
 export type BatchToggleInputProps = {
@@ -22,13 +22,13 @@ export type BatchToggleInputProps = {
  */
 export default function BatchToggleInput(props: BatchToggleInputProps) {
   const { addGlobalDesignerEdit, removeGlobalDesignerEdit } = useDesignerEditTools();
-  const baseVisualToolEdits = useEdit(
+  const baseVisualToolEdits = useCurrent(
     (s) => s.neutralEdits
   );
   // Narrow selectors: subscribe only to visualToolEdits maps, not full scheme objects
-  const lightModeVisual = useEdit((s) => s.schemeEdits.light?.designer);
-  const darkModeVisual = useEdit((s) => s.schemeEdits.dark?.designer);
-  const activeColorScheme = useEdit((s) => s.activeColorScheme);
+  const lightModeVisual = useCurrent((s) => s.schemeEdits.light?.designer);
+  const darkModeVisual = useCurrent((s) => s.schemeEdits.dark?.designer);
+  const activeColorScheme = useCurrent((s) => s.activeColorScheme);
 
   // Get the appropriate visual edits based on active color scheme
   const activeVisualToolEdits = useMemo(() => {

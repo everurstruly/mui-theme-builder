@@ -1,17 +1,17 @@
-import useEdit from "./useEdit";
+import useCurrent from "./useCurrent";
 import { useMemo } from "react";
 import useCreatedTheme from "./useCreatedTheme";
 import { getNestedValue, type SerializableValue } from "../compiler";
-import { getEditScope } from "../utilities/themePathUtils";
+import { getEditScope } from "./themePathUtils";
 import { useShallow } from "zustand/react/shallow";
 
 export default function useEditProperty(path: string) {
-  const activeScheme = useEdit((s) => s.activeColorScheme);
+  const activeScheme = useCurrent((s) => s.activeColorScheme);
   const actualTheme = useCreatedTheme(activeScheme);
   const scope = getEditScope(path);
 
-  const codeOverride = useEdit(useShallow((s) => s.codeOverridesEdits?.[path]));
-  const editValue = useEdit(
+  const codeOverride = useCurrent(useShallow((s) => s.codeOverridesEdits?.[path]));
+  const editValue = useCurrent(
     useShallow((s) =>
       scope === "scheme"
         ? s.schemeEdits[activeScheme]?.designer?.[path]
@@ -23,10 +23,10 @@ export default function useEditProperty(path: string) {
     return getNestedValue(actualTheme, path) as SerializableValue | undefined;
   }, [actualTheme, path]);
 
-  const addGlobal = useEdit((s) => s.addGlobalDesignerEdit);
-  const addScheme = useEdit((s) => s.addSchemeDesignerEdit);
-  const removeGlobal = useEdit((s) => s.removeGlobalDesignerEdit);
-  const removeScheme = useEdit((s) => s.removeSchemeDesignerEdit);
+  const addGlobal = useCurrent((s) => s.addNeutralDesignerEdit);
+  const addScheme = useCurrent((s) => s.addSchemeDesignerEdit);
+  const removeGlobal = useCurrent((s) => s.removeNeutralDesignerEdit);
+  const removeScheme = useCurrent((s) => s.removeSchemeDesignerEdit);
 
   const setValue = (v: SerializableValue) => {
     if (scope === "scheme") {

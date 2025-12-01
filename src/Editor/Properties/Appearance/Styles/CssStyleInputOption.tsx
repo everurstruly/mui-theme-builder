@@ -1,6 +1,6 @@
 import { Typography, TextField, ListItem, Stack } from "@mui/material";
 import OptionListItemResetButton from "../../OptionListItemResetButton";
-import useEditProperty from "../../../Design/Edit/useEditProperty";
+import useEditProperty from "../../../Design/Current/useEditProperty";
 
 export type CssStyleInputOptionProps = {
   name: string;

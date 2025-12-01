@@ -1,20 +1,20 @@
 import { Button, ButtonGroup } from "@mui/material";
 import { RedoRounded, UndoRounded } from "@mui/icons-material";
-import useEdit from "./useEdit";
+import useCurrent from "./useCurrent";
 import useEditor from "../../useEditor";
 
-export default function ModificationHistoryButtons() {
+export default function HistoryButtons() {
   const selected = useEditor((s) => s.selectedExperience);
 
-  const undoVisual = useEdit((s) => s.undoVisualToolEdit);
-  const redoVisual = useEdit((s) => s.redoVisualToolEdit);
-  const undoCode = useEdit((s) => s.undoCodeOverride);
-  const redoCode = useEdit((s) => s.redoCodeOverride);
+  const undoVisual = useCurrent((s) => s.undoVisualToolEdit);
+  const redoVisual = useCurrent((s) => s.redoVisualToolEdit);
+  const undoCode = useCurrent((s) => s.undoCodeOverride);
+  const redoCode = useCurrent((s) => s.redoCodeOverride);
 
-  const canUndoVisual = useEdit((s) => s.visualHistoryPast.length > 0);
-  const canRedoVisual = useEdit((s) => s.visualHistoryFuture.length > 0);
-  const canUndoCode = useEdit((s) => s.codeHistoryPast.length > 0);
-  const canRedoCode = useEdit((s) => s.codeHistoryFuture.length > 0);
+  const canUndoVisual = useCurrent((s) => s.visualHistoryPast.length > 0);
+  const canRedoVisual = useCurrent((s) => s.visualHistoryFuture.length > 0);
+  const canUndoCode = useCurrent((s) => s.codeHistoryPast.length > 0);
+  const canRedoCode = useCurrent((s) => s.codeHistoryFuture.length > 0);
 
   const isCodeExperience = selected === "developer";
 

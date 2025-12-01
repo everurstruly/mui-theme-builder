@@ -1,23 +1,24 @@
 import type { StateCreator } from "zustand";
 import { serializeThemeOptions } from "../../compiler";
 import type {
-  ColorSchemeEdits,
-  DesignEditCurrentSlice,
-  ThemeCurrentState,
+  SchemeEdits,
+  CurrentDesignEditStore,
+  CurrentDesignEditState,
 } from "./types";
 import templatesRegistry from "../../../Templates/registry";
 import { createAddPatch, createRemovePatch } from "./historySlice";
+import type { CurrentDesignStore } from ".";
 
-export const createCurrentSlice: StateCreator<
-  DesignEditCurrentSlice,
+export const createEditSlice: StateCreator<
+  CurrentDesignStore,
   [],
   [],
-  DesignEditCurrentSlice
+  CurrentDesignEditStore
 > = (set, get) => ({
   title: templatesRegistry.material.label,
   baseThemeOptionSource: generateDefaultBaseThemeOption(),
   baseThemeOptionSourceMetadata: {
-    templateId: "material",
+    templateId: templatesRegistry.material.id,
     createdAtTimestamp: Date.now(),
     lastModifiedTimestamp: Date.now(),
   },
@@ -39,7 +40,7 @@ export const createCurrentSlice: StateCreator<
 
   setTitle: (title: string) => {
     set((state) => {
-      const newState: Partial<DesignEditCurrentSlice> = { title };
+      const newState: Partial<CurrentDesignEditStore> = { title };
       const contentHash = computeContentHash({ ...state, ...newState });
       return {
         ...newState,
@@ -59,7 +60,7 @@ export const createCurrentSlice: StateCreator<
         : JSON.stringify(themeCodeOrDsl);
 
     set((state) => {
-      const newState: Partial<DesignEditCurrentSlice> = {
+      const newState: Partial<CurrentDesignEditStore> = {
         baseThemeOptionSource: codeString,
         baseThemeOptionSourceMetadata: {
           ...state.baseThemeOptionSourceMetadata,
@@ -82,7 +83,7 @@ export const createCurrentSlice: StateCreator<
     });
   },
 
-  addGlobalDesignerEdit: (path, value) => {
+  addNeutralDesignerEdit: (path, value) => {
     set((state) => {
       const current = state.neutralEdits[path];
       if (current === value) return state; // Skip if no change
@@ -90,7 +91,7 @@ export const createCurrentSlice: StateCreator<
       // Record history patch for this change
       try {
         const patch = createAddPatch(path, value, current, undefined, true);
-        (get() as any).recordVisualChange?.([patch]);
+        get().recordVisualChange?.([patch]);
       } catch {
         // non-fatal; continue
       }
@@ -100,7 +101,7 @@ export const createCurrentSlice: StateCreator<
         [path]: value,
       };
 
-      const newState: Partial<DesignEditCurrentSlice> = { neutralEdits: newEdits };
+      const newState: Partial<CurrentDesignEditStore> = { neutralEdits: newEdits };
       const contentHash = computeContentHash({ ...state, ...newState });
 
       return {
@@ -122,13 +123,13 @@ export const createCurrentSlice: StateCreator<
 
       // Record history patch for scheme-specific change
       try {
-        const patch = createAddPatch(path, value, current, scheme as any, false);
-        (get() as any).recordVisualChange?.([patch]);
+        const patch = createAddPatch(path, value, current, scheme, false);
+        get().recordVisualChange?.([patch]);
       } catch {
         // ignore
       }
 
-      const newSchemes: DesignEditCurrentSlice["schemeEdits"] = {
+      const newSchemes: CurrentDesignEditStore["schemeEdits"] = {
         ...state.schemeEdits,
         [scheme]: {
           ...schemeObj,
@@ -139,7 +140,7 @@ export const createCurrentSlice: StateCreator<
         },
       };
 
-      const newState: Partial<DesignEditCurrentSlice> = { schemeEdits: newSchemes };
+      const newState: Partial<CurrentDesignEditStore> = { schemeEdits: newSchemes };
       const contentHash = computeContentHash({ ...state, ...newState });
 
       return {
@@ -153,7 +154,7 @@ export const createCurrentSlice: StateCreator<
     });
   },
 
-  removeGlobalDesignerEdit: (path) => {
+  removeNeutralDesignerEdit: (path) => {
     set((state) => {
       const newEdits = { ...state.neutralEdits };
       if (!(path in newEdits)) return state;
@@ -163,11 +164,11 @@ export const createCurrentSlice: StateCreator<
       // Record removal patch
       try {
         const patch = createRemovePatch(path, oldValue, undefined, true);
-        (get() as any).recordVisualChange?.([patch]);
+        get().recordVisualChange?.([patch]);
       } catch {
         // ignore
       }
-      const newState: Partial<DesignEditCurrentSlice> = { neutralEdits: newEdits };
+      const newState: Partial<CurrentDesignEditStore> = { neutralEdits: newEdits };
       const contentHash = computeContentHash({ ...state, ...newState });
       return {
         neutralEdits: newEdits,
@@ -193,13 +194,13 @@ export const createCurrentSlice: StateCreator<
 
       // Record removal patch for scheme edit
       try {
-        const patch = createRemovePatch(path, oldValue, scheme as any, false);
-        (get() as any).recordVisualChange?.([patch]);
+        const patch = createRemovePatch(path, oldValue, scheme, false);
+        get().recordVisualChange?.([patch]);
       } catch {
         // ignore
       }
 
-      const newSchemes: DesignEditCurrentSlice["schemeEdits"] = {
+      const newSchemes: CurrentDesignEditStore["schemeEdits"] = {
         ...state.schemeEdits,
         [scheme]: {
           ...schemeEdits,
@@ -207,7 +208,7 @@ export const createCurrentSlice: StateCreator<
         },
       };
 
-      const newState: Partial<DesignEditCurrentSlice> = { schemeEdits: newSchemes };
+      const newState: Partial<CurrentDesignEditStore> = { schemeEdits: newSchemes };
       const contentHash = computeContentHash({ ...state, ...newState });
 
       return {
@@ -221,16 +222,16 @@ export const createCurrentSlice: StateCreator<
     });
   },
 
-  getGlobalDesignerEdit: (path) => {
+  getDesignerNeutralEdit: (path) => {
     return get().neutralEdits[path];
   },
 
-  getSchemeDesignerEdit: (scheme, path) => {
+  getDesignerSchemeEdit: (scheme, path) => {
     const schemeEdits = get().schemeEdits[scheme];
     return schemeEdits?.designer[path];
   },
 
-  // Backward compatibility helper - merges global + scheme edits
+  // Backward compatibility helper - merges neutral + scheme edits
   getDeveloperToolEdit: (path: string, scheme: string) => {
     const state = get();
     return {
@@ -242,27 +243,27 @@ export const createCurrentSlice: StateCreator<
   clearDesignerEdits: (scope, scheme) => {
     if (scope === "global") {
       set((state) => {
-        const newState: Partial<DesignEditCurrentSlice> = { neutralEdits: {} };
+        const newState: Partial<CurrentDesignEditStore> = { neutralEdits: {} };
         const contentHash = computeContentHash({ ...state, ...newState });
         return {
           neutralEdits: {},
           contentHash,
           modificationTimestamps: {
             ...state.modificationTimestamps,
-            ["visual:global:clear"]: Date.now(),
+            ["designer:global:clear"]: Date.now(),
           },
         };
       });
     } else if (scope === "current-scheme") {
       set((state) => {
-        const newSchemes: DesignEditCurrentSlice["schemeEdits"] = {
+        const newSchemes: CurrentDesignEditStore["schemeEdits"] = {
           ...state.schemeEdits,
           [scheme]: {
             ...state.schemeEdits[scheme],
             designer: {},
           },
         };
-        const newState: Partial<DesignEditCurrentSlice> = {
+        const newState: Partial<CurrentDesignEditStore> = {
           schemeEdits: newSchemes,
         };
         const contentHash = computeContentHash({ ...state, ...newState });
@@ -271,13 +272,13 @@ export const createCurrentSlice: StateCreator<
           contentHash,
           modificationTimestamps: {
             ...state.modificationTimestamps,
-            ["visual:scheme:clear:" + scheme]: Date.now(),
+            ["designer:scheme:clear:" + scheme]: Date.now(),
           },
         };
       });
     } else {
       set((state) => {
-        const newState: Partial<DesignEditCurrentSlice> = {
+        const newState: Partial<CurrentDesignEditStore> = {
           neutralEdits: {},
           schemeEdits: {
             light: createInitialSchemeEdits(),
@@ -294,7 +295,7 @@ export const createCurrentSlice: StateCreator<
           contentHash,
           modificationTimestamps: {
             ...state.modificationTimestamps,
-            ["visual:all:clear"]: Date.now(),
+            ["designer:all:clear"]: Date.now(),
           },
         };
       });
@@ -307,12 +308,12 @@ export const createCurrentSlice: StateCreator<
 
       // Record code history (previous source) for undo
       try {
-        (get() as any).recordCodeChange?.(previousSource);
+        get().recordCodeChange?.(previousSource);
       } catch {
         // ignore
       }
 
-      const newState: Partial<DesignEditCurrentSlice> = {
+      const newState: Partial<CurrentDesignEditStore> = {
         codeOverridesSource: source,
         codeOverridesDsl: dsl,
         codeOverridesEdits: flattened,
@@ -332,7 +333,7 @@ export const createCurrentSlice: StateCreator<
 
   clearCodeOverrides: () => {
     set((state) => {
-      const newState: Partial<DesignEditCurrentSlice> = {
+      const newState: Partial<CurrentDesignEditStore> = {
         codeOverridesSource: "",
         codeOverridesDsl: {},
         codeOverridesEdits: {},
@@ -359,7 +360,7 @@ export const createCurrentSlice: StateCreator<
       : generateDefaultBaseThemeOption();
 
     set((state) => {
-      const newState: Partial<DesignEditCurrentSlice> = {
+      const newState: Partial<CurrentDesignEditStore> = {
         title: metadata?.title || templatesRegistry.material.label,
         baseThemeOptionSource: codeString,
         baseThemeOptionSourceMetadata: {
@@ -377,7 +378,7 @@ export const createCurrentSlice: StateCreator<
         codeOverridesDsl: {},
         codeOverridesEdits: {},
         codeOverridesError: null,
-      } as any;
+      };
 
       const contentHash = computeContentHash({ ...state, ...newState });
 
@@ -390,17 +391,17 @@ export const createCurrentSlice: StateCreator<
           loadNew: Date.now(),
         },
         // Clear undo/redo history so previous design's edits don't carry over
-        visualHistoryPast: [],
-        visualHistoryFuture: [],
+        designerHistoryPast: [],
+        designerHistoryFuture: [],
         codeHistoryPast: [],
         codeHistoryFuture: [],
-      } as any;
+      };
     });
   },
 
   resetToBase: () => {
     set((state) => {
-      const newState: Partial<DesignEditCurrentSlice> = {
+      const newState: Partial<CurrentDesignEditStore> = {
         neutralEdits: {},
         schemeEdits: {
           light: createInitialSchemeEdits(),
@@ -438,7 +439,7 @@ function generateDefaultBaseThemeOption(): string {
 
 // Helper: compute a deterministic content hash (JSON string) for dirty checking
 // Only includes the serializable parts relevant to storage/dirty checks.
-export function computeContentHash(state: Partial<ThemeCurrentState>): string {
+export function computeContentHash(state: Partial<CurrentDesignEditState>): string {
   return JSON.stringify({
     base: state.baseThemeOptionSource,
     neutral: state.neutralEdits,
@@ -447,7 +448,7 @@ export function computeContentHash(state: Partial<ThemeCurrentState>): string {
   });
 }
 
-function createInitialSchemeEdits(): ColorSchemeEdits {
+function createInitialSchemeEdits(): SchemeEdits {
   return { designer: {} };
 }
 

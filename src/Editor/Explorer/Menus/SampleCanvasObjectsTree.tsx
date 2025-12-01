@@ -3,13 +3,13 @@ import { SimpleTreeView } from "@mui/x-tree-view/SimpleTreeView";
 import { TreeItem } from "@mui/x-tree-view/TreeItem";
 import { buildSamplesTree, type TreeNode } from "../../Previews/registry";
 import * as React from "react";
-import useEdit from "../../Design/Edit/useEdit";
+import useCurrent from "../../Design/Current/useCurrent";
 
 export default function SampleCanvasObjectsTree() {
   // Build once; tree is static for session
   const samplesTree = React.useMemo(() => buildSamplesTree(), []);
-  const activePreviewId = useEdit((state) => state.activePreviewId);
-  const selectPreview = useEdit((state) => state.selectPreview);
+  const activePreviewId = useCurrent((state) => state.activePreviewId);
+  const selectPreview = useCurrent((state) => state.selectPreview);
 
   const handleSelectSample = (sampleId: string) => {
     selectPreview(sampleId);

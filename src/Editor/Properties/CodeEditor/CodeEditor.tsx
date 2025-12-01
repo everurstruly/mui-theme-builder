@@ -1,8 +1,8 @@
 import AlertBar from "./AlertBar";
 import CodeMirror from "@uiw/react-codemirror";
 import Toolbar from "./Toolbar";
-import useDeveloperToolEdit from "../../Design/Edit/useDeveloperToolEdit";
-import useDeveloperToolActions from "../../Design/Edit/useDeveloperEditTools";
+import useDeveloperToolEdit from "../../Design/Current/useDeveloperToolEdit";
+import useDeveloperToolActions from "../../Design/Current/useDeveloperEditTools";
 import useCodeEditor from "./useCodeEditor";
 import { useMemo } from "react";
 import { Stack, Paper } from "@mui/material";

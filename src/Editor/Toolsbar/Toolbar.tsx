@@ -1,7 +1,7 @@
-import ExportCommand from "../Design/Edit/ExportCommand";
-import ModificationHistoryButtons from "../Design/Edit/ModificationHistoryButtons";
+import ExportCommand from "../Design/Current/ExportCommand";
+import HistoryButtons from "../Design/Current/HistoryButtons";
 import DesignMobileActionMenu from "./DesignMobileActionMenu";
-import CurrentDesignContext from "../Design/Edit/Context";
+import CurrentDesignContext from "../Design/Current/Context";
 import PropertiesPanelHeader from "../Properties/PropertiesPanelHeader";
 import SaveButton from "../Design/Persistence/components/SaveButton";
 import LaunchDialogOpenButton from "../Design/Launch/LaunchDialogOpenButton";
@@ -61,7 +61,7 @@ function DesktopToolbarContent() {
 
         <Stack direction={"row"} alignItems={"inherit"} columnGap={inlineGapRem}>
           <SaveButton />
-          <ModificationHistoryButtons />
+          <HistoryButtons />
           <ExportCommand />
         </Stack>
       </Stack>

@@ -1,8 +1,8 @@
 import { ListItem, Typography, Stack } from "@mui/material";
 import FontWeightOptionInput from "./FontWeightOptionInput";
 import OptionListItemResetButton from "../../OptionListItemResetButton";
-import useDesignCreatedTheme from "../../../Design/Edit/useCreatedTheme";
-import useEditProperty from "../../../Design/Edit/useEditProperty";
+import useDesignCreatedTheme from "../../../Design/Current/useCreatedTheme";
+import useEditProperty from "../../../Design/Current/useEditProperty";
 import { getNestedValue } from "../../../Design/compiler";
 
 export type FontWeightOptionProps = {

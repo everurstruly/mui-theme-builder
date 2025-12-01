@@ -1,7 +1,7 @@
 import React from "react";
 import { usePersistenceStore } from "../Persistence/persistenceStore";
 import { useRename } from "../Persistence/hooks";
-import useEdit from "./useEdit";
+import useCurrent from "./useCurrent";
 import { MoreVertRounded } from "@mui/icons-material";
 import {
   Typography,
@@ -24,7 +24,7 @@ function Context({ sx }: { sx?: SxProps }) {
   const hasSavedRecently = storageStatus === "idle" && lastSavedAt !== null;
 
   const { title, rename } = useRename();
-  const loadNew = useEdit((s) => s.loadNew);
+  const loadNew = useCurrent((s) => s.loadNew);
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [renameDialogOpen, setRenameDialogOpen] = React.useState(false);

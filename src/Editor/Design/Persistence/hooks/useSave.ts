@@ -13,7 +13,7 @@
 import { useMemo } from 'react';
 import { usePersistence } from '../usePersistence';
 import { usePersistenceStore } from '../persistenceStore';
-import { useEdit } from '../../Edit/useEdit';
+import { useCurrent } from '../../Current/useCurrent';
 
 type SaveStatus = 'idle' | 'saving' | 'saved';
 
@@ -26,7 +26,7 @@ export function useSave() {
   // Design is dirty if:
   // Content changed since last save (contentHash !== checkpointHash)
   // NOTE: Brand new designs (checkpointHash === null) are NOT considered dirty
-  const isDirty = useEdit((s) => {
+  const isDirty = useCurrent((s) => {
     const checkpointHash = (s as any).checkpointHash;
     const contentHash = (s as any).contentHash;
     return checkpointHash !== null && contentHash !== checkpointHash;

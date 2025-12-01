@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Box, ListItem, Typography } from "@mui/material";
 import { useDebouncyEffect } from "use-debouncy";
 import OptionListItemResetButton from "../../OptionListItemResetButton";
-import useEditProperty from "../../../Design/Edit/useEditProperty";
+import useEditProperty from "../../../Design/Current/useEditProperty";
 import ColorPickerPopover from "../ColorPickerPopover";
 
 type ShadesListItemProps = {

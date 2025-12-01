@@ -4,7 +4,7 @@ import {
   MenuItem,
   type SelectChangeEvent,
 } from "@mui/material";
-import useEditProperty from "../../../Design/Edit/useEditProperty";
+import useEditProperty from "../../../Design/Current/useEditProperty";
 
 type FontWeightOptionInputProps = {
   id: string;

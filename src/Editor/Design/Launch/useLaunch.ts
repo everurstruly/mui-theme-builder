@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { useSave } from "../Persistence/hooks/useSave";
-import { useEdit } from "../Edit/useEdit";
+import { useCurrent } from "../Current/useCurrent";
 import { usePersistenceStore } from "../Persistence/persistenceStore";
 import { serializeThemeOptions } from "../compiler";
 import { getTemplateById } from "../../Templates/registry";
@@ -18,7 +18,7 @@ export interface LaunchBlocker {
 
 export function useLaunch() {
   const { isDirty } = useSave();
-  const loadNew = useEdit((s) => s.loadNew);
+  const loadNew = useCurrent((s) => s.loadNew);
   const setSnapshotId = usePersistenceStore((s) => s.setSnapshotId);
   const currentSnapshotId = usePersistenceStore((s) => s.currentSnapshotId);
 

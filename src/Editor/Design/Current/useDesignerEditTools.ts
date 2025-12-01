@@ -1,12 +1,12 @@
 import { useCallback } from "react";
-import useEdit from "./useEdit";
+import useCurrent from "./useCurrent";
 
 export function useDesignerEditTools() {
-  const addGlobal = useEdit((s) => s.addGlobalDesignerEdit);
-  const addScheme = useEdit((s) => s.addSchemeDesignerEdit);
-  const removeGlobal = useEdit((s) => s.removeGlobalDesignerEdit);
-  const removeScheme = useEdit((s) => s.removeSchemeDesignerEdit);
-  const removeAll = useEdit((s) => s.clearDesignerEdits);
+  const addGlobal = useCurrent((s) => s.addNeutralDesignerEdit);
+  const addScheme = useCurrent((s) => s.addSchemeDesignerEdit);
+  const removeGlobal = useCurrent((s) => s.removeNeutralDesignerEdit);
+  const removeScheme = useCurrent((s) => s.removeSchemeDesignerEdit);
+  const removeAll = useCurrent((s) => s.clearDesignerEdits);
 
   const addGlobalDesignerEdit = useCallback(
     (path: string, value: any) => addGlobal(path, value),

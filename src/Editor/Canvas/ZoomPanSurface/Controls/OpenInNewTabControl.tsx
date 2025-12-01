@@ -1,10 +1,10 @@
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { Tooltip, IconButton } from "@mui/material";
-import useEdit from "../../../Design/Edit/useEdit";
-import useCreatedThemeOption from "../../../Design/Edit/useCreatedThemeOption";
+import useCurrent from "../../../Design/Current/useCurrent";
+import useCreatedThemeOption from "../../../Design/Current/useCreatedThemeOption";
 
 export default function OpenInNewTabControl() {
-  const activePreviewId = useEdit((state) => state.activePreviewId);
+  const activePreviewId = useCurrent((state) => state.activePreviewId);
   const themeOptions = useCreatedThemeOption();
 
   const handleOpenInNewTab = () => {

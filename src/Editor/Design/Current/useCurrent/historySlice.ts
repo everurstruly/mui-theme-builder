@@ -1,162 +1,27 @@
-/**
- * History Slice - Undo/Redo with Efficient Patches
- * 
- * Responsibilities:
- * - Track changes to domain state (visual edits + code overrides)
- * - Provide undo/redo operations
- * - Store O(1) diffs instead of O(n) full snapshots
- * 
- * Approach:
- * - Store minimal patches (only changed paths + values)
- * - Separate history stacks for visual edits vs code overrides
- * - Version-based tracking for efficient dirty checks
- * 
- * Does NOT contain:
- * - Domain state itself
- * - UI state
- * - Storage logic
- */
-
-import type { StateCreator } from 'zustand';
-import type { SerializableValue } from './types';
-
-// ===== Types =====
-
-/**
- * A lightweight patch representing a single change.
- */
-export interface HistoryPatch {
-  /** Operation type */
-  op: 'add' | 'remove';
-  
-  /** Path that was modified */
-  path: string;
-  
-  /** Previous value (for undo) */
-  oldValue?: SerializableValue;
-  
-  /** New value (for redo) */
-  newValue?: SerializableValue;
-  
-  /** Color scheme if applicable */
-  scheme?: 'light' | 'dark';
-  
-  /** Whether this is a global visual edit */
-  isGlobal?: boolean;
-}
-
-/**
- * A collection of patches representing a single atomic change.
- * Used for batch operations.
- */
-export interface HistoryEntry {
-  /** Array of patches in this entry */
-  patches: HistoryPatch[];
-  
-  /** Timestamp for debugging */
-  timestamp: number;
-  
-  /** Content hash representing state at this entry (optional) */
-  contentHash?: string;
-
-  /** Marks this entry as a save point so undo/redo can skip or treat specially */
-  isSavePoint?: boolean;
-}
-
-/**
- * Code override history entry.
- */
-export interface CodeHistoryEntry {
-  /** Previous source code */
-  source: string;
-  
-  /** Timestamp */
-  timestamp: number;
-  
-  /** Content hash representing state at this entry (optional) */
-  contentHash?: string;
-
-  /** Marks this entry as a save point */
-  isSavePoint?: boolean;
-}
-
-/**
- * History state.
- */
-export interface ThemeDesignHistoryState {
-  /** Visual edit history (past) */
-  visualHistoryPast: HistoryEntry[];
-  
-  /** Visual edit history (future/redo stack) */
-  visualHistoryFuture: HistoryEntry[];
-  
-  /** Code override history (past) */
-  codeHistoryPast: CodeHistoryEntry[];
-  
-  /** Code override history (future/redo stack) */
-  codeHistoryFuture: CodeHistoryEntry[];
-}
-
-/**
- * History actions.
- */
-export interface ThemeDesignHistoryActions {
-  /** Record a visual edit change */
-  recordVisualChange: (patches: HistoryPatch[]) => void;
-  
-  /** Record a code override change */
-  recordCodeChange: (previousSource: string) => void;
-  /** Record a save point in visual history */
-  recordStoragePoint: (contentHash: string) => void;
-  /** Record a save point in code history */
-  recordCodeStoragePoint: (contentHash: string) => void;
-  
-  /** Get undo/redo availability */
-  canUndoVisual: () => boolean;
-  canRedoVisual: () => boolean;
-  canUndoCode: () => boolean;
-  canRedoCode: () => boolean;
-  /** Undo/redo operations (scope: visual or code) */
-  undoVisualToolEdit: () => void;
-  redoVisualToolEdit: () => void;
-  undoCodeOverride: () => void;
-  redoCodeOverride: () => void;
-  
-  /** Mark current version as stored */
-  // lastStoredModificationVersion tracking is handled by the domain slice; history does not track it.
-  
-  /** Clear all history */
-  clearHistory: () => void;
-  
-  /** Get entries for debugging */
-  getVisualHistory: () => { past: HistoryEntry[]; future: HistoryEntry[] };
-  getCodeHistory: () => { past: CodeHistoryEntry[]; future: CodeHistoryEntry[] };
-}
-
-export type DesignEditHistorySlice = ThemeDesignHistoryState & ThemeDesignHistoryActions;
-
-// ===== Constants =====
+import type { StateCreator } from "zustand";
+import type { CurrentDesignStore } from ".";
+import type {
+  CurrentDesignHistorySlice,
+  HistoryPatch,
+  SerializableValue,
+} from "./types";
 
 const MAX_HISTORY_SIZE = 50;
 
-// ===== Slice Creator =====
-
 export const createHistorySlice: StateCreator<
-  any,
+  CurrentDesignStore,
   [],
   [],
-  DesignEditHistorySlice
+  CurrentDesignHistorySlice
 > = (set, get) => ({
-  // Initial state
   visualHistoryPast: [],
   visualHistoryFuture: [],
   codeHistoryPast: [],
   codeHistoryFuture: [],
-  
 
   // Actions
   recordVisualChange: (patches) => {
-  set((state: any) => ({
+    set((state) => ({
       visualHistoryPast: [
         ...state.visualHistoryPast,
         {
@@ -169,7 +34,7 @@ export const createHistorySlice: StateCreator<
   },
 
   recordStoragePoint: (contentHash: string) => {
-    set((state: any) => ({
+    set((state) => ({
       visualHistoryPast: [
         ...state.visualHistoryPast,
         {
@@ -184,7 +49,7 @@ export const createHistorySlice: StateCreator<
   },
 
   recordCodeChange: (previousSource) => {
-  set((state: any) => ({
+    set((state) => ({
       codeHistoryPast: [
         ...state.codeHistoryPast,
         {
@@ -197,11 +62,11 @@ export const createHistorySlice: StateCreator<
   },
 
   recordCodeStoragePoint: (contentHash: string) => {
-    set((state: any) => ({
+    set((state) => ({
       codeHistoryPast: [
         ...state.codeHistoryPast,
         {
-          source: '',
+          source: "",
           timestamp: Date.now(),
           contentHash,
           isSavePoint: true,
@@ -211,7 +76,7 @@ export const createHistorySlice: StateCreator<
     }));
   },
 
-    canUndoVisual: () => {
+  canUndoVisual: () => {
     return get().visualHistoryPast.length > 0;
   },
 
@@ -235,7 +100,6 @@ export const createHistorySlice: StateCreator<
       codeHistoryFuture: [],
     });
   },
-  
 
   undoVisualToolEdit: () => {
     const past = get().visualHistoryPast;
@@ -252,17 +116,17 @@ export const createHistorySlice: StateCreator<
 
     // Apply inverse patches
     entryToUndo.patches.forEach((patch: HistoryPatch) => {
-      if (patch.op === 'add') {
+      if (patch.op === "add") {
         // inverse of add is remove
         if (patch.isGlobal) {
-          get().removeGlobalDesignerEdit(patch.path);
+          get().removeNeutralDesignerEdit(patch.path);
         } else {
           get().removeSchemeDesignerEdit(patch.scheme!, patch.path);
         }
-      } else if (patch.op === 'remove') {
+      } else if (patch.op === "remove") {
         // inverse of remove is add with oldValue
         if (patch.isGlobal) {
-          get().addGlobalDesignerEdit(patch.path, patch.oldValue!);
+          get().addNeutralDesignerEdit(patch.path, patch.oldValue!);
         } else {
           get().addSchemeDesignerEdit(patch.scheme!, patch.path, patch.oldValue!);
         }
@@ -270,7 +134,7 @@ export const createHistorySlice: StateCreator<
     });
 
     // Move undone entry and any later entries to the future (redo) stack
-    set((state: any) => ({
+    set((state) => ({
       visualHistoryPast: state.visualHistoryPast.slice(0, undoIndex),
       visualHistoryFuture: [
         ...state.visualHistoryFuture,
@@ -294,9 +158,9 @@ export const createHistorySlice: StateCreator<
 
     // Apply patches forward
     entryToRedo.patches.forEach((patch: HistoryPatch) => {
-      if (patch.op === 'add') {
+      if (patch.op === "add") {
         if (patch.isGlobal) {
-          get().addGlobalDesignerEdit(patch.path, patch.newValue!);
+          get().addNeutralDesignerEdit(patch.path, patch.newValue!);
         } else {
           get().addSchemeDesignerEdit(patch.scheme!, patch.path, patch.newValue!);
         }
@@ -305,7 +169,7 @@ export const createHistorySlice: StateCreator<
     });
 
     // Move the redone entry and any preceding save points to past
-    set((state: any) => ({
+    set((state) => ({
       visualHistoryPast: [
         ...state.visualHistoryPast,
         ...state.visualHistoryFuture.slice(0, redoIndex + 1),
@@ -342,7 +206,7 @@ export const createHistorySlice: StateCreator<
 
     const entryToUndo = past[undoIndex];
 
-    set((state: any) => ({
+    set((state) => ({
       codeHistoryPast: state.codeHistoryPast.slice(0, undoIndex),
       codeHistoryFuture: [
         ...state.codeHistoryFuture,
@@ -366,7 +230,7 @@ export const createHistorySlice: StateCreator<
 
     const entryToRedo = future[redoIndex];
 
-    set((state: any) => ({
+    set((state) => ({
       codeHistoryPast: [
         ...state.codeHistoryPast,
         ...state.codeHistoryFuture.slice(0, redoIndex + 1),
@@ -387,11 +251,11 @@ export function createAddPatch(
   path: string,
   newValue: SerializableValue,
   oldValue: SerializableValue | undefined,
-  scheme?: 'light' | 'dark',
+  scheme?: string,
   isGlobal?: boolean
 ): HistoryPatch {
   return {
-    op: 'add',
+    op: "add",
     path,
     oldValue,
     newValue,
@@ -406,11 +270,11 @@ export function createAddPatch(
 export function createRemovePatch(
   path: string,
   oldValue: SerializableValue,
-  scheme?: 'light' | 'dark',
+  scheme?: string,
   isGlobal?: boolean
 ): HistoryPatch {
   return {
-    op: 'remove',
+    op: "remove",
     path,
     oldValue,
     scheme,

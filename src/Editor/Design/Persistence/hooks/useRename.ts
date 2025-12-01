@@ -9,7 +9,7 @@ import { useCallback, useState, useMemo } from "react";
 import { usePersistence } from "../usePersistence";
 import { usePersistenceStore } from "../persistenceStore";
 import { getPersistenceDependencies } from "../persistenceRegistry";
-import useEdit from "../../Edit/useEdit";
+import useCurrent from "../../Current/useCurrent";
 import type { ConflictInfo } from "../types";
 
 // Simple debounce implementation
@@ -27,8 +27,8 @@ function debounce<T extends (...args: any[]) => any>(
 export function useRename() {
   const { save } = usePersistence();
   const currentSnapshotId = usePersistenceStore((s) => s.currentSnapshotId);
-  const title = useEdit((s) => s.title);
-  const setTitle = useEdit((s) => s.setTitle);
+  const title = useCurrent((s) => s.title);
+  const setTitle = useCurrent((s) => s.setTitle);
 
   const [conflict, setConflict] = useState<ConflictInfo | null>(null);
   const [isChecking, setIsChecking] = useState(false);
@@ -70,11 +70,14 @@ export function useRename() {
    */
   const rename = useCallback(
     async (newTitle: string) => {
+      console.debug('[useRename] rename -> setTitle', newTitle);
       setTitle(newTitle);
 
       // If this is a saved design, persist the rename immediately
       if (isSavedDesign) {
+        console.debug('[useRename] saving persisted title', newTitle);
         await save({ title: newTitle, onConflict: "overwrite" });
+        console.debug('[useRename] save completed for', newTitle);
         return { persisted: true, title: newTitle };
       }
 

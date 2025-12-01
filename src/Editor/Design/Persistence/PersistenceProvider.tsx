@@ -11,7 +11,7 @@ import { MockStorageAdapter } from './adapters/MockStorageAdapter';
 import { ThemeSerializer } from './serialization/ThemeSerializer';
 import { ThemeDeserializer } from './serialization/ThemeDeserializer';
 import { usePersistenceStore } from './persistenceStore';
-import useEdit from '../Edit/useEdit';
+import useCurrent from '../Current/useCurrent';
 
 interface PersistenceProviderProps {
   children: ReactNode;
@@ -29,7 +29,7 @@ export function PersistenceProvider({
   templateRegistry,
 }: PersistenceProviderProps) {
   const setSnapshotId = usePersistenceStore((s) => s.setSnapshotId);
-  const loadNewTimestamp = useEdit((s) => (s as any).modificationTimestamps?.loadNew);
+  const loadNewTimestamp = useCurrent((s) => (s as any).modificationTimestamps?.loadNew);
 
   useEffect(() => {
     // Initialize with provided dependencies or defaults

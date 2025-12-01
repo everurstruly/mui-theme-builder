@@ -2,7 +2,7 @@ import { Typography, TextField, ListItem, Stack } from "@mui/material";
 import { useState } from "react";
 import SliderInput from "../../SliderInput";
 import OptionListItemResetButton from "../../OptionListItemResetButton";
-import useEditProperty from "../../../Design/Edit/useEditProperty";
+import useEditProperty from "../../../Design/Current/useEditProperty";
 
 export type FontStyleRangedOptionProps = {
   name: string;

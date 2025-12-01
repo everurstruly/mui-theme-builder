@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import useEdit from "./useEdit";
+import useCurrent from "./useCurrent";
 
 /**
  * Hook for accessing code overrides state.
@@ -14,8 +14,8 @@ import useEdit from "./useEdit";
  * }
  */
 export default function useDeveloperToolEdit() {
-  const source = useEdit((s) => s.codeOverridesSource);
-  const error = useEdit((s) => s.codeOverridesError);
+  const source = useCurrent((s) => s.codeOverridesSource);
+  const error = useCurrent((s) => s.codeOverridesError);
   const hasOverrides = source.length > 0;
 
   return useMemo(

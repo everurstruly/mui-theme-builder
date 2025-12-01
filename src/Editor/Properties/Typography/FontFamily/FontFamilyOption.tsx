@@ -1,9 +1,9 @@
 import { ListItem, Typography, Stack, type SelectChangeEvent } from "@mui/material";
 import FontFamilyOptionInput from "./FontFamilyOptionInput";
 import OptionListItemResetButton from "../../OptionListItemResetButton";
-import useDesignCreatedTheme from "../../../Design/Edit/useCreatedTheme";
-import { useDesignerEditTools } from "../../../Design/Edit/useDesignerEditTools";
-import useEditProperty from "../../../Design/Edit/useEditProperty";
+import useDesignCreatedTheme from "../../../Design/Current/useCreatedTheme";
+import { useDesignerEditTools } from "../../../Design/Current/useDesignerEditTools";
+import useEditProperty from "../../../Design/Current/useEditProperty";
 
 export type FontFamilyOptionProps = {
   title: string;

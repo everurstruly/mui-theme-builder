@@ -14,7 +14,7 @@ import {
 } from "@mui/icons-material";
 import { useTemplates } from "./useTemplates";
 import { useTemplateSelection } from "./useTemplateSelection";
-import ColorSchemeToggle from "../../Edit/ColorSchemeToggle";
+import ColorSchemeToggle from "../../Current/ColorSchemeToggle";
 
 interface TemplateMethodProps {
   onClose: () => void;

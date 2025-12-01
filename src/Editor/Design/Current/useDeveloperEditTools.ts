@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import useEdit from "./useEdit";
+import useCurrent from "./useCurrent";
 import {
   transformCodeToDsl,
   transformDslToThemeOptions,
@@ -25,10 +25,10 @@ const flattenedCache = new Map<string, Record<string, any>>();
  * }
  */
 export default function useDeveloperToolActions() {
-  const setCodeOverrides = useEdit((s) => s.setCodeOverrides);
-  const clearCodeOverrides = useEdit((s) => s.clearCodeOverrides);
-  const resetToVisual = useEdit((s) => s.clearCodeOverrides);
-  const resetToBase = useEdit((s) => s.resetToBase);
+  const setCodeOverrides = useCurrent((s) => s.setCodeOverrides);
+  const clearCodeOverrides = useCurrent((s) => s.clearCodeOverrides);
+  const resetToVisual = useCurrent((s) => s.clearCodeOverrides);
+  const resetToBase = useCurrent((s) => s.resetToBase);
 
   return useMemo(
     () => ({
@@ -40,9 +40,9 @@ export default function useDeveloperToolActions() {
         } else {
           try {
             // Build resolution context from current editor base template
-            const state = useEdit.getState();
+            const state = useCurrent.getState();
             const baseTemplate = parseThemeCode(state.baseThemeOptionSource) ?? {};
-            const activeScheme = (state as any).activeColorScheme ?? "light";
+            const activeScheme = state.activeColorScheme ?? "light";
 
             // Cache key must include DSL + base template (string) + scheme because
             // resolved values depend on the template and active color scheme.
@@ -56,7 +56,7 @@ export default function useDeveloperToolActions() {
                 template: baseTemplate,
                 colorScheme: activeScheme,
                 spacingFactor: 8,
-              } as any;
+              };
 
               // Resolve DSL -> ThemeOptions and then flatten for quick path lookups
               const themeOptions = transformDslToThemeOptions(result.dsl, context);
