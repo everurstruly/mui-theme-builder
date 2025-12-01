@@ -30,7 +30,7 @@ export interface ThemeCurrentState {
   codeOverridesEdits: Record<string, SerializableValue>;
   codeOverridesError: string | null;
   contentHash: string;
-  lastStoredContentHash: string;
+  checkpointHash: string | null;
   modificationTimestamps: Record<string, number>;
 }
 
@@ -66,7 +66,8 @@ export interface ThemeCurrentActions {
     metadata?: Partial<ThemeMetadata> & { title?: string }
   ) => void;
   resetToBase: () => void;
-  acknowledgeStoredModifications: () => void;
+  setCheckpoint: (hash: string) => void;
+  clearCheckpoint: () => void;
 }
 
 export type DesignEditCurrentSlice = ThemeCurrentState & ThemeCurrentActions;

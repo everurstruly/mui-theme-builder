@@ -1,5 +1,6 @@
 import React from "react";
-import useStorage from "../Storage/useStorage";
+import { usePersistenceStore } from "../Persistence/persistenceStore";
+import { useRename } from "../Persistence/hooks";
 import useEdit from "./useEdit";
 import { MoreVertRounded } from "@mui/icons-material";
 import {
@@ -18,20 +19,21 @@ import {
 } from "@mui/material";
 
 function Context({ sx }: { sx?: SxProps }) {
-  const title = useEdit((s) => s.title);
-  const setTitle = useEdit((s) => s.setTitle);
-  const storageStatus = useStorage((s) => s.storageProgress);
-  const hasSavedRecently = storageStatus === "success";
+  const storageStatus = usePersistenceStore((s) => s.status);
+  const lastSavedAt = usePersistenceStore((s) => s.lastSavedAt);
+  const hasSavedRecently = storageStatus === "idle" && lastSavedAt !== null;
 
+  const { title, rename } = useRename();
   const loadNew = useEdit((s) => s.loadNew);
 
-  const [renameOpen, setRenameOpen] = React.useState(false);
-  const [renameValue, setRenameValue] = React.useState(title);
-
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const menuOpen = Boolean(anchorEl);
+  const [renameDialogOpen, setRenameDialogOpen] = React.useState(false);
+  const [renameFormValue, setRenameFormValue] = React.useState(title);
 
-  const [deleteConfirmOpen, setDeleteConfirmOpen] = React.useState(false);
+  const [deleteConfirmationDialogOpen, setDeleteConfirmationDialogOpen] =
+    React.useState(false);
+
+  const actionMenuOpen = Boolean(anchorEl);
 
   const [snack, setSnack] = React.useState<null | {
     severity?: "info" | "success" | "error";
@@ -43,26 +45,42 @@ function Context({ sx }: { sx?: SxProps }) {
   const handleMenuClose = () => setAnchorEl(null);
 
   const handleRename = () => {
-    setRenameOpen(true);
-    setRenameValue(title);
+    setRenameDialogOpen(true);
+    setRenameFormValue(title);
     handleMenuClose();
   };
 
-  const handleRenameConfirm = () => {
-    setTitle(renameValue || "Untitled");
-    setRenameOpen(false);
-    setSnack({ severity: "success", message: `Renamed to '${renameValue}'` });
+  const handleRenameConfirm = async () => {
+    const newTitle = renameFormValue || "Untitled";
+    setRenameDialogOpen(false);
+
+    try {
+      const result = await rename(newTitle);
+      if (result.persisted) {
+        setSnack({
+          severity: "success",
+          message: `Renamed and saved as '${result.title}'`,
+        });
+      } else {
+        setSnack({
+          severity: "success",
+          message: `Renamed to '${result.title}' (not yet saved)`,
+        });
+      }
+    } catch (err) {
+      console.error("Failed to rename:", err);
+      setSnack({ severity: "error", message: "Rename failed" });
+    }
   };
 
   const handleDelete = () => {
     handleMenuClose();
-    setDeleteConfirmOpen(true);
+    setDeleteConfirmationDialogOpen(true);
   };
 
   const handleDeleteConfirm = () => {
-    // Let the store reset to its own default baseline
     loadNew();
-    setDeleteConfirmOpen(false);
+    setDeleteConfirmationDialogOpen(false);
     setSnack({ severity: "info", message: "Deleted current design" });
   };
 
@@ -112,7 +130,7 @@ function Context({ sx }: { sx?: SxProps }) {
       <Menu
         id="design-menu"
         anchorEl={anchorEl}
-        open={menuOpen}
+        open={actionMenuOpen}
         onClose={handleMenuClose}
         slotProps={{
           paper: {
@@ -131,8 +149,8 @@ function Context({ sx }: { sx?: SxProps }) {
       </Menu>
 
       <Dialog
-        open={renameOpen}
-        onClose={() => setRenameOpen(false)}
+        open={renameDialogOpen}
+        onClose={() => setRenameDialogOpen(false)}
         maxWidth="xs"
         fullWidth
       >
@@ -141,8 +159,8 @@ function Context({ sx }: { sx?: SxProps }) {
         <DialogContent>
           <TextField
             fullWidth
-            value={renameValue}
-            onChange={(e) => setRenameValue(e.target.value)}
+            value={renameFormValue}
+            onChange={(e) => setRenameFormValue(e.target.value)}
             autoFocus
             onKeyDown={(e) => {
               const enterKeyCode = "Enter";
@@ -154,14 +172,17 @@ function Context({ sx }: { sx?: SxProps }) {
         </DialogContent>
 
         <DialogActions sx={{ p: 3 }}>
-          <Button onClick={() => setRenameOpen(false)}>Cancel</Button>
+          <Button onClick={() => setRenameDialogOpen(false)}>Cancel</Button>
           <Button onClick={handleRenameConfirm} variant="contained">
             Rename
           </Button>
         </DialogActions>
       </Dialog>
 
-      <Dialog open={deleteConfirmOpen} onClose={() => setDeleteConfirmOpen(false)}>
+      <Dialog
+        open={deleteConfirmationDialogOpen}
+        onClose={() => setDeleteConfirmationDialogOpen(false)}
+      >
         <DialogTitle>Delete current design?</DialogTitle>
 
         <DialogContent>
@@ -171,7 +192,9 @@ function Context({ sx }: { sx?: SxProps }) {
         </DialogContent>
 
         <DialogActions sx={{ p: 3 }}>
-          <Button onClick={() => setDeleteConfirmOpen(false)}>Cancel</Button>
+          <Button onClick={() => setDeleteConfirmationDialogOpen(false)}>
+            Cancel
+          </Button>
           <Button color="error" onClick={handleDeleteConfirm}>
             Delete
           </Button>

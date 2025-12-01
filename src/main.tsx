@@ -16,6 +16,8 @@ import {
   ThemeProvider,
 } from "@mui/material";
 import EditorGlobalKeyboardShortcuts from "./Editor/Properties/KeyboardShortcuts";
+import { PersistenceProvider } from "./Editor/Design/Persistence";
+import { InitializationWrapper } from "./InitializationWrapper";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -96,15 +98,19 @@ createRoot(document.getElementById("root")!).render(
       )}
     >
       <CssBaseline />
-      <EditorGlobalKeyboardShortcuts />
-      <BrowserRouter>
-        <Routes>
-          <Route index element={<HomePage />} />
-          <Route path="/editor/viewport" element={<ViewportPage />} />
-          <Route path="/editor" element={<EditorPage />} />
-          <Route path="*" element={<EditorPage />} />
-        </Routes>
-      </BrowserRouter>
+      <PersistenceProvider>
+        <InitializationWrapper>
+          <EditorGlobalKeyboardShortcuts />
+          <BrowserRouter>
+            <Routes>
+              <Route index element={<HomePage />} />
+              <Route path="/editor/viewport" element={<ViewportPage />} />
+              <Route path="/editor" element={<EditorPage />} />
+              <Route path="*" element={<EditorPage />} />
+            </Routes>
+          </BrowserRouter>
+        </InitializationWrapper>
+      </PersistenceProvider>
     </ThemeProvider>
   </StrictMode>
 );

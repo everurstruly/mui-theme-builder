@@ -34,7 +34,7 @@ export const createCurrentSlice: StateCreator<
   codeOverridesError: null,
 
   contentHash: generateInitialContentHash(),
-  lastStoredContentHash: generateInitialContentHash(),
+  checkpointHash: null,
   modificationTimestamps: {},
 
   setTitle: (title: string) => {
@@ -384,11 +384,16 @@ export const createCurrentSlice: StateCreator<
       return {
         ...newState,
         contentHash,
-        lastStoredContentHash: contentHash,
+        checkpointHash: null, // Fresh designs are unsaved - no checkpoint yet
         modificationTimestamps: {
           ...state.modificationTimestamps,
           loadNew: Date.now(),
         },
+        // Clear undo/redo history so previous design's edits don't carry over
+        visualHistoryPast: [],
+        visualHistoryFuture: [],
+        codeHistoryPast: [],
+        codeHistoryFuture: [],
       } as any;
     });
   },
@@ -418,10 +423,12 @@ export const createCurrentSlice: StateCreator<
     });
   },
 
-  acknowledgeStoredModifications: () => {
-    set((state) => ({
-      lastStoredContentHash: state.contentHash,
-    }));
+  setCheckpoint: (hash: string) => {
+    set({ checkpointHash: hash });
+  },
+
+  clearCheckpoint: () => {
+    set({ checkpointHash: null });
   },
 });
 
