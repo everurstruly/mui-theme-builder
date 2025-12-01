@@ -1,26 +1,20 @@
-import { List, Typography } from "@mui/material";
+import { List } from "@mui/material";
+import OptionGroupCollapse from "../OptionGroupCollapse";
 
 type TypographyOptionGroupProps = {
   title: string;
   children: React.ReactNode;
+  defaultOpen?: boolean;
 };
 
-export default function TypographyOptionGroup(props: TypographyOptionGroupProps) {
+export default function TypographyOptionGroup({
+  title,
+  children,
+  defaultOpen,
+}: TypographyOptionGroupProps) {
   return (
-    <>
-      <Typography
-        variant="subtitle2"
-        component={"h6"}
-        marginTop={6}
-        paddingBottom={1.5}
-        fontWeight={600}
-      >
-        {props.title}
-      </Typography>
-
-      <List sx={{ padding: 0 }}>
-        {props.children}
-      </List>
-    </>
+    <OptionGroupCollapse heading={title} defaultOpen={defaultOpen}>
+      <List sx={{ padding: 0 }}>{children}</List>
+    </OptionGroupCollapse>
   );
 }

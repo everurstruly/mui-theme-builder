@@ -5,9 +5,9 @@ import { Stack } from "@mui/material";
 
 export default function TypographyProperty() {
   return (
-    <Stack>
-      <FontFamilyTypography />
-      <HeadlineTypography title="H1" variant="h1" />
+    <Stack flexGrow={1}>
+      <FontFamilyTypography/>
+      <HeadlineTypography title="H1" variant="h1" defaultOpen={true} />
       <HeadlineTypography title="H2" variant="h2" />
       <HeadlineTypography title="H3" variant="h3" />
       <HeadlineTypography title="H4" variant="h4" />

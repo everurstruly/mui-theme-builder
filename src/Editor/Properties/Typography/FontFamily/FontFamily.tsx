@@ -3,7 +3,7 @@ import TypographyOptionGroup from "../TypographyOptionGroup";
 
 function FontFamilyTypography() {
   return (
-    <TypographyOptionGroup title="Font Family">
+    <TypographyOptionGroup title="Font Family" defaultOpen={true}>
       <FontFamilyOption title="Body & Captions" path="typography.fontFamily" />
 
       <FontFamilyOption

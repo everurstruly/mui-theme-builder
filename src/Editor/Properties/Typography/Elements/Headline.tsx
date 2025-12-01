@@ -6,14 +6,15 @@ import TypographyOptionGroup from "../TypographyOptionGroup";
 
 type HeadlineTypographyProps = {
   title: string;
+  defaultOpen?: boolean;
   variant: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
 };
 
-function HeadlineTypography({ title, variant }: HeadlineTypographyProps) {
+function HeadlineTypography({ title, defaultOpen, variant }: HeadlineTypographyProps) {
   // Memoize the subtree so it only re-creates when `title` or `variant` change.
   const content = useMemo(
     () => (
-      <TypographyOptionGroup title={title}>
+      <TypographyOptionGroup title={title} defaultOpen={defaultOpen}>
         <FontWeightOption name={"Font weight"} path={`typography.${variant}.fontWeight`} />
 
         <FontStyleFieldOption name={"Font size"} path={`typography.${variant}.fontSize`} />
@@ -23,7 +24,7 @@ function HeadlineTypography({ title, variant }: HeadlineTypographyProps) {
         <FontStyleRangedOption name={"Line height"} path={`typography.${variant}.lineHeight`} />
       </TypographyOptionGroup>
     ),
-    [title, variant]
+    [title, variant, defaultOpen]
   );
 
   return content;
