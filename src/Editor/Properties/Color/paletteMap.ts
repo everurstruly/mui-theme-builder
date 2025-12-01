@@ -32,7 +32,6 @@ const paletteGroupMap: PaletteGroup[] = [
   },
   {
     title: "Text Colors",
-    defaultOpen: true,
     items: [
       { name: "Primary", fill: "palette.text.primary" },
       { name: "Secondary", fill: "palette.text.secondary" },
@@ -49,6 +48,7 @@ const paletteGroupMap: PaletteGroup[] = [
   },
   {
     title: "Feedback Colors",
+    defaultOpen: true,
     items: [
       {
         name: "Actions",

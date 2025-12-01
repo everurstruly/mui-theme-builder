@@ -2,26 +2,27 @@ import { useDebouncyEffect } from "use-debouncy";
 import useThemeEdit from "../../Design/Edit/useEditProperty";
 import { useRef, useState, useMemo, useCallback, useEffect } from "react";
 import generateReadableColorShade from "../../../utils/generateReadableColorShade";
+import type { ColorResult } from "@uiw/react-color";
 
 type Options = {
   debounceMs?: number;
 
   /** If false, onChange will not sync the color picking widget/interface with the actual source value. */
-  autoApply?: boolean;
+  autoSync?: boolean;
 };
 
 export type ColorEditResult = {
   color: string;
-  previewColor: string;
-  previewReadableForegroundColor: string;
-  readableForegroundColor: string;
+  pickedColor: string;
+  contentOnPickedColorReadableShade: string;
+  contentOnColorReadableShade: string;
   borderColor: string;
   anchorRef: React.RefObject<HTMLDivElement | null>;
   anchorEl: HTMLElement | null;
   open: boolean;
   openPicker: () => void;
   closePicker: () => void;
-  onColorChange: (c: any) => void;
+  onColorChange: (c: ColorResult) => void;
   canReset: boolean;
   reset: () => void;
   hasDelegatedControl: boolean;
@@ -33,7 +34,7 @@ export default function useColorEdit(
   options?: Options
 ): ColorEditResult {
   const debounceMs = options?.debounceMs ?? 140;
-  const autoSyncTransientWithValue = options?.autoApply ?? true;
+  const autoSyncTransientWithValue = options?.autoSync ?? true;
 
   const { value, userEdit, isCodeControlled, isModified, setValue, reset } =
     useThemeEdit(path as string);
@@ -51,16 +52,17 @@ export default function useColorEdit(
   // into color helpers or MUI `sx` props.
   const color = typeof value === "string" && value ? value : "#000";
   const borderColor = "divider";
-  const readableForegroundColor = generateReadableColorShade(color);
+  const contentOnColorReadableShade = generateReadableColorShade(color);
+
   // previewColor reflects the transient color only while the picker popover is open.
   // This prevents the preview card from permanently showing a transient value
   // when the popover is closed (for example after a reset). When the popover
   // is closed, the effective `color` (from the theme/store) is shown.
-  const previewColor =
+  const pickedColor =
     anchorEl && typeof transientColor === "string" && transientColor
       ? transientColor
       : color;
-  const previewReadableForegroundColor = generateReadableColorShade(previewColor);
+  const contentOnPickedColorReadableShade = generateReadableColorShade(pickedColor);
   const hasDelegatedControl = !!isCodeControlled;
 
   const openPicker = useCallback(() => {
@@ -73,21 +75,22 @@ export default function useColorEdit(
   }, [isCodeControlled, value]);
 
   const closePicker = useCallback(() => {
-    if (
-      autoSyncTransientWithValue &&
-      transientColor &&
-      transientColor !== (value as string)
-    ) {
+    if (autoSyncTransientWithValue && transientColor) {
       setValue(transientColor);
     }
 
     setAnchorEl(null);
-  }, [autoSyncTransientWithValue, transientColor, value, setValue]);
+  }, [autoSyncTransientWithValue, transientColor, setValue]);
 
-  const onColorChange = useCallback((c: any) => {
-    const hex = c?.hex ?? c;
-    if (typeof hex === "string") setTransientColor(hex);
-  }, []);
+  const onColorChange = useCallback(
+    (c: any) => {
+      const hex = c?.hex ?? c;
+      if (typeof hex === "string") {
+        setTransientColor(c.hex);
+      }
+    },
+    [setTransientColor]
+  );
 
   useDebouncyEffect(
     () => {
@@ -142,15 +145,15 @@ export default function useColorEdit(
     () => ({
       // source values
       color,
-      previewColor,
-      previewReadableForegroundColor,
-      readableForegroundColor,
+      pickedColor,
+      contentOnPickedColorReadableShade,
+      contentOnColorReadableShade,
       borderColor,
 
       // popover anchor + controls
+      open: Boolean(anchorEl),
       anchorRef,
       anchorEl,
-      open: Boolean(anchorEl),
       openPicker,
       closePicker,
       onColorChange,
@@ -163,13 +166,13 @@ export default function useColorEdit(
     }),
     [
       color,
-      previewColor,
-      previewReadableForegroundColor,
+      pickedColor,
+      contentOnPickedColorReadableShade,
       anchorEl,
       openPicker,
       closePicker,
       onColorChange,
-      readableForegroundColor,
+      contentOnColorReadableShade,
       borderColor,
       canReset,
       reset,

@@ -1,11 +1,11 @@
-import { Typography, Stack } from "@mui/material";
 import ColorPickerPopover from "./ColorPickerPopover";
-import { useShadesDrawerStore } from "./ShadesDrawer/useShadesDrawerStore";
-import type { UseShadesDrawerState } from "./ShadesDrawer/useShadesDrawerStore";
 import OptionListItemResetButton from "../OptionListItemResetButton";
 import useColorEdit from "./useColorEdit";
-import type { PaletteGroupItem } from "./Color";
 import ColorPreviewCard from "./ColorPreviewCard";
+import { Typography, Stack } from "@mui/material";
+import { useShadesDrawerStore } from "./ShadesDrawer/useShadesDrawerStore";
+import type { UseShadesDrawerState } from "./ShadesDrawer/useShadesDrawerStore";
+import type { PaletteGroupItem } from "./Color";
 
 type ColorOptionGroupItemProps = PaletteGroupItem;
 
@@ -15,13 +15,11 @@ export default function ColorOptionGroupItem(props: ColorOptionGroupItemProps) {
   );
   const backgroundEdit = useColorEdit(props.fill);
   const foregroundEdit = useColorEdit(props.foreground || "");
-  const canResetValue = backgroundEdit.canReset || foregroundEdit.canReset;
+  const background = backgroundEdit.pickedColor || backgroundEdit.color;
+  const foreground = foregroundEdit.pickedColor || foregroundEdit.color;
+  const contentColor = backgroundEdit.contentOnColorReadableShade;
 
-  const background = backgroundEdit.previewColor || backgroundEdit.color;
-  const foreground = foregroundEdit.previewColor || foregroundEdit.color;
-  const appReadableForeground =
-    backgroundEdit.previewReadableForegroundColor ||
-    backgroundEdit.readableForegroundColor;
+  const canResetValue = backgroundEdit.canReset || foregroundEdit.canReset;
 
   function resetValue() {
     backgroundEdit.reset();
@@ -31,18 +29,18 @@ export default function ColorOptionGroupItem(props: ColorOptionGroupItemProps) {
   return (
     <Stack>
       <ColorPreviewCard
-        previewBackground={background}
-        previewForeground={foreground}
-        previewForegroundReadable={appReadableForeground}
-        hasForeground={!!props.foreground}
+        backgroundColor={background}
+        foregroundColor={foreground}
+        contentReadableColor={contentColor}
         onForegroundClick={foregroundEdit.openPicker}
         onBackgroundClick={backgroundEdit.openPicker}
         foregroundAnchorRef={foregroundEdit.anchorRef}
         backgroundAnchorRef={backgroundEdit.anchorRef}
         foregroundDisabled={foregroundEdit.hasDelegatedControl}
         backgroundDisabled={backgroundEdit.hasDelegatedControl}
+        hasForeground={!!props.foreground}
         showStates={!!(props.shades && props.shades.length)}
-        onOpenShades={() =>
+        onOpenStates={() =>
           openShadesDrawer(props.shades ?? [], undefined, props.name)
         }
       />

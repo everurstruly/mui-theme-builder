@@ -6,26 +6,27 @@ import {
 } from "@mui/icons-material";
 
 type Props = {
-  previewBackground?: string | undefined;
-  previewForeground?: string | undefined;
-  previewForegroundReadable?: string | undefined;
-  hasForeground?: boolean;
-  onForegroundClick?: () => void;
-  onBackgroundClick?: () => void;
-  foregroundAnchorRef?: React.RefObject<HTMLDivElement | null>;
+  contentReadableColor?: string | undefined;
+
+  backgroundColor?: string | undefined;
   backgroundAnchorRef?: React.RefObject<HTMLDivElement | null>;
-  foregroundDisabled?: boolean;
   backgroundDisabled?: boolean;
-  /** Optional content rendered in the card bottom-left (e.g. States button) */
-  /** Render a small labeled States button inside the card */
+  onBackgroundClick?: () => void;
+
+  hasForeground?: boolean;
+  foregroundColor?: string | undefined;
+  onForegroundClick?: () => void;
+  foregroundAnchorRef?: React.RefObject<HTMLDivElement | null>;
+  foregroundDisabled?: boolean;
+
   showStates?: boolean;
-  onOpenShades?: () => void;
+  onOpenStates?: () => void;
 };
 
 export default function ColorPreviewCard({
-  previewBackground,
-  previewForeground,
-  previewForegroundReadable,
+  backgroundColor: previewBackground,
+  foregroundColor: previewForeground,
+  contentReadableColor: appContentReadable,
   hasForeground,
   onForegroundClick,
   onBackgroundClick,
@@ -34,7 +35,7 @@ export default function ColorPreviewCard({
   foregroundDisabled,
   backgroundDisabled,
   showStates,
-  onOpenShades,
+  onOpenStates: onOpenShades,
 }: Props) {
   return (
     <Card
@@ -58,8 +59,8 @@ export default function ColorPreviewCard({
           cursor: foregroundDisabled ? "not-allowed" : "pointer",
           opacity: foregroundDisabled ? 0.5 : 1,
           color: previewForeground,
-          backgroundColor: previewForegroundReadable
-            ? alpha(previewForegroundReadable, 0.05)
+          backgroundColor: appContentReadable
+            ? alpha(appContentReadable, 0.05)
             : undefined,
           position: "absolute",
           top: 0,
@@ -79,9 +80,9 @@ export default function ColorPreviewCard({
         sx={{
           cursor: backgroundDisabled ? "not-allowed" : "pointer",
           opacity: backgroundDisabled ? 0.5 : 1,
-          color: previewForegroundReadable,
-          backgroundColor: previewForegroundReadable
-            ? alpha(previewForegroundReadable, 0.07)
+          color: appContentReadable,
+          backgroundColor: appContentReadable
+            ? alpha(appContentReadable, 0.07)
             : undefined,
           position: "absolute",
           minWidth: "auto",
@@ -101,9 +102,9 @@ export default function ColorPreviewCard({
           <Button
             onClick={onOpenShades}
             sx={{
-              color: previewForegroundReadable,
-              backgroundColor: previewForegroundReadable
-                ? alpha(previewForegroundReadable, 0.07)
+              color: appContentReadable,
+              backgroundColor: appContentReadable
+                ? alpha(appContentReadable, 0.07)
                 : undefined,
               display: "inline-flex",
               alignItems: "center",
