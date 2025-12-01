@@ -24,7 +24,7 @@ export default function useCreatedThemeOption(
     const { colorSchemes, ...baseTheme } = parseThemeCode(baseThemeSourceCode) ?? {};
     baseTheme.palette = {
       mode: targetScheme,
-      ...((colorSchemes as any) || {})[targetScheme],
+      ...((colorSchemes as any) || {})[targetScheme].palette,
     };
 
     const codeOverrides = transformDslToThemeOptions(codeOverridesDsl, {
