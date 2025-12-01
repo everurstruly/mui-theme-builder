@@ -12,45 +12,35 @@ import {
   KeyboardArrowRight,
   ShuffleOutlined,
 } from "@mui/icons-material";
-import useTemplateMethod from "./useTemplateMethod";
+import { useTemplates } from "./useTemplates";
+import { useTemplateSelection } from "./useTemplateSelection";
 import ColorSchemeToggle from "../../Edit/ColorSchemeToggle";
-import CreationIntentConfirmationDialog from "../CreationIntentConfirmationDialog";
 
-export default function TemplateMethod({ onClose }: { onClose: () => void }) {
-  const {
-    templates: allTemplates,
-    selectedTemplateId,
-    requestSelectBlank,
-    requestSelectTemplate,
-    selectRandomTemplate,
-    getColorSamples,
-    clearPending,
-    dialogOpen,
-    onDiscard,
-    onKeep,
-    onCancel,
-  } = useTemplateMethod({ onClose, autoConfirm: false });
+interface TemplateMethodProps {
+  onClose: () => void;
+  launch: (templateId: string) => void;
+}
 
-  function cancelChangeOperation() {
-    // clear pending and keep the loader open (TemplatesLoader consumer decides)
-    clearPending();
-    onClose();
-  }
+export default function TemplateMethod({ launch }: TemplateMethodProps) {
+  const { templates: allTemplates, getTemplateColors } = useTemplates();
+  const selectedId = useTemplateSelection((s) => s.selectedId);
+  const select = useTemplateSelection((s) => s.select);
 
   function selectRandom() {
-    selectRandomTemplate();
+    if (allTemplates.length === 0) return;
+    const idx = Math.floor(Math.random() * allTemplates.length);
+    const randomTemplate = allTemplates[idx];
+    launch(randomTemplate.id);
   }
 
   const handleSelectTemplate = (templateId: string) => {
-    requestSelectTemplate(templateId);
+    select(templateId);
+    launch(templateId);
   };
 
   const handleWithoutTemplate = () => {
-    const applied = requestSelectBlank();
-    // Only close the creation UI if the store applied the blank design
-    // immediately. If confirmation is pending (unsaved changes), keep the
-    // creation dialog open so the user can confirm.
-    if (applied) onClose();
+    select('__blank__');
+    launch('__blank__');
   };
 
   return (
@@ -61,7 +51,7 @@ export default function TemplateMethod({ onClose }: { onClose: () => void }) {
           position: "sticky",
           top: "50px",
           zIndex: 1,
-          mx: -3, // FIXME: Sync with parent padding
+          mx: -3,
           justifyContent: "space-between",
           columnGap: 1,
           borderRadius: 3,
@@ -88,6 +78,7 @@ export default function TemplateMethod({ onClose }: { onClose: () => void }) {
             backgroundColor: "background.default",
           }}
           onClick={handleWithoutTemplate}
+          selected={selectedId === '__blank__'}
         >
           <Typography variant="body2" sx={{ flexGrow: 1 }}>
             Create without a template
@@ -96,8 +87,8 @@ export default function TemplateMethod({ onClose }: { onClose: () => void }) {
         </ListItemButton>
 
         {allTemplates.map((template) => {
-          const isSelected = selectedTemplateId === template.id;
-          const colorSamples = getColorSamples(template);
+          const isSelected = selectedId === template.id;
+          const colorSamples = getTemplateColors(template.id);
 
           return (
             <ListItemButton
@@ -149,23 +140,6 @@ export default function TemplateMethod({ onClose }: { onClose: () => void }) {
           );
         })}
       </List>
-
-      <CreationIntentConfirmationDialog
-        open={Boolean(dialogOpen)}
-        onDiscard={() => {
-          // discard unsaved and proceed
-          onDiscard();
-        }}
-        onKeep={() => {
-          // keep unsaved modifications
-          onKeep();
-        }}
-        onCancel={() => {
-          onCancel();
-          // also close the loader UI
-          cancelChangeOperation();
-        }}
-      />
     </>
   );
 }

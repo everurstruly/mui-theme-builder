@@ -3,10 +3,12 @@ import EditorToolsbar from "./Toolsbar/Toolbar";
 import EditorPropertiesPanel from "./Properties/PropertiesPanel";
 import EditorExplorerPanel from "./Explorer/ExplorerPanel";
 import { GlobalStyles, Paper, Stack } from "@mui/material";
+import LaunchDialogContainer from "./Design/Launch/LaunchDialog";
 
 export default function Editor() {
   return (
     <>
+      <LaunchDialogContainer />
       <GlobalStyles
         styles={(theme) => ({
           ":root": {
