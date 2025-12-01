@@ -1,13 +1,13 @@
 import FullscreenIcon from "@mui/icons-material/Fullscreen";
 import FullscreenExitIcon from "@mui/icons-material/FullscreenExit";
-import useEditorStore from "../../../useEditor";
+import useEditor from "../../../useEditor";
 import { IconButton, Tooltip } from "@mui/material";
 import { useState } from "react";
 
 export default function FullpagePreviewButton() {
   const [isFullpage, setIsFullpage] = useState(false);
-  const handleFullpage = useEditorStore((s) => s.hideCanvasSidebarPanels);
-  const exitFullpage = useEditorStore((s) => s.restoreCanvasSidebarPanels);
+  const handleFullpage = useEditor((s) => s.hideCanvasSidebarPanels);
+  const exitFullpage = useEditor((s) => s.restoreCanvasSidebarPanels);
 
   const handleFullScreenToggle = () => {
     if (isFullpage) {

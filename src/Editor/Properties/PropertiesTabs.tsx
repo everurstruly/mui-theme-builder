@@ -1,4 +1,4 @@
-import useEditorStore, { designProperties } from "../useEditor";
+import useEditor, { designProperties } from "../useEditor";
 import { Tabs, Tab, alpha } from "@mui/material";
 
 interface PropertiesTabsProps {
@@ -7,8 +7,8 @@ interface PropertiesTabsProps {
 }
 
 export default function PropertiesTabs({ sx, tabSx }: PropertiesTabsProps) {
-  const selected = useEditorStore((s) => s.selectedPropertiesTab);
-  const selectTab = useEditorStore((s) => s.selectPropertiesTab);
+  const selected = useEditor((s) => s.selectedPropertiesTab);
+  const selectTab = useEditor((s) => s.selectPropertiesTab);
 
   return (
     <Tabs

@@ -1,5 +1,5 @@
 import Drawer from "@mui/material/Drawer";
-import useEditorStore from "../useEditor";
+import useEditor from "../useEditor";
 import PropertiesPanelBody from "./PropertiesPanelBody";
 import { TuneOutlined } from "@mui/icons-material";
 import { Divider, Fab } from "@mui/material";
@@ -15,10 +15,10 @@ export default function EditorPropertiesPanel() {
 }
 
 function DesktopPanelDrawer() {
-  const hiddenPanels = useEditorStore((state) => state.hiddenPanels);
+  const hiddenPanels = useEditor((state) => state.hiddenPanels);
   const isVisible = !hiddenPanels.includes("properties");
 
-  const withHidePanel = useEditorStore((state) => state.hidePanel);
+  const withHidePanel = useEditor((state) => state.hidePanel);
   const hidePanel = () => withHidePanel("properties");
 
   return (
@@ -66,13 +66,13 @@ function DesktopPanelDrawer() {
 function MobilePanelDrawer() {
   const display = { lg: "none" };
 
-  const withHidePanel = useEditorStore((state) => state.hidePanel);
+  const withHidePanel = useEditor((state) => state.hidePanel);
   const hidePanel = () => withHidePanel("properties.mobile");
 
-  const withShowPanel = useEditorStore((state) => state.showPanel);
+  const withShowPanel = useEditor((state) => state.showPanel);
   const showPanel = () => withShowPanel("properties.mobile");
 
-  const hiddenPanels = useEditorStore((state) => state.hiddenPanels);
+  const hiddenPanels = useEditor((state) => state.hiddenPanels);
   const isVisible = !hiddenPanels.includes("properties.mobile");
 
   return (

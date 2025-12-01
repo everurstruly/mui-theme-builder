@@ -1,11 +1,11 @@
-import { Box, Stack } from "@mui/material";
-import useEditorStore from "../useEditor";
+import useEditor from "../useEditor";
 import DeveloperPropertiesPanel from "./DeveloperPropertiesPanel";
 import DesignerPropertiesPanel from "./DesignerPropertiesPanel";
+import { Stack } from "@mui/material";
 
 export default function PanelBody() {
-  const selectedExperienceId = useEditorStore((state) => state.selectedExperience);
-  const setMouseOverPropertiesPanel = useEditorStore(
+  const selectedExperienceId = useEditor((state) => state.selectedExperience);
+  const setMouseOverPropertiesPanel = useEditor(
     (state) => state.setMouseOverPropertiesPanel
   );
 
@@ -17,28 +17,13 @@ export default function PanelBody() {
         height: "100%",
         overflow: "hidden",
 
-        // create content window
+        // css: create content window
         position: "relative",
         transform: "translateX(0px)",
       }}
     >
-      <Box
-        sx={{
-          height: "100%",
-          display: selectedExperienceId === "designer" ? "block" : "none",
-        }}
-      >
-        <DesignerPropertiesPanel />
-      </Box>
-
-      <Box
-        sx={{
-          height: "100%",
-          display: selectedExperienceId === "developer" ? "block" : "none",
-        }}
-      >
-        <DeveloperPropertiesPanel />
-      </Box>
+      {selectedExperienceId === "designer" && <DesignerPropertiesPanel />}
+      {selectedExperienceId === "developer" && <DeveloperPropertiesPanel />}
     </Stack>
   );
 }

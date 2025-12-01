@@ -1,6 +1,6 @@
 import * as React from "react";
 import Popover from "@mui/material/Popover";
-import useEditorStore from "../useEditor";
+import useEditor from "../useEditor";
 import SampleCanvasObjectsTree from "./Menus/SampleCanvasObjectsTree";
 import {
   ArrowDropDownOutlined,
@@ -12,7 +12,7 @@ export default function FloatingCanvasObjectsTree() {
   const theme = useTheme();
   const isDesktopScreen = useMediaQuery(theme.breakpoints.up("md"));
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
-  const isVisible = useEditorStore((state) => {
+  const isVisible = useEditor((state) => {
     return state.hiddenPanels.includes("explorer") === false;
   });
 

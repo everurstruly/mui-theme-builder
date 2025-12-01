@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import useEditorStore from "../useEditor";
+import useEditor from "../useEditor";
 
 type CanvasFrameProps = {
   controls?: {
@@ -20,7 +20,7 @@ const defaultControlsPosition = {
 };
 
 export default function CanvasFrame({ controls = {}, children }: CanvasFrameProps) {
-  const setMouseOverCanvas = useEditorStore((state) => state.setMouseOverCanvas);
+  const setMouseOverCanvas = useEditor((state) => state.setMouseOverCanvas);
 
   return (
     <Box

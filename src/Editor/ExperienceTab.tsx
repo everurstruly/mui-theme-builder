@@ -2,7 +2,7 @@ import * as React from "react";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import { alpha, type SxProps, type Theme } from "@mui/material";
-import useEditorStore, { type EditorExperience } from "./useEditor";
+import useEditor, { type EditorExperience } from "./useEditor";
 
 type EditorThemingExperienceTabProps = {
   centered?: boolean;
@@ -13,8 +13,8 @@ export default function EditorExperienceTab({
   centered = false,
   sx,
 }: EditorThemingExperienceTabProps) {
-  const value = useEditorStore((state) => state.selectedExperience);
-  const setValue = useEditorStore((state) => state.selectExperience);
+  const value = useEditor((state) => state.selectedExperience);
+  const setValue = useEditor((state) => state.selectExperience);
 
   const handleChange = (event: React.SyntheticEvent, newValue: EditorExperience) => {
     void event;
@@ -36,15 +36,12 @@ export default function EditorExperienceTab({
       overflow: "hidden",
 
       "& .MuiTab-root": {
-        minHeight: "auto", // fix vertical responsiveness issue
+        minHeight: "auto", // fixes vertical responsiveness issue
         flexGrow: 1,
 
-        textWrap: "nowrap",
+        whiteSpace: "nowrap",
         position: "relative",
         zIndex: 1,
-
-        fontSize: 12,
-        fontWeight: 400,
 
         textTransform: "none",
         paddingInline: { xs: 1.75 },
@@ -64,34 +61,15 @@ export default function EditorExperienceTab({
         backgroundColor: (theme: Theme) => alpha(theme.palette.primary.main, 0.05),
       },
     }),
-    (theme) => ({
-      ...(theme?.applyStyles?.("light", {
-        backgroundColor: "white",
-      }) ?? {}),
-    }),
   ];
 
   const incomingSx = Array.isArray(sx) ? sx : sx ? [sx] : [];
   const mergedSx = [...baseSx, ...incomingSx];
 
   return (
-    <Tabs
-      value={value}
-      onChange={handleChange}
-      aria-label="secondary tabs example"
-      centered={centered}
-      sx={mergedSx}
-    >
-      <Tab
-        value={"designer"}
-        label={"Customize"}
-        iconPosition="start"
-      />
-      <Tab
-        value={"developer"}
-        label={"Ovveride"}
-        iconPosition="start"
-      />
+    <Tabs value={value} onChange={handleChange} centered={centered} sx={mergedSx}>
+      <Tab value={"designer"} label={"Customize"} iconPosition="start" />
+      <Tab value={"developer"} label={"Ovveride"} iconPosition="start" />
     </Tabs>
   );
 }

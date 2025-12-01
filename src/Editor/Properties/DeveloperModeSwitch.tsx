@@ -1,4 +1,4 @@
-import useEditorStore from "../useEditor";
+import useEditor from "../useEditor";
 import Switch from "@mui/material/Switch";
 import { styled } from "@mui/material/styles";
 import { FormControlLabel } from "@mui/material";
@@ -67,8 +67,8 @@ export default function DeveloperModeSwitch({
   scale?: number;
   height?: number;
 }) {
-  const selectedExperienceId = useEditorStore((s) => s.selectedExperience);
-  const selectExperience = useEditorStore((s) => s.selectExperience);
+  const selectedExperienceId = useEditor((s) => s.selectedExperience);
+  const selectExperience = useEditor((s) => s.selectExperience);
   const isDeveloperExperience = selectedExperienceId === "developer";
 
   const handleChange = () => {

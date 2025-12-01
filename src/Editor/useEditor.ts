@@ -23,7 +23,7 @@ export type PropertiesTab = (typeof designProperties)[number]["value"];
 export type EditorPanels = (typeof panels)[number];
 export type EditorExperience = (typeof editorExperiences)[number];
 
-export const useEditorStore = create(
+export const useEditor = create(
   combine(
     {
       mouseOverCanvas: false,
@@ -108,4 +108,4 @@ export const useEditorStore = create(
   )
 );
 
-export default useEditorStore;
+export default useEditor;

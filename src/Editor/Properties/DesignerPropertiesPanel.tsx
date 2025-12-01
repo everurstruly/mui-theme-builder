@@ -1,4 +1,4 @@
-import useEditorStore from "../useEditor";
+import useEditor from "../useEditor";
 import PropertiesTabs from "./PropertiesTabs";
 import ColorProperty from "./Color/Color";
 import TypographyProperty from "./Typography/Typography";
@@ -12,7 +12,7 @@ const thinScrollbar = {
 };
 
 export default function DesignerPropertiesPanel({ sx }: { sx?: SxProps<any> }) {
-  const selectedPropertiesTab = useEditorStore((s) => s.selectedPropertiesTab);
+  const selectedPropertiesTab = useEditor((s) => s.selectedPropertiesTab);
 
   return (
     <Paper

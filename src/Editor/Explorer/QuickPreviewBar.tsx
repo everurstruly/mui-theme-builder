@@ -1,4 +1,4 @@
-import useEditorStore from "../useEditor";
+import useEditor from "../useEditor";
 import useFolderNavigator from "./useFolderNavigator";
 import useEdit from "../Design/Edit/useEdit";
 import { DoubleArrowOutlined } from "@mui/icons-material";
@@ -6,7 +6,7 @@ import { Stack, Breadcrumbs, Link, Typography, Box } from "@mui/material";
 import { getFolderNodeByChain } from "../Previews/registry";
 
 function QuickPreviewBar() {
-  const hiddenPanels = useEditorStore((state) => state.hiddenPanels);
+  const hiddenPanels = useEditor((state) => state.hiddenPanels);
   const shouldBeHidden = !hiddenPanels.includes("explorer");
 
   const activePreviewId = useEdit((s) => s.activePreviewId);
