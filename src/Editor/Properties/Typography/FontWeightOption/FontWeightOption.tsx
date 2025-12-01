@@ -1,9 +1,8 @@
+import React, { memo, useCallback } from "react";
 import { ListItem, Typography, Stack } from "@mui/material";
 import FontWeightOptionInput from "./FontWeightOptionInput";
 import OptionListItemResetButton from "../../OptionListItemResetButton";
-import useDesignCreatedTheme from "../../../Design/Current/useCreatedTheme";
 import useEditProperty from "../../../Design/Current/useEditProperty";
-import { getNestedValue } from "../../../Design/compiler";
 
 export type FontWeightOptionProps = {
   disabled?: boolean;
@@ -12,14 +11,14 @@ export type FontWeightOptionProps = {
   path: string;
 };
 
-export default function FontWeightOption(props: FontWeightOptionProps) {
-  const theme = useDesignCreatedTheme();
-  const autoResolvedValue = getNestedValue(theme, props.path);
-  
+export function FontWeightOption(props: FontWeightOptionProps) {
+  // useEditProperty already computes the effective value (including auto-resolved)
   const { value, userEdit, isCodeControlled, reset } = useEditProperty(props.path);
 
-  const currentValue = (value as string | number) ?? autoResolvedValue;
+  const currentValue = (value as string | number | undefined) ?? "";
   const canResetValue = !!userEdit || !!isCodeControlled;
+
+  const handleReset = useCallback(() => reset(), [reset]);
 
   return (
     <ListItem
@@ -35,11 +34,7 @@ export default function FontWeightOption(props: FontWeightOptionProps) {
       }}
     >
       <Stack direction="row" alignItems="center" spacing={0.75}>
-        <OptionListItemResetButton
-          canResetValue={canResetValue}
-          resetValue={reset}
-          label={"Default"}
-        />
+        <OptionListItemResetButton canResetValue={canResetValue} resetValue={handleReset} label={"Default"} />
 
         <Typography variant="caption" sx={{ fontSize: 12 }}>
           {props.name}
@@ -56,4 +51,6 @@ export default function FontWeightOption(props: FontWeightOptionProps) {
     </ListItem>
   );
 }
+
+export default memo(FontWeightOption);
 

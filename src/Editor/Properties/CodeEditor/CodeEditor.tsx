@@ -1,8 +1,7 @@
 import AlertBar from "./AlertBar";
 import CodeMirror from "@uiw/react-codemirror";
 import Toolbar from "./Toolbar";
-import useDeveloperToolEdit from "../../Design/Current/useDeveloperToolEdit";
-import useDeveloperToolActions from "../../Design/Current/useDeveloperEditTools";
+import useEditScript from "../../Design/Current/useEditScript";
 import useCodeEditor from "./useCodeEditor";
 import { useMemo } from "react";
 import { Stack, Paper } from "@mui/material";
@@ -13,8 +12,7 @@ import { createMuiThemeCompleter } from "./codeEditorExtras";
 
 export default function CodeEditor() {
   // Use focused hooks instead of monolithic useCodeEditorPanel
-  const { source, error, hasOverrides } = useDeveloperToolEdit();
-  const { applyModifications, clearOverrides } = useDeveloperToolActions();
+  const { source, error, hasOverrides, applyModifications, clearOverrides } = useEditScript();
   const validate = themeCompiler.validateThemeCode;
 
   const { state, actions, refs } = useCodeEditor({

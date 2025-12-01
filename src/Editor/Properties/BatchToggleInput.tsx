@@ -1,6 +1,6 @@
 import { Box, ListItemButton, Tooltip } from "@mui/material";
 import ListItemText from "@mui/material/ListItemText";
-import { useDesignerEditTools } from "../Design/Current/useDesignerEditTools";
+// migrated from useDesignerEditTools -> useCurrent store functions
 import { useMemo } from "react";
 import { AddOutlined, InfoOutline, RemoveOutlined } from "@mui/icons-material";
 import useCurrent from "../Design/Current/useCurrent";
@@ -21,7 +21,8 @@ export type BatchToggleInputProps = {
  * Enabled state is determined by checking if ALL paths match their expected values.
  */
 export default function BatchToggleInput(props: BatchToggleInputProps) {
-  const { addGlobalDesignerEdit, removeGlobalDesignerEdit } = useDesignerEditTools();
+  const addGlobalDesignerEdit = useCurrent((s) => s.addNeutralDesignerEdit);
+  const removeGlobalDesignerEdit = useCurrent((s) => s.removeNeutralDesignerEdit);
   const baseVisualToolEdits = useCurrent(
     (s) => s.neutralEdits
   );
