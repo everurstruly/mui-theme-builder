@@ -1,10 +1,10 @@
 import { Button, ButtonGroup } from "@mui/material";
 import { RedoRounded, UndoRounded } from "@mui/icons-material";
 import useEdit from "./useEdit";
+import useEditor from "../../useEditor";
 
 export default function ModificationHistoryButtons() {
-  // Use the same per-experience undo/redo API that keyboard shortcuts use
-  const selected = useEdit((s) => s.selectedExperienceId);
+  const selected = useEditor((s) => s.selectedExperience);
 
   const undoVisual = useEdit((s) => s.undoVisualToolEdit);
   const redoVisual = useEdit((s) => s.redoVisualToolEdit);
@@ -22,13 +22,17 @@ export default function ModificationHistoryButtons() {
   const canRedo = isCodeExperience ? canRedoCode : canRedoVisual;
 
   const handleUndo = () => {
-    if (isCodeExperience) undoCode();
-    else undoVisual();
+    if (isCodeExperience) {
+      return undoCode();
+    }
+    undoVisual();
   };
 
   const handleRedo = () => {
-    if (isCodeExperience) redoCode();
-    else redoVisual();
+    if (isCodeExperience) {
+      return redoCode();
+    }
+    redoVisual();
   };
 
   return (

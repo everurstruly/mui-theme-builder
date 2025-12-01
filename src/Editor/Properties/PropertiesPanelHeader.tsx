@@ -1,8 +1,8 @@
 import ColorSchemeToggle from "../Design/Edit/ColorSchemeToggle";
 import EditorExperienceTab from "../ExperienceTab";
-import { Box, Stack, type SxProps } from "@mui/material";
+import { Box, Stack, type SxProps, type Theme } from "@mui/material";
 
-export default function PropertiesPanelHeader({ sx }: { sx?: SxProps }) {
+export default function PropertiesPanelHeader({ sx }: { sx?: SxProps<Theme> }) {
   return (
     <Stack
       direction={"row"}
