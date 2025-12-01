@@ -600,9 +600,11 @@ import { useCallback } from 'react';
 import { usePersistenceStore } from './persistenceStore';
 import { useDesignEditStore } from '../Edit/useEdit';
 import type { StorageAdapter, ThemeSerializer, ThemeDeserializer } from './types';
+import { getPersistenceDependencies } from './persistenceRegistry';
 
-export function usePersistence(adapter: StorageAdapter, serializer: ThemeSerializer, deserializer: ThemeDeserializer) {
+export function usePersistence() {
   const { setStatus, setError, setSnapshotId, setLastSavedAt } = usePersistenceStore();
+  const { adapter, serializer, deserializer } = getPersistenceDependencies();
 
   const save = useCallback(async (options: SaveOptions = { mode: 'update-or-create' }) => {
     if (!adapter || !serializer) {
@@ -654,7 +656,7 @@ export function usePersistence(adapter: StorageAdapter, serializer: ThemeSeriali
       setError(persistenceError);
       throw persistenceError;
     }
-  }, [adapter, serializer, setError, setStatus, setSnapshotId, setLastSavedAt]);
+  }, [setError, setStatus, setSnapshotId, setLastSavedAt]);
 
   const load = useCallback(async (id: string, options: LoadOptions = { mode: 'replace' }) => {
     setStatus('loading');
@@ -676,105 +678,110 @@ export function usePersistence(adapter: StorageAdapter, serializer: ThemeSeriali
       setError(persistenceError);
       throw persistenceError;
     }
-  }, [adapter, deserializer, setError, setStatus, setSnapshotId, setLastSavedAt]);
+  }, [setError, setStatus, setSnapshotId, setLastSavedAt]);
 
   return { save, load, status: usePersistenceStore((s) => s.status), error: usePersistenceStore((s) => s.error) };
 }
 ```
 
-### Example: SaveButton using `usePersistence`
-
-```tsx
-// UI/SaveButton.usePersistence.tsx
-import React, { useContext } from 'react';
-import { Button, Badge } from '@mui/material';
-import { PersistenceContext } from './PersistenceProvider'; // provider supplies adapter/serializer/deserializer
-import { usePersistence } from './usePersistence';
-import { useDesignEditStore } from '../Edit/useEdit';
-
-export function SaveButtonUsingPersistence() {
-  const deps = useContext(PersistenceContext);
-  const { save, status } = usePersistence(deps.adapter, deps.serializer, deps.deserializer);
-  const isDirty = useDesignEditStore((s) => (s as any).isDirty);
-  const isSaving = status === 'saving';
-
-  const handleSave = async () => {
-    try {
-      await save({ onConflict: 'prompt' });
-      // show success UI (snackbar, etc.)
-    } catch (e) {
-      // error state is reflected in the store; additional handling optional
-      console.error('Save failed', e);
-    }
-  };
-
-  return (
-    <Badge badgeContent={isSaving ? '...' : isDirty ? '•' : ''} color="primary">
-      <Button onClick={handleSave} disabled={!isDirty || isSaving}>
-        {isSaving ? 'Saving...' : isDirty ? 'Save Changes' : 'Saved'}
-      </Button>
-    </Badge>
-  );
-}
-```
-
-### Hooks (No manual subscribe)
+### Hooks (Orchestrator + Zustand)
 
 ```typescript
 // src/Editor/Design/Persistence/hooks/useSave.ts
+import { usePersistence } from '../usePersistence';
+import { usePersistenceStore } from '../persistenceStore';
+import { useDesignEditStore } from '../../Edit/useEdit';
+
 export function useSave() {
-  const save = usePersistenceStore((s) => s.save);
+  const { save } = usePersistence();
   const status = usePersistenceStore((s) => s.status);
   const error = usePersistenceStore((s) => s.error);
-  const isDirty = useEdit((s) => (s as any).isDirty);
+  const isDirty = useDesignEditStore((s) => (s as any).isDirty);
   const isSaving = status === 'saving';
   const canSave = status === 'idle' && !!isDirty;
-  return { save, isSaving, canSave, error };
+  return { save, isSaving, canSave, error, isDirty };
 }
 
 // src/Editor/Design/Persistence/hooks/useLoad.ts
+import { usePersistence } from '../usePersistence';
+import { usePersistenceStore } from '../persistenceStore';
+
 export function useLoad() {
-  const load = usePersistenceStore((s) => s.load);
+  const { load } = usePersistence();
   const status = usePersistenceStore((s) => s.status);
   const error = usePersistenceStore((s) => s.error);
   return { load, isLoading: status === 'loading', error };
 }
 
 // src/Editor/Design/Persistence/hooks/useTitleValidation.ts
+import { useState, useMemo } from 'react';
+import debounce from 'lodash.debounce';
+import { getPersistenceDependencies } from '../persistenceRegistry';
+
 export function useTitleValidation() {
-  const validateTitle = usePersistenceStore((s) => s.validateTitle);
   const [conflict, setConflict] = useState<ConflictInfo | null>(null);
   const [isChecking, setIsChecking] = useState(false);
+  const { adapter } = getPersistenceDependencies();
+
   const checkTitle = useMemo(() => debounce(async (title: string) => {
     setIsChecking(true);
-    const result = await validateTitle(title);
+    const existing = await adapter.findByTitle(title);
+    const result = (existing && existing.length > 0) ? { type: 'title', existingId: existing[0].id, existingTitle: existing[0].title, currentTitle: title } as ConflictInfo : null;
     setConflict(result);
     setIsChecking(false);
-  }, 300), [validateTitle]);
+  }, 300), [adapter]);
+
   return { checkTitle, conflict, isChecking, hasConflict: conflict !== null };
 }
 ```
 
-### Provider Setup
+### Persistence Registry
+
+```typescript
+// src/Editor/Design/Persistence/persistenceRegistry.ts
+let _deps: { adapter?: any; serializer?: any; deserializer?: any } = {};
+
+export function initializePersistence(adapter: any, serializer: any, deserializer: any) {
+  _deps = { adapter, serializer, deserializer };
+}
+
+export function getPersistenceDependencies() {
+  if (!_deps.adapter || !_deps.serializer || !_deps.deserializer) {
+    throw new Error('Persistence dependencies not initialized. Call initializePersistence() during app startup.');
+  }
+  return _deps as { adapter: any; serializer: any; deserializer: any };
+}
+```
+
+### Global Service Registry / Provider Setup
 
 ```typescript
 // src/Editor/Design/Persistence/PersistenceProvider.tsx
+import { useEffect } from 'react';
+import { initializePersistence } from './persistenceRegistry';
+
 export function PersistenceProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
-    initializePersistence(new DeviceStorageAdapter(), new ThemeSerializer(templateRegistry), new ThemeDeserializer(templateRegistry));
+    initializePersistence(
+      new DeviceStorageAdapter(),
+      new ThemeSerializer(templateRegistry),
+      new ThemeDeserializer(templateRegistry)
+    );
   }, []);
   return children;
 }
 ```
 
-### Testing (No React wrapper needed)
+### Testing (Registry wiring)
 
 ```typescript
-it('saves snapshot via store', async () => {
+it('registers persistence dependencies and adapter works', async () => {
   initializePersistence(new MockAdapter(), new ThemeSerializer(templateRegistry), new ThemeDeserializer(templateRegistry));
-  const result = await usePersistenceStore.getState().save({ mode: 'create' });
-  expect(result.id).toBeDefined();
-  expect(usePersistenceStore.getState().status).toBe('idle');
+  const { adapter } = getPersistenceDependencies();
+  const mockSnapshot = { id: 'test-1', title: 'Test', version: 1, createdAt: Date.now(), updatedAt: Date.now(), strategy: 'full', baseTheme: { type: 'inline', dsl: {}, metadata: {} }, edits: { neutral: {}, schemes: {}, codeOverrides: { source: '', dsl: {}, flattened: {} } }, preferences: { activeColorScheme: 'light' }, checkpointHash: 'abc' } as any;
+  await adapter.create(mockSnapshot);
+  const items = await adapter.list();
+  expect(items.find(i => i.id === 'test-1')).toBeDefined();
 });
 ```
 
