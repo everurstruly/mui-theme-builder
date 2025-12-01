@@ -22,34 +22,52 @@ export default function generateReadableColorShade(
   const hsl = base.toHsl();
   const isLight = hsl.l > 0.5;
   
-  // Boost saturation for more vibrant shades
-  const targetSaturation = Math.max(hsl.s, Math.min(0.9, hsl.s * 1.3));
-  
-  // Try increasingly aggressive adjustments
-  const attempts = isLight 
-    ? [0.15, 0.10, 0.05, 0.02, 0] // Target lightness for light backgrounds
-    : [0.85, 0.90, 0.95, 0.98, 1]; // Target lightness for dark backgrounds
-  
-  for (const targetL of attempts) {
-    const candidate = tinycolor({ h: hsl.h, s: targetSaturation, l: targetL });
-    
+  // Instead of moving to absolute white/black, nudge lightness away from
+  // the background toward higher contrast while staying visually closer
+  // to the original color. Use relative deltas from the background lightness
+  // and a mild saturation boost so lighter candidates don't look washed-out.
+  const saturationBoost = 0.1;
+  const targetSaturation = Math.min(0.95, hsl.s * (1 + saturationBoost) + 0.02);
+  // Very small lightness nudge to avoid "disabled" appearance
+  const brightnessNudge = 0.03;
+
+  // Relative lightness deltas from the background (larger first)
+  const deltas = [0.40, 0.30, 0.20, 0.12, 0.06];
+
+  for (const delta of deltas) {
+    const candidateL = isLight
+      ? Math.max(0, hsl.l - delta + brightnessNudge)
+      : Math.min(1, hsl.l + delta + brightnessNudge);
+    const candidate = tinycolor({ h: hsl.h, s: targetSaturation, l: candidateL });
+
     if (tinycolor.readability(base, candidate) >= minContrast) {
       return candidate.toHexString();
     }
   }
-  
-  // Try complementary color with aggressive adjustments
+
+  // Try complementary hues as a fallback but keep deltas smaller to avoid
+  // landing too close to pure white/black which looks like "washed out".
   const complementaryH = (hsl.h + 180) % 360;
-  for (const targetL of attempts) {
-    const candidate = tinycolor({ h: complementaryH, s: targetSaturation, l: targetL });
-    
+  const compDeltas = [0.30, 0.20, 0.12, 0.06, 0.03];
+
+  for (const delta of compDeltas) {
+    const candidateL = isLight
+      ? Math.max(0, hsl.l - delta + brightnessNudge)
+      : Math.min(1, hsl.l + delta + brightnessNudge);
+    const candidate = tinycolor({ h: complementaryH, s: targetSaturation, l: candidateL });
+
     if (tinycolor.readability(base, candidate) >= minContrast) {
       return candidate.toHexString();
     }
   }
-  
-  // Last resort: pure black or white
-  return isLight ? "#000000" : "#FFFFFF";
+
+  // Final fallback: pick a mix closer to the original color rather than pure
+  // black/white so it visually relates to the background.
+  const fallback = isLight
+    ? tinycolor.mix(base.toHexString(), '#000000', 70)
+    : tinycolor.mix(base.toHexString(), '#FFFFFF', 70);
+
+  return fallback.toHexString();
 }
 
 // Installation: npm install tinycolor2
