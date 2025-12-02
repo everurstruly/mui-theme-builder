@@ -61,9 +61,34 @@ export function useLaunch() {
   // Public API
   const launch = useCallback(
     (templateId: string) => {
-      // Only block if there's a saved design with unsaved changes
-      // Don't block for brand new unsaved designs (currentSnapshotId === null)
-      const hasUnsavedChanges = isDirty && currentSnapshotId !== null;
+      const editStore = useCurrent.getState();
+      const checkpointHash = (editStore as any).checkpointHash;
+      
+      // For new unsaved designs, check if there are any actual edits made
+      const hasDesignerEdits = 
+        Object.keys(editStore.neutralEdits).length > 0 ||
+        Object.keys(editStore.schemeEdits.light?.designer || {}).length > 0 ||
+        Object.keys(editStore.schemeEdits.dark?.designer || {}).length > 0 ||
+        (editStore.codeOverridesSource && editStore.codeOverridesSource.trim().length > 0);
+      
+      // For saved designs: use isDirty
+      // For new designs: check if any edits were made
+      const hasUnsavedChanges = checkpointHash !== null 
+        ? isDirty
+        : hasDesignerEdits;
+      
+      console.log('[LAUNCH DEBUG]', {
+        isDirty,
+        currentSnapshotId,
+        checkpointHash,
+        hasDesignerEdits,
+        neutralEdits: Object.keys(editStore.neutralEdits).length,
+        lightSchemeEdits: Object.keys(editStore.schemeEdits.light?.designer || {}).length,
+        darkSchemeEdits: Object.keys(editStore.schemeEdits.dark?.designer || {}).length,
+        hasCodeOverrides: !!(editStore.codeOverridesSource && editStore.codeOverridesSource.trim()),
+        hasUnsavedChanges,
+        willBlock: hasUnsavedChanges
+      });
       
       if (hasUnsavedChanges) {
         // HIT A BLOCKER: Return the context and resolutions

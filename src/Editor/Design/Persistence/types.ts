@@ -1,19 +1,5 @@
-/**
- * Persistence Module Types
- * 
- * Core type definitions for the Persistence module.
- * This module handles all storage operations for theme snapshots.
- */
-
-/**
- * Serializable value type for theme edits
- */
-export type SerializableValue = string | number | boolean | null | SerializableValue[] | { [key: string]: SerializableValue };
-
-/**
- * Theme DSL representation (simplified for now)
- */
-export type ThemeDsl = Record<string, SerializableValue>;
+import type { SerializableValue, ThemeDsl } from "../compiler";
+import type { SchemeEdits } from "../Current/useCurrent/types";
 
 /**
  * Serialization strategy for base theme storage
@@ -63,9 +49,7 @@ export interface ThemeSnapshot {
   edits: {
     neutral: Record<string, SerializableValue>;
     schemes: {
-      [scheme: string]: {
-        designer: Record<string, SerializableValue>;
-      };
+      [scheme: string]: SchemeEdits;
     };
     codeOverrides: {
       source: string;

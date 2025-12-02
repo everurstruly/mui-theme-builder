@@ -57,7 +57,7 @@ export const createEditSlice: StateCreator<
     const codeString =
       typeof themeCodeOrDsl === "string"
         ? themeCodeOrDsl
-        : JSON.stringify(themeCodeOrDsl);
+        : sortedStringify(themeCodeOrDsl);
 
     set((state) => {
       const newState: Partial<CurrentDesignEditStore> = {
@@ -103,6 +103,13 @@ export const createEditSlice: StateCreator<
 
       const newState: Partial<CurrentDesignEditStore> = { neutralEdits: newEdits };
       const contentHash = computeContentHash({ ...state, ...newState });
+      
+      console.log('[EDIT DEBUG] addNeutralDesignerEdit', {
+        path,
+        oldCheckpoint: state.checkpointHash,
+        newContentHash: contentHash,
+        isDirty: state.checkpointHash !== null && contentHash !== state.checkpointHash
+      });
 
       return {
         ...newState,
@@ -142,6 +149,14 @@ export const createEditSlice: StateCreator<
 
       const newState: Partial<CurrentDesignEditStore> = { schemeEdits: newSchemes };
       const contentHash = computeContentHash({ ...state, ...newState });
+      
+      console.log('[EDIT DEBUG] addSchemeDesignerEdit', {
+        scheme,
+        path,
+        oldCheckpoint: state.checkpointHash,
+        newContentHash: contentHash,
+        isDirty: state.checkpointHash !== null && contentHash !== state.checkpointHash
+      });
 
       return {
         schemeEdits: newSchemes,
@@ -437,15 +452,37 @@ function generateDefaultBaseThemeOption(): string {
   return serializeThemeOptions(templatesRegistry.material.themeOptions);
 }
 
-// Helper: compute a deterministic content hash (JSON string) for dirty checking
-// Only includes the serializable parts relevant to storage/dirty checks.
+// Helper: compute a deterministic content hash for dirty checking
+// Uses sorted JSON keys to ensure consistent hashing regardless of object key order
+function sortedStringify(obj: any): string {
+  if (obj === null || obj === undefined) return String(obj);
+  if (typeof obj !== 'object') return JSON.stringify(obj);
+  if (Array.isArray(obj)) return `[${obj.map(sortedStringify).join(',')}]`;
+  
+  const keys = Object.keys(obj).sort();
+  const pairs = keys.map(k => `"${k}":${sortedStringify(obj[k])}`);
+  return `{${pairs.join(',')}}`;
+}
+
 export function computeContentHash(state: Partial<CurrentDesignEditState>): string {
-  return JSON.stringify({
+  const content = {
     base: state.baseThemeOptionSource,
     neutral: state.neutralEdits,
     schemes: state.schemeEdits,
     codeOverrides: state.codeOverridesEdits,
-  });
+  };
+  
+  // Use sorted stringify for deterministic hashing
+  const serialized = sortedStringify(content);
+  
+  // Simple but stable hash (FNV-1a variant)
+  let hash = 2166136261;
+  for (let i = 0; i < serialized.length; i++) {
+    hash ^= serialized.charCodeAt(i);
+    hash = Math.imul(hash, 16777619);
+  }
+  
+  return (hash >>> 0).toString(36);
 }
 
 function createInitialSchemeEdits(): SchemeEdits {

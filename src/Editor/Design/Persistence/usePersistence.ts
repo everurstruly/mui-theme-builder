@@ -76,8 +76,10 @@ export function usePersistence() {
       setError(null);
 
       try {
+        // Capture edit state at START of save to prevent race conditions
         const editState = useCurrent.getState();
         const currentSnapshotId = usePersistenceStore.getState().currentSnapshotId;
+        const capturedContentHash = (editState as any).contentHash; // Freeze the hash at save start
 
         // Serialize current edit state
         const snapshot = serializer.serialize(editState, {
@@ -87,7 +89,8 @@ export function usePersistence() {
         });
 
         // Conflict detection
-        let targetId = snapshot.id; // Start with current snapshot ID (if updating existing)
+        const targetId = snapshot.id; // Start with current snapshot ID (if updating existing)
+        let conflictToDelete: string | null = null;
 
         if (options.onConflict !== "overwrite") {
           const existing = await adapter.findByTitle(snapshot.title);
@@ -103,17 +106,21 @@ export function usePersistence() {
             throw err;
           }
         } else {
-          // onConflict === 'overwrite': find existing design with same title and use its ID
+          // onConflict === 'overwrite': mark conflicting design for deletion
           const existing = await adapter.findByTitle(snapshot.title);
           const conflict = existing.find((m: any) => m.id !== snapshot.id);
           if (conflict) {
-            // Overwrite the existing design by using its ID
-            targetId = conflict.id;
+            conflictToDelete = conflict.id;
           }
         }
 
         // Persist with transaction support
         const saved = await adapter.transaction(async (tx: any) => {
+          // Delete conflicting design first if overwriting
+          if (conflictToDelete) {
+            await tx.delete(conflictToDelete);
+          }
+          
           return targetId
             ? await tx.update(targetId, { ...snapshot, id: targetId })
             : await tx.create(snapshot);
@@ -134,10 +141,11 @@ export function usePersistence() {
           // Don't throw - save was successful, just collection is stale
         }
 
-        // Set domain checkpoint
+        // Set checkpoint using the captured hash from save START, not save END
+        // This prevents race condition where user makes changes during save
         const editStore = useCurrent.getState();
         if ((editStore as any).setCheckpoint) {
-          (editStore as any).setCheckpoint(saved.checkpointHash);
+          (editStore as any).setCheckpoint(capturedContentHash);
         }
 
         return saved;
@@ -191,17 +199,45 @@ export function usePersistence() {
           editStore.clearHistory?.(); // Clear undo/redo stacks
         }
 
-        // Apply all commands to restore the design
-        commands.forEach((cmd: EditCommand) => applyEditCommand(editStore, cmd));
+        // BATCH: Suppress hash recomputation during deserialization
+        const originalSet = useCurrent.setState;
+        let batchedUpdates: any = {};
+        
+        useCurrent.setState = (update: any) => {
+          const resolved = typeof update === 'function' ? update(useCurrent.getState()) : update;
+          batchedUpdates = { ...batchedUpdates, ...resolved };
+        };
 
-        // Set checkpoint AFTER all edits applied to mark as "fully saved"
+        // Apply all commands (they'll batch into batchedUpdates)
+        commands.forEach((cmd: EditCommand) => applyEditCommand(editStore, cmd));
+        
+        // Restore original setState
+        useCurrent.setState = originalSet;
+        
+        // Now apply all updates at once and compute final hash
+        originalSet(batchedUpdates);
+        
+        // Capture the final content hash AFTER all edits applied
+        const finalContentHash = (useCurrent.getState() as any).contentHash;
+
+        console.log('[LOAD DEBUG] After applying commands:', JSON.stringify({
+          finalContentHash,
+          storedCheckpoint: snapshot.checkpointHash,
+          match: finalContentHash === snapshot.checkpointHash
+        }));
+
+        // Set checkpoint to the NEW hash (ignore old format checkpoints from storage)
+        // This effectively marks old saves as "clean" with the new hash on first load
         if ((editStore as any).setCheckpoint) {
-          (editStore as any).setCheckpoint((editStore as any).contentHash);
+          (editStore as any).setCheckpoint(finalContentHash);
         }
 
-        setStatus("idle");
+        // Update reactive state: snapshot id and last saved timestamp
         setSnapshotId(snapshot.id);
         setLastSavedAt(snapshot.updatedAt ?? Date.now());
+
+        // Finally set persistence status to idle so consumers observe a consistent saved state
+        setStatus("idle");
       } catch (error: any) {
         const persistenceError: PersistenceError = {
           code: error.code ?? "UNKNOWN",

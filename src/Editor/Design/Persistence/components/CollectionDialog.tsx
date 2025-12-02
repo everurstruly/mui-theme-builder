@@ -26,8 +26,14 @@ import {
   Box,
   CircularProgress,
   Divider,
+  Dialog as ConfirmDialog,
+  DialogTitle as ConfirmDialogTitle,
+  DialogContent as ConfirmDialogContent,
+  DialogContentText,
+  DialogActions as ConfirmDialogActions,
 } from '@mui/material';
 import { useCallback } from 'react';
+import * as React from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CloseIcon from '@mui/icons-material/Close';
 import { useCollection, useLoad } from '../hooks';
@@ -41,17 +47,25 @@ interface CollectionDialogProps {
 
 export default function CollectionDialog({ open, onClose }: CollectionDialogProps) {
   const { collection, refreshCollection, isLoading } = useCollection();
-  const { load, isLoading: isLoadingDesign } = useLoad();
+  const { load, isLoading: isLoadingDesign, status, blocker } = useLoad();
   const { currentSnapshotId, setSnapshotId } = usePersistenceStore();
   
   const handleLoadDesign = useCallback(async (id: string) => {
     try {
       await load(id);
-      onClose();
+      // Only close if load was successful (not blocked)
+      // If blocked, the blocker dialog will handle the flow
     } catch (error) {
       console.error('Failed to load design:', error);
     }
-  }, [load, onClose]);
+  }, [load]);
+  
+  // Close collection dialog on successful load
+  React.useEffect(() => {
+    if (status === 'success') {
+      onClose();
+    }
+  }, [status, onClose]);
 
   const handleDeleteDesign = useCallback(async (id: string, event: React.MouseEvent) => {
     event.stopPropagation();
@@ -85,6 +99,18 @@ export default function CollectionDialog({ open, onClose }: CollectionDialogProp
       hour: '2-digit',
       minute: '2-digit',
     });
+  };
+
+  const formatCreatedAt = (timestamp: number) => {
+    const now = Date.now();
+    const diff = now - timestamp;
+    const minutes = Math.floor(diff / 60000);
+
+    // If created in the last minute, show "just now"
+    if (minutes < 1) return 'just now';
+    
+    // Otherwise show formatted date
+    return formatDate(timestamp);
   };
 
   const formatRelativeTime = (timestamp: number) => {
@@ -165,7 +191,7 @@ export default function CollectionDialog({ open, onClose }: CollectionDialogProp
                       secondary={
                         <Box component="span" sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, mt: 0.5 }}>
                           <Typography variant="caption" component="span" color="text.secondary">
-                            Created: {formatDate(item.createdAt)}
+                            Created: {formatCreatedAt(item.createdAt)}
                           </Typography>
                           {item.updatedAt && item.updatedAt !== item.createdAt && (
                             <Typography variant="caption" component="span" color="primary.main">
@@ -186,6 +212,27 @@ export default function CollectionDialog({ open, onClose }: CollectionDialogProp
       <DialogActions>
         <Button onClick={onClose}>Close</Button>
       </DialogActions>
+      
+      {/* Unsaved Changes Confirmation Dialog */}
+      <ConfirmDialog
+        open={status === 'blocked' && blocker?.reason === 'UNSAVED_CHANGES'}
+        onClose={() => blocker?.resolutions.cancel()}
+      >
+        <ConfirmDialogTitle>Unsaved Changes</ConfirmDialogTitle>
+        <ConfirmDialogContent>
+          <DialogContentText>
+            You have unsaved changes. Loading this design will discard your current work.
+          </DialogContentText>
+        </ConfirmDialogContent>
+        <ConfirmDialogActions>
+          <Button onClick={() => blocker?.resolutions.cancel()}>
+            Cancel
+          </Button>
+          <Button onClick={() => blocker?.resolutions.discardAndProceed()} color="error" autoFocus>
+            Discard Changes
+          </Button>
+        </ConfirmDialogActions>
+      </ConfirmDialog>
     </Dialog>
   );
 }

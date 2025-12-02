@@ -5,7 +5,9 @@
  * Supports multiple serialization strategies (full, delta, hybrid).
  */
 
-import type { ThemeSnapshot, SerializationStrategy, SerializableValue } from '../types';
+import type { CurrentDesignStore } from "../../Current/useCurrent";
+import type { SerializableValue } from "../../Current/useCurrent/types";
+import type { SerializationStrategy, ThemeSnapshot } from "../types";
 
 interface SerializeOptions {
   id?: string;
@@ -20,7 +22,7 @@ export class ThemeSerializer {
     this.templateRegistry = templateRegistry;
   }
 
-  serialize(editState: any, options: SerializeOptions = {}): ThemeSnapshot {
+  serialize(editState: CurrentDesignStore, options: SerializeOptions = {}): ThemeSnapshot {
     const strategy = options.strategy ?? this.autoDetectStrategy(editState);
     const title = options.title ?? editState.title ?? 'Untitled';
     const id = options.id;
@@ -39,15 +41,15 @@ export class ThemeSerializer {
         neutral: editState.neutralEdits ?? {},
         schemes: {
           light: { 
-            designer: editState.colorSchemes?.light?.designer ?? {} 
+            designer: editState.schemeEdits?.light?.designer ?? {},
           },
           dark: { 
-            designer: editState.colorSchemes?.dark?.designer ?? {} 
+            designer: editState.schemeEdits?.dark?.designer ?? {},
           },
         },
         codeOverrides: {
           source: editState.codeOverridesSource ?? '',
-          dsl: editState.codeOverridesDsl ?? {},
+          dsl: editState.codeOverridesDsl || {},
           flattened: editState.codeOverridesEdits ?? {},
         },
       },
@@ -60,7 +62,7 @@ export class ThemeSerializer {
     };
   }
 
-  private serializeBaseTheme(editState: any, strategy: SerializationStrategy): ThemeSnapshot['baseTheme'] {
+  private serializeBaseTheme(editState: CurrentDesignStore, strategy: SerializationStrategy): ThemeSnapshot['baseTheme'] {
     const templateId = editState.baseThemeOptionSourceMetadata?.templateId;
     const baseDsl = this.parseThemeCode(editState.baseThemeOptionSource ?? '{}');
     
@@ -70,7 +72,7 @@ export class ThemeSerializer {
         dsl: baseDsl,
         metadata: {
           templateId,
-          sourceLabel: editState.baseThemeOptionSourceMetadata?.sourceLabel,
+          sourceLabel: editState.baseThemeOptionSourceMetadata?.label
         },
       };
     }
@@ -83,7 +85,7 @@ export class ThemeSerializer {
         dsl: baseDsl,
         metadata: {
           templateId,
-          sourceLabel: editState.baseThemeOptionSourceMetadata?.sourceLabel,
+          sourceLabel: editState.baseThemeOptionSourceMetadata?.label,
         },
       };
     }
@@ -96,7 +98,7 @@ export class ThemeSerializer {
         dsl: baseDsl,
         metadata: {
           templateId,
-          sourceLabel: editState.baseThemeOptionSourceMetadata?.sourceLabel,
+          sourceLabel: editState.baseThemeOptionSourceMetadata?.label,
         },
       };
     }
@@ -115,7 +117,7 @@ export class ThemeSerializer {
     };
   }
 
-  private autoDetectStrategy(editState: any): SerializationStrategy {
+  private autoDetectStrategy(editState: CurrentDesignStore): SerializationStrategy {
     const size = (editState.baseThemeOptionSource ?? '').length;
     const hasTemplateId = !!editState.baseThemeOptionSourceMetadata?.templateId;
     

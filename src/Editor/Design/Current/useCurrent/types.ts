@@ -14,6 +14,7 @@ export interface SchemeEdits {
 }
 
 export interface DesignBaseMetadata {
+  label?: string;
   templateId?: string;
   createdAtTimestamp: number;
   lastModifiedTimestamp: number;

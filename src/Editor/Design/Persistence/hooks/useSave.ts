@@ -1,15 +1,3 @@
-/**
- * useSave Hook
- * 
- * User-facing hook for save operations.
- * Exposes semantic save state machine + dirty tracking.
- * 
- * Status values are mutually exclusive:
- * - 'idle': ready to save or no changes
- * - 'saving': currently persisting to storage
- * - 'saved': most recent save completed successfully
- */
-
 import { useMemo } from 'react';
 import { usePersistence } from '../usePersistence';
 import { usePersistenceStore } from '../persistenceStore';

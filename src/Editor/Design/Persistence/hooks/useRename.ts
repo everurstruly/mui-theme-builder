@@ -76,8 +76,11 @@ export function useRename() {
       // If this is a saved design, persist the rename immediately
       if (isSavedDesign) {
         console.debug('[useRename] saving persisted title', newTitle);
-        const saveArgs: any = { title: newTitle };
-        if (options?.force) saveArgs.onConflict = "overwrite";
+        const saveArgs: any = { 
+          title: newTitle,
+          // Default to "fail" to prevent accidental overwrites; allow force override
+          onConflict: options?.force ? "overwrite" : "fail"
+        };
         await save(saveArgs);
         console.debug('[useRename] save completed for', newTitle);
         return { persisted: true, title: newTitle };

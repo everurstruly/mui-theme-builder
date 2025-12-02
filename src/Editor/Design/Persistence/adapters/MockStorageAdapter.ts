@@ -56,6 +56,16 @@ export class MockStorageAdapter implements StorageAdapter {
       throw new Error(`Snapshot ${id} not found`);
     }
 
+    // Check for title conflicts if title is being updated
+    if (partial.title) {
+      const titleConflict = snapshots.find(
+        (s) => s.id !== id && s.title.toLowerCase() === partial.title!.toLowerCase()
+      );
+      if (titleConflict) {
+        throw new Error(`Title "${partial.title}" already exists (used by snapshot ${titleConflict.id})`);
+      }
+    }
+
     const updated: ThemeSnapshot = {
       ...snapshots[index],
       ...partial,
