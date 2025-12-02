@@ -424,10 +424,11 @@ export const createEditSlice: StateCreator<
       // Otherwise leave checkpoint null so design shows as unsaved
       const checkpointHash = options.isSaved ? contentHash : null;
 
-      return {
+      const result = {
         ...newState,
         contentHash,
         checkpointHash,
+        saveStatus: 'idle' as const, // Reset save status on load
         modificationTimestamps: {},
         // Clear undo/redo history - loading a saved design starts a fresh editing session
         visualHistoryPast: [],
@@ -435,6 +436,11 @@ export const createEditSlice: StateCreator<
         codeHistoryPast: [],
         codeHistoryFuture: [],
       };
+
+      // DEV-ONLY: Validate state after hydrate
+      validateHydrateState(result, options.isSaved);
+
+      return result;
     });
   },
 
@@ -571,4 +577,56 @@ function generateInitialContentHash() {
       dark: { designer: {} },
     },
   });
+}
+
+/**
+ * Validate state after hydrate to catch bugs early
+ */
+function validateHydrateState(state: any, isSaved?: boolean): void {
+  // Only in development - use console check as guard
+  const isDev = typeof import.meta !== 'undefined' && import.meta.env?.DEV;
+  if (!isDev) return;
+
+  // Rule 1: saveStatus must always be 'idle' after hydrate
+  if (state.saveStatus !== 'idle') {
+    console.error(
+      `[HYDRATE VIOLATION] saveStatus must be 'idle' after hydrate, got: "${state.saveStatus}". ` +
+      `This will cause SaveButton to show wrong label.`
+    );
+  }
+
+  // Rule 2: Edits must be empty (flattened architecture)
+  const hasNeutralEdits = Object.keys(state.neutralEdits || {}).length > 0;
+  const hasSchemeEdits = 
+    Object.keys(state.schemeEdits?.light?.designer || {}).length > 0 ||
+    Object.keys(state.schemeEdits?.dark?.designer || {}).length > 0;
+
+  if (hasNeutralEdits || hasSchemeEdits) {
+    console.error(
+      `[HYDRATE VIOLATION] Edits must be empty after hydrate (flattened architecture). ` +
+      `Found neutral: ${hasNeutralEdits}, scheme: ${hasSchemeEdits}`
+    );
+  }
+
+  // Rule 3: History must be cleared
+  if (state.visualHistoryPast?.length > 0 || state.visualHistoryFuture?.length > 0) {
+    console.error(
+      `[HYDRATE VIOLATION] History must be cleared after hydrate. ` +
+      `Found past: ${state.visualHistoryPast?.length}, future: ${state.visualHistoryFuture?.length}`
+    );
+  }
+
+  // Rule 4: Checkpoint should match isSaved flag
+  if (isSaved && !state.checkpointHash) {
+    console.warn(
+      `[HYDRATE WARNING] Loading saved design but checkpointHash is null. ` +
+      `This will show as dirty immediately.`
+    );
+  }
+  if (!isSaved && state.checkpointHash) {
+    console.error(
+      `[HYDRATE VIOLATION] Loading unsaved design but checkpointHash is set. ` +
+      `This will prevent "Save to Collection" from showing.`
+    );
+  }
 }
