@@ -7,7 +7,6 @@ import { AppBar, Stack, Divider, Toolbar, type SxProps, Box } from "@mui/materia
 import LaunchDialogOpenButton from "../Design/New/LaunchDialogOpenButton";
 import CollectionDialogButton from "../Design/Collection/CollectionDialogButton";
 import SaveButton from "../Design/Current/Save/SaveButton";
-import { VersionHistoryButton } from "../Design/Versions";
 
 const inlineGapRem = 2;
 
@@ -63,7 +62,6 @@ function DesktopToolbarContent() {
         <Stack direction={"row"} alignItems={"inherit"} columnGap={inlineGapRem}>
           <SaveButton />
           <HistoryButtons />
-          <VersionHistoryButton />
           <ExportCommand />
         </Stack>
       </Stack>
