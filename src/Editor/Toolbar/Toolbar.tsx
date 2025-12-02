@@ -7,6 +7,9 @@ import { AppBar, Stack, Divider, Toolbar, type SxProps, Box } from "@mui/materia
 import LaunchDialogOpenButton from "../Design/New/LaunchDialogOpenButton";
 import CollectionDialogButton from "../Design/Collection/CollectionDialogButton";
 import SaveButton from "../Design/Current/Save/SaveButton";
+import { isFeatureEnabled } from "../../config/featureFlags";
+import StatusBar from "../Design/Versions/StatusBar";
+import { useCurrent } from "../Design/Current/useCurrent";
 
 const inlineGapRem = 2;
 
@@ -20,6 +23,8 @@ export default function EditorToolsbar() {
 }
 
 function DesktopToolbarContent() {
+  const isViewingVersion = useCurrent((s) => s.isViewingVersion);
+
   return (
     <Stack
       flexGrow={1}
@@ -51,19 +56,36 @@ function DesktopToolbarContent() {
         justifyContent={"space-between"}
         direction={"row"}
         marginInline={"auto"}
-        paddingInline={inlineGapRem}
         columnGap={inlineGapRem}
       >
-        <Stack direction={"row"} sx={{ columnGap: inlineGapRem }}>
-          <CollectionDialogButton />
-          <LaunchDialogOpenButton />
-        </Stack>
+        {isFeatureEnabled("SHOW_VERSION_HISTORY") && isViewingVersion ? (
+          <StatusBar
+            sx={{ paddingInline: inlineGapRem }}
+            actionSx={{ columnGap: inlineGapRem }}
+          />
+        ) : (
+          <>
+            <Stack
+              direction={"row"}
+              sx={{ columnGap: inlineGapRem }}
+              paddingInlineStart={inlineGapRem}
+            >
+              <CollectionDialogButton />
+              <LaunchDialogOpenButton />
+            </Stack>
 
-        <Stack direction={"row"} alignItems={"inherit"} columnGap={inlineGapRem}>
-          <SaveButton />
-          <HistoryButtons />
-          <ExportCommand />
-        </Stack>
+            <Stack
+              direction={"row"}
+              alignItems={"inherit"}
+              columnGap={inlineGapRem}
+              paddingInlineEnd={inlineGapRem}
+            >
+              <SaveButton />
+              <HistoryButtons />
+              <ExportCommand />
+            </Stack>
+          </>
+        )}
       </Stack>
 
       <Divider

@@ -11,6 +11,7 @@ import {
   Alert,
   Box,
 } from "@mui/material";
+import { useCurrent } from "../Current/useCurrent";
 import { useVersionHistory } from "./useVersionHistory";
 import { VersionItem } from "./VersionItem";
 import { RestoreConfirmDialog } from "./RestoreConfirmDialog";
@@ -31,15 +32,20 @@ export function VersionHistoryDialog({
     deleteVersion,
     restoreVersion,
     loadVersionAsNew,
+    getVersion,
   } = useVersionHistory();
 
   const [restoreDialogOpen, setRestoreDialogOpen] = useState(false);
   const [selectedVersionId, setSelectedVersionId] = useState<string | null>(null);
   const [selectedVersionTimestamp, setSelectedVersionTimestamp] = useState<number | null>(null);
 
-  const handleView = (versionId: string) => {
-    // TODO: Implement view in modal/new tab
-    console.log("View version:", versionId);
+  const handleView = async (versionId: string) => {
+    const version = await getVersion(versionId);
+    if (version) {
+      const { enterViewMode } = useCurrent.getState();
+      enterViewMode(versionId, version.snapshot, version.createdAt);
+      onClose();
+    }
   };
 
   const handleRestoreClick = (versionId: string) => {

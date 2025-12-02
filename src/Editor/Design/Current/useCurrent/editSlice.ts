@@ -40,6 +40,9 @@ export const createEditSlice: StateCreator<
 
   setTitle: (title: string) => {
     set((state) => {
+      // Block edits in view mode
+      if (state.isViewingVersion) return state;
+
       const newState: Partial<CurrentDesignEditStore> = { title };
       const contentHash = computeContentHash({ ...state, ...newState });
       return {
@@ -61,6 +64,9 @@ export const createEditSlice: StateCreator<
         : sortedStringify(themeCodeOrDsl);
 
     set((state) => {
+      // Block edits in view mode
+      if (state.isViewingVersion) return state;
+
       const newState: Partial<CurrentDesignEditStore> = {
         baseThemeOptionSource: codeString,
         baseThemeOptionSourceMetadata: {
@@ -87,6 +93,9 @@ export const createEditSlice: StateCreator<
 
   addNeutralDesignerEdit: (path, value) => {
     set((state) => {
+      // Block edits in view mode
+      if (state.isViewingVersion) return state;
+
       const current = state.neutralEdits[path];
       if (current === value) return state; // Skip if no change
 
@@ -127,6 +136,9 @@ export const createEditSlice: StateCreator<
 
   addSchemeDesignerEdit: (scheme, path, value) => {
     set((state) => {
+      // Block edits in view mode
+      if (state.isViewingVersion) return state;
+
       const schemeObj = state.schemeEdits[scheme] || { designer: {} };
       const current = schemeObj.designer[path];
       if (current === value) return state;
@@ -175,6 +187,9 @@ export const createEditSlice: StateCreator<
 
   removeNeutralDesignerEdit: (path) => {
     set((state) => {
+      // Block edits in view mode
+      if (state.isViewingVersion) return state;
+
       const newEdits = { ...state.neutralEdits };
       if (!(path in newEdits)) return state;
       const oldValue = newEdits[path];
@@ -203,6 +218,9 @@ export const createEditSlice: StateCreator<
 
   removeSchemeDesignerEdit: (scheme, path) => {
     set((state) => {
+      // Block edits in view mode
+      if (state.isViewingVersion) return state;
+
       const schemeEdits = state.schemeEdits[scheme];
       if (!schemeEdits) return state;
 
@@ -328,6 +346,9 @@ export const createEditSlice: StateCreator<
 
   setCodeOverrides: (source, dsl, flattened, error) => {
     set((state) => {
+      // Block edits in view mode
+      if (state.isViewingVersion) return state;
+
       const previousSource = state.codeOverridesSource;
 
       // Record code history (previous source) for undo

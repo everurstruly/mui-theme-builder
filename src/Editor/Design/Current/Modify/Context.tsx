@@ -16,17 +16,21 @@ import {
 } from "@mui/material";
 import RenameDialog from "./RenameDialog";
 import { useTitle } from "./useTitle";
+import { VersionHistoryDialog } from "../../Versions";
+import { isFeatureEnabled } from "../../../../config/featureFlags";
 
 function Context({ sx }: { sx?: SxProps }) {
   const storageStatus = useCurrent((s) => s.saveStatus);
   const lastSavedAt = useCurrent((s) => s.lastPersistedAt);
   const persistedSnapshotId = useCurrent((s) => s.persistenceSnapshotId);
+  const isViewingVersion = useCurrent((s) => s.isViewingVersion);
   const hasSavedRecently = storageStatus === "idle" && lastSavedAt !== null;
 
   const { title } = useTitle();
   const loadNew = useCurrent((s) => s.loadNew);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [renameDialogOpen, setRenameDialogOpen] = React.useState(false);
+  const [versionHistoryOpen, setVersionHistoryOpen] = React.useState(false);
 
   const [deleteConfirmationDialogOpen, setDeleteConfirmationDialogOpen] =
     React.useState(false);
@@ -44,6 +48,11 @@ function Context({ sx }: { sx?: SxProps }) {
 
   const handleRename = () => {
     setRenameDialogOpen(true);
+    handleMenuClose();
+  };
+
+  const handleVersionHistory = () => {
+    setVersionHistoryOpen(true);
     handleMenuClose();
   };
 
@@ -96,7 +105,7 @@ function Context({ sx }: { sx?: SxProps }) {
             overflow: "hidden",
           }}
         >
-          You're editing —{" "}
+          {isViewingVersion ? "You're previewing —" : "You're editing —"}{" "}
           <Typography
             variant="caption"
             color="textPrimary"
@@ -131,10 +140,26 @@ function Context({ sx }: { sx?: SxProps }) {
         <MenuItem dense onClick={handleRename}>
           Rename
         </MenuItem>
+        {isFeatureEnabled("SHOW_VERSION_HISTORY") && (
+          <MenuItem
+            dense
+            onClick={handleVersionHistory}
+            disabled={!hasSavedRecently}
+          >
+            Version History
+          </MenuItem>
+        )}
         <MenuItem dense onClick={handleDelete} disabled={!hasSavedRecently}>
           Delete
         </MenuItem>
       </Menu>
+
+      {isFeatureEnabled("SHOW_VERSION_HISTORY") && (
+        <VersionHistoryDialog
+          open={versionHistoryOpen}
+          onClose={() => setVersionHistoryOpen(false)}
+        />
+      )}
 
       <RenameDialog
         open={renameDialogOpen}

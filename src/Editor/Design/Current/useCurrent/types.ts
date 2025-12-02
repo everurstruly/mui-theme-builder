@@ -189,9 +189,23 @@ export interface CurrentDesignPreviewState {
   activePreviewId: string;
 }
 
+export interface CurrentDesignPreviewState {
+  activeColorScheme: "light" | "dark";
+  activePreviewId: string;
+  isViewingVersion: boolean;
+  viewingVersionId: string | null;
+  viewingVersionSnapshot: {
+    previousSnapshotId: string | null;
+    previousEditState: Partial<CurrentDesignEditState>;
+    versionCreatedAt: number;
+  } | null;
+}
+
 export interface CurrentDesignPreviewActions {
   setActiveColorScheme: (scheme: "light" | "dark") => void;
   selectPreview: (previewId: string) => void;
+  enterViewMode: (versionId: string, snapshot: ThemeSnapshot, createdAt: number) => void;
+  exitViewMode: () => void;
 }
 
 export type CurrentDesignPreviewSlice = CurrentDesignPreviewState &
