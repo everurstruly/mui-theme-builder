@@ -107,27 +107,50 @@ function convertOldToNew(old: SavedToStorageDesign): ThemeSnapshot {
   // Parse compiled theme options back to DSL
   const baseDsl = parseThemeCode(old.themeOptionsCode);
 
-  // Reconstruct edits from session data
+  // Merge session edits into base (flatten)
+  let flattenedBase = { ...baseDsl };
+  
+  if (old.session) {
+    // Import utilities for merging
+    const { deepMerge, expandFlatThemeOptions } = require('../compiler/utilities/objectOps');
+    
+    // Merge neutral edits
+    if (old.session.neutralEdits && Object.keys(old.session.neutralEdits).length > 0) {
+      const expandedNeutral = expandFlatThemeOptions(old.session.neutralEdits);
+      flattenedBase = deepMerge(flattenedBase, expandedNeutral);
+    }
+    
+    // Merge scheme edits (use active scheme or default to light)
+    const activeScheme = old.session.activeColorScheme ?? 'light';
+    const schemeEdits = old.session[activeScheme]?.designer ?? {};
+    if (Object.keys(schemeEdits).length > 0) {
+      const expandedScheme = expandFlatThemeOptions(schemeEdits);
+      flattenedBase = deepMerge(flattenedBase, expandedScheme);
+    }
+    
+    // Merge code overrides
+    if (old.session.codeOverridesSource) {
+      const codeOverrideDsl = parseThemeCode(old.session.codeOverridesSource);
+      flattenedBase = deepMerge(flattenedBase, codeOverrideDsl);
+    }
+  }
+
+  // No edits - flattened into base
   const edits = {
-    neutral: old.session?.neutralEdits ?? {},
+    neutral: {},
     schemes: {
-      light: { designer: old.session?.light?.designer ?? {} },
-      dark: { designer: old.session?.dark?.designer ?? {} },
+      light: { designer: {} },
+      dark: { designer: {} },
     },
     codeOverrides: {
-      source: old.session?.codeOverridesSource ?? '',
-      dsl: old.session?.codeOverridesSource
-        ? parseThemeCode(old.session.codeOverridesSource)
-        : {},
+      source: '',
+      dsl: {},
       flattened: {},
     },
   };
 
   // Compute checkpoint hash
-  const checkpointHash = JSON.stringify({
-    base: old.themeOptionsCode,
-    ...edits,
-  });
+  const checkpointHash = JSON.stringify(flattenedBase);
 
   // Convert timestamp strings to numbers
   const createdAt = typeof old.createdAt === 'string' 
@@ -143,13 +166,13 @@ function convertOldToNew(old: SavedToStorageDesign): ThemeSnapshot {
     title: old.title,
     createdAt,
     updatedAt,
-    strategy: 'full', // Old format didn't have delta snapshots
+    strategy: 'full',
     baseTheme: {
       type: 'inline',
-      dsl: baseDsl,
+      dsl: flattenedBase, // Flattened with edits merged in
       metadata: {},
     },
-    edits,
+    edits, // Empty - all flattened into base
     preferences: {
       activeColorScheme: old.session?.activeColorScheme ?? 'light',
     },

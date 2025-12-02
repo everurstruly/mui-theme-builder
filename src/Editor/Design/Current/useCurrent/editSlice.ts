@@ -45,6 +45,7 @@ export const createEditSlice: StateCreator<
       return {
         ...newState,
         contentHash,
+        saveStatus: 'idle',
         modificationTimestamps: {
           ...state.modificationTimestamps,
           title: Date.now(),
@@ -75,6 +76,7 @@ export const createEditSlice: StateCreator<
       return {
         ...newState,
         contentHash,
+        saveStatus: 'idle',
         modificationTimestamps: {
           ...state.modificationTimestamps,
           baseThemeOptionSource: Date.now(),
@@ -114,6 +116,7 @@ export const createEditSlice: StateCreator<
       return {
         ...newState,
         contentHash,
+        saveStatus: 'idle',
         modificationTimestamps: {
           ...state.modificationTimestamps,
           ["global:" + path]: Date.now(),
@@ -161,6 +164,7 @@ export const createEditSlice: StateCreator<
       return {
         schemeEdits: newSchemes,
         contentHash,
+        saveStatus: 'idle',
         modificationTimestamps: {
           ...state.modificationTimestamps,
           ["scheme:" + scheme + ":" + path]: Date.now(),
@@ -188,6 +192,7 @@ export const createEditSlice: StateCreator<
       return {
         neutralEdits: newEdits,
         contentHash,
+        saveStatus: 'idle',
         modificationTimestamps: {
           ...state.modificationTimestamps,
           ["global:" + path]: Date.now(),
@@ -229,6 +234,7 @@ export const createEditSlice: StateCreator<
       return {
         schemeEdits: newSchemes,
         contentHash,
+        saveStatus: 'idle',
         modificationTimestamps: {
           ...state.modificationTimestamps,
           ["scheme:" + scheme + ":" + path]: Date.now(),
@@ -263,6 +269,7 @@ export const createEditSlice: StateCreator<
         return {
           neutralEdits: {},
           contentHash,
+          saveStatus: 'idle',
           modificationTimestamps: {
             ...state.modificationTimestamps,
             ["designer:global:clear"]: Date.now(),
@@ -285,6 +292,7 @@ export const createEditSlice: StateCreator<
         return {
           schemeEdits: newSchemes,
           contentHash,
+          saveStatus: 'idle',
           modificationTimestamps: {
             ...state.modificationTimestamps,
             ["designer:scheme:clear:" + scheme]: Date.now(),
@@ -308,12 +316,13 @@ export const createEditSlice: StateCreator<
             dark: createInitialSchemeEdits(),
           },
           contentHash,
+          saveStatus: 'idle',
           modificationTimestamps: {
             ...state.modificationTimestamps,
             ["designer:all:clear"]: Date.now(),
           },
         };
-      });
+      })
     }
   },
 
@@ -338,6 +347,7 @@ export const createEditSlice: StateCreator<
       return {
         ...newState,
         contentHash,
+        saveStatus: 'idle',
         modificationTimestamps: {
           ...state.modificationTimestamps,
           codeOverrides: Date.now(),
@@ -358,6 +368,7 @@ export const createEditSlice: StateCreator<
       return {
         ...newState,
         contentHash,
+        saveStatus: 'idle',
         modificationTimestamps: {
           ...state.modificationTimestamps,
           ["codeOverrides:clear"]: Date.now(),
@@ -394,11 +405,15 @@ export const createEditSlice: StateCreator<
           createdAtTimestamp: snapshot.createdAt,
           lastModifiedTimestamp: snapshot.updatedAt ?? snapshot.createdAt,
         },
-        neutralEdits: snapshot.edits.neutral,
-        schemeEdits: snapshot.edits.schemes,
-        codeOverridesSource: snapshot.edits.codeOverrides.source,
-        codeOverridesDsl: snapshot.edits.codeOverrides.dsl,
-        codeOverridesEdits: snapshot.edits.codeOverrides.flattened,
+        // Always start with empty edits - old snapshots are migrated by flattening into base
+        neutralEdits: {},
+        schemeEdits: {
+          light: { designer: {} },
+          dark: { designer: {} },
+        },
+        codeOverridesSource: '',
+        codeOverridesDsl: {},
+        codeOverridesEdits: {},
         codeOverridesError: null,
       };
 

@@ -3,10 +3,12 @@ import { Button, Box } from "@mui/material";
 import { useState, useCallback, useEffect } from "react";
 import { useTitle } from "../Modify/useTitle";
 import { useSave } from "./useSave";
+import { useCurrent } from "../useCurrent";
 
 export default function SaveButton() {
   const { title, checkTitle, conflict, isChecking } = useTitle();
   const { save, status, canSave, isDirty } = useSave();
+  const isSaved = useCurrent((s) => !!s.persistenceSnapshotId);
   const [showConflictDialog, setShowConflictDialog] = useState(false);
   const [conflictError, setConflictError] = useState<string | null>(null);
   const [attemptedNewTitle, setAttemptedNewTitle] = useState<string | null>(null);
@@ -87,6 +89,10 @@ export default function SaveButton() {
     }
     if (isDirty) {
       return "Save Changes";
+    }
+    // Unsaved designs (templates, blank, new)
+    if (!isSaved) {
+      return "Save to Collection";
     }
     return "Save";
   };
