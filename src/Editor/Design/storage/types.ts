@@ -49,6 +49,28 @@ export interface ThemeSnapshotMetadata {
 }
 
 /**
+ * Version snapshot - a historical point-in-time copy of a design
+ */
+export interface VersionSnapshot {
+  id: string;
+  parentDesignId: string;
+  snapshot: ThemeSnapshot;
+  createdAt: number;
+  // Future: Add commit message, author, etc.
+}
+
+/**
+ * Lightweight metadata for version listing
+ */
+export interface VersionMetadata {
+  id: string;
+  parentDesignId: string;
+  createdAt: number;
+  title: string; // Design title at time of version
+  checkpointHash: string;
+}
+
+/**
  * Transaction interface for atomic multi-operation updates
  */
 export interface StorageTransaction {
@@ -76,6 +98,12 @@ export interface StorageAdapter {
 
   // Transaction support
   transaction<T>(callback: (tx: StorageTransaction) => Promise<T>): Promise<T>;
+
+  // Version management
+  createVersion(parentDesignId: string, snapshot: ThemeSnapshot): Promise<VersionSnapshot>;
+  listVersions(parentDesignId: string): Promise<VersionMetadata[]>;
+  getVersion(versionId: string): Promise<VersionSnapshot | null>;
+  deleteVersion(versionId: string): Promise<boolean>;
 
   // Cleanup
   clear(): Promise<void>;

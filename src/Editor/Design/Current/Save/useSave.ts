@@ -83,6 +83,18 @@ export function useSave() {
         setSnapshotId(saved.id);
         setLastSavedAt(Date.now());
 
+        // Create version if this is an update to an existing design and content changed
+        const isUpdate = !!currentSnapshotId;
+        const contentChanged = editState.checkpointHash !== capturedContentHash;
+        if (isUpdate && contentChanged) {
+          try {
+            await adapter.createVersion(saved.id, saved);
+          } catch (versionError) {
+            console.error("Failed to create version:", versionError);
+            // Non-fatal - save still succeeded
+          }
+        }
+
         // Refresh collection to keep it in sync
         try {
           const items = await storage.adapter.list();
