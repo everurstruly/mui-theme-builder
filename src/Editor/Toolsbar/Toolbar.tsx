@@ -3,10 +3,9 @@ import HistoryButtons from "../Design/Current/HistoryButtons";
 import DesignMobileActionMenu from "./DesignMobileActionMenu";
 import CurrentDesignContext from "../Design/Current/Context";
 import PropertiesPanelHeader from "../Properties/PropertiesPanelHeader";
-import SaveButton from "../Design/Lifecycle/components/SaveButton";
-import NewDesignButton from "../Design/Lifecycle/components/NewDesignButton";
-import CollectionDialogButton from "../Design/Storage/components/CollectionDialogButton";
 import { AppBar, Stack, Divider, Toolbar, type SxProps, Box } from "@mui/material";
+import { CollectionDialogButton, SaveButton } from "../Design/Persistence";
+import LaunchDialogOpenButton from "../Design/Launch/LaunchDialogOpenButton";
 
 const inlineGapRem = 2;
 
@@ -56,7 +55,7 @@ function DesktopToolbarContent() {
       >
         <Stack direction={"row"} sx={{ columnGap: inlineGapRem }}>
           <CollectionDialogButton />
-          <NewDesignButton />
+          <LaunchDialogOpenButton />
         </Stack>
 
         <Stack direction={"row"} alignItems={"inherit"} columnGap={inlineGapRem}>
@@ -111,7 +110,7 @@ function MobileToolbarContent() {
         marginInlineStart={"auto"}
         px={1}
       >
-        <NewDesignButton />
+        <LaunchDialogOpenButton />
         <DesignMobileActionMenu />
       </Box>
     </Stack>
