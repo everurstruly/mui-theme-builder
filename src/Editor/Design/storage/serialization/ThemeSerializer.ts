@@ -7,6 +7,7 @@
 
 import type { CurrentDesignStore, SerializableValue } from "../../Current/useCurrent/types";
 import type { SerializationStrategy, ThemeSnapshot } from "../types";
+import { deepMerge, expandFlatThemeOptions } from "../../compiler/utilities/objectOps";
 
 interface SerializeOptions {
   id?: string;
@@ -15,16 +16,17 @@ interface SerializeOptions {
 }
 
 export class ThemeSerializer {
-  private templateRegistry?: any;
-
-  constructor(templateRegistry?: any) {
-    this.templateRegistry = templateRegistry;
+  constructor(_templateRegistry?: any) {
+    // Template registry not used in flattened snapshot approach
   }
 
   serialize(editState: CurrentDesignStore, options: SerializeOptions = {}): ThemeSnapshot {
     const strategy = options.strategy ?? this.autoDetectStrategy(editState);
     const title = options.title ?? editState.title ?? 'Untitled';
     const id = options.id;
+
+    // Flatten edits into base theme - snapshot IS the final document
+    const flattenedBase = this.flattenEditsIntoBase(editState);
 
     return {
       id: id ?? '', // Will be set by adapter.create if empty
@@ -34,22 +36,27 @@ export class ThemeSerializer {
       updatedAt: Date.now(),
       strategy,
       
-      baseTheme: this.serializeBaseTheme(editState, strategy),
+      // Store the flattened theme as base (with template metadata preserved)
+      baseTheme: {
+        type: 'inline',
+        dsl: flattenedBase,
+        metadata: {
+          templateId: editState.baseThemeOptionSourceMetadata?.templateId,
+          sourceLabel: editState.baseThemeOptionSourceMetadata?.label,
+        },
+      },
       
+      // No edits - the snapshot IS the base
       edits: {
-        neutral: editState.neutralEdits ?? {},
+        neutral: {},
         schemes: {
-          light: { 
-            designer: editState.schemeEdits?.light?.designer ?? {},
-          },
-          dark: { 
-            designer: editState.schemeEdits?.dark?.designer ?? {},
-          },
+          light: { designer: {} },
+          dark: { designer: {} },
         },
         codeOverrides: {
-          source: editState.codeOverridesSource ?? '',
-          dsl: editState.codeOverridesDsl || {},
-          flattened: editState.codeOverridesEdits ?? {},
+          source: '',
+          dsl: {},
+          flattened: {},
         },
       },
       
@@ -58,61 +65,6 @@ export class ThemeSerializer {
       },
       
       checkpointHash: editState.contentHash ?? '',
-    };
-  }
-
-  private serializeBaseTheme(editState: CurrentDesignStore, strategy: SerializationStrategy): ThemeSnapshot['baseTheme'] {
-    const templateId = editState.baseThemeOptionSourceMetadata?.templateId;
-    const baseDsl = this.parseThemeCode(editState.baseThemeOptionSource ?? '{}');
-    
-    if (strategy === 'full' || !templateId) {
-      return {
-        type: 'inline',
-        dsl: baseDsl,
-        metadata: {
-          templateId,
-          sourceLabel: editState.baseThemeOptionSourceMetadata?.label
-        },
-      };
-    }
-    
-    // Delta/hybrid strategy with template reference
-    if (!this.templateRegistry) {
-      console.warn('Template registry not available, falling back to full snapshot');
-      return {
-        type: 'inline',
-        dsl: baseDsl,
-        metadata: {
-          templateId,
-          sourceLabel: editState.baseThemeOptionSourceMetadata?.label,
-        },
-      };
-    }
-    
-    const template = this.templateRegistry.get(templateId);
-    if (!template) {
-      console.warn(`Template ${templateId} not found, using full snapshot`);
-      return {
-        type: 'inline',
-        dsl: baseDsl,
-        metadata: {
-          templateId,
-          sourceLabel: editState.baseThemeOptionSourceMetadata?.label,
-        },
-      };
-    }
-    
-    return {
-      type: 'reference',
-      reference: {
-        templateId,
-        version: template.version ?? '1.0',
-        checksum: this.computeChecksum(template.themeOptions),
-      },
-      metadata: {
-        templateId,
-        sourceLabel: template.label ?? templateId,
-      },
     };
   }
 
@@ -131,15 +83,31 @@ export class ThemeSerializer {
     }
   }
 
-  private computeChecksum(themeOptions: any): string {
-    // Simple hash for template verification
-    const str = JSON.stringify(themeOptions);
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-      const char = str.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
-      hash = hash & hash; // Convert to 32-bit integer
+  private flattenEditsIntoBase(editState: CurrentDesignStore): Record<string, SerializableValue> {
+    // Start with base theme DSL
+    const baseDsl = this.parseThemeCode(editState.baseThemeOptionSource ?? '{}');
+    
+    let result = { ...baseDsl };
+    
+    // Merge neutral edits
+    if (editState.neutralEdits && Object.keys(editState.neutralEdits).length > 0) {
+      const expandedNeutral = expandFlatThemeOptions(editState.neutralEdits);
+      result = deepMerge(result, expandedNeutral) as Record<string, SerializableValue>;
     }
-    return Math.abs(hash).toString(36);
+    
+    // Merge scheme edits (for active scheme)
+    const activeScheme = editState.activeColorScheme ?? 'light';
+    const schemeEdits = editState.schemeEdits?.[activeScheme]?.designer ?? {};
+    if (Object.keys(schemeEdits).length > 0) {
+      const expandedScheme = expandFlatThemeOptions(schemeEdits);
+      result = deepMerge(result, expandedScheme) as Record<string, SerializableValue>;
+    }
+    
+    // Merge code overrides
+    if (editState.codeOverridesDsl && Object.keys(editState.codeOverridesDsl).length > 0) {
+      result = deepMerge(result, editState.codeOverridesDsl) as Record<string, SerializableValue>;
+    }
+    
+    return result;
   }
 }

@@ -10,9 +10,12 @@ import type {
   StorageTransaction,
   ThemeSnapshot,
   ThemeSnapshotMetadata,
+  VersionSnapshot,
+  VersionMetadata,
 } from "../types";
 
 const STORAGE_KEY = "mui-theme-builder-snapshots-v2";
+const VERSIONS_KEY = "mui-theme-builder-versions-v1";
 
 export class MockStorageAdapter implements StorageAdapter {
   private generateId(): string {
@@ -26,6 +29,19 @@ export class MockStorageAdapter implements StorageAdapter {
 
   private async writeAll(snapshots: ThemeSnapshot[]): Promise<void> {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshots));
+  }
+
+  private async readAllVersions(): Promise<VersionSnapshot[]> {
+    const data = localStorage.getItem(VERSIONS_KEY);
+    return data ? JSON.parse(data) : [];
+  }
+
+  private async writeAllVersions(versions: VersionSnapshot[]): Promise<void> {
+    localStorage.setItem(VERSIONS_KEY, JSON.stringify(versions));
+  }
+
+  private generateVersionId(): string {
+    return `version-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
   }
 
   async get(id: string): Promise<ThemeSnapshot | null> {
@@ -150,5 +166,51 @@ export class MockStorageAdapter implements StorageAdapter {
 
   async clear(): Promise<void> {
     localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(VERSIONS_KEY);
+  }
+
+  // Version management
+  async createVersion(parentDesignId: string, snapshot: ThemeSnapshot): Promise<VersionSnapshot> {
+    const versions = await this.readAllVersions();
+    const newVersion: VersionSnapshot = {
+      id: this.generateVersionId(),
+      parentDesignId,
+      snapshot,
+      createdAt: Date.now(),
+    };
+    versions.push(newVersion);
+    await this.writeAllVersions(versions);
+    return newVersion;
+  }
+
+  async listVersions(parentDesignId: string): Promise<VersionMetadata[]> {
+    const versions = await this.readAllVersions();
+    return versions
+      .filter((v) => v.parentDesignId === parentDesignId)
+      .map((v) => ({
+        id: v.id,
+        parentDesignId: v.parentDesignId,
+        createdAt: v.createdAt,
+        title: v.snapshot.title,
+        checkpointHash: v.snapshot.checkpointHash,
+      }))
+      .sort((a, b) => b.createdAt - a.createdAt); // Most recent first
+  }
+
+  async getVersion(versionId: string): Promise<VersionSnapshot | null> {
+    const versions = await this.readAllVersions();
+    return versions.find((v) => v.id === versionId) || null;
+  }
+
+  async deleteVersion(versionId: string): Promise<boolean> {
+    const versions = await this.readAllVersions();
+    const filtered = versions.filter((v) => v.id !== versionId);
+
+    if (filtered.length === versions.length) {
+      return false; // Not found
+    }
+
+    await this.writeAllVersions(filtered);
+    return true;
   }
 }
