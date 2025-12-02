@@ -30,7 +30,7 @@ export default function SaveButton() {
         console.error("Save failed:", err);
       }
     }
-  }, [save, title]);
+  }, [save]);
 
   const handleOverwrite = useCallback(async () => {
     // Keep dialog open until overwrite completes; parent will close on success.

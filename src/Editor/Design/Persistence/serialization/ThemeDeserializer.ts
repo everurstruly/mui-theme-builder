@@ -1,11 +1,5 @@
-/**
- * Theme Deserializer
- * 
- * Pure deserialization - returns EditCommand[] without side effects.
- * Resolves base theme references and generates commands to restore state.
- */
-
-import type { ThemeSnapshot, EditCommand, PersistenceError, ThemeDsl } from '../types';
+import type { ThemeDsl } from "../../compiler";
+import type { ThemeSnapshot, EditCommand, PersistenceError } from '../types';
 
 export class ThemeDeserializer {
   private templateRegistry?: any;
