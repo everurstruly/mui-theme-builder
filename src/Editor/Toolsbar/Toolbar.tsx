@@ -3,7 +3,7 @@ import HistoryButtons from "../Design/Current/HistoryButtons";
 import DesignMobileActionMenu from "./DesignMobileActionMenu";
 import CurrentDesignContext from "../Design/Current/Context";
 import PropertiesPanelHeader from "../Properties/PropertiesPanelHeader";
-import SaveButton from "../Design/Persistence/components/SaveButton";
+import SaveButton from "../Design/Current/Save/SaveButton";
 import LaunchDialogOpenButton from "../Design/Launch/LaunchDialogOpenButton";
 import CollectionDialogButton from "../Design/Persistence/components/CollectionDialogButton";
 import { AppBar, Stack, Divider, Toolbar, type SxProps, Box } from "@mui/material";

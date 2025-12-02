@@ -12,23 +12,21 @@ import {
   DialogContent,
   DialogActions,
   Button,
-  TextField,
   Snackbar,
   Alert,
   type SxProps,
 } from "@mui/material";
+import RenameDialog from "./RenameDialog";
 
 function Context({ sx }: { sx?: SxProps }) {
   const storageStatus = usePersistenceStore((s) => s.status);
   const lastSavedAt = usePersistenceStore((s) => s.lastSavedAt);
   const hasSavedRecently = storageStatus === "idle" && lastSavedAt !== null;
 
-  const { title, rename } = useRename();
+  const { title } = useRename();
   const loadNew = useCurrent((s) => s.loadNew);
-
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [renameDialogOpen, setRenameDialogOpen] = React.useState(false);
-  const [renameFormValue, setRenameFormValue] = React.useState(title);
 
   const [deleteConfirmationDialogOpen, setDeleteConfirmationDialogOpen] =
     React.useState(false);
@@ -46,30 +44,14 @@ function Context({ sx }: { sx?: SxProps }) {
 
   const handleRename = () => {
     setRenameDialogOpen(true);
-    setRenameFormValue(title);
     handleMenuClose();
   };
 
-  const handleRenameConfirm = async () => {
-    const newTitle = renameFormValue || "Untitled";
-    setRenameDialogOpen(false);
-
-    try {
-      const result = await rename(newTitle);
-      if (result.persisted) {
-        setSnack({
-          severity: "success",
-          message: `Renamed and saved as '${result.title}'`,
-        });
-      } else {
-        setSnack({
-          severity: "success",
-          message: `Renamed to '${result.title}' (not yet saved)`,
-        });
-      }
-    } catch (err) {
-      console.error("Failed to rename:", err);
-      setSnack({ severity: "error", message: "Rename failed" });
+  const handleRenameSuccess = (result: { persisted: boolean; title: string }) => {
+    if (result.persisted) {
+      setSnack({ severity: "success", message: `Renamed and saved as '${result.title}'` });
+    } else {
+      setSnack({ severity: "success", message: `Renamed to '${result.title}' (not yet saved)` });
     }
   };
 
@@ -148,36 +130,15 @@ function Context({ sx }: { sx?: SxProps }) {
         </MenuItem>
       </Menu>
 
-      <Dialog
+      <RenameDialog
         open={renameDialogOpen}
         onClose={() => setRenameDialogOpen(false)}
-        maxWidth="xs"
-        fullWidth
-      >
-        <DialogTitle>Rename Current Design</DialogTitle>
-
-        <DialogContent>
-          <TextField
-            fullWidth
-            value={renameFormValue}
-            onChange={(e) => setRenameFormValue(e.target.value)}
-            autoFocus
-            onKeyDown={(e) => {
-              const enterKeyCode = "Enter";
-              if (e.code === enterKeyCode) {
-                handleRenameConfirm();
-              }
-            }}
-          />
-        </DialogContent>
-
-        <DialogActions sx={{ p: 3 }}>
-          <Button onClick={() => setRenameDialogOpen(false)}>Cancel</Button>
-          <Button onClick={handleRenameConfirm} variant="contained">
-            Rename
-          </Button>
-        </DialogActions>
-      </Dialog>
+        initialTitle={title}
+        currentSnapshotId={usePersistenceStore((s) => s.currentSnapshotId)}
+        onSuccess={(res) => {
+          handleRenameSuccess(res);
+        }}
+      />
 
       <Dialog
         open={deleteConfirmationDialogOpen}

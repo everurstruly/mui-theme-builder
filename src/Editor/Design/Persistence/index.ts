@@ -39,11 +39,11 @@ export { useSave, useLoad, useTitleValidation, useCollection } from './hooks';
 export { PersistenceProvider } from './PersistenceProvider';
 
 // Components
-export { default as SaveButton } from './components/SaveButton';
+export { default as SaveButton } from '../Current/Save/SaveButton';
 export { default as CollectionPopoverMenuButton } from './components/CollectionPopoverMenuButton';
 export { default as CollectionDialog } from './components/CollectionDialog';
 export { default as CollectionDialogButton } from './components/CollectionDialogButton';
-export { default as ConfirmOverwriteDialog } from './components/ConfirmOverwriteDialog';
+export { default as ConfirmOverwriteDialog } from '../Current/Save/SaveConflictDialog';
 
 // Serialization
 export { ThemeSerializer } from './serialization/ThemeSerializer';

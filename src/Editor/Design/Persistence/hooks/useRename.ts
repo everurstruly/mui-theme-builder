@@ -69,14 +69,16 @@ export function useRename() {
    * If the design is unsaved, just updates the in-memory title.
    */
   const rename = useCallback(
-    async (newTitle: string) => {
+    async (newTitle: string, options?: { force?: boolean }) => {
       console.debug('[useRename] rename -> setTitle', newTitle);
       setTitle(newTitle);
 
       // If this is a saved design, persist the rename immediately
       if (isSavedDesign) {
         console.debug('[useRename] saving persisted title', newTitle);
-        await save({ title: newTitle, onConflict: "overwrite" });
+        const saveArgs: any = { title: newTitle };
+        if (options?.force) saveArgs.onConflict = "overwrite";
+        await save(saveArgs);
         console.debug('[useRename] save completed for', newTitle);
         return { persisted: true, title: newTitle };
       }
