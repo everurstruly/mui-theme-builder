@@ -9,6 +9,7 @@
  *   await migrateStorageToPersistence();
  */
 
+import { deepMerge, expandFlatThemeOptions } from "../compiler";
 import type { ThemeSnapshot } from './types';
 
 // Old Storage format type (defined here since Storage module is deleted)
@@ -111,9 +112,6 @@ function convertOldToNew(old: SavedToStorageDesign): ThemeSnapshot {
   let flattenedBase = { ...baseDsl };
   
   if (old.session) {
-    // Import utilities for merging
-    const { deepMerge, expandFlatThemeOptions } = require('../compiler/utilities/objectOps');
-    
     // Merge neutral edits
     if (old.session.neutralEdits && Object.keys(old.session.neutralEdits).length > 0) {
       const expandedNeutral = expandFlatThemeOptions(old.session.neutralEdits);
