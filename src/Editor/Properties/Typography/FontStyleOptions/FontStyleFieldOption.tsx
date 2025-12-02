@@ -1,6 +1,6 @@
 import { Typography, TextField, ListItem, Stack } from "@mui/material";
 import OptionListItemResetButton from "../../OptionListItemResetButton";
-import useEditProperty from "../../../Design/Current/useEditProperty";
+import useEditProperty from "../../../Design/Current/Modify/useEditProperty";
 
 export type FontStyleFieldOptionProps = {
   name: string;

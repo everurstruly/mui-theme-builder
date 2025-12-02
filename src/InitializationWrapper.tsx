@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import {
   getMigrationStatus,
   migrateStorageToPersistence,
-} from "./Editor/Design/Persistence/migrationScript";
+} from "./Editor/Design/storage/migrationScript";
 
 export function InitializationWrapper({ children }: { children: React.ReactNode }) {
   useEffect(() => {

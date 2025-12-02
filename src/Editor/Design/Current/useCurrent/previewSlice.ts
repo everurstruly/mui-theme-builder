@@ -1,6 +1,5 @@
 import type { StateCreator } from "zustand";
-import type { CurrentDesignPreviewSlice } from "./types";
-import type { CurrentDesignStore } from ".";
+import type { CurrentDesignPreviewSlice, CurrentDesignStore } from "./types";
 
 export const createPreviewSlice: StateCreator<
   CurrentDesignStore,

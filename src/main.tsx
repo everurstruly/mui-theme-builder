@@ -16,7 +16,7 @@ import {
   ThemeProvider,
 } from "@mui/material";
 import EditorGlobalKeyboardShortcuts from "./Editor/Properties/KeyboardShortcuts";
-import { PersistenceProvider } from "./Editor/Design/Persistence";
+import { StorageProvider } from "./Editor/Design/storage";
 import { InitializationWrapper } from "./InitializationWrapper";
 
 createRoot(document.getElementById("root")!).render(
@@ -98,7 +98,7 @@ createRoot(document.getElementById("root")!).render(
       )}
     >
       <CssBaseline />
-      <PersistenceProvider>
+      <StorageProvider>
         <InitializationWrapper>
           <EditorGlobalKeyboardShortcuts />
           <BrowserRouter>
@@ -110,7 +110,7 @@ createRoot(document.getElementById("root")!).render(
             </Routes>
           </BrowserRouter>
         </InitializationWrapper>
-      </PersistenceProvider>
+      </StorageProvider>
     </ThemeProvider>
   </StrictMode>
 );

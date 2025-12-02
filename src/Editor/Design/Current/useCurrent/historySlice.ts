@@ -1,5 +1,5 @@
 import type { StateCreator } from "zustand";
-import type { CurrentDesignStore } from ".";
+import type { CurrentDesignStore } from "./types";
 import type {
   CurrentDesignHistorySlice,
   HistoryPatch,

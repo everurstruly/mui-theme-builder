@@ -3,7 +3,7 @@ import { useCallback } from "react";
 import FontFamilyOptionInput from "./FontFamilyOptionInput";
 import OptionListItemResetButton from "../../OptionListItemResetButton";
 import useDesignCreatedTheme from "../../../Design/Current/useCreatedTheme";
-import useEditProperty from "../../../Design/Current/useEditProperty";
+import useEditProperty from "../../../Design/Current/Modify/useEditProperty";
 import useCurrent from "../../../Design/Current/useCurrent";
 
 export type FontFamilyOptionProps = {

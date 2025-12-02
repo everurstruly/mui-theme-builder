@@ -1,11 +1,11 @@
 import SaveConflictDialog from "./SaveConflictDialog";
 import { Button, Box } from "@mui/material";
 import { useState, useCallback, useEffect } from "react";
-import { useSave } from "../../Persistence";
-import { useRename } from "../../Persistence/hooks";
+import { useTitle } from "../Modify/useTitle";
+import { useSave } from "./useSave";
 
 export default function SaveButton() {
-  const { title, checkTitle, conflict, isChecking } = useRename();
+  const { title, checkTitle, conflict, isChecking } = useTitle();
   const { save, status, canSave, isDirty } = useSave();
   const [showConflictDialog, setShowConflictDialog] = useState(false);
   const [conflictError, setConflictError] = useState<string | null>(null);

@@ -2,21 +2,15 @@ import { create } from "zustand";
 import { createEditSlice } from "./editSlice";
 import { createPreviewSlice } from "./previewSlice";
 import { createHistorySlice } from "./historySlice";
-import type {
-  CurrentDesignHistorySlice,
-  CurrentDesignPreviewSlice,
-  CurrentDesignEditStore,
-} from "./types";
-
-export type CurrentDesignStore = CurrentDesignEditStore &
-  CurrentDesignPreviewSlice &
-  CurrentDesignHistorySlice;
+import { createPersistenceSlice } from "./persistenceSlice";
+import type { CurrentDesignStore } from "./types";
 
 export const useCurrent = create<CurrentDesignStore>()((...a) => {
   return {
     ...createEditSlice(...a),
     ...createPreviewSlice(...a),
     ...createHistorySlice(...a),
+    ...createPersistenceSlice(...a),
   };
 });
 

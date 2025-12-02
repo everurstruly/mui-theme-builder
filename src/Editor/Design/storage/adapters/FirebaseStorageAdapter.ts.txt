@@ -1,0 +1,354 @@
+/**
+ * Firebase Storage Adapter
+ * 
+ * Firestore-based implementation for production use.
+ * Supports real-time sync, offline persistence, and scalable storage.
+ * 
+ * Setup:
+ * 1. Install: pnpm add firebase
+ * 2. Initialize Firebase in your app
+ * 3. Pass Firestore instance to constructor
+ * 
+ * @example
+ * import { initializeApp } from 'firebase/app';
+ * import { getFirestore } from 'firebase/firestore';
+ * 
+ * const app = initializeApp(firebaseConfig);
+ * const db = getFirestore(app);
+ * const adapter = new FirebaseStorageAdapter(db, 'user-123');
+ */
+
+import type {
+  Firestore,
+  CollectionReference,
+  DocumentReference,
+  QueryConstraint,
+} from 'firebase/firestore';
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  setDoc,
+  updateDoc,
+  deleteDoc,
+  query,
+  where,
+  orderBy,
+  limit as firestoreLimit,
+  writeBatch,
+  serverTimestamp,
+  Timestamp,
+} from 'firebase/firestore';
+import type {
+  StorageAdapter,
+  StorageTransaction,
+  ThemeSnapshot,
+  ThemeSnapshotMetadata,
+} from '../types';
+
+interface FirestoreThemeSnapshot extends Omit<ThemeSnapshot, 'createdAt' | 'updatedAt'> {
+  createdAt: Timestamp;
+  updatedAt?: Timestamp;
+  userId: string; // For multi-user support
+}
+
+export class FirebaseStorageAdapter implements StorageAdapter {
+  private db: Firestore;
+  private collectionPath: string;
+  private userId: string;
+
+  /**
+   * @param db - Firestore instance
+   * @param userId - User ID for data isolation (optional, defaults to 'anonymous')
+   * @param collectionPath - Custom collection path (optional, defaults to 'theme-snapshots')
+   */
+  constructor(
+    db: Firestore,
+    userId: string = 'anonymous',
+    collectionPath: string = 'theme-snapshots'
+  ) {
+    this.db = db;
+    this.userId = userId;
+    this.collectionPath = collectionPath;
+  }
+
+  private getCollectionRef(): CollectionReference {
+    return collection(this.db, this.collectionPath);
+  }
+
+  private getDocRef(id: string): DocumentReference {
+    return doc(this.db, this.collectionPath, id);
+  }
+
+  private generateId(): string {
+    return `snapshot-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+  }
+
+  private toFirestore(snapshot: ThemeSnapshot): FirestoreThemeSnapshot {
+    return {
+      ...snapshot,
+      createdAt: Timestamp.fromMillis(snapshot.createdAt),
+      updatedAt: snapshot.updatedAt ? Timestamp.fromMillis(snapshot.updatedAt) : undefined,
+      userId: this.userId,
+    };
+  }
+
+  private fromFirestore(doc: FirestoreThemeSnapshot): ThemeSnapshot {
+    return {
+      ...doc,
+      createdAt: doc.createdAt.toMillis(),
+      updatedAt: doc.updatedAt?.toMillis(),
+    };
+  }
+
+  async get(id: string): Promise<ThemeSnapshot | null> {
+    const docRef = this.getDocRef(id);
+    const docSnap = await getDoc(docRef);
+
+    if (!docSnap.exists()) {
+      return null;
+    }
+
+    const data = docSnap.data() as FirestoreThemeSnapshot;
+    
+    // Check user ownership
+    if (data.userId !== this.userId) {
+      return null;
+    }
+
+    return this.fromFirestore(data);
+  }
+
+  async create(
+    snapshot: Omit<ThemeSnapshot, 'id' | 'createdAt'>
+  ): Promise<ThemeSnapshot> {
+    const id = this.generateId();
+    const now = Date.now();
+    
+    const newSnapshot: ThemeSnapshot = {
+      ...snapshot,
+      id,
+      createdAt: now,
+      updatedAt: now,
+    };
+
+    const docRef = this.getDocRef(id);
+    await setDoc(docRef, this.toFirestore(newSnapshot));
+
+    return newSnapshot;
+  }
+
+  async update(
+    id: string,
+    partial: Partial<ThemeSnapshot>
+  ): Promise<ThemeSnapshot> {
+    const docRef = this.getDocRef(id);
+    const docSnap = await getDoc(docRef);
+
+    if (!docSnap.exists()) {
+      throw new Error(`Snapshot ${id} not found`);
+    }
+
+    const existing = docSnap.data() as FirestoreThemeSnapshot;
+
+    // Check user ownership
+    if (existing.userId !== this.userId) {
+      throw new Error(`Unauthorized: Snapshot ${id} belongs to another user`);
+    }
+
+    // Check for title conflicts if title is being updated
+    if (partial.title && partial.title !== existing.title) {
+      const conflicts = await this.findByTitle(partial.title);
+      const hasConflict = conflicts.some(s => s.id !== id);
+      
+      if (hasConflict) {
+        throw new Error(`Title "${partial.title}" already exists`);
+      }
+    }
+
+    const updated: ThemeSnapshot = {
+      ...this.fromFirestore(existing),
+      ...partial,
+      id, // Ensure ID doesn't change
+      updatedAt: Date.now(),
+    };
+
+    await updateDoc(docRef, this.toFirestore(updated) as any);
+    return updated;
+  }
+
+  async delete(id: string): Promise<boolean> {
+    const docRef = this.getDocRef(id);
+    const docSnap = await getDoc(docRef);
+
+    if (!docSnap.exists()) {
+      return false;
+    }
+
+    const data = docSnap.data() as FirestoreThemeSnapshot;
+
+    // Check user ownership
+    if (data.userId !== this.userId) {
+      throw new Error(`Unauthorized: Snapshot ${id} belongs to another user`);
+    }
+
+    await deleteDoc(docRef);
+    return true;
+  }
+
+  async list(): Promise<ThemeSnapshotMetadata[]> {
+    const q = query(
+      this.getCollectionRef(),
+      where('userId', '==', this.userId),
+      orderBy('updatedAt', 'desc')
+    );
+
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => {
+      const data = doc.data() as FirestoreThemeSnapshot;
+      return {
+        id: data.id,
+        title: data.title,
+        createdAt: data.createdAt.toMillis(),
+        updatedAt: data.updatedAt?.toMillis(),
+        strategy: data.strategy,
+        checkpointHash: data.checkpointHash,
+      };
+    });
+  }
+
+  async exists(id: string): Promise<boolean> {
+    const docRef = this.getDocRef(id);
+    const docSnap = await getDoc(docRef);
+    
+    if (!docSnap.exists()) {
+      return false;
+    }
+
+    const data = docSnap.data() as FirestoreThemeSnapshot;
+    return data.userId === this.userId;
+  }
+
+  async findByTitle(title: string): Promise<ThemeSnapshotMetadata[]> {
+    const titleLower = title.toLowerCase();
+    const q = query(
+      this.getCollectionRef(),
+      where('userId', '==', this.userId),
+      where('title', '>=', title),
+      where('title', '<=', title + '\uf8ff')
+    );
+
+    const querySnapshot = await getDocs(q);
+    const results = querySnapshot.docs
+      .map(doc => {
+        const data = doc.data() as FirestoreThemeSnapshot;
+        return {
+          id: data.id,
+          title: data.title,
+          createdAt: data.createdAt.toMillis(),
+          updatedAt: data.updatedAt?.toMillis(),
+          strategy: data.strategy,
+          checkpointHash: data.checkpointHash,
+        };
+      })
+      .filter(snapshot => snapshot.title.toLowerCase() === titleLower);
+
+    return results;
+  }
+
+  async count(): Promise<number> {
+    const q = query(
+      this.getCollectionRef(),
+      where('userId', '==', this.userId)
+    );
+
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.size;
+  }
+
+  async transaction<T>(
+    callback: (tx: StorageTransaction) => Promise<T>
+  ): Promise<T> {
+    // Firebase batch operations
+    const batch = writeBatch(this.db);
+    const cache = new Map<string, ThemeSnapshot>();
+
+    const tx: StorageTransaction = {
+      get: async (id: string) => {
+        if (cache.has(id)) {
+          return cache.get(id)!;
+        }
+        const snapshot = await this.get(id);
+        if (snapshot) {
+          cache.set(id, snapshot);
+        }
+        return snapshot;
+      },
+
+      create: async (snapshot: Omit<ThemeSnapshot, 'id' | 'createdAt'>) => {
+        const id = this.generateId();
+        const now = Date.now();
+        const newSnapshot: ThemeSnapshot = {
+          ...snapshot,
+          id,
+          createdAt: now,
+          updatedAt: now,
+        };
+        
+        const docRef = this.getDocRef(id);
+        batch.set(docRef, this.toFirestore(newSnapshot));
+        cache.set(id, newSnapshot);
+        
+        return newSnapshot;
+      },
+
+      update: async (id: string, partial: Partial<ThemeSnapshot>) => {
+        const existing = cache.get(id) || await this.get(id);
+        if (!existing) {
+          throw new Error(`Snapshot ${id} not found`);
+        }
+
+        const updated: ThemeSnapshot = {
+          ...existing,
+          ...partial,
+          id,
+          updatedAt: Date.now(),
+        };
+
+        const docRef = this.getDocRef(id);
+        batch.update(docRef, this.toFirestore(updated) as any);
+        cache.set(id, updated);
+
+        return updated;
+      },
+
+      delete: async (id: string) => {
+        const docRef = this.getDocRef(id);
+        batch.delete(docRef);
+        cache.delete(id);
+        return true;
+      },
+    };
+
+    const result = await callback(tx);
+    await batch.commit();
+    return result;
+  }
+
+  async clear(): Promise<void> {
+    const q = query(
+      this.getCollectionRef(),
+      where('userId', '==', this.userId)
+    );
+
+    const querySnapshot = await getDocs(q);
+    const batch = writeBatch(this.db);
+
+    querySnapshot.docs.forEach(doc => {
+      batch.delete(doc.ref);
+    });
+
+    await batch.commit();
+  }
+}

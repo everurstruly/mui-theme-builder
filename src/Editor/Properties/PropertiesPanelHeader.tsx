@@ -1,4 +1,4 @@
-import ColorSchemeToggle from "../Design/Current/ColorSchemeToggle";
+import ColorSchemeToggle from "../Design/Current/Modify/ColorSchemeToggle";
 import EditorExperienceTab from "../ExperienceTab";
 import { Box, Stack, type SxProps, type Theme } from "@mui/material";
 

@@ -1,9 +1,9 @@
 import EditorCanvas from "./Canvas/Canvas";
-import EditorToolsbar from "./Toolsbar/Toolbar";
+import EditorToolsbar from "./Toolbar/Toolbar";
 import EditorPropertiesPanel from "./Properties/PropertiesPanel";
 import EditorExplorerPanel from "./Explorer/ExplorerPanel";
 import { GlobalStyles, Paper, Stack } from "@mui/material";
-import LaunchDialogContainer from "./Design/Launch/LaunchDialog";
+import LaunchDialogContainer from "./Design/New/LaunchDialog";
 
 export default function Editor() {
   return (

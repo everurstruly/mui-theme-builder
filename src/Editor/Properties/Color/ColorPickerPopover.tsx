@@ -1,12 +1,12 @@
 import { Popover } from "@mui/material";
-import { Sketch } from "@uiw/react-color";
+import { Sketch, type ColorResult } from "@uiw/react-color";
 
 type Props = {
   open: boolean;
   anchorEl: HTMLElement | null;
   onClose: () => void;
   color?: string;
-  onChange: (c: { hex: string }) => void;
+  onChange: (c: ColorResult) => void;
 };
 
 export default function ColorPickerPopover({

@@ -7,7 +7,7 @@ import type {
 } from "./types";
 import templatesRegistry from "../../../Templates/registry";
 import { createAddPatch, createRemovePatch } from "./historySlice";
-import type { CurrentDesignStore } from ".";
+import type { CurrentDesignStore } from "./types";
 
 export const createEditSlice: StateCreator<
   CurrentDesignStore,
@@ -366,6 +366,63 @@ export const createEditSlice: StateCreator<
     });
   },
 
+  hydrate: (snapshot, options = {}) => {
+    set((state) => {
+      // Resolve base theme DSL
+      let baseDsl = snapshot.baseTheme.type === 'inline' 
+        ? snapshot.baseTheme.dsl 
+        : {};
+      const baseMetadata = snapshot.baseTheme.metadata;
+
+      // If reference type, resolve from template registry
+      if (snapshot.baseTheme.type === 'reference') {
+        const templateId = snapshot.baseTheme.reference.templateId;
+        const template = templatesRegistry[templateId];
+        if (template) {
+          baseDsl = JSON.parse(serializeThemeOptions(template.themeOptions));
+        }
+      }
+
+      const baseThemeSource = sortedStringify(baseDsl);
+
+      // Build new state
+      const newState: Partial<CurrentDesignEditStore> = {
+        title: snapshot.title,
+        baseThemeOptionSource: baseThemeSource,
+        baseThemeOptionSourceMetadata: {
+          templateId: baseMetadata.templateId,
+          createdAtTimestamp: snapshot.createdAt,
+          lastModifiedTimestamp: snapshot.updatedAt ?? snapshot.createdAt,
+        },
+        neutralEdits: snapshot.edits.neutral,
+        schemeEdits: snapshot.edits.schemes,
+        codeOverridesSource: snapshot.edits.codeOverrides.source,
+        codeOverridesDsl: snapshot.edits.codeOverrides.dsl,
+        codeOverridesEdits: snapshot.edits.codeOverrides.flattened,
+        codeOverridesError: null,
+      };
+
+      // Compute content hash based on hydrated state
+      const contentHash = computeContentHash({ ...state, ...newState });
+
+      // Only set checkpoint if this is a saved design (has persistenceSnapshotId)
+      // Otherwise leave checkpoint null so design shows as unsaved
+      const checkpointHash = options.isSaved ? contentHash : null;
+
+      return {
+        ...newState,
+        contentHash,
+        checkpointHash,
+        modificationTimestamps: {},
+        // Clear undo/redo history - loading a saved design starts a fresh editing session
+        visualHistoryPast: [],
+        visualHistoryFuture: [],
+        codeHistoryPast: [],
+        codeHistoryFuture: [],
+      };
+    });
+  },
+
   loadNew: (themeCodeOrDsl, metadata) => {
     // If caller doesn't provide a theme, store will use its internal default.
     const codeString = themeCodeOrDsl
@@ -406,8 +463,8 @@ export const createEditSlice: StateCreator<
           loadNew: Date.now(),
         },
         // Clear undo/redo history so previous design's edits don't carry over
-        designerHistoryPast: [],
-        designerHistoryFuture: [],
+        visualHistoryPast: [],
+        visualHistoryFuture: [],
         codeHistoryPast: [],
         codeHistoryFuture: [],
       };

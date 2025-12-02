@@ -2,7 +2,7 @@ import { memo, useCallback } from "react";
 import { ListItem, Typography, Stack } from "@mui/material";
 import FontWeightOptionInput from "./FontWeightOptionInput";
 import OptionListItemResetButton from "../../OptionListItemResetButton";
-import useEditProperty from "../../../Design/Current/useEditProperty";
+import useEditProperty from "../../../Design/Current/Modify/useEditProperty";
 
 export type FontWeightOptionProps = {
   disabled?: boolean;
