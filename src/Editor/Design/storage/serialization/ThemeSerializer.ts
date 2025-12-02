@@ -16,7 +16,7 @@ interface SerializeOptions {
 }
 
 export class ThemeSerializer {
-  constructor(_templateRegistry?: any) {
+  constructor() {
     // Template registry not used in flattened snapshot approach
   }
 

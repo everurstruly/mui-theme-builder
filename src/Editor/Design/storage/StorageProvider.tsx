@@ -10,12 +10,12 @@ import { migrateStorageToPersistence } from "./migrationScript";
  */
 
 export function StorageProvider({
-  children, adapter, serializer, templateRegistry,
+  children, adapter, serializer,
 }: StorageProviderProps) {
   // Use provided dependencies or create defaults
   const deps: StorageDependencies = {
     adapter: adapter ?? new MockStorageAdapter(),
-    serializer: serializer ?? new ThemeSerializer(templateRegistry),
+    serializer: serializer ?? new ThemeSerializer(),
   };
 
   // Run migration silently on mount
