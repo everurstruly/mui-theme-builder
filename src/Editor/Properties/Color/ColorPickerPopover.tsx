@@ -5,11 +5,17 @@ type Props = {
   open: boolean;
   anchorEl: HTMLElement | null;
   onClose: () => void;
-  color: string;
-  onChange: (c: any) => void;
+  color?: string;
+  onChange: (c: { hex: string }) => void;
 };
 
-export default function ColorPickerPopover({ open, anchorEl, onClose, color, onChange }: Props) {
+export default function ColorPickerPopover({
+  open,
+  anchorEl,
+  onClose,
+  color,
+  onChange,
+}: Props) {
   return (
     <Popover
       open={open}

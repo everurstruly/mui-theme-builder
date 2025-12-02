@@ -71,9 +71,7 @@ export default function DynamicResourceGeneratorFab({
             <Fab
               variant={activeFab.variant}
               aria-label={activeFab.label}
-              color={
-                shouldUseCustomBg ? ("inherit" as any) : (activeFab.color as any)
-              }
+              color={shouldUseCustomBg ? "inherit" : activeFab.color}
               size="medium"
               sx={[
                 {
@@ -83,7 +81,7 @@ export default function DynamicResourceGeneratorFab({
                       ? "100%"
                       : undefined,
                 },
-                (activeFab.sx as any) || {},
+                ...(Array.isArray(activeFab.sx) ? activeFab.sx : [activeFab.sx]),
               ]}
             >
               {activeFab.icon}

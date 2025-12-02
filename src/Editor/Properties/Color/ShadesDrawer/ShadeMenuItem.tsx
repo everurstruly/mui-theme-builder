@@ -128,8 +128,8 @@ export default function ShadeListItem({ title, path }: ShadesListItemProps) {
           open={open}
           anchorEl={anchorEl}
           onClose={handleClosePicker}
-          color={(transientColor || (value as string)) as string}
-          onChange={(c) => setTransientColor((c as any).hex ?? (c as any).hex)}
+          color={transientColor || `${value}`}
+          onChange={(c) => setTransientColor(c.hex)}
         />
       </Box>
     </ListItem>

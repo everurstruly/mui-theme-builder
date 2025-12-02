@@ -7,7 +7,7 @@ export function createMuiThemeCompleter(muiThemeCompletions: any) {
   return () => (context: CompletionContext) => {
     const word = context.matchBefore(/\w*/);
     if (!word || (word.from === word.to && !context.explicit)) return null;
-    return { from: word.from, options: muiThemeCompletions } as any;
+    return { from: word.from, options: muiThemeCompletions };
   };
 }
 

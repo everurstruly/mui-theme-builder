@@ -1,6 +1,6 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
+import Button, { type ButtonProps } from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
@@ -26,7 +26,7 @@ const tiers = [
     ],
     buttonText: "Let's Work Together",
     buttonVariant: "contained",
-    buttonColor: "secondary",
+    buttonColor: "secondary" as ButtonProps["color"],
     buttonAriaLabel: "Hire me for custom design and development work",
     microcopy: "Available for Work",
   },
@@ -43,7 +43,7 @@ const tiers = [
     ],
     buttonText: "Start Customizing",
     buttonVariant: "outlined",
-    buttonColor: "primary",
+    buttonColor: "primary" as ButtonProps["color"],
     buttonAriaLabel: "Explore free open-source projects and tools",
     microcopy: "No sign-up. No tracking. No idea who you are.",
     highlighted: true,
@@ -59,7 +59,7 @@ const tiers = [
     ],
     buttonText: "via $BTC",
     buttonVariant: "outlined",
-    buttonColor: "warning",
+    buttonColor: "warning" as ButtonProps["color"],
     buttonAriaLabel: "Sponsor open-source development via Bitcoin",
     microcopy: "Keep the tools light on!",
   },
@@ -68,6 +68,7 @@ const tiers = [
 export default function PricingSatire() {
   const [sponsorOpen, setSponsorOpen] = React.useState(false);
   const sponsorAddress = "bc1...REPLACE_ME";
+
   return (
     <Container
       id="pricing"
@@ -112,29 +113,28 @@ export default function PricingSatire() {
             key={tier.title}
           >
             <Card
-              sx={(theme) => {
-                const base = {
+              sx={[
+                () => ({
                   p: 2,
                   display: "flex",
                   flexDirection: "column",
                   gap: 4,
                   height: "100%",
-                };
-                if (!tier.highlighted) return base;
-                return {
-                  ...base,
-                  border: "none",
-                  background:
-                    "radial-gradient(circle at 50% 0%, hsl(220, 20%, 35%), hsl(220, 30%, 6%))",
-                  boxShadow: `0 8px 12px hsla(220, 20%, 42%, 0.2)`,
-                  // use optional chaining / unknown cast to avoid Theme typing issues if applyStyles isn't present
-                  ...(theme as any)?.applyStyles?.("dark", {
+                  border: tier.highlighted ? "none" : undefined,
+                  background: tier.highlighted
+                    ? "radial-gradient(circle at 50% 0%, hsl(220, 20%, 35%), hsl(220, 30%, 6%))"
+                    : undefined,
+                  boxShadow: tier.highlighted
+                    ? `0 8px 12px hsla(220, 20%, 42%, 0.2)`
+                    : undefined,
+                }),
+                (theme) =>
+                  theme?.applyStyles?.("dark", {
                     background:
                       "radial-gradient(circle at 50% 0%, hsl(220, 20%, 20%), hsl(220, 30%, 16%))",
                     boxShadow: `0 8px 12px hsla(0, 0%, 0%, 0.8)`,
                   }),
-                };
-              }}
+              ]}
             >
               <CardContent sx={{ flexGrow: 1 }}>
                 <Box
@@ -221,7 +221,7 @@ export default function PricingSatire() {
                       <Button
                         sx={{ flexGrow: 1 }}
                         variant={tier.buttonVariant as "outlined" | "contained"}
-                        color={tier.buttonColor as any}
+                        color={tier.buttonColor}
                         aria-label={tier.buttonAriaLabel}
                         onClick={() => setSponsorOpen(true)}
                         aria-haspopup="dialog"
