@@ -20,6 +20,10 @@ import {
   Stack,
   Button,
 } from "@mui/material";
+import useEditor from "../useEditor";
+import useCurrent from "../Design/Current/useCurrent";
+import { useSave } from "../Design/Current/Save/useSave";
+import useExportOptions from "../Design/Current/Export/useExportOptions";
 
 export default function DesignMobileActionMenu() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -43,7 +47,7 @@ export default function DesignMobileActionMenu() {
         flexShrink={0}
         columnGap={1.5}
         sx={{
-          mx: 1.5,
+          mx: 1,
         }}
       >
         <HistoryButtons />
@@ -76,47 +80,104 @@ export default function DesignMobileActionMenu() {
           },
         }}
       >
-        <MenuItem dense onClick={handleCloseMenu}>
-          <ListItemIcon>
-            <RedoOutlined fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Redo</ListItemText>
-          <Typography variant="body2" sx={{ color: "text.secondary" }}>
-            ⌘Y
-          </Typography>
-        </MenuItem>
-
-        <MenuItem dense onClick={handleCloseMenu}>
-          <ListItemIcon>
-            <UndoOutlined fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Undo</ListItemText>
-          <Typography variant="body2" sx={{ color: "text.secondary" }}>
-            ⌘Z
-          </Typography>
-        </MenuItem>
-
-        <MenuItem dense onClick={handleCloseMenu}>
-          <ListItemIcon>
-            <SaveOutlined fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Save</ListItemText>
-          <Typography variant="body2" sx={{ color: "text.secondary" }}>
-            ⌘S
-          </Typography>
-        </MenuItem>
-
-        <Divider />
-
-        <MenuItem dense onClick={handleCloseMenu} sx={{ minWidth: "200px" }}>
-          <ListItemIcon>
-            <ContentCopy color="secondary" fontSize="small" />
-          </ListItemIcon>
-          <Typography color="secondary" fontSize={"small"}>
-            Export Theme
-          </Typography>
-        </MenuItem>
+        <MobileMenuContent
+          onClose={handleCloseMenu}
+        />
       </Menu>
+    </>
+  );
+}
+
+function MobileMenuContent({ onClose }: { onClose: () => void }) {
+  const selected = useEditor((s) => s.selectedExperience);
+
+  const undoVisual = useCurrent((s) => s.undoVisualToolEdit);
+  const redoVisual = useCurrent((s) => s.redoVisualToolEdit);
+  const undoCode = useCurrent((s) => s.undoCodeOverride);
+  const redoCode = useCurrent((s) => s.redoCodeOverride);
+
+  const canUndoVisual = useCurrent((s) => s.visualHistoryPast.length > 0);
+  const canRedoVisual = useCurrent((s) => s.visualHistoryFuture.length > 0);
+  const canUndoCode = useCurrent((s) => s.codeHistoryPast.length > 0);
+  const canRedoCode = useCurrent((s) => s.codeHistoryFuture.length > 0);
+
+  const { save, canSave } = useSave();
+  const setExportOpened = useExportOptions((s) => s.setOpened);
+
+  const isCodeExperience = selected === "developer";
+  const canUndo = isCodeExperience ? canUndoCode : canUndoVisual;
+  const canRedo = isCodeExperience ? canRedoCode : canRedoVisual;
+
+  const handleUndo = async () => {
+    onClose();
+    if (isCodeExperience) return undoCode();
+    return undoVisual();
+  };
+
+  const handleRedo = async () => {
+    onClose();
+    if (isCodeExperience) return redoCode();
+    return redoVisual();
+  };
+
+  const handleSave = async () => {
+    onClose();
+    if (canSave) {
+      try {
+        await save();
+      } catch {
+        /* ignore save errors here; UI will surface them */
+      }
+    }
+  };
+
+  const handleExport = () => {
+    onClose();
+    setExportOpened(true);
+  };
+
+  return (
+    <>
+      <MenuItem dense onClick={handleRedo} disabled={!canRedo}>
+        <ListItemIcon>
+          <RedoOutlined fontSize="small" />
+        </ListItemIcon>
+        <ListItemText>Redo</ListItemText>
+        <Typography variant="body2" sx={{ color: "text.secondary" }}>
+          ⌘Y
+        </Typography>
+      </MenuItem>
+
+      <MenuItem dense onClick={handleUndo} disabled={!canUndo}>
+        <ListItemIcon>
+          <UndoOutlined fontSize="small" />
+        </ListItemIcon>
+        <ListItemText>Undo</ListItemText>
+        <Typography variant="body2" sx={{ color: "text.secondary" }}>
+          ⌘Z
+        </Typography>
+      </MenuItem>
+
+      <MenuItem dense onClick={handleSave} disabled={!canSave}>
+        <ListItemIcon>
+          <SaveOutlined fontSize="small" />
+        </ListItemIcon>
+        <ListItemText>Save</ListItemText>
+        <Typography variant="body2" sx={{ color: "text.secondary" }}>
+          ⌘S
+        </Typography>
+      </MenuItem>
+
+      <Divider />
+
+      <MenuItem dense onClick={handleExport} sx={{ minWidth: "200px" }}>
+        <ListItemIcon>
+          <ContentCopy color="secondary" fontSize="small" />
+        </ListItemIcon>
+        <Typography color="secondary" fontSize={"small"}>
+          Export Theme
+        </Typography>
+      </MenuItem>
     </>
   );
 }
