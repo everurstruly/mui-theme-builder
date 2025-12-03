@@ -1,6 +1,7 @@
 import useCurrent from "./Design/Current/useCurrent";
 import useExportOptions from "./Design/Current/Export/useExportOptions";
 import useEditor from "./useEditor";
+import { useLaunchDialog } from "./Design/New/useLaunchDialog";
 import { useTemplateSelection } from "./Design/New/Template/useTemplateSelection";
 import useDelete from "./Design/Current/Modify/useDelete";
 import { useEffect } from "react";
@@ -27,6 +28,7 @@ export default function EditorGlobalKeyboardShortcuts() {
   const showPanel = useEditor((s) => s.showPanel);
   const toggleFullpage = useEditor((s) => s.toggleFullpage);
   const { next: nextTemplate, prev: prevTemplate } = useTemplateSelection();
+  const openLaunchDialog = useLaunchDialog((s) => s.open);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -61,11 +63,11 @@ export default function EditorGlobalKeyboardShortcuts() {
       }
 
       // Intercept print shortcut (Ctrl/Cmd + p) to open the export dialog
-      // if (isMod && e.key.toLowerCase() === "p") {
-      //   e.preventDefault();
-      //   setExportOpened(true);
-      //   return;
-      // }
+      if (onlyCtrlOrCmd && e.key.toLowerCase() === "p") {
+        e.preventDefault();
+        setExportOpened(true);
+        return;
+      }
 
       // Rename: F2 (no modifiers)
       if (noModifiers && e.key === "F2") {
@@ -121,6 +123,13 @@ export default function EditorGlobalKeyboardShortcuts() {
         return;
       }
 
+      // Open launch dialog: `n` (no modifiers)
+      if (noModifiers && e.key.toLowerCase() === "n") {
+        e.preventDefault();
+        openLaunchDialog();
+        return;
+      }
+
       // Undo/Redo: Ctrl/Cmd+Z (Shift for Redo). Alt disables.
       if (ctrlOrCmdAllowShift && e.key.toLowerCase() === "z") {
         e.preventDefault();
@@ -147,6 +156,7 @@ export default function EditorGlobalKeyboardShortcuts() {
     setCollectionOpened,
     save,
     canSave,
+    openLaunchDialog,
     setRenameDialogOpen,
     canDelete,
     setDeleteConfirmationDialogOpen,
