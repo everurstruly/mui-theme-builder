@@ -9,6 +9,8 @@ export default function ExplorerPanelBody() {
 
   const hiddenPanels = useEditor((s) => s.hiddenPanels);
   const isVisible = !hiddenPanels.includes("explorer");
+  const keyboardFocusRequest = useEditor((s) => s.keyboardFocusRequest);
+  const clearKeyboardFocusRequest = useEditor((s) => s.clearKeyboardFocusRequest);
 
   React.useEffect(() => {
     // Only run focus logic when the explorer panel is visible
@@ -18,6 +20,11 @@ export default function ExplorerPanelBody() {
         window.clearTimeout(focusTimeoutRef.current);
         focusTimeoutRef.current = null;
       }
+      return;
+    }
+
+    // Only autofocus when the focus request was initiated via keyboard
+    if (keyboardFocusRequest !== "explorer") {
       return;
     }
 
@@ -47,6 +54,13 @@ export default function ExplorerPanelBody() {
           /* ignore */
         }
       }
+
+      // Clear the request so we don't refocus on unrelated updates
+      try {
+        clearKeyboardFocusRequest();
+      } catch {
+        /* ignore */
+      }
     }, 0);
 
     return () => {
@@ -55,7 +69,7 @@ export default function ExplorerPanelBody() {
         focusTimeoutRef.current = null;
       }
     };
-  }, [isVisible]);
+  }, [isVisible, keyboardFocusRequest, clearKeyboardFocusRequest]);
 
   return (
     <Box

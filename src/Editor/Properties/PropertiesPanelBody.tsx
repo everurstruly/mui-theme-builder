@@ -9,12 +9,19 @@ export default function PanelBody() {
   const setMouseOverPropertiesPanel = useEditor(
     (state) => state.setMouseOverPropertiesPanel
   );
+  const keyboardFocusRequest = useEditor((s) => s.keyboardFocusRequest);
+  const clearKeyboardFocusRequest = useEditor((s) => s.clearKeyboardFocusRequest);
   const containerRef = React.useRef<HTMLDivElement | null>(null);
   const focusTimeoutRef = React.useRef<number | null>(null);
 
   React.useEffect(() => {
     const root = containerRef.current;
     if (!root) return;
+
+    // Only autofocus when the focus request was initiated via keyboard
+    if (keyboardFocusRequest !== "properties") {
+      return;
+    }
 
     if (focusTimeoutRef.current) {
       window.clearTimeout(focusTimeoutRef.current);
@@ -39,6 +46,13 @@ export default function PanelBody() {
           /* ignore */
         }
       }
+
+      // Clear the keyboard focus request so we don't re-run on unrelated changes
+      try {
+        clearKeyboardFocusRequest();
+      } catch {
+        /* ignore */
+      }
     }, 0);
 
     return () => {
@@ -47,7 +61,7 @@ export default function PanelBody() {
         focusTimeoutRef.current = null;
       }
     };
-  }, [selectedExperienceId]);
+  }, [selectedExperienceId, keyboardFocusRequest, clearKeyboardFocusRequest]);
 
   return (
     <Stack

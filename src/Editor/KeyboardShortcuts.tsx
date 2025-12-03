@@ -27,6 +27,7 @@ export default function EditorGlobalKeyboardShortcuts() {
   const hidePanel = useEditor((s) => s.hidePanel);
   const showPanel = useEditor((s) => s.showPanel);
   const toggleFullpage = useEditor((s) => s.toggleFullpage);
+  const requestKeyboardFocus = useEditor((s) => s.requestKeyboardFocus);
   const { next: nextTemplate, prev: prevTemplate } = useTemplateSelection();
   const openLaunchDialog = useLaunchDialog((s) => s.open);
 
@@ -79,6 +80,9 @@ export default function EditorGlobalKeyboardShortcuts() {
       // Toggle experience: Ctrl/Cmd+I (no extra Shift/Alt)
       if (onlyCtrlOrCmd && e.key.toLowerCase() === "i") {
         e.preventDefault();
+        // Indicate the properties panel should receive focus because this
+        // action was initiated via keyboard.
+        requestKeyboardFocus("properties");
         // cycle between 'designer' and 'developer'
         selectExperience(selected === "designer" ? "developer" : "designer");
         return;
@@ -88,7 +92,11 @@ export default function EditorGlobalKeyboardShortcuts() {
       if (onlyCtrlOrCmd && e.key.toLowerCase() === "b") {
         e.preventDefault();
         const isExplorerHidden = hiddenPanels.includes("explorer");
-        if (isExplorerHidden) showPanel("explorer");
+        if (isExplorerHidden) {
+          // Request keyboard focus for the explorer panel when opened via keyboard
+          requestKeyboardFocus("explorer");
+          showPanel("explorer");
+        }
         else hidePanel("explorer");
         return;
       }
@@ -149,6 +157,7 @@ export default function EditorGlobalKeyboardShortcuts() {
   }, [
     selected,
     undoVisual,
+    requestKeyboardFocus,
     redoVisual,
     undoCode,
     redoCode,

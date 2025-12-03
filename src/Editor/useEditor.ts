@@ -28,6 +28,10 @@ export const useEditor = create(
     {
       mouseOverCanvas: false,
       mouseOverPropertiesPanel: false,
+      // Tracks which panel should receive focus because of a keyboard action.
+      // Set to an `EditorPanels` value (e.g. 'explorer' or 'properties') when
+      // a keyboard shortcut requests focus, then cleared after the panel uses it.
+      keyboardFocusRequest: null as EditorPanels | null,
       selectedExperience: "designer" as EditorExperience,
       selectedPropertiesTab: "palette" as PropertiesTab,
       sidebarPanelsBeforeHide: [] as EditorPanels[],
@@ -52,6 +56,14 @@ export const useEditor = create(
         set(() => ({
           selectedPropertiesTab: tab,
         }));
+      },
+
+      requestKeyboardFocus: (panel: EditorPanels | null) => {
+        set(() => ({ keyboardFocusRequest: panel }));
+      },
+
+      clearKeyboardFocusRequest: () => {
+        set(() => ({ keyboardFocusRequest: null }));
       },
 
       setMouseOverPropertiesPanel: (isMouseOver: boolean) => {
