@@ -24,6 +24,8 @@ export interface TemplatesState {
   
   /** Error during template operations */
   error: string | null;
+  /** Currently selected template id for quick selection */
+  selectedId: string | null;
 }
 
 export interface TemplatesActions {
@@ -32,6 +34,8 @@ export interface TemplatesActions {
   setLoading: (isLoading: boolean) => void;
   setError: (error: string | null) => void;
   reset: () => void;
+  select: (id: string) => void;
+  clearSelection: () => void;
 }
 
 export type TemplatesStore = TemplatesState & TemplatesActions;
@@ -41,6 +45,7 @@ const initialState: TemplatesState = {
   templates: Object.values(templatesRegistry), // Initialize from registry
   isLoading: false,
   error: null,
+  selectedId: null,
 };
 
 export const useTemplates = create<TemplatesStore>((set) => ({
@@ -55,6 +60,11 @@ export const useTemplates = create<TemplatesStore>((set) => ({
   setError: (error) => set({ error, isLoading: false }),
   
   reset: () => set(initialState),
+
+  // Selection actions
+  select: (id: string) => set({ selectedId: id }),
+
+  clearSelection: () => set({ selectedId: null }),
 }));
 
 export default useTemplates;

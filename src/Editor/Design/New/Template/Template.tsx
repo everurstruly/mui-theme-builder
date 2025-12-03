@@ -1,3 +1,4 @@
+import ColorSchemeToggle from "../../Current/Modify/ColorSchemeToggle";
 import {
   Box,
   Button,
@@ -14,33 +15,29 @@ import {
 } from "@mui/icons-material";
 import { useTemplates } from "./useTemplates";
 import { useTemplateSelection } from "./useTemplateSelection";
-import ColorSchemeToggle from "../../Current/Modify/ColorSchemeToggle";
+import { useLoad } from ".././useLoad";
+import { loadBlank } from "../strategies/loadBlank";
 
-interface TemplateMethodProps {
-  onClose: () => void;
-  launch: (templateId: string) => void;
-}
+// interface TemplateMethodProps {
+//   onClose: () => void;
+// }
 
-export default function TemplateMethod({ launch }: TemplateMethodProps) {
-  const { templates } = useTemplates();
-  const selectedId = useTemplateSelection((s) => s.selectedId);
-  const select = useTemplateSelection((s) => s.select);
+export default function TemplateMethod() {
+  const templates = useTemplates((s) => s.templates);
+  const selectedId = useTemplates((s) => s.selectedId);
+  const { select, getTemplateColors, randomSelect } = useTemplateSelection();
+  const { load } = useLoad();
 
-  function selectRandom() {
-    if (templates.length === 0) return;
-    const idx = Math.floor(Math.random() * templates.length);
-    const randomTemplate = templates[idx];
-    launch(randomTemplate.id);
+  function handleRandom() {
+    randomSelect();
   }
 
   const handleSelectTemplate = (templateId: string) => {
     select(templateId);
-    launch(templateId);
   };
 
   const handleWithoutTemplate = () => {
-    select("__blank__");
-    launch("__blank__");
+    load(() => loadBlank());
   };
 
   return (
@@ -59,7 +56,7 @@ export default function TemplateMethod({ launch }: TemplateMethodProps) {
           backgroundColor: (theme) => theme.palette.background.paper,
         }}
       >
-        <Button startIcon={<ShuffleOutlined />} onClick={selectRandom}>
+        <Button startIcon={<ShuffleOutlined />} onClick={handleRandom}>
           Random
         </Button>
 
@@ -88,7 +85,7 @@ export default function TemplateMethod({ launch }: TemplateMethodProps) {
 
         {templates.map((template) => {
           const isSelected = selectedId === template.id;
-          const colorSamples = [""]; // FIXME: derive from template data
+          const colorSamples = getTemplateColors(template.id);
 
           return (
             <ListItemButton

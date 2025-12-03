@@ -3,13 +3,13 @@ import HistoryButtons from "../Design/Current/HistoryButtons";
 import DesignMobileActionMenu from "./DesignMobileActionMenu";
 import CurrentDesignContext from "../Design/Current/Modify/Context";
 import PropertiesPanelHeader from "../Properties/PropertiesPanelHeader";
-import { AppBar, Stack, Divider, Toolbar, type SxProps, Box } from "@mui/material";
 import LaunchDialogOpenButton from "../Design/New/LaunchDialogOpenButton";
 import CollectionDialogButton from "../Design/Collection/CollectionDialogButton";
 import SaveButton from "../Design/Current/Save/SaveButton";
-import { isFeatureEnabled } from "../../config/featureFlags";
 import StatusBar from "../Design/Versions/StatusBar";
+import { isFeatureEnabled } from "../../config/featureFlags";
 import { useCurrent } from "../Design/Current/useCurrent";
+import { AppBar, Stack, Divider, Toolbar, type SxProps, Box } from "@mui/material";
 
 const inlineGapRem = 2;
 

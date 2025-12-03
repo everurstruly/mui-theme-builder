@@ -1,30 +1,30 @@
 import { useState, useCallback } from "react";
-import { useCurrent } from "../Current/useCurrent";
-import { useHasUnsavedWork } from "../Current/useHasUnsavedWork";
 import type {
   LoadOptions,
   LoadBlocker,
   PersistenceError,
-} from "./useCurrent/types";
-import type { LoadData } from "./loadStrategies";
+} from "../Current/useCurrent/types";
+import type { LoadData } from "../New/types";
+import useCurrent from "../Current/useCurrent";
+import { useHasUnsavedWork } from "../Current/useHasUnsavedWork";
 
 /**
  * Universal Load Hook (Strategy Pattern)
- * 
+ *
  * Accepts any data provider strategy. You control what to load:
- * 
+ *
  * @example
  * const { load } = useLoad();
- * 
+ *
  * // Load from snapshot
  * load(() => loadFromSnapshot(id, storage));
- * 
+ *
  * // Load from template
  * load(() => loadFromTemplate("material"));
- * 
+ *
  * // Load blank
  * load(() => loadBlank());
- * 
+ *
  * // Custom strategy (URL, clipboard, etc.)
  * load(async () => ({
  *   commands: [...],
@@ -37,35 +37,35 @@ export function useLoad() {
   const setError = useCurrent((s) => s.setPersistenceError);
   const setSnapshotId = useCurrent((s) => s.setPersistenceSnapshotId);
   const setLastSavedAt = useCurrent((s) => s.setPersistedAt);
-  
-  const hasUnsavedWork = useHasUnsavedWork();
+  const clearHistory = useCurrent((s) => s.clearHistory);
+  const hydrate = useCurrent((s) => s.hydrate);
 
-  const [localStatus, setLocalStatus] = useState<"idle" | "loading" | "blocked">(
-    "idle"
-  );
+  const [status, setStatus] = useState<"idle" | "loading" | "blocked">("idle");
   const [blocker, setBlocker] = useState<LoadBlocker | null>(null);
+  const hasUnsavedWork = useHasUnsavedWork();
 
   /**
    * Internal executor: hydrates snapshot without blocker checks
    */
-  const executeLoad = useCallback(
+  const handleLoadable = useCallback(
     async (loadData: LoadData, options: LoadOptions = {}) => {
-      setLocalStatus("loading");
+      setStatus("loading");
       setBlocker(null);
       setLoadStatus("loading");
       setError(null);
 
       try {
-        const editStore = useCurrent.getState();
-
         // Clear history if replace mode
         if (options.mode === "replace") {
-          editStore.clearHistory?.();
+          clearHistory?.();
         }
 
         // Hydrate store directly from snapshot
-        const isSavedDesign = loadData.metadata.sourceType === "snapshot" && !!loadData.metadata.snapshotId;
-        editStore.hydrate(loadData.snapshot, { isSaved: isSavedDesign });
+        const isSavedDesign =
+          loadData.metadata.sourceType === "snapshot" &&
+          !!loadData.metadata.snapshotId;
+
+        hydrate(loadData.snapshot, { isSaved: isSavedDesign });
 
         // Update persistence context based on source type
         if (isSavedDesign) {
@@ -79,7 +79,7 @@ export function useLoad() {
         }
 
         setLoadStatus("idle");
-        setLocalStatus("idle");
+        setStatus("idle");
       } catch (error: any) {
         const persistenceError: PersistenceError = {
           code: error.code ?? "UNKNOWN",
@@ -87,48 +87,54 @@ export function useLoad() {
         };
         setLoadStatus("error");
         setError(persistenceError);
-        setLocalStatus("idle");
+        setStatus("idle");
         throw persistenceError;
       }
     },
-    [setLoadStatus, setError, setSnapshotId, setLastSavedAt]
+    [setLoadStatus, setError, setSnapshotId, setLastSavedAt, clearHistory, hydrate]
   );
 
   /**
    * Public API: load using any strategy with blocker detection
    */
-  const load = useCallback(
+  const loadWithStrategy = useCallback(
     async (strategy: () => Promise<LoadData>, options: LoadOptions = {}) => {
+      if (status === "loading") {
+        // Prevent multiple simultaneous loads
+        return;
+      }
+
       // Check for blockers (unless explicitly skipped)
       if (!options.skipBlockerCheck && hasUnsavedWork) {
-        setLocalStatus("blocked");
+        setStatus("blocked");
         setBlocker({
           reason: "UNSAVED_CHANGES",
           context: {},
           resolutions: {
             discardAndProceed: async () => {
               const loadData = await strategy();
-              executeLoad(loadData, options);
+              handleLoadable(loadData, options);
             },
             cancel: () => {
-              setLocalStatus("idle");
+              setStatus("idle");
               setBlocker(null);
             },
           },
         });
+
         return;
       }
 
       // No blockers - execute strategy
       const loadData = await strategy();
-      await executeLoad(loadData, options);
+      await handleLoadable(loadData, options);
     },
-    [hasUnsavedWork, executeLoad]
+    [hasUnsavedWork, handleLoadable, status]
   );
 
   return {
-    load,
-    status: localStatus,
+    load: loadWithStrategy,
+    status,
     blocker,
   };
 }

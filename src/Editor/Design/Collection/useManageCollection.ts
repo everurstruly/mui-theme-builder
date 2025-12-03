@@ -1,9 +1,9 @@
+import useCurrent from "../Current/useCurrent";
 import { useCallback, useEffect, useState } from 'react';
 import { useCollection } from './useCollection';
 import { useStorage } from "../storage/useStorage";
-import { useLoad } from "../Current/useLoad";
-import { loadFromSnapshot } from "../Current/loadStrategies";
-import useCurrent from "../Current/useCurrent";
+import { loadFromSnapshot } from "../New/strategies/loadFromSnapshot";
+import { useLoad } from "../New/useLoad";
 
 export function useManageCollection() {
   const storage = useStorage();

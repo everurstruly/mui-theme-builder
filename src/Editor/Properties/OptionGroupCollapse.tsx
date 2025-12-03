@@ -88,6 +88,10 @@ export default function OptionGroupCollapse({
           size="small"
           aria-expanded={open}
           aria-label={open ? "Collapse" : "Expand"}
+          // only include in tab order when headingContent is present
+          tabIndex={headingContent ? 0 : -1}
+          // hide from assistive tech when not interactive via keyboard
+          aria-hidden={headingContent ? undefined : true}
           onClick={(e) => {
             e.stopPropagation();
             toggle();

@@ -1,3 +1,4 @@
+import React from "react";
 import useEditor from "../useEditor";
 import DeveloperPropertiesPanel from "./DeveloperPropertiesPanel";
 import DesignerPropertiesPanel from "./DesignerPropertiesPanel";
@@ -8,9 +9,52 @@ export default function PanelBody() {
   const setMouseOverPropertiesPanel = useEditor(
     (state) => state.setMouseOverPropertiesPanel
   );
+  const containerRef = React.useRef<HTMLDivElement | null>(null);
+  const focusTimeoutRef = React.useRef<number | null>(null);
+
+  React.useEffect(() => {
+    const root = containerRef.current;
+    if (!root) return;
+
+    if (focusTimeoutRef.current) {
+      window.clearTimeout(focusTimeoutRef.current);
+    }
+
+    // Delay a tick so mounted children can render and be focusable
+    focusTimeoutRef.current = window.setTimeout(() => {
+      const selector =
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+      const firstFocusable = root.querySelector<HTMLElement>(selector);
+
+      if (firstFocusable) {
+        try {
+          firstFocusable.focus();
+        } catch {
+          /* ignore focus errors */
+        }
+      } else {
+        try {
+          root.focus();
+        } catch {
+          /* ignore */
+        }
+      }
+    }, 0);
+
+    return () => {
+      if (focusTimeoutRef.current) {
+        window.clearTimeout(focusTimeoutRef.current);
+        focusTimeoutRef.current = null;
+      }
+    };
+  }, [selectedExperienceId]);
 
   return (
     <Stack
+      ref={containerRef}
+      tabIndex={-1}
+      role="region"
+      aria-label={`Properties panel (${selectedExperienceId})`}
       onMouseEnter={() => setMouseOverPropertiesPanel(true)}
       onMouseLeave={() => setMouseOverPropertiesPanel(false)}
       sx={{

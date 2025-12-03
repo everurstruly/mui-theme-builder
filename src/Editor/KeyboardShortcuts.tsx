@@ -1,6 +1,7 @@
 import useCurrent from "./Design/Current/useCurrent";
 import useExportOptions from "./Design/Current/Export/useExportOptions";
 import useEditor from "./useEditor";
+import { useTemplateSelection } from "./Design/New/Template/useTemplateSelection";
 import useDelete from "./Design/Current/Modify/useDelete";
 import { useEffect } from "react";
 import { useCollection } from "./Design/Collection";
@@ -25,6 +26,7 @@ export default function EditorGlobalKeyboardShortcuts() {
   const hidePanel = useEditor((s) => s.hidePanel);
   const showPanel = useEditor((s) => s.showPanel);
   const toggleFullpage = useEditor((s) => s.toggleFullpage);
+  const { next: nextTemplate, prev: prevTemplate } = useTemplateSelection();
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -55,11 +57,11 @@ export default function EditorGlobalKeyboardShortcuts() {
       }
 
       // Intercept print shortcut (Ctrl/Cmd + p) to open the export dialog
-      if (isMod && e.key.toLowerCase() === "p") {
-        e.preventDefault();
-        setExportOpened(true);
-        return;
-      }
+      // if (isMod && e.key.toLowerCase() === "p") {
+      //   e.preventDefault();
+      //   setExportOpened(true);
+      //   return;
+      // }
 
       // Rename: F2 (no modifiers)
       if (!isMod && e.key === "F2") {
@@ -90,6 +92,19 @@ export default function EditorGlobalKeyboardShortcuts() {
         e.preventDefault();
         // use the selector to toggle fullpage mode
         toggleFullpage();
+        return;
+      }
+
+      // Cycle templates: Ctrl/Cmd + ArrowRight / ArrowLeft
+      if (isMod && e.key === "ArrowRight") {
+        e.preventDefault();
+        nextTemplate();
+        return;
+      }
+
+      if (isMod && e.key === "ArrowLeft") {
+        e.preventDefault();
+        prevTemplate();
         return;
       }
 
@@ -136,6 +151,8 @@ export default function EditorGlobalKeyboardShortcuts() {
     hidePanel,
     showPanel,
     toggleFullpage,
+    nextTemplate,
+    prevTemplate,
   ]);
 
   return null;

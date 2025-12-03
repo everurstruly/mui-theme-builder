@@ -1,38 +1,18 @@
 import * as React from "react";
+import LaunchBlockerDialog from "./LaunchBlockerDialog";
 import { Popover } from "@mui/material";
 import { Box, Tabs, Tab, Stack, lighten } from "@mui/material";
-import TemplateMethod from "./Template/Template";
-import LaunchConfirmationDialog from "./LaunchConfirmationDialog";
-import { useLaunchScreen, type LaunchScreen } from "./useLaunchScreen";
-import { useLoad } from "../Current/useLoad";
-import { loadFromTemplate, loadBlank } from "../Current/loadStrategies";
+import { useLaunchDialog } from "./useLaunchDialog";
+import { useLoad } from "./useLoad";
+import { launchDialogTabs } from "./launchDialogTabs";
 
-const modes: {
-  value: LaunchScreen;
-  label: string;
-  Component: React.ComponentType<any>;
-}[] = [
-  { value: "template", label: "Built-in Templates", Component: TemplateMethod },
-];
+export default function LaunchDialog() {
+  const { status, blocker } = useLoad();
 
-export default function LaunchDialogContainer() {
-  const anchorEl = useLaunchScreen((s) => s.anchorEl);
-  const close = useLaunchScreen((s) => s.close);
-  const screen = useLaunchScreen((s) => s.screen);
-  const setScreen = useLaunchScreen((s) => s.setScreen);
-  
-  const { load, status, blocker } = useLoad();
-
-  const loadFromTemplateCallback = React.useCallback(
-    (templateId: string) => {
-      if (templateId === "__blank__") {
-        load(() => loadBlank());
-      } else {
-        load(() => loadFromTemplate(templateId));
-      }
-    },
-    [load]
-  );
+  const anchorEl = useLaunchDialog((s) => s.anchorEl);
+  const close = useLaunchDialog((s) => s.close);
+  const screen = useLaunchDialog((s) => s.screen);
+  const setScreen = useLaunchDialog((s) => s.setScreen);
 
   // Close dialog on successful launch
   React.useEffect(() => {
@@ -87,7 +67,7 @@ export default function LaunchDialogContainer() {
                 lighten(theme.palette.background.paper, 0.05),
             }}
           >
-            {modes.map((modeOption) => (
+            {launchDialogTabs.map((modeOption) => (
               <Tab
                 key={modeOption.value}
                 label={modeOption.label}
@@ -99,25 +79,14 @@ export default function LaunchDialogContainer() {
         </Stack>
 
         <Box role="region" sx={{ px: 2 }}>
-          {modes.map(
+          {launchDialogTabs.map(
             ({ value, Component }) =>
-              screen === value && (
-                <Component
-                  key={value}
-                  onClose={close}
-                  launch={loadFromTemplateCallback}
-                />
-              )
+              screen === value && <Component key={value} onClose={close} />
           )}
         </Box>
-
-        <LaunchConfirmationDialog
-          open={status === "blocked" && blocker?.reason === "UNSAVED_CHANGES"}
-          onDiscard={() => blocker?.resolutions.discardAndProceed()}
-          onKeep={() => blocker?.resolutions.cancel()}
-          onCancel={() => blocker?.resolutions.cancel()}
-        />
       </Box>
+
+      <LaunchBlockerDialog />
     </Popover>
   );
 }
