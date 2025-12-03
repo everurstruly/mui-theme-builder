@@ -14,6 +14,8 @@ import { create } from 'zustand';
 import type { ThemeSnapshotMetadata } from "../Current/useCurrent/types";
 
 export interface CollectionState {
+  menuOpened: boolean;
+
   /** List of all saved designs */
   collection: ThemeSnapshotMetadata[];
   
@@ -25,6 +27,7 @@ export interface CollectionState {
 }
 
 export interface CollectionActions {
+  setMenuOpened: (opened: boolean) => void;
   setCollection: (items: ThemeSnapshotMetadata[]) => void;
   setLoading: (isLoading: boolean) => void;
   setError: (error: string | null) => void;
@@ -34,6 +37,7 @@ export interface CollectionActions {
 export type CollectionStore = CollectionState & CollectionActions;
 
 const initialState: CollectionState = {
+  menuOpened: false,
   collection: [],
   isLoading: false,
   error: null,
@@ -41,6 +45,8 @@ const initialState: CollectionState = {
 
 export const useCollection = create<CollectionStore>((set) => ({
   ...initialState,
+
+  setMenuOpened: (menuOpened) => set({ menuOpened }),
 
   setCollection: (collection) => set({ collection, error: null }),
   

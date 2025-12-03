@@ -1,27 +1,20 @@
-import { Button } from '@mui/material';
-import { useState } from 'react';
-import FolderOpenIcon from '@mui/icons-material/FolderOpen';
-import CollectionDialog from "./CollectionDialog";
-import { useCollection } from "./useCollection";
+import FolderOpenIcon from "@mui/icons-material/FolderOpen";
+import { Button } from "@mui/material";
+import { useManageCollection } from "./useManageCollection";
+import { useCollection } from ".";
 
 export default function CollectionDialogButton() {
-  const { collection, isLoading } = useCollection();
-  const [open, setOpen] = useState(false);
+  const { collection, isLoading } = useManageCollection();
+  const showCollection = useCollection((s) => s.setMenuOpened);
+  const onClick = () => showCollection(true);
 
   return (
-    <>
-      <Button
-        onClick={() => setOpen(true)}
-        startIcon={<FolderOpenIcon />}
-        disabled={isLoading}
-      >
-        Designs ({collection.length})
-      </Button>
-
-      <CollectionDialog 
-        open={open} 
-        onClose={() => setOpen(false)} 
-      />
-    </>
+    <Button
+      onClick={() => onClick()}
+      startIcon={<FolderOpenIcon />}
+      disabled={isLoading}
+    >
+      Designs ({collection.length})
+    </Button>
   );
 }

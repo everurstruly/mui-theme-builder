@@ -1,16 +1,4 @@
-/**
- * CollectionDialog
- *
- * Full-screen dialog for browsing saved designs.
- * Alternative to CollectionPopoverMenuButton with more screen space.
- *
- * Features:
- * - Search/filter designs
- * - Sort by name/date
- * - Grid or list view
- * - Bulk operations
- */
-
+import * as React from "react";
 import {
   Dialog,
   DialogTitle,
@@ -33,17 +21,17 @@ import {
   DialogActions as ConfirmDialogActions,
 } from "@mui/material";
 import { useCallback } from "react";
-import * as React from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CloseIcon from "@mui/icons-material/Close";
-import { useManageCollection } from "./useManageCollection";
+import { useCollection, useManageCollection } from ".";
 
-interface CollectionDialogProps {
-  open: boolean;
-  onClose: () => void;
-}
+export default function CollectionDialog() {
+  const open = useCollection((s) => s.menuOpened);
+  const display = useCollection((s) => s.setMenuOpened);
+  const onClose = useCallback(() => {
+    display(false);
+  }, [display]);
 
-export default function CollectionDialog({ open, onClose }: CollectionDialogProps) {
   const {
     collection,
     isLoading,

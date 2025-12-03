@@ -1,12 +1,9 @@
-import { useCallback } from 'react';
-import { useCurrent } from '../useCurrent';
-import { useIsSavedDesignDirty } from './useIsSavedDesignDirty';
-import { useCollectionStore } from "../../Collection";
+import { useCallback } from "react";
+import { useCurrent } from "../useCurrent";
+import { useIsSavedDesignDirty } from "./useIsSavedDesignDirty";
+import { useCollection } from "../../Collection";
 import { useStorage } from "../../storage/useStorage";
-import type {
-  SaveOptions,
-  PersistenceError,
-} from "../useCurrent/types";
+import type { SaveOptions, PersistenceError } from "../useCurrent/types";
 
 export function useSave() {
   const storage = useStorage();
@@ -14,14 +11,14 @@ export function useSave() {
   const setError = useCurrent((s) => s.setPersistenceError);
   const setSnapshotId = useCurrent((s) => s.setPersistenceSnapshotId);
   const setLastSavedAt = useCurrent((s) => s.setPersistedAt);
-  const setCollection = useCollectionStore((s) => s.setCollection);
-  
+  const setCollection = useCollection((s) => s.setCollection);
+
   const saveStatus = useCurrent((s) => s.saveStatus);
   const currentSnapshotId = useCurrent((s) => s.persistenceSnapshotId);
   const error = useCurrent((s) => s.persistenceError);
-  
+
   const isDirty = useIsSavedDesignDirty();
-  
+
   const save = useCallback(
     async (options: SaveOptions = { mode: "update-or-create" }) => {
       const { adapter, serializer } = storage;
@@ -72,7 +69,7 @@ export function useSave() {
           if (conflictToDelete) {
             await tx.delete(conflictToDelete);
           }
-          
+
           return targetId
             ? await tx.update(targetId, { ...snapshot, id: targetId })
             : await tx.create(snapshot);
@@ -122,15 +119,15 @@ export function useSave() {
     },
     [setError, setSaveStatus, setSnapshotId, setLastSavedAt, setCollection, storage]
   );
-  
+
   // Can save if not currently saving and either dirty or new design
-  const canSave = saveStatus !== 'saving' && (isDirty || !currentSnapshotId);
-  
-  return { 
-    save, 
+  const canSave = saveStatus !== "saving" && (isDirty || !currentSnapshotId);
+
+  return {
+    save,
     status: saveStatus,
-    canSave, 
+    canSave,
     isDirty,
-    error
+    error,
   };
 }

@@ -15,7 +15,7 @@ import {
   responsiveFontSizes,
   ThemeProvider,
 } from "@mui/material";
-import EditorGlobalKeyboardShortcuts from "./Editor/Properties/KeyboardShortcuts";
+import EditorGlobalKeyboardShortcuts from "./Editor/KeyboardShortcuts";
 import { StorageProvider } from "./Editor/Design/storage";
 import { InitializationWrapper } from "./InitializationWrapper";
 
