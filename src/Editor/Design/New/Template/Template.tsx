@@ -22,14 +22,14 @@ interface TemplateMethodProps {
 }
 
 export default function TemplateMethod({ launch }: TemplateMethodProps) {
-  const { templates: allTemplates, getTemplateColors } = useTemplates();
+  const { templates } = useTemplates();
   const selectedId = useTemplateSelection((s) => s.selectedId);
   const select = useTemplateSelection((s) => s.select);
 
   function selectRandom() {
-    if (allTemplates.length === 0) return;
-    const idx = Math.floor(Math.random() * allTemplates.length);
-    const randomTemplate = allTemplates[idx];
+    if (templates.length === 0) return;
+    const idx = Math.floor(Math.random() * templates.length);
+    const randomTemplate = templates[idx];
     launch(randomTemplate.id);
   }
 
@@ -39,8 +39,8 @@ export default function TemplateMethod({ launch }: TemplateMethodProps) {
   };
 
   const handleWithoutTemplate = () => {
-    select('__blank__');
-    launch('__blank__');
+    select("__blank__");
+    launch("__blank__");
   };
 
   return (
@@ -78,7 +78,7 @@ export default function TemplateMethod({ launch }: TemplateMethodProps) {
             backgroundColor: "background.default",
           }}
           onClick={handleWithoutTemplate}
-          selected={selectedId === '__blank__'}
+          selected={selectedId === "__blank__"}
         >
           <Typography variant="body2" sx={{ flexGrow: 1 }}>
             Create without a template
@@ -86,9 +86,9 @@ export default function TemplateMethod({ launch }: TemplateMethodProps) {
           <KeyboardArrowRight color="action" fontSize="small" />
         </ListItemButton>
 
-        {allTemplates.map((template) => {
+        {templates.map((template) => {
           const isSelected = selectedId === template.id;
-          const colorSamples = getTemplateColors(template.id);
+          const colorSamples = [""]; // FIXME: derive from template data
 
           return (
             <ListItemButton

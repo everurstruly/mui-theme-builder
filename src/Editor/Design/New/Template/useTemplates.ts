@@ -1,32 +1,60 @@
-import { useMemo } from 'react';
-import templatesRegistry, { getTemplateById } from '../../../Templates/registry';
+/**
+ * Templates Store
+ * 
+ * Manages the list of available templates and UI state.
+ * This is similar to the collection store but for templates.
+ * 
+ * Responsibilities:
+ * - Store the list of all templates
+ * - Track loading state
+ * - Manage UI state (dialog open, etc.)
+ */
 
-export function useTemplates() {
-  const templates = useMemo(() => Object.values(templatesRegistry), []);
+import { create } from 'zustand';
+import templatesRegistry, { type TemplateMetadata } from '../../../Templates/registry';
 
-  const getTemplateColors = (id: string): string[] => {
-    const template = getTemplateById(id);
-    if (!template) return ["#1976d2", "#dc004e", "#ff9800"];
+export interface TemplatesState {
+  menuOpened: boolean;
 
-    // Extract colors from theme options
-    const themeOptions = template.themeOptions as any;
-    const colors: string[] = [];
-    
-    // Try new color schemes format
-    const palette = themeOptions?.colorSchemes?.light?.palette || themeOptions?.palette;
-    
-    if (palette) {
-      ['primary', 'secondary', 'error', 'warning', 'info'].forEach(key => {
-        if (palette[key]?.main) colors.push(palette[key].main);
-      });
-    }
-
-    return colors.length > 0 ? colors.slice(0, 6) : ["#1976d2", "#dc004e", "#ff9800"];
-  };
-
-  return {
-    templates,
-    getTemplateById,
-    getTemplateColors
-  };
+  /** List of all available templates */
+  templates: TemplateMetadata[];
+  
+  /** Whether templates are being loaded */
+  isLoading: boolean;
+  
+  /** Error during template operations */
+  error: string | null;
 }
+
+export interface TemplatesActions {
+  setMenuOpened: (opened: boolean) => void;
+  setTemplates: (items: TemplateMetadata[]) => void;
+  setLoading: (isLoading: boolean) => void;
+  setError: (error: string | null) => void;
+  reset: () => void;
+}
+
+export type TemplatesStore = TemplatesState & TemplatesActions;
+
+const initialState: TemplatesState = {
+  menuOpened: false,
+  templates: Object.values(templatesRegistry), // Initialize from registry
+  isLoading: false,
+  error: null,
+};
+
+export const useTemplates = create<TemplatesStore>((set) => ({
+  ...initialState,
+
+  setMenuOpened: (menuOpened) => set({ menuOpened }),
+
+  setTemplates: (templates) => set({ templates, error: null }),
+  
+  setLoading: (isLoading) => set({ isLoading }),
+  
+  setError: (error) => set({ error, isLoading: false }),
+  
+  reset: () => set(initialState),
+}));
+
+export default useTemplates;
