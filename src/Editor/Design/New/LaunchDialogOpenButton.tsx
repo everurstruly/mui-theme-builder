@@ -10,7 +10,7 @@ export default function LaunchDialogOpenButton() {
   return (
     <Button
       aria-label="Create new theme"
-      onClick={(e) => open(e.currentTarget)}
+      onClick={() => open()}
       sx={{
         columnGap: 0.5,
         minWidth: 0,

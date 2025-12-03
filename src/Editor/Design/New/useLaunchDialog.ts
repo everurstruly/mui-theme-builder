@@ -4,16 +4,16 @@ export type LaunchDialog = "template" | "blank" | "link" | "paste";
 
 interface LaunchDialogStore {
   screen: LaunchDialog;
-  anchorEl: HTMLElement | null;
+  isOpen: boolean;
   setScreen: (screen: LaunchDialog) => void;
-  open: (anchorEl: HTMLElement) => void;
+  open: () => void;
   close: () => void;
 }
 
 export const useLaunchDialog = create<LaunchDialogStore>((set) => ({
   screen: "template",
-  anchorEl: null,
+  isOpen: false,
   setScreen: (screen) => set({ screen }),
-  open: (anchorEl) => set({ anchorEl }),
-  close: () => set({ anchorEl: null }),
+  open: () => set({ isOpen: true }),
+  close: () => set({ isOpen: false }),
 }));
