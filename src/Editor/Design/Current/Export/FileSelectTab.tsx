@@ -1,31 +1,8 @@
 import useExport from "./useExport";
-import { Tab, Tabs, type TabOwnProps } from "@mui/material";
-import { ContrastOutlined, DarkMode, LightMode } from "@mui/icons-material";
-import type { ExportColorScheme } from "./useExportOptions";
+import { Tab, Tabs } from "@mui/material";
+import { fileSelectOptions } from "./fileSelectOptions";
 
-const colorSchemeOptions: Array<{
-  label: string;
-  icon: TabOwnProps["icon"];
-  value: ExportColorScheme;
-}> = [
-  {
-    label: "Dual mode",
-    icon: <ContrastOutlined fontSize="small" />,
-    value: "dual",
-  },
-  {
-    label: "Light mode",
-    icon: <LightMode fontSize="small" />,
-    value: "light",
-  },
-  {
-    label: "Dark mode",
-    icon: <DarkMode fontSize="small" />,
-    value: "dark",
-  },
-];
-
-export default function ExportFileTabs() {
+export default function FileSelectTab() {
   const { colorScheme, setColorScheme } = useExport();
   return (
     <Tabs
@@ -41,13 +18,13 @@ export default function ExportFileTabs() {
         },
       }}
     >
-      {colorSchemeOptions.map((option) => {
+      {fileSelectOptions.map((option) => {
         return (
           <Tab
             key={option.value}
             label={option.label}
             value={option.value}
-            icon={option.icon}
+            // icon={option.icon}
             iconPosition="start"
             disableRipple
             sx={(theme) => ({

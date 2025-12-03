@@ -23,10 +23,10 @@ export default function useExport() {
   const { title } = useTitle();
   const mode = useExportOptions((state) => state.mode);
   const colorScheme = useExportOptions((state) => state.colorScheme);
-  const language = useExportOptions((state) => state.language);
+  const fileExtension = useExportOptions((state) => state.fileExtension);
   const setMode = useExportOptions((state) => state.setMode);
   const setColorScheme = useExportOptions((state) => state.setColorScheme);
-  const setLanguage = useExportOptions((state) => state.setLanguage);
+  const setFileExtension = useExportOptions((state) => state.setFileExtension);
 
   const lightThemeOptions = useCreatedThemeOption("light");
   const darkThemeOptions = useCreatedThemeOption("dark");
@@ -108,9 +108,9 @@ export default function useExport() {
     let importLine: string;
     let typeAnnotation: string = "";
 
-    if (language === "js") {
+    if (fileExtension === "js") {
       importLine = "import { createTheme } from '@mui/material/styles';";
-    } else if (language === "ts") {
+    } else if (fileExtension === "ts") {
       importLine =
         "import { createTheme, type ThemeOptions } from '@mui/material/styles';";
       // The variable to be exported is either ThemeOptions (for 'diff' mode) or Theme (for 'merged' mode - though createTheme returns ThemeOptions)
@@ -118,7 +118,7 @@ export default function useExport() {
       typeAnnotation = ": ThemeOptions";
     } else {
       // Handle unhandled language (like the 'json' type if it existed)
-      return joinLines([`// Export language '${language}' is not supported.`]);
+      return joinLines([`// Export language '${fileExtension}' is not supported.`]);
     }
 
     parts.push(importLine, "");
@@ -128,7 +128,7 @@ export default function useExport() {
     parts.push("", `export default ${variableName};`, "");
 
     return joinLines(parts);
-  }, [themeOptionsToExport, mode, language]);
+  }, [themeOptionsToExport, mode, fileExtension]);
 
   const copyToClipboard = useCallback(async () => {
     try {
@@ -147,10 +147,10 @@ export default function useExport() {
     title,
     mode,
     colorScheme,
-    language,
+    fileExtension,
     setMode,
     setColorScheme,
-    setLanguage,
+    setFileExtension,
     getExportCode,
     copyToClipboard,
   };

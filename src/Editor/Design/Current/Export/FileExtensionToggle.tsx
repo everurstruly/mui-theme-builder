@@ -1,8 +1,8 @@
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import useExport from "./useExport";
-import type { ExportLanguage } from "./useExportOptions";
+import type { ExportFileExtension } from "./useExportOptions";
 
-const formatOptions: Array<{ label: string; value: ExportLanguage }> = [
+const formatOptions: Array<{ label: string; value: ExportFileExtension }> = [
   {
     label: "TS",
     value: "ts",
@@ -13,8 +13,8 @@ const formatOptions: Array<{ label: string; value: ExportLanguage }> = [
   },
 ];
 
-function FormatToggle() {
-  const { language, setLanguage } = useExport();
+function FileExtensionToggle({ sx }: { sx?: object }) {
+  const { fileExtension: language, setFileExtension: setLanguage } = useExport();
   return (
     <ToggleButtonGroup
       exclusive
@@ -22,7 +22,7 @@ function FormatToggle() {
       onChange={(_, value) => {
         setLanguage(value);
       }}
-      sx={{ marginInlineStart: "auto !important", borderRadius: 4 }}
+      sx={{ marginInlineStart: "auto !important", borderRadius: 4, ...sx }}
     >
       {formatOptions.map((option) => {
         return (
@@ -35,4 +35,4 @@ function FormatToggle() {
   );
 }
 
-export default FormatToggle;
+export default FileExtensionToggle;

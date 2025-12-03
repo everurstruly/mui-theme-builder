@@ -3,19 +3,19 @@ import { create } from "zustand";
 // Types matching the existing codebase's export hook
 export type ExportMode = "diff" | "merged";
 export type ExportColorScheme = "light" | "dark" | "dual";
-export type ExportLanguage = "ts" | "js" | "json";
+export type ExportFileExtension = "ts" | "js" | "json";
 
 interface ExportOptionsState {
   title?: string;
   mode: ExportMode;
   colorScheme: ExportColorScheme;
-  language: ExportLanguage;
+  fileExtension: ExportFileExtension;
   opened: boolean;
 
   setTitle: (title?: string) => void;
   setMode: (mode: ExportMode) => void;
   setColorScheme: (colorScheme: ExportColorScheme) => void;
-  setLanguage: (language: ExportLanguage) => void;
+  setFileExtension: (language: ExportFileExtension) => void;
   setOpened: (opened: boolean) => void;
   reset: () => void;
 }
@@ -29,20 +29,20 @@ const useExportOptions = create<ExportOptionsState>((set) => ({
   title: undefined,
   mode: "diff",
   colorScheme: "dual",
-  language: "ts",
+  fileExtension: "ts",
   opened: false,
 
   setTitle: (title) => set(() => ({ title })),
   setMode: (mode) => set(() => ({ mode })),
   setColorScheme: (colorScheme) => set(() => ({ colorScheme })),
-  setLanguage: (language) => set(() => ({ language })),
+  setFileExtension: (fileExtension) => set(() => ({ fileExtension })),
   setOpened: (opened) => set(() => ({ opened })),
   reset: () =>
     set(() => ({
       title: undefined,
       mode: "diff",
       colorScheme: "dual",
-      language: "ts",
+      fileExtension: "ts",
       opened: false,
     })),
 }));

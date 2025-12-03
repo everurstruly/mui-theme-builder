@@ -2,22 +2,21 @@ import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import IconButton from "@mui/material/IconButton";
-import ExportFileTabs from "./ExportFileTabs";
-import useExport from "./useExport";
+import FileSelectTab from "./FileSelectTab";
 import MergeWithDefaultsSwitch from "./MergeWithDefaultsSwitch";
 import DownloadButton from "./DownloadButton";
 import CopyButton from "./CopyButton";
-import FormatToggle from "./FormatToggle";
-import { Close } from "@mui/icons-material";
-import { Box, Typography, Paper, Stack } from "@mui/material";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
+import FileExtensionToggle from "./FileExtensionToggle";
 import useExportOptions from "./useExportOptions";
+import FileContent from "./FileContent";
+import { Close } from "@mui/icons-material";
+import { Box, Typography, Paper, Stack, useMediaQuery } from "@mui/material";
+import FileSelectBox from "./FileSelectBox";
 
 export default function ExportDialog() {
-  const { getExportCode } = useExport();
   const open = useExportOptions((s) => s.opened);
   const setOpen = useExportOptions((s) => s.setOpened);
+  const requiresCompactView = useMediaQuery("(min-width:400px)");
 
   return (
     <Dialog
@@ -67,17 +66,25 @@ export default function ExportDialog() {
             mb: 2,
           }}
         >
-          <MergeWithDefaultsSwitch />
+          {requiresCompactView && <MergeWithDefaultsSwitch />}
 
           <Box
             sx={{
-              ml: "auto",
+              marginLeft: "auto !important",
               display: "inherit",
               alignItems: "inherit",
-              columnGap: 2,
+              flexGrow: !requiresCompactView ? 1 : 0,
+              justifyContent: !requiresCompactView ? "flex-end" : "inherit",
+              columnGap: requiresCompactView ? 2 : 1,
             }}
           >
-            <DownloadButton />
+            {!requiresCompactView && (
+              <FileExtensionToggle
+                sx={{ m: "0 !important", marginInlineEnd: "auto !important" }}
+              />
+            )}
+
+            <DownloadButton compactView={!requiresCompactView} />
             <CopyButton />
           </Box>
         </Stack>
@@ -104,16 +111,11 @@ export default function ExportDialog() {
               bgcolor: (theme) => theme.palette.background.default,
             }}
           >
-            <ExportFileTabs />
-            <FormatToggle />
+            {requiresCompactView ? <FileSelectTab /> : <FileSelectBox />}
+            {requiresCompactView && <FileExtensionToggle />}
           </Box>
 
-          {/* Code area */}
-          <Box
-            component={SyntaxHighlighter}
-            language={"typescript"}
-            style={vscDarkPlus}
-            showLineNumbers
+          <FileContent
             sx={{
               position: "relative",
               scrollbarWidth: "none",
@@ -121,9 +123,7 @@ export default function ExportDialog() {
               height: "60vh",
               paddingTop: "4rem !important",
             }}
-          >
-            {getExportCode()}
-          </Box>
+          />
         </Paper>
       </DialogContent>
     </Dialog>
