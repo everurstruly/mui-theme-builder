@@ -36,6 +36,7 @@
     "acorn": "^8.15.0",
     "framer-motion": "^12.23.24",
     "motion": "^12.23.24",
+    "node": "^20.19.6",
     "polished": "^4.3.1",
     "prettier": "^2.8.8",
     "react": "^19.1.1",
