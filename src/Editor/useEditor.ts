@@ -37,6 +37,7 @@ export const useEditor = create(
         "explorer",
         "explorer.mobile",
       ] as EditorPanels[],
+      isFullpage: false,
       renameDialogOpen: false,
       deleteConfirmationDialogOpen: false,
       versionHistoryOpen: false,
@@ -72,21 +73,36 @@ export const useEditor = create(
       },
 
       hideCanvasSidebarPanels: () => {
+        // Only record the current hiddenPanels if we aren't already in fullscreen
+        const alreadySaved = get().sidebarPanelsBeforeHide && get().sidebarPanelsBeforeHide.length > 0;
+        if (alreadySaved) {
+          // already hidden (fullscreen) — no-op
+          return;
+        }
+
         set(() => ({
-          sidebarPanelsBeforeHide: get().hiddenPanels,
+          sidebarPanelsBeforeHide: [...get().hiddenPanels],
           hiddenPanels: [
             "properties",
             "properties.mobile",
             "explorer",
             "explorer.mobile",
           ],
+          isFullpage: true,
         }));
       },
 
       restoreCanvasSidebarPanels: () => {
+        const prev = get().sidebarPanelsBeforeHide || [];
+        if (!prev || prev.length === 0) {
+          // Nothing to restore
+          return;
+        }
+
         set(() => ({
-          hiddenPanels: get().sidebarPanelsBeforeHide,
+          hiddenPanels: [...prev],
           sidebarPanelsBeforeHide: [],
+          isFullpage: false,
         }));
       },
 
@@ -116,6 +132,46 @@ export const useEditor = create(
       },
       setVersionHistoryOpen: (open: boolean) => {
         set({ versionHistoryOpen: open });
+      },
+      setIsFullpage: (open: boolean) => {
+        set({ isFullpage: open });
+      },
+
+      toggleFullpage: () => {
+        const isFull = get().isFullpage;
+        if (isFull) {
+          // restore saved panels if present
+          const prev = get().sidebarPanelsBeforeHide || [];
+          if (!prev || prev.length === 0) {
+            set({ isFullpage: false });
+            return;
+          }
+
+          set(() => ({
+            hiddenPanels: [...prev],
+            sidebarPanelsBeforeHide: [],
+            isFullpage: false,
+          }));
+          return;
+        }
+
+        // enter fullpage: save current hidden panels and hide canvas sidebars
+        const alreadySaved = get().sidebarPanelsBeforeHide && get().sidebarPanelsBeforeHide.length > 0;
+        if (alreadySaved) {
+          set({ isFullpage: true });
+          return;
+        }
+
+        set(() => ({
+          sidebarPanelsBeforeHide: [...get().hiddenPanels],
+          hiddenPanels: [
+            "properties",
+            "properties.mobile",
+            "explorer",
+            "explorer.mobile",
+          ],
+          isFullpage: true,
+        }));
       },
     })
   )

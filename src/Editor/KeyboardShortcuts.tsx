@@ -1,0 +1,150 @@
+import useCurrent from "./Design/Current/useCurrent";
+import useExportOptions from "./Design/Current/Export/useExportOptions";
+import useEditor from "./useEditor";
+import useDelete from "./Design/Current/Modify/useDelete";
+import { useEffect } from "react";
+import { useCollection } from "./Design/Collection";
+import { useSave } from "./Design/Current/Save/useSave";
+
+export default function EditorGlobalKeyboardShortcuts() {
+  const { save, canSave } = useSave();
+  const selected = useEditor((s) => s.selectedExperience);
+  const selectExperience = useEditor((s) => s.selectExperience);
+  const undoVisual = useCurrent((s) => s.undoVisualToolEdit);
+  const redoVisual = useCurrent((s) => s.redoVisualToolEdit);
+  const undoCode = useCurrent((s) => s.undoCodeOverride);
+  const redoCode = useCurrent((s) => s.redoCodeOverride);
+  const setExportOpened = useExportOptions((s) => s.setOpened);
+  const setCollectionOpened = useCollection((s) => s.setMenuOpened);
+  const setRenameDialogOpen = useEditor((s) => s.setRenameDialogOpen);
+  const { canDelete } = useDelete();
+  const setDeleteConfirmationDialogOpen = useEditor(
+    (s) => s.setDeleteConfirmationDialogOpen
+  );
+  const hiddenPanels = useEditor((s) => s.hiddenPanels);
+  const hidePanel = useEditor((s) => s.hidePanel);
+  const showPanel = useEditor((s) => s.showPanel);
+  const toggleFullpage = useEditor((s) => s.toggleFullpage);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      const active = document.activeElement;
+      const isUserTyping = keyPressedWithinInteractiveField(active);
+      const isMod = e.ctrlKey || e.metaKey;
+
+      // don't intercept other editor typing shortcuts
+      if (isUserTyping) {
+        return;
+      }
+
+      // Slash (/) opens collection when NOT holding modifiers and not typing
+      if (!isMod && e.key === "/" && !isUserTyping) {
+        e.preventDefault();
+        setCollectionOpened(true);
+        return;
+      }
+
+      // Handle save: Ctrl/Cmd+S
+      if (isMod && e.key.toLowerCase() === "s") {
+        e.preventDefault();
+        if (canSave) {
+          // fire-and-forget; save() returns a promise
+          void save();
+        }
+        return;
+      }
+
+      // Intercept print shortcut (Ctrl/Cmd + p) to open the export dialog
+      if (isMod && e.key.toLowerCase() === "p") {
+        e.preventDefault();
+        setExportOpened(true);
+        return;
+      }
+
+      // Rename: F2 (no modifiers)
+      if (!isMod && e.key === "F2") {
+        e.preventDefault();
+        setRenameDialogOpen(true);
+        return;
+      }
+
+      // Toggle experience: Ctrl/Cmd+I
+      if (isMod && e.key.toLowerCase() === "i") {
+        e.preventDefault();
+        // cycle between 'designer' and 'developer'
+        selectExperience(selected === "designer" ? "developer" : "designer");
+        return;
+      }
+
+      // Toggle explorer collapse: Ctrl/Cmd+B
+      if (isMod && e.key.toLowerCase() === "b") {
+        e.preventDefault();
+        const isExplorerHidden = hiddenPanels.includes("explorer");
+        if (isExplorerHidden) showPanel("explorer");
+        else hidePanel("explorer");
+        return;
+      }
+
+      // Fullscreen toggle: Ctrl/Cmd+Space
+      if (isMod && e.code === "Space") {
+        e.preventDefault();
+        // use the selector to toggle fullpage mode
+        toggleFullpage();
+        return;
+      }
+
+      // Delete key opens delete confirmation when not typing
+      if (!isMod && e.key === "Delete") {
+        if (canDelete) {
+          e.preventDefault();
+          setDeleteConfirmationDialogOpen(true);
+        }
+        return;
+      }
+
+      // Undo/Redo (already wired)
+      if (isMod && e.key.toLowerCase() === "z") {
+        e.preventDefault();
+        const isRedo = e.shiftKey;
+        if (selected === "developer") {
+          if (isRedo) redoCode();
+          else undoCode();
+        } else {
+          if (isRedo) redoVisual();
+          else undoVisual();
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [
+    selected,
+    undoVisual,
+    redoVisual,
+    undoCode,
+    redoCode,
+    setExportOpened,
+    setCollectionOpened,
+    save,
+    canSave,
+    setRenameDialogOpen,
+    canDelete,
+    setDeleteConfirmationDialogOpen,
+    selectExperience,
+    hiddenPanels,
+    hidePanel,
+    showPanel,
+    toggleFullpage,
+  ]);
+
+  return null;
+}
+function keyPressedWithinInteractiveField(active: Element | null) {
+  return (
+    active &&
+    (active.tagName === "INPUT" ||
+      active.tagName === "TEXTAREA" ||
+      (active as HTMLElement).isContentEditable)
+  );
+}
