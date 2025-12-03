@@ -15,16 +15,9 @@ import { useCurrent } from "../Current/useCurrent";
 import { useVersionHistory } from "./useVersionHistory";
 import { VersionItem } from "./VersionItem";
 import { RestoreConfirmDialog } from "./RestoreConfirmDialog";
+import { useEditor } from "../../useEditor";
 
-interface VersionHistoryDialogProps {
-  open: boolean;
-  onClose: () => void;
-}
-
-export function VersionHistoryDialog({
-  open,
-  onClose,
-}: VersionHistoryDialogProps) {
+export function VersionHistoryDialog() {
   const {
     versions,
     isLoading,
@@ -35,9 +28,18 @@ export function VersionHistoryDialog({
     getVersion,
   } = useVersionHistory();
 
+  const open = useEditor((s) => s.versionHistoryOpen);
+  const setVersionHistoryOpen = useEditor((s) => s.setVersionHistoryOpen);
+
+  const onClose = () => {
+    setVersionHistoryOpen(false);
+  };
+
   const [restoreDialogOpen, setRestoreDialogOpen] = useState(false);
   const [selectedVersionId, setSelectedVersionId] = useState<string | null>(null);
-  const [selectedVersionTimestamp, setSelectedVersionTimestamp] = useState<number | null>(null);
+  const [selectedVersionTimestamp, setSelectedVersionTimestamp] = useState<
+    number | null
+  >(null);
 
   const handleView = async (versionId: string) => {
     const version = await getVersion(versionId);
@@ -94,8 +96,13 @@ export function VersionHistoryDialog({
           )}
 
           {!isLoading && versions.length === 0 && (
-            <Typography variant="body2" color="text.secondary" sx={{ py: 4, textAlign: "center" }}>
-              No versions yet. Versions are created when you save changes to an existing design.
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ py: 4, textAlign: "center" }}
+            >
+              No versions yet. Versions are created when you save changes to an
+              existing design.
             </Typography>
           )}
 

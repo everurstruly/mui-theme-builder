@@ -37,6 +37,9 @@ export const useEditor = create(
         "explorer",
         "explorer.mobile",
       ] as EditorPanels[],
+      renameDialogOpen: false,
+      deleteConfirmationDialogOpen: false,
+      versionHistoryOpen: false,
     },
 
     (set, get) => ({
@@ -103,6 +106,16 @@ export const useEditor = create(
         set((state) => ({
           hiddenPanels: state.hiddenPanels.filter((p) => p !== panel),
         }));
+      },
+
+      setRenameDialogOpen: (open: boolean) => {
+        set({ renameDialogOpen: open });
+      },
+      setDeleteConfirmationDialogOpen: (open: boolean) => {
+        set({ deleteConfirmationDialogOpen: open });
+      },
+      setVersionHistoryOpen: (open: boolean) => {
+        set({ versionHistoryOpen: open });
       },
     })
   )

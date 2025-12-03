@@ -6,7 +6,7 @@ import { useSave } from "./useSave";
 import { useCurrent } from "../useCurrent";
 
 export default function SaveButton() {
-  const { title, checkTitle, conflict, isChecking } = useTitle();
+  const { title, validateNewTitle: checkTitle, conflict, isChecking } = useTitle();
   const { save, status, canSave, isDirty } = useSave();
   const isSaved = useCurrent((s) => !!s.persistenceSnapshotId);
   const [showConflictDialog, setShowConflictDialog] = useState(false);

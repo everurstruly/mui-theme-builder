@@ -28,22 +28,28 @@ export function useTitle() {
 
   const isSavedDesign = !!currentSnapshotId;
 
-  const checkTitle = useMemo(() => {
-    return debounce(async (title: string) => {
+  const validateNewTitle = useMemo(() => {
+    return debounce(async (t: string) => {
+      const title = t.trim();
       setIsChecking(true);
 
       try {
         const existing = await storage.adapter.findByTitle(title);
 
-        const result =
+        // Filter out the current design's own ID to prevent self-conflict
+        const conflict =
           existing && existing.length > 0
-            ? {
-                type: "title" as const,
-                existingId: existing[0].id,
-                existingTitle: existing[0].title,
-                currentTitle: title,
-              }
+            ? existing.find((item: any) => item.id !== currentSnapshotId)
             : null;
+
+        const result = conflict
+          ? {
+              type: "title" as const,
+              existingId: conflict.id,
+              existingTitle: conflict.title,
+              currentTitle: title,
+            }
+          : null;
 
         setConflict(result);
       } catch (error) {
@@ -53,7 +59,7 @@ export function useTitle() {
         setIsChecking(false);
       }
     }, 300);
-  }, [storage.adapter]);
+  }, [storage.adapter, currentSnapshotId]);
 
   /**
    * Rename the current design.
@@ -88,7 +94,7 @@ export function useTitle() {
     title,
     rename,
     isSavedDesign,
-    checkTitle,
+    validateNewTitle,
     conflict,
     isChecking,
     hasConflict: conflict !== null,

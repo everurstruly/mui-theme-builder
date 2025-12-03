@@ -2,13 +2,22 @@ import EditorCanvas from "./Canvas/Canvas";
 import EditorToolsbar from "./Toolbar/Toolbar";
 import EditorPropertiesPanel from "./Properties/PropertiesPanel";
 import EditorExplorerPanel from "./Explorer/ExplorerPanel";
-import { GlobalStyles, Paper, Stack } from "@mui/material";
 import LaunchDialog from "./Design/New/LaunchDialog";
 import ExportDialog from "./Design/Current/Export/ExportDialog";
+import CollectionDialog from "./Design/Collection/CollectionDialog";
+import { GlobalStyles, Paper, Stack } from "@mui/material";
+import RenameDialog from "./Design/Current/Modify/RenameDialog";
+import { VersionHistoryDialog } from "./Design/Versions";
+import { isFeatureEnabled } from "../config/featureFlags";
+import DeleteDialog from "./Design/Current/Modify/DeleteDialog";
 
 export default function Editor() {
   return (
     <>
+      {isFeatureEnabled("SHOW_VERSION_HISTORY") && <VersionHistoryDialog />}
+      <DeleteDialog />
+      <RenameDialog />
+      <CollectionDialog />
       <LaunchDialog />
       <ExportDialog />
 
