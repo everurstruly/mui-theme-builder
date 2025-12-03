@@ -6,6 +6,7 @@ import { Stack, Breadcrumbs, Link, Typography, Box } from "@mui/material";
 import { getFolderNodeByChain } from "../Previews/registry";
 
 function QuickPreviewBar() {
+  const isFullpage = useEditor((state) => state.isFullpage);
   const hiddenPanels = useEditor((state) => state.hiddenPanels);
   const shouldBeHidden = !hiddenPanels.includes("explorer");
 
@@ -20,7 +21,7 @@ function QuickPreviewBar() {
     upCue,
   } = useFolderNavigator(activePreviewId);
 
-  if (shouldBeHidden) {
+  if (shouldBeHidden || isFullpage) {
     return null;
   }
 
@@ -35,6 +36,8 @@ function QuickPreviewBar() {
         borderBottomColor: "divider",
         px: { md: 1, lg: 1 },
         overflowX: "auto",
+        scrollbarWidth: "none",
+        overflowY: "hidden",
         // pt: 1,
         // display: { xs: "none", md: "flex"}
       }}

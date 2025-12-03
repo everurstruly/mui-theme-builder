@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import useEditor from "../useEditor";
 
 type CanvasFrameProps = {
@@ -23,7 +23,7 @@ export default function CanvasFrame({ controls = {}, children }: CanvasFrameProp
   const setMouseOverCanvas = useEditor((state) => state.setMouseOverCanvas);
 
   return (
-    <Box
+    <Stack
       onMouseEnter={() => setMouseOverCanvas(true)}
       onMouseLeave={() => setMouseOverCanvas(false)}
       sx={(t) => ({
@@ -82,7 +82,6 @@ export default function CanvasFrame({ controls = {}, children }: CanvasFrameProp
         </Box>
       )}
 
-      
       {controls.bottomCenter && (
         <Box
           sx={{
@@ -111,6 +110,6 @@ export default function CanvasFrame({ controls = {}, children }: CanvasFrameProp
           {controls.bottomRight}
         </Box>
       )}
-    </Box>
+    </Stack>
   );
 }

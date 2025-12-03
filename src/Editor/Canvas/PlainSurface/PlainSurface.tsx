@@ -7,6 +7,7 @@ import {
 } from "./BreakpointSimulation";
 import useCurrent from "../../Design/Current/useCurrent";
 import useCreatedTheme from "../../Design/Current/useCreatedTheme";
+import useEditor from "../../useEditor";
 
 export type PlainSurfaceControls = {
   containerRef: RefObject<HTMLDivElement | null>;
@@ -25,6 +26,7 @@ export default function PlainSurface({
 }: PlainSurfaceControls) {
   const wrapperRef = useRef<HTMLDivElement>(null);
 
+  const isFullpage = useEditor((s) => s.isFullpage);
   const previewId = useCurrent((s) => s.activePreviewId);
   const PreviewComponent = previewsRegistry[previewId]?.component;
 
@@ -75,12 +77,12 @@ export default function PlainSurface({
       <Stack
         ref={wrapperRef}
         sx={{
-          height: "calc(100dvh - var(--header-height) - var(--toolbar-height))",
+          height: "100%",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
           overflow: "auto",
-          p: 2,
+          p: isFullpage ? 0 : 2,
         }}
       >
         <Paper

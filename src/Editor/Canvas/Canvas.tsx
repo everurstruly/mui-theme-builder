@@ -2,10 +2,10 @@ import PlainSurface from "./PlainSurface/PlainSurface";
 import ExplorerPanelVisibilityToggle from "../Toolbar/ExplorerPanelVisibilityToggle";
 import FullpagePreviewButton from "./PlainSurface/Controls/FullpagePreviewButton";
 import CanvasFrame from "./CanvasFrame";
+import QuickPreviewBar from "../Explorer/QuickPreviewBar";
 import { alpha, Stack } from "@mui/material";
 import { useRef } from "react";
 import { BreakpointSimulationToggles } from "./PlainSurface/BreakpointSimulation";
-import QuickPreviewBar from "../Explorer/QuickPreviewBar";
 
 export default function EditorCanvas() {
   const previewDivWrapperRef = useRef<HTMLDivElement>(null);
