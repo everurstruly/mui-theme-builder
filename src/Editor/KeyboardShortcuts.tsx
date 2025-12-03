@@ -32,22 +32,26 @@ export default function EditorGlobalKeyboardShortcuts() {
     const handler = (e: KeyboardEvent) => {
       const active = document.activeElement;
       const isUserTyping = keyPressedWithinInteractiveField(active);
-      const isMod = e.ctrlKey || e.metaKey;
+
+      const noModifiers =
+        !e.ctrlKey && !e.metaKey && !e.altKey && !e.shiftKey;
+      const onlyCtrlOrCmd = (e.ctrlKey || e.metaKey) && !e.altKey && !e.shiftKey;
+      const ctrlOrCmdAllowShift = (e.ctrlKey || e.metaKey) && !e.altKey;
 
       // don't intercept other editor typing shortcuts
       if (isUserTyping) {
         return;
       }
 
-      // Slash (/) opens collection when NOT holding modifiers and not typing
-      if (!isMod && e.key === "/" && !isUserTyping) {
+      // Slash (/) opens collection when NO modifiers and not typing
+      if (noModifiers && e.key === "/" && !isUserTyping) {
         e.preventDefault();
         setCollectionOpened(true);
         return;
       }
 
-      // Handle save: Ctrl/Cmd+S
-      if (isMod && e.key.toLowerCase() === "s") {
+      // Handle save: Ctrl/Cmd+S (no extra Shift/Alt)
+      if (onlyCtrlOrCmd && e.key.toLowerCase() === "s") {
         e.preventDefault();
         if (canSave) {
           // fire-and-forget; save() returns a promise
@@ -64,22 +68,22 @@ export default function EditorGlobalKeyboardShortcuts() {
       // }
 
       // Rename: F2 (no modifiers)
-      if (!isMod && e.key === "F2") {
+      if (noModifiers && e.key === "F2") {
         e.preventDefault();
         setRenameDialogOpen(true);
         return;
       }
 
-      // Toggle experience: Ctrl/Cmd+I
-      if (isMod && e.key.toLowerCase() === "i") {
+      // Toggle experience: Ctrl/Cmd+I (no extra Shift/Alt)
+      if (onlyCtrlOrCmd && e.key.toLowerCase() === "i") {
         e.preventDefault();
         // cycle between 'designer' and 'developer'
         selectExperience(selected === "designer" ? "developer" : "designer");
         return;
       }
 
-      // Toggle explorer collapse: Ctrl/Cmd+B
-      if (isMod && e.key.toLowerCase() === "b") {
+      // Toggle explorer collapse: Ctrl/Cmd+B (no extra Shift/Alt)
+      if (onlyCtrlOrCmd && e.key.toLowerCase() === "b") {
         e.preventDefault();
         const isExplorerHidden = hiddenPanels.includes("explorer");
         if (isExplorerHidden) showPanel("explorer");
@@ -87,29 +91,29 @@ export default function EditorGlobalKeyboardShortcuts() {
         return;
       }
 
-      // Fullscreen toggle: Ctrl/Cmd+Space
-      if (isMod && e.code === "Space") {
+      // Fullscreen toggle: Ctrl/Cmd+Space (no extra Shift/Alt)
+      if (onlyCtrlOrCmd && e.code === "Space") {
         e.preventDefault();
         // use the selector to toggle fullpage mode
         toggleFullpage();
         return;
       }
 
-      // Cycle templates: Ctrl/Cmd + ArrowRight / ArrowLeft
-      if (isMod && e.key === "ArrowRight") {
+      // Cycle templates: Ctrl/Cmd + ArrowRight / ArrowLeft (no extra Shift/Alt)
+      if (onlyCtrlOrCmd && e.key === "ArrowRight") {
         e.preventDefault();
         nextTemplate();
         return;
       }
 
-      if (isMod && e.key === "ArrowLeft") {
+      if (onlyCtrlOrCmd && e.key === "ArrowLeft") {
         e.preventDefault();
         prevTemplate();
         return;
       }
 
-      // Delete key opens delete confirmation when not typing
-      if (!isMod && e.key === "Delete") {
+      // Delete key opens delete confirmation when NO modifiers and not typing
+      if (noModifiers && e.key === "Delete") {
         if (canDelete) {
           e.preventDefault();
           setDeleteConfirmationDialogOpen(true);
@@ -117,8 +121,8 @@ export default function EditorGlobalKeyboardShortcuts() {
         return;
       }
 
-      // Undo/Redo (already wired)
-      if (isMod && e.key.toLowerCase() === "z") {
+      // Undo/Redo: Ctrl/Cmd+Z (Shift for Redo). Alt disables.
+      if (ctrlOrCmdAllowShift && e.key.toLowerCase() === "z") {
         e.preventDefault();
         const isRedo = e.shiftKey;
         if (selected === "developer") {
