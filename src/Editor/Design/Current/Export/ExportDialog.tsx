@@ -44,7 +44,7 @@ export default function ExportDialog() {
       <DialogTitle
         sx={{ display: "flex", alignItems: "center", gap: 2, py: 2, pb: 3 }}
       >
-        <Typography variant="h6" sx={{ fontWeight: 600 }}>
+        <Typography variant="h6" component="div" sx={{ fontWeight: 600 }}>
           Export Designed Theme
         </Typography>
 
