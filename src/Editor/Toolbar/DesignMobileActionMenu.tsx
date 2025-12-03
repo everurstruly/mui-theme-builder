@@ -1,6 +1,6 @@
 import * as React from "react";
-import ExportThemeButton from "../Design/Current/Export/ExportCommand";
-import ChangeHistoryActions from "../Design/Current/HistoryButtons";
+import HistoryButtons from "../Design/Current/HistoryButtons";
+import ExportButton from "../Design/Current/Export/ExportButton";
 import MenuItem from "@mui/material/MenuItem";
 import {
   ContentCopy,
@@ -46,8 +46,8 @@ export default function DesignMobileActionMenu() {
           mx: 1.5,
         }}
       >
-        <ChangeHistoryActions />
-        <ExportThemeButton />
+        <HistoryButtons />
+        <ExportButton />
       </Stack>
     );
   }
