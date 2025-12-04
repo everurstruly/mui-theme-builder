@@ -2,8 +2,8 @@ import useCurrent from "../Current/useCurrent";
 import { useCallback, useEffect, useState } from 'react';
 import { useCollection } from './useCollection';
 import { useStorage } from "../storage/useStorage";
-import { loadFromSnapshot } from "../New/strategies/loadFromSnapshot";
-import { useLoad } from "../New/useLoad";
+import { loadFromSnapshot } from "../Draft/strategies/loadFromSnapshot";
+import { useDraft } from "../Draft/useDraft";
 
 export function useManageCollection() {
   const storage = useStorage();
@@ -13,9 +13,9 @@ export function useManageCollection() {
   const setLoading = useCollection((s) => s.setLoading);
   const setError = useCollection((s) => s.setError);
   
-  const { load, status, blocker } = useLoad();
-  const currentSnapshotId = useCurrent((s) => s.persistenceSnapshotId);
-  const setSnapshotId = useCurrent((s) => s.setPersistenceSnapshotId);
+  const { load, status, blocker } = useDraft();
+  const savedDesignId = useCurrent((s) => s.savedId);
+  const setSnapshotId = useCurrent((s) => s.assignSaveId);
 
   const [hasLoadedDesign, setHasLoadedDesign] = useState(false);
   const [onLoadSuccess, setOnLoadSuccess] = useState<(() => void) | null>(null);
@@ -49,14 +49,14 @@ export function useManageCollection() {
   const deleteDesign = useCallback(
     async (id: string) => {
       // If deleting the currently open design, clear the snapshot ID
-      if (id === currentSnapshotId) {
+      if (id === savedDesignId) {
         setSnapshotId(null);
       }
 
       await storage.adapter.delete(id);
       await refreshCollection();
     },
-    [refreshCollection, currentSnapshotId, setSnapshotId, storage.adapter]
+    [refreshCollection, savedDesignId, setSnapshotId, storage.adapter]
   );
 
   // Auto-fetch on mount (with small delay to ensure provider initialized)

@@ -66,11 +66,11 @@ This document tracks implemented and remaining features for the MUI Theme Builde
 
 ### New Design Methods
 - [ ] **Paste Option Implementation** - Import theme from clipboard JSON
-  - File: `src/Editor/Design/New/Methods/PasteOption.tsx`
+  - File: `src/Editor/Design/Draft/Methods/PasteOption.tsx`
   - TODO: Call store action to import theme options (line 23)
   
 - [ ] **Blank Option Implementation** - Create empty design with preset
-  - File: `src/Editor/Design/New/Methods/BlankOption.tsx`
+  - File: `src/Editor/Design/Draft/Methods/BlankOption.tsx`
   - TODO: Call store to create an empty design with chosen preset (line 8)
 
 ### Resource Generator Feature

@@ -3,7 +3,7 @@ import HistoryButtons from "../Design/Current/HistoryButtons";
 import DesignMobileActionMenu from "./DesignMobileActionMenu";
 import CurrentDesignContext from "../Design/Current/Modify/Context";
 import PropertiesPanelHeader from "../Properties/PropertiesPanelHeader";
-import LaunchDialogOpenButton from "../Design/New/LaunchDialogOpenButton";
+import StrategiesDialogOpenButton from "../Design/Draft/StrategiesDialogOpenButton";
 import CollectionDialogButton from "../Design/Collection/CollectionDialogButton";
 import SaveButton from "../Design/Current/Save/SaveButton";
 import StatusBar from "../Design/Versions/StatusBar";
@@ -72,7 +72,7 @@ function DesktopToolbarContent() {
               paddingInlineStart={inlineGapRem}
             >
               <CollectionDialogButton />
-              <LaunchDialogOpenButton />
+              <StrategiesDialogOpenButton />
             </Stack>
 
             <Stack
@@ -133,7 +133,7 @@ function MobileToolbarContent() {
         columnGap={{ xs: 1.2, sm: 3 }}
         marginInlineStart={"auto"}
       >
-        <LaunchDialogOpenButton />
+        <StrategiesDialogOpenButton />
         <DesignMobileActionMenu />
       </Box>
     </Stack>

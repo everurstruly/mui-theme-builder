@@ -19,14 +19,14 @@ function debounce<T extends (...args: any[]) => any>(
 export function useTitle() {
   const storage = useStorage();
   const { save } = useSave();
-  const currentSnapshotId = useCurrent((s) => s.persistenceSnapshotId);
+  const savedDesignId = useCurrent((s) => s.savedId);
   const title = useCurrent((s) => s.title);
   const setTitle = useCurrent((s) => s.setTitle);
 
   const [conflict, setConflict] = useState<ConflictInfo | null>(null);
   const [isChecking, setIsChecking] = useState(false);
 
-  const isSavedDesign = !!currentSnapshotId;
+  const isSavedDesign = !!savedDesignId;
 
   const validateNewTitle = useMemo(() => {
     return debounce(async (t: string) => {
@@ -39,7 +39,7 @@ export function useTitle() {
         // Filter out the current design's own ID to prevent self-conflict
         const conflict =
           existing && existing.length > 0
-            ? existing.find((item: any) => item.id !== currentSnapshotId)
+            ? existing.find((item: any) => item.id !== savedDesignId)
             : null;
 
         const result = conflict
@@ -59,7 +59,7 @@ export function useTitle() {
         setIsChecking(false);
       }
     }, 300);
-  }, [storage.adapter, currentSnapshotId]);
+  }, [storage.adapter, savedDesignId]);
 
   /**
    * Rename the current design.

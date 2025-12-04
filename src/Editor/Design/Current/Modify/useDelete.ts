@@ -2,7 +2,7 @@ import { useManageCollection } from "../../Collection";
 import useCurrent from "../useCurrent";
 
 export default function useDelete() {
-  const designId = useCurrent((s) => s.persistenceSnapshotId);
+  const designId = useCurrent((s) => s.savedId);
   const loadNew = useCurrent((s) => s.loadNew);
   const canDelete = !!designId;
 

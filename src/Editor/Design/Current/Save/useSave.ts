@@ -1,40 +1,41 @@
 import { useCallback } from "react";
 import { useCurrent } from "../useCurrent";
-import { useIsSavedDesignDirty } from "./useIsSavedDesignDirty";
 import { useCollection } from "../../Collection";
 import { useStorage } from "../../storage/useStorage";
 import type { SaveOptions, PersistenceError } from "../useCurrent/types";
+import { useHasUnsavedWork } from "../useHasUnsavedWork";
 
 export function useSave() {
   const storage = useStorage();
-  const setSaveStatus = useCurrent((s) => s.setSaveStatus);
-  const setError = useCurrent((s) => s.setPersistenceError);
-  const setSnapshotId = useCurrent((s) => s.setPersistenceSnapshotId);
-  const setLastSavedAt = useCurrent((s) => s.setPersistedAt);
+  const setSaveStatus = useCurrent((s) => s.updateSaveStatus);
+  const setError = useCurrent((s) => s.recordSaveError);
+  const setSnapshotId = useCurrent((s) => s.assignSaveId);
+  const setLastSavedAt = useCurrent((s) => s.recordSavedAt);
   const setCollection = useCollection((s) => s.setCollection);
 
   const saveStatus = useCurrent((s) => s.saveStatus);
-  const currentSnapshotId = useCurrent((s) => s.persistenceSnapshotId);
-  const error = useCurrent((s) => s.persistenceError);
+  const savedDesignId = useCurrent((s) => s.savedId);
+  const error = useCurrent((s) => s.saveError);
 
-  const isDirty = useIsSavedDesignDirty();
+  const isDirty = useHasUnsavedWork();
 
   const save = useCallback(
-    async (options: SaveOptions = { mode: "update-or-create", onConflict: "fail" }) => {
+    async (
+      options: SaveOptions = { mode: "update-or-create", onConflict: "fail" }
+    ) => {
       const { adapter, serializer } = storage;
 
       setSaveStatus("saving");
       setError(null);
-
       try {
         // Capture edit state at START of save to prevent race conditions
         const editState = useCurrent.getState();
-        const currentSnapshotId = editState.persistenceSnapshotId;
+        const savedDesignId = editState.savedId;
         const capturedContentHash = editState.contentHash;
 
         // Serialize current edit state
         const snapshot = serializer.serialize(editState, {
-          id: options.snapshotId ?? currentSnapshotId ?? undefined,
+          id: options.snapshotId ?? savedDesignId ?? undefined,
           title: options.title ?? editState.title,
           strategy: options.strategy,
         });
@@ -54,6 +55,7 @@ export function useSave() {
             };
             setSaveStatus("error");
             setError(err);
+            throw err;
           }
         } else {
           const existing = await adapter.findByTitle(snapshot.title);
@@ -88,7 +90,7 @@ export function useSave() {
         setLastSavedAt(Date.now());
 
         // Create version if this is an update to an existing design and content changed
-        const isUpdate = !!currentSnapshotId;
+        const isUpdate = !!savedDesignId;
         const contentChanged = editState.checkpointHash !== capturedContentHash;
         if (isUpdate && contentChanged) {
           try {
@@ -121,13 +123,14 @@ export function useSave() {
         };
         setSaveStatus("error");
         setError(persistenceError);
+        throw persistenceError;
       }
     },
     [setError, setSaveStatus, setSnapshotId, setLastSavedAt, setCollection, storage]
   );
 
   // Can save if not currently saving and either dirty or new design
-  const canSave = saveStatus !== "saving" && (isDirty || !currentSnapshotId);
+  const canSave = saveStatus !== "saving" && (isDirty || !savedDesignId);
 
   return {
     save,

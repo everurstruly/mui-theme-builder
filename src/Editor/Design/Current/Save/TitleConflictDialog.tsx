@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import DialogHeading from "../../../_Components/DialogHeading";
 
-interface ConflictResolutionDecisionDialogProps {
+interface TitleConflictDialogProps {
   open: boolean;
   existingTitle: string;
   existingId: string;
@@ -19,13 +19,13 @@ interface ConflictResolutionDecisionDialogProps {
   onSaveAsNew: () => void;
 }
 
-export default function ConflictResolutionDecisionDialog({
+export default function TitleConflictDialog({
   open,
   existingTitle,
   onClose,
   onOverwrite,
   onSaveAsNew,
-}: ConflictResolutionDecisionDialogProps) {
+}: TitleConflictDialogProps) {
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>

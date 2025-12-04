@@ -8,22 +8,22 @@ export const createPersistenceSlice: StateCreator<
   CurrentDesignPersistenceSlice
 > = (set) => ({
   saveStatus: "idle",
-  loadStatus: "idle",
-  persistenceError: null,
-  persistenceSnapshotId: null,
-  lastPersistedAt: null,
+  creationStatus: "idle",
+  saveError: null,
+  savedId: null,
+  lastSavedAt: null,
 
-  setSaveStatus: (status) => set({ saveStatus: status }),
-  setLoadStatus: (status) => set({ loadStatus: status }),
-  setPersistenceError: (error) => set({ persistenceError: error }),
-  setPersistenceSnapshotId: (currentSnapshotId) => set({ persistenceSnapshotId: currentSnapshotId }),
-  setPersistedAt: (lastSavedAt) => set({ lastPersistedAt: lastSavedAt }),
+  updateSaveStatus: (status) => set({ saveStatus: status }),
+  updateCreationStatus: (status) => set({ creationStatus: status }),
+  recordSaveError: (error) => set({ saveError: error }),
+  assignSaveId: (savedDesignId) => set({ savedId: savedDesignId }),
+  recordSavedAt: (lastSavedAt) => set({ lastSavedAt: lastSavedAt }),
   reset: () =>
     set({
       saveStatus: "idle",
-      loadStatus: "idle",
-      persistenceError: null,
-      persistenceSnapshotId: null,
-      lastPersistedAt: null,
+      creationStatus: "idle",
+      saveError: null,
+      savedId: null,
+      lastSavedAt: null,
     }),
 });

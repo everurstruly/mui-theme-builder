@@ -3,7 +3,7 @@ import type {
   LoadOptions,
   PersistenceError,
 } from "../Current/useCurrent/types";
-import type { LoadData } from "../New/types";
+import type { LoadData } from "./types";
 import useCurrent from "../Current/useCurrent";
 import { useHasUnsavedWork } from "../Current/useHasUnsavedWork";
 import useDialogs from "./useDialogs";
@@ -14,7 +14,7 @@ import useDialogs from "./useDialogs";
  * Accepts any data provider strategy. You control what to load:
  *
  * @example
- * const { load } = useLoad();
+ * const { load } = useDraft();
  *
  * // Load from snapshot
  * load(() => loadFromSnapshot(id, storage));
@@ -31,12 +31,12 @@ import useDialogs from "./useDialogs";
  *   metadata: { sourceType: "custom", title: "..." }
  * }));
  */
-export function useLoad() {
+export function useDraft() {
   // Get persistence state setters from useCurrent
-  const setLoadStatus = useCurrent((s) => s.setLoadStatus);
-  const setError = useCurrent((s) => s.setPersistenceError);
-  const setSnapshotId = useCurrent((s) => s.setPersistenceSnapshotId);
-  const setLastSavedAt = useCurrent((s) => s.setPersistedAt);
+  const setLoadStatus = useCurrent((s) => s.updateCreationStatus);
+  const setError = useCurrent((s) => s.recordSaveError);
+  const setSnapshotId = useCurrent((s) => s.assignSaveId);
+  const setLastSavedAt = useCurrent((s) => s.recordSavedAt);
   const clearHistory = useCurrent((s) => s.clearHistory);
   const hydrate = useCurrent((s) => s.hydrate);
 

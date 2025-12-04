@@ -9,19 +9,19 @@ import {
 import DialogHeading from "../../../_Components/DialogHeading";
 import { WarningAmberOutlined } from "@mui/icons-material";
 
-interface ConfirmOverwriteDialogProps {
+interface OverwriteConfirmationDialogProps {
   open: boolean;
   existingTitle: string;
   onClose: () => void;
   onConfirm: () => void;
 }
 
-export default function ConfirmOverwriteDialog({
+export default function OverwriteConfirmationDialog({
   open,
   existingTitle,
   onClose,
   onConfirm,
-}: ConfirmOverwriteDialogProps) {
+}: OverwriteConfirmationDialogProps) {
   return (
     <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
       <DialogTitle>

@@ -6,7 +6,7 @@ import type { VersionMetadata, VersionSnapshot } from "../storage/types";
 
 export function useVersionHistory() {
   const storage = useStorage();
-  const currentDesignId = useCurrent((s) => s.persistenceSnapshotId);
+  const currentDesignId = useCurrent((s) => s.savedId);
   const hasUnsavedWork = useHasUnsavedWork();
   
   const [versions, setVersions] = useState<VersionMetadata[]>([]);
@@ -70,8 +70,8 @@ export function useVersionHistory() {
         editStore.hydrate(version.snapshot, { isSaved: true });
 
         // Update persistence context
-        editStore.setPersistenceSnapshotId(version.snapshot.id);
-        editStore.setPersistedAt(version.createdAt);
+        editStore.assignSaveId(version.snapshot.id);
+        editStore.recordSavedAt(version.createdAt);
 
         return version.snapshot;
       } catch (err: any) {
@@ -96,9 +96,9 @@ export function useVersionHistory() {
         editStore.hydrate(version.snapshot, { isSaved: false });
 
         // Clear persistence context (it's a new design)
-        editStore.setPersistenceSnapshotId(null);
-        editStore.setPersistedAt(null);
-        editStore.setSaveStatus("idle");
+        editStore.assignSaveId(null);
+        editStore.recordSavedAt(null);
+        editStore.updateSaveStatus("idle");
 
         return version.snapshot;
       } catch (err: any) {

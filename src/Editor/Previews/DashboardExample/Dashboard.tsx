@@ -8,7 +8,7 @@ import Chart from "./Chart";
 import Deposits from "./Deposits";
 import Orders from "./Orders";
 import PrimarySearchAppBar from "./Header";
-import { Box } from "@mui/material";
+import { Box, Card } from "@mui/material";
 import { mainListItems, secondaryListItems } from "./listItems";
 
 const drawerWidth = 240;
@@ -58,31 +58,33 @@ export default function Dashboard() {
             <Grid container spacing={3}>
               {/* Chart */}
               <Grid size={{ xs: 12, md: 8 }}>
-                <Paper
+                <Card
                   sx={{
                     ...paperStyle,
                     height: 240,
                   }}
                 >
                   <Chart />
-                </Paper>
+                </Card>
               </Grid>
+              
               {/* Recent Deposits */}
               <Grid size={{ xs: 12, md: 4 }}>
-                <Paper
+                <Card
                   sx={{
                     ...paperStyle,
                     height: 240,
                   }}
                 >
                   <Deposits />
-                </Paper>
+                </Card>
               </Grid>
+
               {/* Recent Orders */}
               <Grid size={{ xs: 12 }}>
-                <Paper sx={paperStyle}>
+                <Card sx={paperStyle}>
                   <Orders />
-                </Paper>
+                </Card>
               </Grid>
             </Grid>
           </Container>

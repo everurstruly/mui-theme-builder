@@ -1,20 +1,20 @@
 import * as React from "react";
-import LaunchBlockerDialog from "./LaunchBlockerDialog";
+import BlockerDialog from "./BlockerDialog";
+import DialogHeading from "../../_Components/DialogHeading";
 import { Dialog, DialogContent, DialogTitle } from "@mui/material";
 import { Tabs, Tab } from "@mui/material";
-import { useLaunchDialog } from "./useLaunchDialog";
-import { useLoad } from "./useLoad";
-import { launchDialogTabs } from "./launchDialogTabs";
+import useDialogs from "./useDialogs";
+import { useDraft } from "./useDraft";
+import { launchDialogTabs } from "./StrategiesTabs";
 import { AddOutlined } from "@mui/icons-material";
-import DialogHeading from "../../_Components/DialogHeading";
 
-export default function LaunchDialog() {
-  const { status, blocker } = useLoad();
+export default function StrategiesDialog() {
+  const { status, blocker } = useDraft();
 
-  const isOpen = useLaunchDialog((s) => s.isOpen);
-  const close = useLaunchDialog((s) => s.close);
-  const screen = useLaunchDialog((s) => s.screen);
-  const setScreen = useLaunchDialog((s) => s.setScreen);
+  const isOpen = useDialogs((s) => s.launchIsOpen);
+  const close = useDialogs((s) => s.closeLaunch);
+  const screen = useDialogs((s) => s.launchScreen);
+  const setScreen = useDialogs((s) => s.setLaunchScreen);
 
   // Close dialog on successful launch
   React.useEffect(() => {
@@ -56,7 +56,7 @@ export default function LaunchDialog() {
         </DialogContent>
       </Dialog>
 
-      <LaunchBlockerDialog />
+      <BlockerDialog />
     </>
   );
 }

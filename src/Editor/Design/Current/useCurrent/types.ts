@@ -204,7 +204,11 @@ export interface CurrentDesignPreviewState {
 export interface CurrentDesignPreviewActions {
   setActiveColorScheme: (scheme: "light" | "dark") => void;
   selectPreview: (previewId: string) => void;
-  enterViewMode: (versionId: string, snapshot: ThemeSnapshot, createdAt: number) => void;
+  enterViewMode: (
+    versionId: string,
+    snapshot: ThemeSnapshot,
+    createdAt: number
+  ) => void;
   exitViewMode: () => void;
 }
 
@@ -214,18 +218,18 @@ export type CurrentDesignPreviewSlice = CurrentDesignPreviewState &
 // ===== Persistence Slice Types =====
 export interface CurrentDesignPersistenceState {
   saveStatus: "idle" | "saving" | "saved" | "error";
-  loadStatus: "idle" | "loading" | "error";
-  persistenceError: PersistenceError | null;
-  persistenceSnapshotId: string | null;
-  lastPersistedAt: number | null;
+  creationStatus: "idle" | "loading" | "error";
+  saveError: PersistenceError | null;
+  savedId: string | null;
+  lastSavedAt: number | null;
 }
 
 export interface CurrentDesignPersistenceActions {
-  setSaveStatus: (status: "idle" | "saving" | "saved" | "error") => void;
-  setLoadStatus: (status: "idle" | "loading" | "error") => void;
-  setPersistenceError: (error: PersistenceError | null) => void;
-  setPersistenceSnapshotId: (id: string | null) => void;
-  setPersistedAt: (timestamp: number | null) => void;
+  updateSaveStatus: (status: "idle" | "saving" | "saved" | "error") => void;
+  updateCreationStatus: (status: "idle" | "loading" | "error") => void;
+  recordSaveError: (error: PersistenceError | null) => void;
+  assignSaveId: (id: string | null) => void;
+  recordSavedAt: (timestamp: number | null) => void;
   reset: () => void;
 }
 
@@ -397,7 +401,7 @@ export interface LoadBlocker {
 export interface PersistenceState {
   status: "idle" | "saving" | "loading" | "error";
   error: PersistenceError | null;
-  currentSnapshotId: string | null;
+  savedDesignId: string | null;
   lastSavedAt: number | null;
   collection: ThemeSnapshotMetadata[];
 }

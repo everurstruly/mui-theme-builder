@@ -1,10 +1,10 @@
 import Button from "@mui/material/Button";
 import { useMediaQuery } from "@mui/material";
 import { Add } from "@mui/icons-material";
-import { useLaunchDialog } from "./useLaunchDialog";
+import useDialogs from "./useDialogs";
 
-export default function LaunchDialogOpenButton() {
-  const open = useLaunchDialog((s) => s.open);
+export default function StrategiesDialogOpenButton() {
+  const open = useDialogs((s) => s.openLaunch);
   const isDesktop = useMediaQuery("(min-width:400px)");
 
   return (

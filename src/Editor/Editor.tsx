@@ -2,9 +2,10 @@ import EditorCanvas from "./Canvas/Canvas";
 import EditorToolsbar from "./Toolbar/Toolbar";
 import EditorPropertiesPanel from "./Properties/PropertiesPanel";
 import EditorExplorerPanel from "./Explorer/ExplorerPanel";
-import LaunchDialog from "./Design/New/LaunchDialog";
+import StrategiesDialog from "./Design/Draft/StrategiesDialog";
 import ExportDialog from "./Design/Current/Export/ExportDialog";
 import CollectionDialog from "./Design/Collection/CollectionDialog";
+import SaveBlockerDialog from "./Design/Current/Save/BlockerDialog";
 import editorTheme from "./theme";
 import RenameDialog from "./Design/Current/Modify/RenameDialog";
 import DeleteDialog from "./Design/Current/Modify/DeleteDialog";
@@ -22,7 +23,8 @@ export default function Editor() {
       <DeleteDialog />
       <RenameDialog />
       <CollectionDialog />
-      <LaunchDialog />
+      <SaveBlockerDialog />
+      <StrategiesDialog />
       <ExportDialog />
 
       <GlobalStyles

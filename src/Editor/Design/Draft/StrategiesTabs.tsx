@@ -1,9 +1,9 @@
 import * as React from "react";
 import TemplateMethod from "./Template/Template";
-import type { LaunchDialog } from "./useLaunchDialog";
+import type { StrategiesDialog } from "./useDialogs";
 
 export const launchDialogTabs: {
-  value: LaunchDialog;
+  value: StrategiesDialog;
   label: string;
   Component: React.ComponentType<any>;
 }[] = [

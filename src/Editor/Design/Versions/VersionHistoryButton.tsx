@@ -4,7 +4,7 @@ import { useCurrent } from "../Current/useCurrent";
 import useEditor from "../../useEditor";
 
 export function VersionHistoryButton() {
-  const currentDesignId = useCurrent((s) => s.persistenceSnapshotId);
+  const currentDesignId = useCurrent((s) => s.savedId);
   const setDialogOpen = useEditor((s) => s.setVersionHistoryOpen);
 
   // Only show button if there's a saved design

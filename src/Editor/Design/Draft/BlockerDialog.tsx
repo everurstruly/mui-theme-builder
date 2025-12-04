@@ -6,12 +6,12 @@ import {
   DialogTitle,
   Typography,
 } from "@mui/material";
-import { useLoad } from "./useLoad";
+import { useDraft } from "./useDraft";
 import DialogHeading from "../../_Components/DialogHeading";
 import { ErrorOutline } from "@mui/icons-material";
 
-export default function LaunchBlockerDialog() {
-  const { status, blocker } = useLoad();
+export default function BlockerDialog() {
+  const { status, blocker } = useDraft();
 
   const open = status === "blocked" && blocker?.reason === "UNSAVED_CHANGES";
   const onCancel = () => blocker?.resolutions.cancel();

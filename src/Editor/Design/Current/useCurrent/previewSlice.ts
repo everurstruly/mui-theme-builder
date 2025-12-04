@@ -28,7 +28,7 @@ export const createPreviewSlice: StateCreator<
       isViewingVersion: true,
       viewingVersionId: versionId,
       viewingVersionSnapshot: {
-        previousSnapshotId: currentState.persistenceSnapshotId,
+        previousSnapshotId: currentState.savedId,
         previousEditState: {
           title: currentState.title,
           baseThemeOptionSource: currentState.baseThemeOptionSource,
@@ -69,7 +69,7 @@ export const createPreviewSlice: StateCreator<
       
       // Restore snapshot ID
       if (savedState.previousSnapshotId) {
-        set({ persistenceSnapshotId: savedState.previousSnapshotId });
+        set({ savedId: savedState.previousSnapshotId });
       }
     }
   },

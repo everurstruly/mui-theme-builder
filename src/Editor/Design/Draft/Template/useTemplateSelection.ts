@@ -1,7 +1,7 @@
 import templatesRegistry, { getTemplateById } from "../../../Templates/registry";
 import { useCallback, useEffect } from "react";
 import { useTemplates } from "./useTemplates";
-import { useLoad } from "../useLoad";
+import { useDraft } from "../useDraft";
 import { loadFromTemplate } from "../strategies/loadFromTemplate";
 
 const maxPreviewColorCount = 4;
@@ -15,7 +15,7 @@ export function useTemplateSelection() {
   const selectedId = useTemplates((s) => s.selectedId);
   const clearSelection = useTemplates((s) => s.clearSelection);
 
-  const { load } = useLoad();
+  const { load } = useDraft();
 
   const select = useCallback(
     (id: string) => {

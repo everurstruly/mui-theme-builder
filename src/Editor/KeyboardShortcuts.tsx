@@ -1,8 +1,8 @@
 import useCurrent from "./Design/Current/useCurrent";
 import useExportOptions from "./Design/Current/Export/useExportOptions";
 import useEditor from "./useEditor";
-import { useLaunchDialog } from "./Design/New/useLaunchDialog";
-import { useTemplateSelection } from "./Design/New/Template/useTemplateSelection";
+import useDialogs from "./Design/Draft/useDialogs";
+import { useTemplateSelection } from "./Design/Draft/Template/useTemplateSelection";
 import useDelete from "./Design/Current/Modify/useDelete";
 import { useCollection } from "./Design/Collection";
 import { useSave } from "./Design/Current/Save/useSave";
@@ -31,7 +31,7 @@ export default function EditorGlobalKeyboardShortcuts() {
   const toggleFullpage = useEditor((s) => s.toggleFullpage);
   const requestKeyboardFocus = useEditor((s) => s.requestKeyboardFocus);
   const { next: nextTemplate, prev: prevTemplate } = useTemplateSelection();
-  const openLaunchDialog = useLaunchDialog((s) => s.open);
+  const openLaunchDialog = useDialogs((s) => s.openLaunch);
   const openHelp = useHelpDialog((s) => s.open);
 
   // Common options: don't trigger when typing in inputs
