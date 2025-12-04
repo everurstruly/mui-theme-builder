@@ -3,6 +3,7 @@ import useEditor from "../useEditor";
 import DeveloperPropertiesPanel from "./DeveloperPropertiesPanel";
 import DesignerPropertiesPanel from "./DesignerPropertiesPanel";
 import { Stack } from "@mui/material";
+import ShadesDrawer from "./Color/ShadesDrawer/ShadesDrawer";
 
 export default function PanelBody() {
   const selectedExperienceId = useEditor((state) => state.selectedExperience);
@@ -76,12 +77,14 @@ export default function PanelBody() {
         overflow: "hidden",
 
         // css: create content window
-        position: "relative",
-        transform: "translateX(0px)",
+        // position: "relative !important",
+        // transform: "translateX(0px)",
       }}
     >
       {selectedExperienceId === "designer" && <DesignerPropertiesPanel />}
       {selectedExperienceId === "developer" && <DeveloperPropertiesPanel />}
+
+      <ShadesDrawer />
     </Stack>
   );
 }

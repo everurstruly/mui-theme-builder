@@ -44,6 +44,7 @@ function DesktopActivitiesDrawer() {
             height: "100%",
             border: "none",
             overflowX: "hidden",
+            backgroundColor: (theme) => theme.palette.background.paper,
 
             // hide native scrollbars but preserve scrolling
             msOverflowStyle: "none",

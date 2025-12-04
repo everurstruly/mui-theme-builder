@@ -16,13 +16,13 @@ export default function DesignerPropertiesPanel({ sx }: { sx?: SxProps<any> }) {
 
   return (
     <Paper
-      elevation={0}
       sx={{
         position: "relative",
         overflow: "auto",
         height: `100%`,
         px: 0,
         borderRadius: 0,
+        border: "none",
         ...thinScrollbar,
         ...(Array.isArray(sx) ? sx : [sx]),
       }}
@@ -36,7 +36,9 @@ export default function DesignerPropertiesPanel({ sx }: { sx?: SxProps<any> }) {
           display: "flex",
           flexGrow: 1,
           alignItems: "center",
+          border: "none",
           paddingInline: panelPaddingInlineRem,
+          backgroundColor: (theme) => theme.palette.background.paper,
           borderBottom: (theme) => `1px solid ${theme.palette.divider}`,
         }}
       >

@@ -31,7 +31,6 @@ function DesktopToolbarContent() {
       direction="row"
       alignItems={"center"}
       justifyContent="space-between"
-      borderColor={"divider"}
       display={{ xs: "none", md: "flex" }}
       sx={{
         px: { md: inlineGapRem, lg: "0px" },
@@ -119,7 +118,7 @@ function MobileToolbarContent() {
       direction="row"
       alignItems={"center"}
       columnGap={1.5}
-      paddingInline={{ xs: .6, sm: "12px" }}
+      paddingInline={{ xs: 0.6, sm: "12px" }}
     >
       <CurrentDesignContext
         sx={{ minWidth: 0, maxWidth: "var(--explorer-panel-width)" }}
@@ -152,6 +151,8 @@ function SectionLayout({ sx, children }: SectionLayoutProps) {
       color={"inherit"}
       sx={{
         color: "text.primary",
+        border: "none",
+
         // borderBottom: 1,
         // borderColor: "divider",
 

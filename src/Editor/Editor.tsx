@@ -5,16 +5,20 @@ import EditorExplorerPanel from "./Explorer/ExplorerPanel";
 import LaunchDialog from "./Design/New/LaunchDialog";
 import ExportDialog from "./Design/Current/Export/ExportDialog";
 import CollectionDialog from "./Design/Collection/CollectionDialog";
-import { GlobalStyles, Paper, Stack } from "@mui/material";
+import editorTheme from "./theme";
 import RenameDialog from "./Design/Current/Modify/RenameDialog";
+import DeleteDialog from "./Design/Current/Modify/DeleteDialog";
+import HelpDialog from "./Help/Dialog";
+import { GlobalStyles, Paper, Stack } from "@mui/material";
+import { ThemeProvider } from "@mui/material/styles";
 import { VersionHistoryDialog } from "./Design/Versions";
 import { isFeatureEnabled } from "../config/featureFlags";
-import DeleteDialog from "./Design/Current/Modify/DeleteDialog";
 
 export default function Editor() {
   return (
-    <>
+    <ThemeProvider theme={editorTheme}>
       {isFeatureEnabled("SHOW_VERSION_HISTORY") && <VersionHistoryDialog />}
+      <HelpDialog />
       <DeleteDialog />
       <RenameDialog />
       <CollectionDialog />
@@ -47,7 +51,7 @@ export default function Editor() {
         height={`calc(100dvh - var(--header-height) - 1px)`} // NB: 1px is a magic number that prevents vertical scrollbar from appearing
         overflow={"hidden"}
       >
-        <Paper component="main" sx={{ flexGrow: 1, minWidth: 0 }}>
+        <Paper component="main" elevation={0} sx={{ flexGrow: 1, minWidth: 0, border: "none" }}>
           <EditorToolsbar />
           <Stack
             minWidth={0}
@@ -62,6 +66,6 @@ export default function Editor() {
           </Stack>
         </Paper>
       </Stack>
-    </>
+    </ThemeProvider>
   );
 }
