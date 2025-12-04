@@ -63,7 +63,7 @@ const editorTheme = createTheme({
         root: {
           transition: 'box-shadow .18s ease, transform .18s ease, background-color .12s ease',
           '&:focus-visible': {
-            outline: '4px solid rgba(10,132,255,0.14)',
+            outline: '3px solid rgba(10,132,255,0.08)',
             outlineOffset: 2,
           },
         },
@@ -146,6 +146,36 @@ const editorTheme = createTheme({
             theme.palette.mode === "light"
               ? "1px solid rgba(16,24,40,0.04)"
               : "1px solid rgba(255,255,255,0.04)",
+        }),
+      },
+    },
+    MuiIconButton: {
+      styleOverrides: {
+        root: ({ theme }: any) => ({
+          color:
+            theme.palette.mode === 'dark'
+              ? theme.palette.text?.secondary ?? 'rgba(255,255,255,0.74)'
+              : theme.palette.text?.secondary ?? 'rgba(0,0,0,0.6)',
+          opacity: 0.92,
+        }),
+        sizeSmall: ({ theme }: any) => ({
+          color:
+            theme.palette.mode === 'dark'
+              ? theme.palette.text?.secondary ?? 'rgba(255,255,255,0.74)'
+              : theme.palette.text?.secondary ?? 'rgba(0,0,0,0.6)',
+          opacity: 0.92,
+        }),
+      },
+    },
+    MuiSvgIcon: {
+      styleOverrides: {
+        root: ({ theme }: any) => ({
+          color:
+            theme.palette.mode === 'dark'
+              ? theme.palette.text?.secondary ?? 'rgba(255,255,255,0.74)'
+              : theme.palette.text?.secondary ?? 'rgba(0,0,0,0.6)',
+          opacity: 0.92,
+          transition: 'color .12s ease, opacity .12s ease',
         }),
       },
     },
