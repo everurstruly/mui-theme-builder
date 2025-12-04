@@ -4,9 +4,11 @@ import useEditor from "./useEditor";
 import { useLaunchDialog } from "./Design/New/useLaunchDialog";
 import { useTemplateSelection } from "./Design/New/Template/useTemplateSelection";
 import useDelete from "./Design/Current/Modify/useDelete";
-import { useEffect } from "react";
 import { useCollection } from "./Design/Collection";
 import { useSave } from "./Design/Current/Save/useSave";
+import { useHelpDialog } from "./Help/useHelpDialog";
+import { useHotkeys } from "react-hotkeys-hook";
+import { keyboardMappings } from "./keyboardMappings";
 
 export default function EditorGlobalKeyboardShortcuts() {
   const { save, canSave } = useSave();
@@ -30,161 +32,129 @@ export default function EditorGlobalKeyboardShortcuts() {
   const requestKeyboardFocus = useEditor((s) => s.requestKeyboardFocus);
   const { next: nextTemplate, prev: prevTemplate } = useTemplateSelection();
   const openLaunchDialog = useLaunchDialog((s) => s.open);
+  const openHelp = useHelpDialog((s) => s.open);
 
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      const active = document.activeElement;
-      const isUserTyping = keyPressedWithinInteractiveField(active);
+  // Common options: don't trigger when typing in inputs
+  const hotkeyOptions = {
+    enableOnFormTags: false,
+    preventDefault: true,
+  };
 
-      const noModifiers =
-        !e.ctrlKey && !e.metaKey && !e.altKey && !e.shiftKey;
-      const onlyCtrlOrCmd = (e.ctrlKey || e.metaKey) && !e.altKey && !e.shiftKey;
-      const ctrlOrCmdAllowShift = (e.ctrlKey || e.metaKey) && !e.altKey;
+  // Find mappings by description keyword for easy reference
+  const getMapping = (keyword: string) =>
+    keyboardMappings.find((m) => m.description.toLowerCase().includes(keyword))
+      ?.keys || "";
 
-      // don't intercept other editor typing shortcuts
-      if (isUserTyping) {
-        return;
+  // Help
+  useHotkeys(getMapping("help"), () => openHelp(), {
+    useKey: true,
+    ...hotkeyOptions,
+  });
+
+  // Collection
+  useHotkeys(getMapping("collection"), () => setCollectionOpened(true), {
+    useKey: true,
+    ...hotkeyOptions,
+  });
+
+  // Save
+  useHotkeys(
+    getMapping("save"),
+    () => {
+      if (canSave) {
+        void save();
       }
+    },
+    { ...hotkeyOptions, enabled: canSave },
+    [canSave, save]
+  );
 
-      // Slash (/) opens collection when NO modifiers and not typing
-      if (noModifiers && e.key === "/" && !isUserTyping) {
-        e.preventDefault();
-        setCollectionOpened(true);
-        return;
+  // Export
+  useHotkeys(getMapping("export"), () => setExportOpened(true), hotkeyOptions);
+
+  // Rename
+  useHotkeys(getMapping("rename"), () => setRenameDialogOpen(true), hotkeyOptions);
+
+  // Toggle experience (designer/developer)
+  useHotkeys(
+    getMapping("designer/developer"),
+    () => {
+      requestKeyboardFocus("properties");
+      selectExperience(selected === "designer" ? "developer" : "designer");
+    },
+    hotkeyOptions,
+    [selected, selectExperience, requestKeyboardFocus]
+  );
+
+  // Toggle explorer
+  useHotkeys(
+    getMapping("explorer"),
+    () => {
+      const isExplorerHidden = hiddenPanels.includes("explorer");
+      if (isExplorerHidden) {
+        requestKeyboardFocus("explorer");
+        showPanel("explorer");
+      } else {
+        hidePanel("explorer");
       }
+    },
+    hotkeyOptions,
+    [hiddenPanels, requestKeyboardFocus, showPanel, hidePanel]
+  );
 
-      // Handle save: Ctrl/Cmd+S (no extra Shift/Alt)
-      if (onlyCtrlOrCmd && e.key.toLowerCase() === "s") {
-        e.preventDefault();
-        if (canSave) {
-          // fire-and-forget; save() returns a promise
-          void save();
-        }
-        return;
-      }
+  // Fullscreen
+  useHotkeys(getMapping("fullscreen"), () => toggleFullpage(), hotkeyOptions);
 
-      // Intercept print shortcut (Ctrl/Cmd + p) to open the export dialog
-      if (onlyCtrlOrCmd && e.key.toLowerCase() === "p") {
-        e.preventDefault();
-        setExportOpened(true);
-        return;
-      }
-
-      // Rename: F2 (no modifiers)
-      if (noModifiers && e.key === "F2") {
-        e.preventDefault();
-        setRenameDialogOpen(true);
-        return;
-      }
-
-      // Toggle experience: Ctrl/Cmd+I (no extra Shift/Alt)
-      if (onlyCtrlOrCmd && e.key.toLowerCase() === "i") {
-        e.preventDefault();
-        // Indicate the properties panel should receive focus because this
-        // action was initiated via keyboard.
-        requestKeyboardFocus("properties");
-        // cycle between 'designer' and 'developer'
-        selectExperience(selected === "designer" ? "developer" : "designer");
-        return;
-      }
-
-      // Toggle explorer collapse: Ctrl/Cmd+B (no extra Shift/Alt)
-      if (onlyCtrlOrCmd && e.key.toLowerCase() === "b") {
-        e.preventDefault();
-        const isExplorerHidden = hiddenPanels.includes("explorer");
-        if (isExplorerHidden) {
-          // Request keyboard focus for the explorer panel when opened via keyboard
-          requestKeyboardFocus("explorer");
-          showPanel("explorer");
-        }
-        else hidePanel("explorer");
-        return;
-      }
-
-      // Fullscreen toggle: Ctrl/Cmd+Space (no extra Shift/Alt)
-      if (onlyCtrlOrCmd && e.code === "Space") {
-        e.preventDefault();
-        // use the selector to toggle fullpage mode
-        toggleFullpage();
-        return;
-      }
-
-      // Cycle templates: Ctrl/Cmd + ArrowRight / ArrowLeft (no extra Shift/Alt)
-      if (onlyCtrlOrCmd && e.key === "ArrowRight") {
-        e.preventDefault();
-        nextTemplate();
-        return;
-      }
-
-      if (onlyCtrlOrCmd && e.key === "ArrowLeft") {
-        e.preventDefault();
-        prevTemplate();
-        return;
-      }
-
-      // Delete key opens delete confirmation when NO modifiers and not typing
-      if (noModifiers && e.key === "Delete") {
-        if (canDelete) {
-          e.preventDefault();
-          setDeleteConfirmationDialogOpen(true);
-        }
-        return;
-      }
-
-      // Open launch dialog: `n` (no modifiers)
-      if (noModifiers && e.key.toLowerCase() === "n") {
-        e.preventDefault();
-        openLaunchDialog();
-        return;
-      }
-
-      // Undo/Redo: Ctrl/Cmd+Z (Shift for Redo). Alt disables.
-      if (ctrlOrCmdAllowShift && e.key.toLowerCase() === "z") {
-        e.preventDefault();
-        const isRedo = e.shiftKey;
-        if (selected === "developer") {
-          if (isRedo) redoCode();
-          else undoCode();
-        } else {
-          if (isRedo) redoVisual();
-          else undoVisual();
-        }
-      }
-    };
-
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, [
-    selected,
-    undoVisual,
-    requestKeyboardFocus,
-    redoVisual,
-    undoCode,
-    redoCode,
-    setExportOpened,
-    setCollectionOpened,
-    save,
-    canSave,
-    openLaunchDialog,
-    setRenameDialogOpen,
-    canDelete,
-    setDeleteConfirmationDialogOpen,
-    selectExperience,
-    hiddenPanels,
-    hidePanel,
-    showPanel,
-    toggleFullpage,
+  // Cycle templates
+  useHotkeys(getMapping("next template"), () => nextTemplate(), hotkeyOptions, [
     nextTemplate,
+  ]);
+  useHotkeys(getMapping("previous template"), () => prevTemplate(), hotkeyOptions, [
     prevTemplate,
   ]);
 
-  return null;
-}
-function keyPressedWithinInteractiveField(active: Element | null) {
-  return (
-    active &&
-    (active.tagName === "INPUT" ||
-      active.tagName === "TEXTAREA" ||
-      (active as HTMLElement).isContentEditable)
+  // Delete
+  useHotkeys(
+    getMapping("delete"),
+    () => {
+      if (canDelete) {
+        setDeleteConfirmationDialogOpen(true);
+      }
+    },
+    { ...hotkeyOptions, enabled: canDelete },
+    [canDelete, setDeleteConfirmationDialogOpen]
   );
+
+  // New design
+  useHotkeys(getMapping("new design"), () => openLaunchDialog(), hotkeyOptions);
+
+  // Undo
+  useHotkeys(
+    getMapping("undo"),
+    () => {
+      if (selected === "developer") {
+        undoCode();
+      } else {
+        undoVisual();
+      }
+    },
+    hotkeyOptions,
+    [selected, undoCode, undoVisual]
+  );
+
+  // Redo
+  useHotkeys(
+    getMapping("redo"),
+    () => {
+      if (selected === "developer") {
+        redoCode();
+      } else {
+        redoVisual();
+      }
+    },
+    hotkeyOptions,
+    [selected, redoCode, redoVisual]
+  );
+
+  return null;
 }
