@@ -6,6 +6,8 @@ import {
   DialogActions,
   Button,
 } from "@mui/material";
+import DialogHeading from "../../../_Components/DialogHeading";
+import { WarningAmberOutlined } from "@mui/icons-material";
 
 interface ConfirmOverwriteDialogProps {
   open: boolean;
@@ -22,11 +24,13 @@ export default function ConfirmOverwriteDialog({
 }: ConfirmOverwriteDialogProps) {
   return (
     <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
-      <DialogTitle>Confirm Overwrite</DialogTitle>
+      <DialogTitle>
+        <DialogHeading title="Confirm Replace" Icon={WarningAmberOutlined} />
+      </DialogTitle>
 
       <DialogContent>
         <DialogContentText>
-          Are you sure you want to overwrite the existing design "{existingTitle}"?
+          Are you sure you want to replace the existing design "{existingTitle}"?
           This action cannot be undone.
         </DialogContentText>
       </DialogContent>
@@ -34,7 +38,7 @@ export default function ConfirmOverwriteDialog({
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
         <Button onClick={onConfirm} color="error" variant="contained">
-          Yes, Overwrite
+          Yes, Replace existing
         </Button>
       </DialogActions>
     </Dialog>

@@ -1,3 +1,4 @@
+import { ErrorOutline } from "@mui/icons-material";
 import {
   Dialog,
   DialogTitle,
@@ -5,7 +6,9 @@ import {
   DialogContentText,
   DialogActions,
   Button,
+  Typography,
 } from "@mui/material";
+import DialogHeading from "../../../_Components/DialogHeading";
 
 interface ConflictResolutionDecisionDialogProps {
   open: boolean;
@@ -19,23 +22,28 @@ interface ConflictResolutionDecisionDialogProps {
 export default function ConflictResolutionDecisionDialog({
   open,
   existingTitle,
-  existingId,
   onClose,
   onOverwrite,
   onSaveAsNew,
 }: ConflictResolutionDecisionDialogProps) {
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>Design Title Already Exists</DialogTitle>
+      <DialogTitle>
+        <DialogHeading title="Design Title Already Taken" Icon={ErrorOutline} />
+      </DialogTitle>
 
       <DialogContent>
         <DialogContentText>
-          A design with the title "{existingTitle}" already exists (ID:{" "}
-          {existingId.slice(0, 8)}...).
-          <br />
-          <br />
-          Would you like to overwrite it or save as a new design with a different
-          title?
+          Uh oh! You already have a saved design with the title{" "}
+          <Typography
+            variant="body1"
+            fontWeight={"bold"}
+            fontStyle={"italic"}
+            component="span"
+          >
+            {existingTitle}
+          </Typography>
+          . What would you like to do?
         </DialogContentText>
       </DialogContent>
 
@@ -44,7 +52,7 @@ export default function ConflictResolutionDecisionDialog({
         <Button onClick={onSaveAsNew} color="primary">
           Save as New
         </Button>
-        <Button onClick={onOverwrite} color="warning" variant="contained">
+        <Button onClick={onOverwrite} color="error">
           Overwrite Existing
         </Button>
       </DialogActions>

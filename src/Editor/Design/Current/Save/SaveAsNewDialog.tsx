@@ -60,7 +60,7 @@ export default function SaveAsNewDialog({
             }}
           />
           {errorMessage && (
-            <Box sx={{ mt: 1 }}>
+            <Box sx={{ mt: 1, mx: 1.5 }}>
               <DialogContentText color="error">{errorMessage}</DialogContentText>
             </Box>
           )}
