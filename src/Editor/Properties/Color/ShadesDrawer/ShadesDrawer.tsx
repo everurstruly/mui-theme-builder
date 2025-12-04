@@ -29,9 +29,9 @@ export default function ShadesDrawer() {
         data-selected-path={selectedPath ?? ""}
         onClick={close}
         sx={{
-          position: "fixed",
+          position: "fixed !important",
           inset: 0,
-          background: "rgba(0,0,0,.2)",
+          background: "rgba(0,0,0,.5)",
           opacity: open ? 1 : 0,
           pointerEvents: open ? "auto" : "none",
           transition: "opacity 380ms cubic-bezier(.2,.8,.2,1)",
@@ -44,13 +44,17 @@ export default function ShadesDrawer() {
         aria-hidden={!open}
         data-dev-name="shades-drawer-panel"
         sx={{
-          position: "fixed",
+          position: "fixed !important",
           left: 0,
           right: 0,
           bottom: 0,
           zIndex: 1500,
+          borderRadius: "8px 8px 0 0",
+          opacity: open ? 1 : 0,
+          pointerEvents: open ? "auto" : "none",
           transform: open ? "translateY(0%)" : "translateY(100%)",
-          transition: "transform 320ms cubic-bezier(.2,.8,.2,1)",
+          transition:
+            "transform 320ms cubic-bezier(.2,.8,.2,1), opacity 320ms cubic-bezier(.2,.8,.2,1)",
           height: "max(70vh, 60%)",
           boxShadow: "0px -2px 10px rgba(0,0,0,0.1)",
           overflow: "hidden",
@@ -115,7 +119,7 @@ function DrawerGrabber() {
           width: 40,
           height: 4,
           borderRadius: 999,
-          background: "rgba(0,0,0,0.26)",
+          background: "rgba(0,0,0,0.5)",
         }}
       />
     </Box>

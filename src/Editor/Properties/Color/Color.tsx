@@ -1,7 +1,6 @@
 import ColorOptionGroup from "./ColorOptionGroup";
-import ShadesDrawer from "./ShadesDrawer/ShadesDrawer";
-import { Box, Divider, Stack } from "@mui/material";
 import paletteGroupMap from "./paletteMap";
+import { Box, Divider, Stack } from "@mui/material";
 
 export type PaletteGroupItemAttribute = {
   name: string;
@@ -23,19 +22,16 @@ export type PaletteGroup = {
 
 export default function ColorProperty() {
   return (
-    <>
-      <Stack sx={{ flexGrow: 1 }} divider={<Divider sx={{ borderStyle: "dashed" }} />}>
-        {paletteGroupMap.map((group) => (
-          <Box key={group.title}>
-            <ColorOptionGroup
-              title={group.title}
-              defaultOpen={group.defaultOpen}
-              items={group.items}
-            />
-          </Box>
-        ))}
-      </Stack>
-      <ShadesDrawer />
-    </>
+    <Stack sx={{ flexGrow: 1 }} divider={<Divider sx={{ borderStyle: "dashed" }} />}>
+      {paletteGroupMap.map((group) => (
+        <Box key={group.title}>
+          <ColorOptionGroup
+            title={group.title}
+            defaultOpen={group.defaultOpen}
+            items={group.items}
+          />
+        </Box>
+      ))}
+    </Stack>
   );
 }
