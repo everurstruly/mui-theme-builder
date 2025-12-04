@@ -7,15 +7,13 @@ const editorTheme = createTheme({
         mode: "dark",
         primary: { main: "#0A84FF" },
         background: {
-          // darker default for app chrome; keep papers slightly translucent
           default: "#0B0B0C",
-          paper: "rgba(18,18,18,.9)",
+          paper: "rgba(18,18,18,.96)",
         },
         text: {
           primary: "rgba(255,255,255,0.92)",
           secondary: "rgba(255,255,255,0.7)",
         },
-        divider: "rgba(255,255,255,0.06)",
         action: {
           hover: "rgba(255,255,255,0.06)",
           selected: "rgba(255,255,255,0.04)",
@@ -30,7 +28,7 @@ const editorTheme = createTheme({
         primary: { main: "#0A84FF" },
         background: {
           default: "#F6F7F8",
-          paper: "rgba(255,255,255,0.8)",
+          paper: "rgba(255,255,255,0.96)",
         },
         action: {
           hover: "rgba(0,0,0,0.06)",
@@ -61,9 +59,10 @@ const editorTheme = createTheme({
     MuiButtonBase: {
       styleOverrides: {
         root: {
-          transition: 'box-shadow .18s ease, transform .18s ease, background-color .12s ease',
-          '&:focus-visible': {
-            outline: '3px solid rgba(10,132,255,0.08)',
+          transition:
+            "box-shadow .18s ease, transform .18s ease, background-color .12s ease",
+          "&:focus-visible": {
+            outline: "3px solid rgba(10,132,255,0.08)",
             outlineOffset: 2,
           },
         },
@@ -74,13 +73,18 @@ const editorTheme = createTheme({
         root: ({ theme }: any) => ({
           borderRadius: 10,
           background:
-            theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)',
-          '& .MuiOutlinedInput-notchedOutline': { borderColor: 'transparent' },
-          '&:hover .MuiOutlinedInput-notchedOutline': {
-            borderColor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)',
+            theme.palette.mode === "dark"
+              ? "rgba(255,255,255,0.02)"
+              : "rgba(0,0,0,0.02)",
+          "& .MuiOutlinedInput-notchedOutline": { borderColor: "transparent" },
+          "&:hover .MuiOutlinedInput-notchedOutline": {
+            borderColor:
+              theme.palette.mode === "dark"
+                ? "rgba(255,255,255,0.06)"
+                : "rgba(0,0,0,0.06)",
           },
-          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-            borderColor: 'rgba(10,132,255,0.32)',
+          "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+            borderColor: "rgba(10,132,255,0.32)",
           },
         }),
       },
@@ -140,8 +144,8 @@ const editorTheme = createTheme({
               : "rgba(18,18,18,0.96)",
           boxShadow:
             theme.palette.mode === "light"
-              ? "0 6px 18px rgba(16,24,40,0.06)"
-              : "0 6px 20px rgba(0,0,0,0.6)",
+              ? "0 6px 12px rgba(16,24,40,0.06)"
+              : "0 6px 18px rgba(0,0,0,0.2)",
           border:
             theme.palette.mode === "light"
               ? "1px solid rgba(16,24,40,0.04)"
@@ -153,16 +157,16 @@ const editorTheme = createTheme({
       styleOverrides: {
         root: ({ theme }: any) => ({
           color:
-            theme.palette.mode === 'dark'
-              ? theme.palette.text?.secondary ?? 'rgba(255,255,255,0.74)'
-              : theme.palette.text?.secondary ?? 'rgba(0,0,0,0.6)',
+            theme.palette.mode === "dark"
+              ? theme.palette.text?.secondary ?? "rgba(255,255,255,0.74)"
+              : theme.palette.text?.secondary ?? "rgba(0,0,0,0.6)",
           opacity: 0.92,
         }),
         sizeSmall: ({ theme }: any) => ({
           color:
-            theme.palette.mode === 'dark'
-              ? theme.palette.text?.secondary ?? 'rgba(255,255,255,0.74)'
-              : theme.palette.text?.secondary ?? 'rgba(0,0,0,0.6)',
+            theme.palette.mode === "dark"
+              ? theme.palette.text?.secondary ?? "rgba(255,255,255,0.74)"
+              : theme.palette.text?.secondary ?? "rgba(0,0,0,0.6)",
           opacity: 0.92,
         }),
       },
@@ -171,11 +175,11 @@ const editorTheme = createTheme({
       styleOverrides: {
         root: ({ theme }: any) => ({
           color:
-            theme.palette.mode === 'dark'
-              ? theme.palette.text?.secondary ?? 'rgba(255,255,255,0.74)'
-              : theme.palette.text?.secondary ?? 'rgba(0,0,0,0.6)',
+            theme.palette.mode === "dark"
+              ? theme.palette.text?.secondary ?? "rgba(255,255,255,0.74)"
+              : theme.palette.text?.secondary ?? "rgba(0,0,0,0.6)",
           opacity: 0.92,
-          transition: 'color .12s ease, opacity .12s ease',
+          transition: "color .12s ease, opacity .12s ease",
         }),
       },
     },
@@ -184,7 +188,6 @@ const editorTheme = createTheme({
         root: {
           boxShadow: "none",
           borderRadius: 999,
-          paddingBlock: 8,
         },
         containedPrimary: {
           background: "linear-gradient(180deg, #0A84FF, #0060D6)",
