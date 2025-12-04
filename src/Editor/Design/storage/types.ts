@@ -100,4 +100,3 @@ export interface StorageDependencies {
   adapter: StorageAdapter;
   serializer: ThemeSerializer;
 }
-  adapter: StorageAdapter;

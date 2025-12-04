@@ -93,7 +93,7 @@ export function useLoad() {
         throw persistenceError;
       }
     },
-    [setLoadStatus, setError, setSnapshotId, setLastSavedAt, clearHistory, hydrate]
+    [setLoadStatus, setError, setSnapshotId, setLastSavedAt, clearHistory, hydrate, setStatus, setBlocker]
   );
 
   /**
@@ -131,7 +131,7 @@ export function useLoad() {
       const loadData = await strategy();
       await handleLoadable(loadData, options);
     },
-    [hasUnsavedWork, handleLoadable, status]
+    [hasUnsavedWork, handleLoadable, status, setStatus, setBlocker]
   );
 
   return {
