@@ -18,6 +18,7 @@ import { styled } from "@mui/material/styles";
 import { editorMiscsLinksMenu } from "../Editor/editorMiscsLinksMenu";
 import { useState } from "react";
 import BrandLink from "../BrandLink";
+import { useHelpDialog } from "../Editor/Help/useHelpDialog";
 
 const StyledToolbar = styled(Toolbar)(() => ({
   flexWrap: "wrap",
@@ -27,6 +28,14 @@ const StyledToolbar = styled(Toolbar)(() => ({
 }));
 
 export default function EditorPage() {
+  const openHelp = useHelpDialog((s) => s.open);
+
+  const handleMenuItemClick = (item: typeof editorMiscsLinksMenu[0]) => {
+    if (item.key === "help") {
+      openHelp();
+    }
+  };
+
   return (
     <>
       <Helmet>
@@ -74,18 +83,40 @@ export default function EditorPage() {
             alignItems={"center"}
             sx={{ columnGap: 4, display: { xs: "none", md: "flex" } }}
           >
-            {editorMiscsLinksMenu.map((item) => (
-              <Link
-                key={item.key}
-                href={item.href}
-                target={item.target}
-                fontSize={"small"}
-                color="text.secondary"
-                underline="none"
-              >
-                {item.label}
-              </Link>
-            ))}
+            {editorMiscsLinksMenu.map((item) =>
+              item.href ? (
+                <Link
+                  key={item.key}
+                  href={item.href}
+                  target={item.target}
+                  fontSize={"small"}
+                  color="text.secondary"
+                  underline="none"
+                >
+                  {item.label}
+                </Link>
+              ) : (
+                <Link
+                  key={item.key}
+                  component="button"
+                  onClick={() => handleMenuItemClick(item)}
+                  fontSize={"small"}
+                  color="text.secondary"
+                  underline="none"
+                  sx={{
+                    cursor: "pointer",
+                    background: "none",
+                    border: "none",
+                    padding: 0,
+                    "&:hover": {
+                      color: "text.primary",
+                    },
+                  }}
+                >
+                  {item.label}
+                </Link>
+              )
+            )}
           </Stack>
 
           <Stack
@@ -108,6 +139,7 @@ export default function EditorPage() {
 }
 
 function MobileMenuButton() {
+  const openHelp = useHelpDialog((s) => s.open);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -162,7 +194,13 @@ function MobileMenuButton() {
               <ArrowRightAltRounded />
             </MenuItem>
           ) : (
-            <MenuItem key={item.key} onClick={handleClose}>
+            <MenuItem
+              key={item.key}
+              onClick={() => {
+                handleClose();
+                if (item.key === "help") openHelp();
+              }}
+            >
               <ListItemText>{item.label}</ListItemText>
               <ArrowRightAltRounded />
             </MenuItem>

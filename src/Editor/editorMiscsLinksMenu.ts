@@ -3,9 +3,14 @@ export type EditorMenuItem = {
   label: string;
   href?: string;
   target?: string;
+  action?: () => void;
 };
 
 export const editorMiscsLinksMenu: EditorMenuItem[] = [
+  {
+    key: "help",
+    label: "Help",
+  },
   {
     key: "human",
     label: "Human",
