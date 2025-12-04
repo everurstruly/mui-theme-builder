@@ -7,7 +7,7 @@ import { useCurrent } from "../useCurrent";
 
 export default function SaveButton() {
   const { title, validateNewTitle: checkTitle, conflict, isChecking } = useTitle();
-  const { save, status, canSave, isDirty } = useSave();
+  const { save, error, status, canSave, isDirty } = useSave();
   const isSaved = useCurrent((s) => !!s.persistenceSnapshotId);
   const [showConflictDialog, setShowConflictDialog] = useState(false);
   const [conflictError, setConflictError] = useState<string | null>(null);
@@ -20,19 +20,19 @@ export default function SaveButton() {
   }, [title, checkTitle]);
 
   const handleSave = useCallback(async () => {
-    try {
-      await save({ onConflict: "fail" });
-    } catch (err: any) {
-      if (err.code === "CONFLICT") {
-        setAttemptedNewTitle(null);
-        setConflictError(null);
-        setShowConflictDialog(true);
-      } else {
-        // Other errors are shown via error state
-        console.error("Save failed:", err);
-      }
-    }
+    await save({ onConflict: "fail" });
   }, [save]);
+
+  useEffect(() => {
+    if (error?.code === "CONFLICT") {
+      setAttemptedNewTitle(null);
+      setConflictError(null);
+      setShowConflictDialog(true);
+    } else {
+      // Other errors are shown via error state
+      console.error("Save failed:", error);
+    }
+  }, [error]);
 
   const handleOverwrite = useCallback(async () => {
     // Keep dialog open until overwrite completes; parent will close on success.
@@ -42,7 +42,7 @@ export default function SaveButton() {
       setConflictError(null);
     } catch (err: any) {
       console.error("Overwrite failed:", err);
-      setConflictError(err?.message ?? 'Overwrite failed');
+      setConflictError(err?.message ?? "Overwrite failed");
     }
   }, [save]);
 
@@ -56,15 +56,17 @@ export default function SaveButton() {
         setConflictError(null);
         setAttemptedNewTitle(null);
       } catch (err: any) {
-        if (err.code === 'CONFLICT') {
+        if (err.code === "CONFLICT") {
           // Keep the dialog open and show an inline error; prefill the field
           // so the user can immediately choose a new title.
           setAttemptedNewTitle(newTitle ?? null);
-          setConflictError('A design with that title already exists. Choose a different title.');
+          setConflictError(
+            "A design with that title already exists. Choose a different title."
+          );
           setShowConflictDialog(true);
         } else {
-          console.error('Save as new failed:', err);
-          setConflictError(err?.message ?? 'Save failed');
+          console.error("Save as new failed:", err);
+          setConflictError(err?.message ?? "Save failed");
           setShowConflictDialog(true);
         }
       }
@@ -133,7 +135,7 @@ export default function SaveButton() {
         onSaveAsNew={handleSaveAsNew}
         errorMessage={conflictError}
         initialNewTitle={attemptedNewTitle ?? undefined}
-        initialMode={attemptedNewTitle ? 'rename' : undefined}
+        initialMode={attemptedNewTitle ? "rename" : undefined}
       />
     </>
   );

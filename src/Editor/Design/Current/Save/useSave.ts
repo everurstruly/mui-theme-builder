@@ -20,7 +20,7 @@ export function useSave() {
   const isDirty = useIsSavedDesignDirty();
 
   const save = useCallback(
-    async (options: SaveOptions = { mode: "update-or-create" }) => {
+    async (options: SaveOptions = { mode: "update-or-create", onConflict: "fail" }) => {
       const { adapter, serializer } = storage;
 
       setSaveStatus("saving");
@@ -30,7 +30,7 @@ export function useSave() {
         // Capture edit state at START of save to prevent race conditions
         const editState = useCurrent.getState();
         const currentSnapshotId = editState.persistenceSnapshotId;
-        const capturedContentHash = (editState as any).contentHash;
+        const capturedContentHash = editState.contentHash;
 
         // Serialize current edit state
         const snapshot = serializer.serialize(editState, {
@@ -54,7 +54,6 @@ export function useSave() {
             };
             setSaveStatus("error");
             setError(err);
-            throw err;
           }
         } else {
           const existing = await adapter.findByTitle(snapshot.title);
@@ -64,16 +63,24 @@ export function useSave() {
           }
         }
 
-        // Persist with transaction support
-        const saved = await adapter.transaction(async (tx: any) => {
-          if (conflictToDelete) {
-            await tx.delete(conflictToDelete);
+        if (conflictToDelete) {
+          try {
+            await adapter.delete(conflictToDelete);
+          } catch (delErr) {
+            const err: PersistenceError = {
+              code: "STORAGE_ERROR",
+              message: "Failed to delete conflicting snapshot",
+              context: { conflictId: conflictToDelete },
+            };
+            setSaveStatus("error");
+            setError(err);
+            throw delErr;
           }
+        }
 
-          return targetId
-            ? await tx.update(targetId, { ...snapshot, id: targetId })
-            : await tx.create(snapshot);
-        });
+        const saved = targetId
+          ? await adapter.update(targetId, { ...snapshot, id: targetId })
+          : await adapter.create(snapshot);
 
         // Update reactive state
         setSaveStatus("saved");
@@ -114,7 +121,6 @@ export function useSave() {
         };
         setSaveStatus("error");
         setError(persistenceError);
-        throw persistenceError;
       }
     },
     [setError, setSaveStatus, setSnapshotId, setLastSavedAt, setCollection, storage]
