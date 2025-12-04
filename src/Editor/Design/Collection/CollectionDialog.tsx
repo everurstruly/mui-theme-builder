@@ -24,6 +24,7 @@ import { useCallback } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CloseIcon from "@mui/icons-material/Close";
 import { useCollection, useManageCollection } from ".";
+import { FolderOpenOutlined } from "@mui/icons-material";
 
 export default function CollectionDialog() {
   const open = useCollection((s) => s.menuOpened);
@@ -45,6 +46,7 @@ export default function CollectionDialog() {
   const handleLoadDesign = useCallback(
     (id: string) => {
       loadDesign(id, onClose);
+      onClose();
     },
     [loadDesign, onClose]
   );
@@ -107,13 +109,7 @@ export default function CollectionDialog() {
   };
 
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      maxWidth="xs"
-      fullWidth
-      sx={{ maxHeight: "80vh" }}
-    >
+    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle
         sx={{
           display: "flex",
@@ -121,19 +117,19 @@ export default function CollectionDialog() {
           justifyContent: "space-between",
         }}
       >
-        <Box>
-          <Typography variant="h6">Saved Designs</Typography>
-          <Typography variant="caption" color="text.secondary">
-            {filteredAndSortedCollection.length} of {collection.length} design
-            {collection.length !== 1 ? "s" : ""}
+        <Box sx={{ display: "flex", alignItems: "center", columnGap: 2 }}>
+          <FolderOpenOutlined sx={{ color: "primary.main" }} />
+          <Typography variant="h6" sx={{ fontWeight: 600 }}>
+            Saved Designs ({collection.length})
           </Typography>
         </Box>
+
         <IconButton edge="end" onClick={onClose}>
           <CloseIcon />
         </IconButton>
       </DialogTitle>
 
-      <DialogContent dividers sx={{ p: 0 }}>
+      <DialogContent>
         {/* Design List */}
         {isLoading ? (
           <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
@@ -146,7 +142,7 @@ export default function CollectionDialog() {
             </Typography>
           </Box>
         ) : (
-          <List sx={{ p: 0 }}>
+          <List sx={{ px: 0, pt: 4, pb: 0 }}>
             {filteredAndSortedCollection.map((item: any, index: number) => (
               <Box key={item.id}>
                 {index > 0 && <Divider />}

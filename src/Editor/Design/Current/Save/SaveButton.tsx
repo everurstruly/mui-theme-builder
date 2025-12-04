@@ -105,7 +105,6 @@ export default function SaveButton() {
         <Button
           value="save"
           aria-label="Save design"
-          color={"info"}
           disabled={!canSave || isChecking}
           onClick={handleSave}
         >

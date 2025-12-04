@@ -8,6 +8,8 @@ import {
 } from "@mui/material";
 import useEditor from "../../../useEditor";
 import useDelete from "./useDelete";
+import { DeleteOutline } from "@mui/icons-material";
+import DialogHeading from "../../../components/DialogHeading";
 
 function DeleteDialog() {
   const { trash } = useDelete();
@@ -15,7 +17,7 @@ function DeleteDialog() {
   const deleteConfirmationDialogOpen = useEditor(
     (s) => s.deleteConfirmationDialogOpen
   );
-  
+
   const setDeleteConfirmationDialogOpen = useEditor(
     (s) => s.setDeleteConfirmationDialogOpen
   );
@@ -28,19 +30,21 @@ function DeleteDialog() {
     await trash();
     setDeleteConfirmationDialogOpen(false);
     // setSnack({ severity: "info", message: "Deleted current design" });
-  };
+  }
 
   return (
     <Dialog open={deleteConfirmationDialogOpen} onClose={handleClose}>
-      <DialogTitle>Delete current design?</DialogTitle>
+      <DialogTitle>
+        <DialogHeading title="Delete current design?" Icon={DeleteOutline} />
+      </DialogTitle>
 
       <DialogContent>
-        <Typography>
+        <Typography sx={{ mt: 2 }}>
           Deleting will reset the canvas to a blank design. Continue?
         </Typography>
       </DialogContent>
 
-      <DialogActions sx={{ p: 3 }}>
+      <DialogActions>
         <Button onClick={() => setDeleteConfirmationDialogOpen(false)}>
           Cancel
         </Button>

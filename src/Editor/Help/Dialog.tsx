@@ -43,21 +43,21 @@ export default function HelpDialog() {
       aria-labelledby="help-dialog"
       maxWidth="md"
       fullWidth
-      slotProps={{
-        paper: {
-          sx: {
-            borderRadius: 6,
-            bgcolor: (theme) =>
-              theme.palette.mode === "dark"
-                ? "rgba(0,0,0,0.85)"
-                : "rgba(255,255,255,0.7)",
-            backdropFilter: "blur(10px)",
-            boxShadow: (theme) =>
-              theme.shadows["10"] ?? "0 10px 30px rgba(0,0,0,0.4)",
-            border: () => `1px solid rgba(255,255,255,0.06)`,
-          },
-        },
-      }}
+      // slotProps={{
+      //   paper: {
+      //     sx: {
+      //       borderRadius: 6,
+      //       bgcolor: (theme) =>
+      //         theme.palette.mode === "dark"
+      //           ? "rgba(0,0,0,0.85)"
+      //           : "rgba(255,255,255,0.7)",
+      //       backdropFilter: "blur(10px)",
+      //       boxShadow: (theme) =>
+      //         theme.shadows["10"] ?? "0 10px 30px rgba(0,0,0,0.4)",
+      //       border: () => `1px solid rgba(255,255,255,0.06)`,
+      //     },
+      //   },
+      // }}
     >
       {/* Header */}
       <Box

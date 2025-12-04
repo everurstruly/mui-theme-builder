@@ -1,10 +1,12 @@
 import * as React from "react";
 import LaunchBlockerDialog from "./LaunchBlockerDialog";
-import { Dialog, DialogContent } from "@mui/material";
-import { Box, Tabs, Tab, Stack, lighten } from "@mui/material";
+import DialogHeading from "../../components/DialogHeading";
+import { Dialog, DialogContent, DialogTitle } from "@mui/material";
+import { Tabs, Tab } from "@mui/material";
 import { useLaunchDialog } from "./useLaunchDialog";
 import { useLoad } from "./useLoad";
 import { launchDialogTabs } from "./launchDialogTabs";
+import { AddOutlined } from "@mui/icons-material";
 
 export default function LaunchDialog() {
   const { status, blocker } = useLoad();
@@ -25,60 +27,32 @@ export default function LaunchDialog() {
 
   return (
     <>
-      <Dialog
-        open={Boolean(isOpen)}
-        onClose={close}
-        fullWidth
-        maxWidth={"xs"}
-        PaperProps={{ sx: { borderRadius: 6 } }}
-      >
-        <DialogContent sx={{ p: 0 }}>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              position: "relative",
-              maxHeight: "50vh",
-              overflow: "auto",
-              scrollbarWidth: "none",
-              scrollbarColor: "rgba(0,0,0,0.5) transparent",
-            }}
-          >
-            <Stack
-              sx={{
-                position: "sticky",
-                top: 0,
-                zIndex: 1,
-              }}
-            >
-              <Tabs
-                value={screen}
-                onChange={(_, value) => setScreen(value)}
-                variant="fullWidth"
-                aria-label="New design creation method"
-                sx={{
-                  backgroundColor: (theme) =>
-                    lighten(theme.palette.background.paper, 0.05),
-                }}
-              >
-                {launchDialogTabs.map((modeOption) => (
-                  <Tab
-                    key={modeOption.value}
-                    label={modeOption.label}
-                    value={modeOption.value}
-                    sx={{ py: 2.4 }}
-                  />
-                ))}
-              </Tabs>
-            </Stack>
+      <Dialog open={Boolean(isOpen)} onClose={close} fullWidth maxWidth={"xs"}>
+        <DialogTitle>
+          <DialogHeading title="Start a New Design" Icon={AddOutlined} />
+        </DialogTitle>
 
-            <Box role="region" sx={{ px: 2, pb: 2 }}>
-              {launchDialogTabs.map(
-                ({ value, Component }) =>
-                  screen === value && <Component key={value} onClose={close} />
-              )}
-            </Box>
-          </Box>
+        <Tabs
+          value={screen}
+          onChange={(_, value) => setScreen(value)}
+          aria-label="New design creation methods"
+          sx={{ mx: 4, borderBottom: 1, borderColor: "divider" }}
+        >
+          {launchDialogTabs.map((modeOption) => (
+            <Tab
+              key={modeOption.value}
+              label={modeOption.label}
+              value={modeOption.value}
+              sx={{ py: 2.4 }}
+            />
+          ))}
+        </Tabs>
+
+        <DialogContent>
+          {launchDialogTabs.map(
+            ({ value, Component }) =>
+              screen === value && <Component key={value} onClose={close} />
+          )}
         </DialogContent>
       </Dialog>
 

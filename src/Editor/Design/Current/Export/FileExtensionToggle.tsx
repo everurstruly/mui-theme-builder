@@ -20,13 +20,21 @@ function FileExtensionToggle({ sx }: { sx?: object }) {
       exclusive
       value={language}
       onChange={(_, value) => {
-        setLanguage(value);
+        if (value) {
+          setLanguage(value);
+        }
       }}
       sx={{ marginInlineStart: "auto !important", borderRadius: 4, ...sx }}
     >
       {formatOptions.map((option) => {
         return (
-          <ToggleButton sx={{ lineHeight: 1, p: 1 }} value={option.value}>
+          <ToggleButton
+            sx={{
+              lineHeight: 1,
+              p: 1,
+            }}
+            value={option.value}
+          >
             {option.label}
           </ToggleButton>
         );

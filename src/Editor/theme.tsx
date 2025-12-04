@@ -7,8 +7,8 @@ const editorTheme = createTheme({
         mode: "dark",
         primary: { main: "#0A84FF" },
         background: {
-          default: "#0B0B0C",
-          paper: "rgba(18,18,18,.96)",
+          default: "#0B0BC",
+          paper: "rgba(18,18,18,0.72)",
         },
         text: {
           primary: "rgba(255,255,255,0.92)",
@@ -48,7 +48,7 @@ const editorTheme = createTheme({
     button: {
       textTransform: "none",
       fontWeight: 500,
-      fontSize: "0.7625rem",
+      fontSize: "0.85rem",
     },
     allVariants: {
       WebkitFontSmoothing: "antialiased",
@@ -72,19 +72,32 @@ const editorTheme = createTheme({
       styleOverrides: {
         root: ({ theme }: any) => ({
           borderRadius: 10,
+          // stronger light-mode tint so inputs are readable inside light dialogs
           background:
             theme.palette.mode === "dark"
               ? "rgba(255,255,255,0.02)"
-              : "rgba(0,0,0,0.02)",
-          "& .MuiOutlinedInput-notchedOutline": { borderColor: "transparent" },
+              : "rgba(16,24,40,0.04)",
+          color: theme.palette.text.primary,
+          "& .MuiInputBase-input": {
+            color: theme.palette.text.primary,
+            "&::placeholder": {
+              color: theme.palette.text.secondary,
+              opacity: 1,
+            },
+          },
+          "& .MuiOutlinedInput-notchedOutline": {
+            borderColor:
+              theme.palette.mode === "dark" ? "transparent" : "rgba(16,24,40,0.06)",
+          },
           "&:hover .MuiOutlinedInput-notchedOutline": {
             borderColor:
               theme.palette.mode === "dark"
                 ? "rgba(255,255,255,0.06)"
-                : "rgba(0,0,0,0.06)",
+                : "rgba(16,24,40,0.08)",
           },
           "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
             borderColor: "rgba(10,132,255,0.32)",
+            borderWidth: 1,
           },
         }),
       },
@@ -92,25 +105,27 @@ const editorTheme = createTheme({
     MuiDialog: {
       styleOverrides: {
         paper: ({ theme }: any) => ({
-          borderRadius: 12,
-          background:
+          // stronger visual separation for dialogs
+          borderRadius: 18,
+          bgcolor:
             theme.palette.mode === "dark"
-              ? "rgba(20,20,20,0.5)"
-              : "rgba(255,255,255,0.9)",
-          backdropFilter: "blur(10px)",
-          boxShadow: "0 10px 30px rgba(16,24,40,0.08)",
+              ? "rgba(18,18,18,0.96)"
+              : "rgba(255,255,255,0.94)",
+          backdropFilter: "blur(12px)",
+          boxShadow:
+            theme.palette.mode === "dark"
+              ? "0 20px 60px rgba(2,6,23,0.68)"
+              : "0 12px 40px rgba(16,24,40,0.12)",
           border:
             theme.palette.mode === "light"
-              ? "1px solid rgba(16,24,40,0.04)"
-              : "1px solid rgba(255,255,255,0.04)",
+              ? "1px solid rgba(16,24,40,0.06)"
+              : "1px solid rgba(255,255,255,0.06)",
         }),
       },
     },
     MuiDialogContent: {
       styleOverrides: {
-        root: ({ theme }: any) => ({
-          paddingTop: theme.spacing(2),
-          maxHeight: "70vh",
+        root: ({ theme }) => ({
           overflow: "auto",
           scrollbarWidth: "thin",
           scrollbarColor:
@@ -130,6 +145,25 @@ const editorTheme = createTheme({
                 : "rgba(0,0,0,0.2)",
             borderRadius: 4,
           },
+        }),
+      },
+    },
+    MuiDialogTitle: {
+      styleOverrides: {
+        root: () => ({
+          display: "flex",
+          alignItems: "center",
+          py: 2,
+          gap: 2,
+          pb: 3,
+        }),
+      },
+    },
+    MuiDialogActions: {
+      styleOverrides: {
+        root: ({ theme }: any) => ({
+          padding: theme.spacing(3),
+          columnGap: theme.spacing(1),
         }),
       },
     },
@@ -168,6 +202,29 @@ const editorTheme = createTheme({
               ? theme.palette.text?.secondary ?? "rgba(255,255,255,0.74)"
               : theme.palette.text?.secondary ?? "rgba(0,0,0,0.6)",
           opacity: 0.92,
+        }),
+      },
+    },
+    MuiToggleButton: {
+      styleOverrides: {
+        root: ({ theme }: any) => ({
+          color: theme.palette.text.primary,
+          opacity: 0.96,
+          textTransform: 'none',
+          '&.Mui-selected': {
+            color: theme.palette.primary.contrastText,
+            backgroundColor:
+              theme.palette.mode === 'dark'
+                ? 'rgba(10,132,255,0.16)'
+                : theme.palette.primary.main,
+            boxShadow:
+              theme.palette.mode === 'light'
+                ? '0 6px 18px rgba(10,132,255,0.12)'
+                : '0 6px 18px rgba(10,132,255,0.16)',
+          },
+        }),
+        sizeSmall: ({ theme }: any) => ({
+          color: theme.palette.text.primary,
         }),
       },
     },

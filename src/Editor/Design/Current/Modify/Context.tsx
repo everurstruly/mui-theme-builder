@@ -2,7 +2,7 @@ import React from "react";
 import useCurrent from "../useCurrent";
 import useEditor from "../../../useEditor";
 import useDelete from "./useDelete";
-import { MoreVertRounded } from "@mui/icons-material";
+import { KeyboardArrowDownOutlined } from "@mui/icons-material";
 import { Typography, Menu, MenuItem, Button, type SxProps } from "@mui/material";
 import { useTitle } from "./useTitle";
 import { isFeatureEnabled } from "../../../../config/featureFlags";
@@ -45,41 +45,36 @@ function Context({ sx }: { sx?: SxProps }) {
     <>
       <Button
         onClick={handleMenuOpen}
+        title={title}
         sx={{
           display: "flex",
           overflow: "hidden",
           alignItems: "center",
-          justifyContent: "space-between",
-          columnGap: 1,
+          justifyContent: "flex-start",
+          whiteSpace: "nowrap",
+          columnGap: .75,
+          textOverflow: "ellipsis",
           ...sx,
         }}
       >
+        {isViewingVersion ? "You're previewing" : "You're diting"}
         <Typography
-          variant="button"
-          color="primary"
+          variant="caption"
+          color="textPrimary"
           sx={{
             whiteSpace: "nowrap",
             textOverflow: "ellipsis",
+            lineHeight: 1,
             overflow: "hidden",
+            alignItems: "center",
+            display: "inline-flex",
+            columnGap: 0.5,
+            maxWidth: "50%",
           }}
         >
-          {isViewingVersion ? "You're previewing —" : "You're editing —"}{" "}
-          <Typography
-            variant="caption"
-            color="textPrimary"
-            sx={{
-              whiteSpace: "nowrap",
-              textOverflow: "ellipsis",
-              lineHeight: 1,
-              overflow: "hidden",
-              alignItems: "center",
-              display: "inline-flex",
-              columnGap: 0.5,
-            }}
-          >
-            {title} <MoreVertRounded sx={{ fontSize: "14px" }} />
-          </Typography>
+          {title}
         </Typography>
+        <KeyboardArrowDownOutlined sx={{ fontSize: "16px" }} />
       </Button>
 
       <Menu

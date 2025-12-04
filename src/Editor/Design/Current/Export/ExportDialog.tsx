@@ -9,9 +9,10 @@ import CopyButton from "./CopyButton";
 import FileExtensionToggle from "./FileExtensionToggle";
 import useExportOptions from "./useExportOptions";
 import FileContent from "./FileContent";
-import { Close } from "@mui/icons-material";
-import { Box, Typography, Paper, Stack, useMediaQuery } from "@mui/material";
+import { Close, FolderCopyOutlined } from "@mui/icons-material";
+import { Box, Stack, useMediaQuery } from "@mui/material";
 import FileSelectBox from "./FileSelectBox";
+import DialogHeading from "../../../components/DialogHeading";
 
 export default function ExportDialog() {
   const open = useExportOptions((s) => s.opened);
@@ -25,32 +26,16 @@ export default function ExportDialog() {
       aria-labelledby="export-context-dialog"
       maxWidth="sm"
       fullWidth
-      slotProps={{
-        paper: {
-          sx: {
-            borderRadius: 6,
-            bgcolor: (theme) =>
-              theme.palette.mode === "dark"
-                ? "rgba(20,20,20,0.7)"
-                : "rgba(255,255,255,0.7)",
-            backdropFilter: "blur(10px)",
-            boxShadow: (theme) =>
-              theme.shadows["10"] ?? "0 10px 30px rgba(0,0,0,0.4)",
-            border: () => `1px solid rgba(255,255,255,0.06)`,
-          },
-        },
-      }}
     >
-      <DialogTitle
-        sx={{ display: "flex", alignItems: "center", gap: 2, py: 2, pb: 3 }}
-      >
-        <Typography variant="h6" component="div" sx={{ fontWeight: 600 }}>
-          Export Designed Theme
-        </Typography>
+      <DialogTitle>
+        <DialogHeading title="Export Designed Theme" Icon={FolderCopyOutlined} />
 
-        <Box sx={{ flex: 1 }} />
-
-        <IconButton size="small" aria-label="close" onClick={() => setOpen(false)}>
+        <IconButton
+          size="small"
+          aria-label="close"
+          onClick={() => setOpen(false)}
+          sx={{ marginInlineStart: "auto" }}
+        >
           <Close />
         </IconButton>
       </DialogTitle>
@@ -62,8 +47,8 @@ export default function ExportDialog() {
           sx={{
             alignItems: "center",
             justifyContent: "space-between",
-            my: 1,
-            mb: 2,
+            mt: 2,
+            mb: 1,
           }}
         >
           {requiresCompactView && <MergeWithDefaultsSwitch />}
@@ -75,7 +60,7 @@ export default function ExportDialog() {
               alignItems: "inherit",
               flexGrow: !requiresCompactView ? 1 : 0,
               justifyContent: !requiresCompactView ? "flex-end" : "inherit",
-              columnGap: requiresCompactView ? 2 : 1,
+              columnGap: 2,
             }}
           >
             {!requiresCompactView && (
@@ -89,42 +74,28 @@ export default function ExportDialog() {
           </Box>
         </Stack>
 
-        <Paper
+        <Box
           sx={{
-            position: "relative",
-            borderRadius: 4,
-            overflow: "hidden",
-            mb: 1,
+            display: "flex",
+            alignItems: "center",
           }}
         >
-          {/* Tabs bar */}
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: 2,
-              pr: 2,
-              position: "absolute",
-              top: 0,
-              insetInline: 0,
-              zIndex: 2,
-              bgcolor: (theme) => theme.palette.background.default,
-            }}
-          >
-            {requiresCompactView ? <FileSelectTab /> : <FileSelectBox />}
-            {requiresCompactView && <FileExtensionToggle />}
-          </Box>
+          {requiresCompactView ? <FileSelectTab /> : <FileSelectBox />}
+          {requiresCompactView && <FileExtensionToggle />}
+        </Box>
 
-          <FileContent
-            sx={{
-              position: "relative",
-              scrollbarWidth: "none",
-              overflow: "auto",
-              height: "60vh",
-              paddingTop: "4rem !important",
-            }}
-          />
-        </Paper>
+        <FileContent
+          sx={{
+            position: "relative",
+            scrollbarWidth: "none",
+            overflow: "auto",
+            height: "60vh",
+            border: 1,
+            borderEndStartRadius: 4,
+            borderEndEndRadius: 4,
+            borderColor: (theme) => theme.palette.divider,
+          }}
+        />
       </DialogContent>
     </Dialog>
   );

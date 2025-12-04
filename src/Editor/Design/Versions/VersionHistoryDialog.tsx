@@ -16,6 +16,8 @@ import { useVersionHistory } from "./useVersionHistory";
 import { VersionItem } from "./VersionItem";
 import { RestoreConfirmDialog } from "./RestoreConfirmDialog";
 import { useEditor } from "../../useEditor";
+import DialogHeading from "../../components/DialogHeading";
+import { HistoryOutlined } from "@mui/icons-material";
 
 export function VersionHistoryDialog() {
   const {
@@ -81,7 +83,10 @@ export function VersionHistoryDialog() {
   return (
     <>
       <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
-        <DialogTitle>Version History</DialogTitle>
+        <DialogTitle>
+          <DialogHeading title="Version History" Icon={HistoryOutlined} />
+        </DialogTitle>
+
         <DialogContent>
           {isLoading && (
             <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
@@ -99,10 +104,10 @@ export function VersionHistoryDialog() {
             <Typography
               variant="body2"
               color="text.secondary"
-              sx={{ py: 4, textAlign: "center" }}
+              sx={{ py: 4, textAlign: "center", maxWidth: "40ch", mx: "auto" }}
             >
-              No versions yet. Versions are created when you save changes to an
-              existing design.
+              No versions yet. <br /> Versions are created when you save changes to
+              an existing design.
             </Typography>
           )}
 

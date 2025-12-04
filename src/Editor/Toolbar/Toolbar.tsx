@@ -10,6 +10,7 @@ import StatusBar from "../Design/Versions/StatusBar";
 import { isFeatureEnabled } from "../../config/featureFlags";
 import { useCurrent } from "../Design/Current/useCurrent";
 import { AppBar, Stack, Divider, Toolbar, type SxProps, Box } from "@mui/material";
+import useEditor from "../useEditor";
 
 const inlineGapRem = 2;
 
@@ -23,6 +24,7 @@ export default function EditorToolsbar() {
 }
 
 function DesktopToolbarContent() {
+  const isFullpage = useEditor((s) => s.isFullpage);
   const isViewingVersion = useCurrent((s) => s.isViewingVersion);
 
   return (
@@ -90,7 +92,7 @@ function DesktopToolbarContent() {
       <Divider
         flexItem
         orientation="vertical"
-        sx={{ display: { xs: "none", lg: "block" } }}
+        sx={{ display: { xs: "none", lg: "block" }, opacity: isFullpage ? 0 : 1 }}
       />
 
       <Stack

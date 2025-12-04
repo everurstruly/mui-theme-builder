@@ -13,6 +13,8 @@ import {
 } from "@mui/material";
 import { useTitle } from "./useTitle";
 import useEditor from "../../../useEditor";
+import DialogHeading from "../../../components/DialogHeading";
+import { BorderColorOutlined } from "@mui/icons-material";
 
 export default function RenameDialog() {
   const { rename, title, validateNewTitle, conflict, isChecking, hasConflict } =
@@ -83,7 +85,9 @@ export default function RenameDialog() {
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
-      <DialogTitle>Rename Current Design</DialogTitle>
+      <DialogTitle>
+        <DialogHeading title="Rename Current Design" Icon={BorderColorOutlined} />
+      </DialogTitle>
 
       <DialogContent>
         <TextField
@@ -110,6 +114,7 @@ export default function RenameDialog() {
               handlePrimary();
             }
           }}
+          sx={{ mt: 2 }}
         />
 
         {showOverwriteConfirm && (
@@ -143,7 +148,7 @@ export default function RenameDialog() {
         )}
       </DialogContent>
 
-      <DialogActions sx={{ p: 3 }}>
+      <DialogActions>
         <Button onClick={onClose} disabled={isSubmitting}>
           Cancel
         </Button>
