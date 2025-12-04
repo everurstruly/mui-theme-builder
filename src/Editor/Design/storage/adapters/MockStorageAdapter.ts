@@ -2,12 +2,11 @@
  * Mock Storage Adapter (localStorage-based)
  *
  * Simple localStorage-based implementation for testing and development.
- * Implements full StorageAdapter interface with transaction support.
+ * Implements StorageAdapter interface (transactions retired).
  */
 
 import type {
   StorageAdapter,
-  StorageTransaction,
   ThemeSnapshot,
   ThemeSnapshotMetadata,
   VersionSnapshot,
@@ -53,6 +52,15 @@ export class MockStorageAdapter implements StorageAdapter {
     snapshot: Omit<ThemeSnapshot, "id" | "createdAt">
   ): Promise<ThemeSnapshot> {
     const snapshots = await this.readAll();
+
+    // Enforce title uniqueness at storage layer
+    const titleExists = snapshots.some(
+      (s) => s.title.toLowerCase() === snapshot.title.toLowerCase()
+    );
+    if (titleExists) {
+      throw new Error(`Title "${snapshot.title}" already exists`);
+    }
+
     const newSnapshot: ThemeSnapshot = {
       ...snapshot,
       id: this.generateId(),
@@ -142,27 +150,7 @@ export class MockStorageAdapter implements StorageAdapter {
     return snapshots.length;
   }
 
-  async transaction<T>(
-    callback: (tx: StorageTransaction) => Promise<T>
-  ): Promise<T> {
-    // Simple transaction: read all, execute operations, write all
-    // In a real implementation, this would use proper locking
-    const tx: StorageTransaction = {
-      get: this.get.bind(this),
-      create: this.create.bind(this),
-      update: this.update.bind(this),
-      delete: this.delete.bind(this),
-    };
-
-    return await callback(tx);
-
-    // try {
-    //   return await callback(tx);
-    // } catch (error) {
-    //   // Rollback would happen here in a real implementation
-    //   throw error;
-    // }
-  }
+  // Transaction support removed for this mock adapter per project decision.
 
   async clear(): Promise<void> {
     localStorage.removeItem(STORAGE_KEY);

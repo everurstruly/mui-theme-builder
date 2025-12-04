@@ -3,7 +3,6 @@ export type {
   ThemeSnapshot,
   ThemeSnapshotMetadata,
   StorageAdapter,
-  StorageTransaction,
   SerializationStrategy,
   BaseThemeStorage,
   StorageDependencies

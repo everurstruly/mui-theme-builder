@@ -71,16 +71,6 @@ export interface VersionMetadata {
 }
 
 /**
- * Transaction interface for atomic multi-operation updates
- */
-export interface StorageTransaction {
-  get(id: string): Promise<ThemeSnapshot | null>;
-  create(snapshot: Omit<ThemeSnapshot, "id" | "createdAt">): Promise<ThemeSnapshot>;
-  update(id: string, partial: Partial<ThemeSnapshot>): Promise<ThemeSnapshot>;
-  delete(id: string): Promise<boolean>;
-}
-
-/**
  * Storage adapter interface
  */
 export interface StorageAdapter {
@@ -96,9 +86,6 @@ export interface StorageAdapter {
   findByTitle(title: string): Promise<ThemeSnapshotMetadata[]>;
   count(): Promise<number>;
 
-  // Transaction support
-  transaction<T>(callback: (tx: StorageTransaction) => Promise<T>): Promise<T>;
-
   // Version management
   createVersion(parentDesignId: string, snapshot: ThemeSnapshot): Promise<VersionSnapshot>;
   listVersions(parentDesignId: string): Promise<VersionMetadata[]>;
@@ -113,3 +100,4 @@ export interface StorageDependencies {
   adapter: StorageAdapter;
   serializer: ThemeSerializer;
 }
+  adapter: StorageAdapter;
