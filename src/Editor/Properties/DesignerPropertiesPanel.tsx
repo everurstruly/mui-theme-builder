@@ -37,6 +37,7 @@ export default function DesignerPropertiesPanel({ sx }: { sx?: SxProps<any> }) {
           flexGrow: 1,
           alignItems: "center",
           border: "none",
+          borderRadius: 0,
           paddingInline: panelPaddingInlineRem,
           backgroundColor: (theme) => theme.palette.background.paper,
           borderBottom: (theme) => `1px solid ${theme.palette.divider}`,
