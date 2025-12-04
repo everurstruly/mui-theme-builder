@@ -6,8 +6,8 @@ import {
   spoofThemeBreakpoints,
 } from "./BreakpointSimulation";
 import useCurrent from "../../Design/Current/useCurrent";
-import useCreatedTheme from "../../Design/Current/useCreatedTheme";
 import useEditor from "../../useEditor";
+import useCreatedThemePreview from "../../Design/Current/useCreatedThemePreview";
 
 export type PlainSurfaceControls = {
   containerRef: RefObject<HTMLDivElement | null>;
@@ -33,7 +33,7 @@ export default function PlainSurface({
   const [availableWidth, setAvailableWidth] = useState<number>(0);
   const { simulatedBreakpoint, getMaxWidth, getScale } = useBreakpointSimulation();
 
-  const theme = useCreatedTheme();
+  const theme = useCreatedThemePreview();
   const breakpointSpoofedTheme = spoofThemeBreakpoints(theme, simulatedBreakpoint);
 
   // Track available width for scaling
@@ -95,8 +95,8 @@ export default function PlainSurface({
               display: "flex",
               flexDirection: "column",
               boxShadow: 0,
-              border: 2,
-              borderStyle: "dotted",
+              border: 1,
+              // borderStyle: "dotted",
               borderColor: theme.palette.primary.dark,
               maxWidth: getMaxWidth(),
               height: "100%",
