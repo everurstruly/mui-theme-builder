@@ -12,7 +12,7 @@ import FileContent from "./FileContent";
 import { Close, FolderCopyOutlined } from "@mui/icons-material";
 import { Box, Stack, useMediaQuery } from "@mui/material";
 import FileSelectBox from "./FileSelectBox";
-import DialogHeading from "../../../components/DialogHeading";
+import DialogHeading from "../../../_Components/DialogHeading";
 
 export default function ExportDialog() {
   const open = useExportOptions((s) => s.opened);

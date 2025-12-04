@@ -4,6 +4,7 @@ import { fileSelectOptions } from "./fileSelectOptions";
 
 export default function FileSelectTab() {
   const { colorScheme, setColorScheme } = useExport();
+  
   return (
     <Tabs
       value={colorScheme}

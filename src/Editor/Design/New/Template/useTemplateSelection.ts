@@ -19,8 +19,8 @@ export function useTemplateSelection() {
 
   const select = useCallback(
     (id: string) => {
-      setSelection(id);
       load(() => loadFromTemplate(id));
+      setSelection(id);
     },
     [setSelection, load]
   );

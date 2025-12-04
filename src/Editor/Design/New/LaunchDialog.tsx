@@ -1,12 +1,12 @@
 import * as React from "react";
 import LaunchBlockerDialog from "./LaunchBlockerDialog";
-import DialogHeading from "../../components/DialogHeading";
 import { Dialog, DialogContent, DialogTitle } from "@mui/material";
 import { Tabs, Tab } from "@mui/material";
 import { useLaunchDialog } from "./useLaunchDialog";
 import { useLoad } from "./useLoad";
 import { launchDialogTabs } from "./launchDialogTabs";
 import { AddOutlined } from "@mui/icons-material";
+import DialogHeading from "../../_Components/DialogHeading";
 
 export default function LaunchDialog() {
   const { status, blocker } = useLoad();
