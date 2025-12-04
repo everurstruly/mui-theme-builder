@@ -315,16 +315,6 @@ export interface ThemeSnapshotMetadata {
 }
 
 /**
- * Transaction interface for atomic multi-operation updates
- */
-export interface StorageTransaction {
-  get(id: string): Promise<ThemeSnapshot | null>;
-  create(snapshot: Omit<ThemeSnapshot, "id" | "createdAt">): Promise<ThemeSnapshot>;
-  update(id: string, partial: Partial<ThemeSnapshot>): Promise<ThemeSnapshot>;
-  delete(id: string): Promise<boolean>;
-}
-
-/**
  * Storage adapter interface
  */
 export interface StorageAdapter {
@@ -339,10 +329,6 @@ export interface StorageAdapter {
   exists(id: string): Promise<boolean>;
   findByTitle(title: string): Promise<ThemeSnapshotMetadata[]>;
   count(): Promise<number>;
-
-  // Transaction support
-  transaction<T>(callback: (tx: StorageTransaction) => Promise<T>): Promise<T>;
-
   // Cleanup
   clear(): Promise<void>;
 }
