@@ -22,7 +22,7 @@ const paperStyle = {
 
 export default function Dashboard() {
   return (
-    <Paper>
+    <Paper elevation={0}>
       <PrimarySearchAppBar />
       <Box sx={{ display: "flex", minHeight: "100vh" }}>
         <Drawer

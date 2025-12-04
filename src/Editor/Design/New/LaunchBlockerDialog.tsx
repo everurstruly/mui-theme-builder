@@ -1,19 +1,16 @@
 import {
   Button,
   Dialog,
+  DialogActions,
   DialogContent,
   DialogTitle,
-  Stack,
   Typography,
-  type SxProps,
 } from "@mui/material";
 import { useLoad } from "./useLoad";
+import DialogHeading from "../../_Components/DialogHeading";
+import { ErrorOutline } from "@mui/icons-material";
 
-type LaunchBlockerDialogProps = {
-  sx?: SxProps;
-};
-
-export default function LaunchBlockerDialog({ sx }: LaunchBlockerDialogProps) {
+export default function LaunchBlockerDialog() {
   const { status, blocker } = useLoad();
 
   const open = status === "blocked" && blocker?.reason === "UNSAVED_CHANGES";
@@ -27,43 +24,30 @@ export default function LaunchBlockerDialog({ sx }: LaunchBlockerDialogProps) {
       onClose={onCancel}
       aria-labelledby="load-confirmation-title"
       aria-describedby="load-confirmation-description"
-      sx={{ top: "-20%", ...sx }}
-      slotProps={{
-        paper: {
-          sx: {
-            borderRadius: 4,
-          },
-        },
-      }}
     >
-      <DialogTitle id="load-confirmation-title" sx={{ textAlign: "center", py: 4 }}>
-        <Typography variant="h5" component="div">
-          Wait! You've Unsaved Changes
-        </Typography>
+      <DialogTitle id="load-confirmation-title">
+        <DialogHeading title="Wait! You've Unsaved Changes" Icon={ErrorOutline} />
+      </DialogTitle>
+
+      <DialogContent>
         <Typography
           id="load-confirmation-description"
           variant="body2"
           color="textSecondary"
-          sx={{ maxWidth: "42ch", py: 1 }}
+          sx={{ py: 2, maxWidth: "58ch" }}
         >
           Loading a new template will overwrite your current work unless you choose
           to keep them.
         </Typography>
-      </DialogTitle>
-
-      <DialogContent>
-        <Stack
-          direction={{ xs: "column", sm: "row" }}
-          spacing={2}
-          sx={{ justifyContent: "center", mb: 1 }}
-        >
-          <Button color="warning" onClick={onDiscard}>
-            Discard and continue
-          </Button>
-
-          <Button onClick={onKeep}>Keep them & stay</Button>
-        </Stack>
       </DialogContent>
+
+      <DialogActions>
+        <Button color="warning" onClick={onDiscard}>
+          Discard changes
+        </Button>
+
+        <Button onClick={onKeep}>Keep & stay</Button>
+      </DialogActions>
     </Dialog>
   );
 }

@@ -1,12 +1,12 @@
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
 import type {
   LoadOptions,
-  LoadBlocker,
   PersistenceError,
 } from "../Current/useCurrent/types";
 import type { LoadData } from "../New/types";
 import useCurrent from "../Current/useCurrent";
 import { useHasUnsavedWork } from "../Current/useHasUnsavedWork";
+import useDialogs from "./useDialogs";
 
 /**
  * Universal Load Hook (Strategy Pattern)
@@ -40,8 +40,10 @@ export function useLoad() {
   const clearHistory = useCurrent((s) => s.clearHistory);
   const hydrate = useCurrent((s) => s.hydrate);
 
-  const [status, setStatus] = useState<"idle" | "loading" | "blocked">("idle");
-  const [blocker, setBlocker] = useState<LoadBlocker | null>(null);
+  const status = useDialogs((s) => s.loadStatus);
+  const setStatus = useDialogs((s) => s.setLoadStatus);
+  const blocker = useDialogs((s) => s.loadBlocker);
+  const setBlocker = useDialogs((s) => s.setLoadBlocker);
   const hasUnsavedWork = useHasUnsavedWork();
 
   /**
