@@ -48,7 +48,7 @@ export const createEditSlice: StateCreator<
       return {
         ...newState,
         contentHash,
-        saveStatus: 'idle',
+        saveStatus: "idle",
         modificationTimestamps: {
           ...state.modificationTimestamps,
           title: Date.now(),
@@ -82,7 +82,7 @@ export const createEditSlice: StateCreator<
       return {
         ...newState,
         contentHash,
-        saveStatus: 'idle',
+        saveStatus: "idle",
         modificationTimestamps: {
           ...state.modificationTimestamps,
           baseThemeOptionSource: Date.now(),
@@ -114,18 +114,19 @@ export const createEditSlice: StateCreator<
 
       const newState: Partial<CurrentDesignEditStore> = { neutralEdits: newEdits };
       const contentHash = computeContentHash({ ...state, ...newState });
-      
-      console.log('[EDIT DEBUG] addNeutralDesignerEdit', {
+
+      console.log("[EDIT DEBUG] addNeutralDesignerEdit", {
         path,
         oldCheckpoint: state.checkpointHash,
         newContentHash: contentHash,
-        isDirty: state.checkpointHash !== null && contentHash !== state.checkpointHash
+        isDirty:
+          state.checkpointHash !== null && contentHash !== state.checkpointHash,
       });
 
       return {
         ...newState,
         contentHash,
-        saveStatus: 'idle',
+        saveStatus: "idle",
         modificationTimestamps: {
           ...state.modificationTimestamps,
           ["global:" + path]: Date.now(),
@@ -164,19 +165,20 @@ export const createEditSlice: StateCreator<
 
       const newState: Partial<CurrentDesignEditStore> = { schemeEdits: newSchemes };
       const contentHash = computeContentHash({ ...state, ...newState });
-      
-      console.log('[EDIT DEBUG] addSchemeDesignerEdit', {
+
+      console.log("[EDIT DEBUG] addSchemeDesignerEdit", {
         scheme,
         path,
         oldCheckpoint: state.checkpointHash,
         newContentHash: contentHash,
-        isDirty: state.checkpointHash !== null && contentHash !== state.checkpointHash
+        isDirty:
+          state.checkpointHash !== null && contentHash !== state.checkpointHash,
       });
 
       return {
         schemeEdits: newSchemes,
         contentHash,
-        saveStatus: 'idle',
+        saveStatus: "idle",
         modificationTimestamps: {
           ...state.modificationTimestamps,
           ["scheme:" + scheme + ":" + path]: Date.now(),
@@ -207,7 +209,7 @@ export const createEditSlice: StateCreator<
       return {
         neutralEdits: newEdits,
         contentHash,
-        saveStatus: 'idle',
+        saveStatus: "idle",
         modificationTimestamps: {
           ...state.modificationTimestamps,
           ["global:" + path]: Date.now(),
@@ -252,7 +254,7 @@ export const createEditSlice: StateCreator<
       return {
         schemeEdits: newSchemes,
         contentHash,
-        saveStatus: 'idle',
+        saveStatus: "idle",
         modificationTimestamps: {
           ...state.modificationTimestamps,
           ["scheme:" + scheme + ":" + path]: Date.now(),
@@ -287,7 +289,7 @@ export const createEditSlice: StateCreator<
         return {
           neutralEdits: {},
           contentHash,
-          saveStatus: 'idle',
+          saveStatus: "idle",
           modificationTimestamps: {
             ...state.modificationTimestamps,
             ["designer:global:clear"]: Date.now(),
@@ -310,7 +312,7 @@ export const createEditSlice: StateCreator<
         return {
           schemeEdits: newSchemes,
           contentHash,
-          saveStatus: 'idle',
+          saveStatus: "idle",
           modificationTimestamps: {
             ...state.modificationTimestamps,
             ["designer:scheme:clear:" + scheme]: Date.now(),
@@ -334,13 +336,13 @@ export const createEditSlice: StateCreator<
             dark: createInitialSchemeEdits(),
           },
           contentHash,
-          saveStatus: 'idle',
+          saveStatus: "idle",
           modificationTimestamps: {
             ...state.modificationTimestamps,
             ["designer:all:clear"]: Date.now(),
           },
         };
-      })
+      });
     }
   },
 
@@ -368,7 +370,7 @@ export const createEditSlice: StateCreator<
       return {
         ...newState,
         contentHash,
-        saveStatus: 'idle',
+        saveStatus: "idle",
         modificationTimestamps: {
           ...state.modificationTimestamps,
           codeOverrides: Date.now(),
@@ -389,7 +391,7 @@ export const createEditSlice: StateCreator<
       return {
         ...newState,
         contentHash,
-        saveStatus: 'idle',
+        saveStatus: "idle",
         modificationTimestamps: {
           ...state.modificationTimestamps,
           ["codeOverrides:clear"]: Date.now(),
@@ -401,13 +403,12 @@ export const createEditSlice: StateCreator<
   hydrate: (snapshot, options = {}) => {
     set((state) => {
       // Resolve base theme DSL
-      let baseDsl = snapshot.baseTheme.type === 'inline' 
-        ? snapshot.baseTheme.dsl 
-        : {};
+      let baseDsl =
+        snapshot.baseTheme.type === "inline" ? snapshot.baseTheme.dsl : {};
       const baseMetadata = snapshot.baseTheme.metadata;
 
       // If reference type, resolve from template registry
-      if (snapshot.baseTheme.type === 'reference') {
+      if (snapshot.baseTheme.type === "reference") {
         const templateId = snapshot.baseTheme.reference.templateId;
         const template = templatesRegistry[templateId];
         if (template) {
@@ -432,7 +433,7 @@ export const createEditSlice: StateCreator<
           light: { designer: {} },
           dark: { designer: {} },
         },
-        codeOverridesSource: '',
+        codeOverridesSource: "",
         codeOverridesDsl: {},
         codeOverridesEdits: {},
         codeOverridesError: null,
@@ -449,7 +450,8 @@ export const createEditSlice: StateCreator<
         ...newState,
         contentHash,
         checkpointHash,
-        saveStatus: 'idle' as const, // Reset save status on load
+        activeColorScheme: snapshot.preferences?.activeColorScheme || "light",
+        saveStatus: "idle" as const, // Reset save status on load
         modificationTimestamps: {},
         // Clear undo/redo history - loading a saved design starts a fresh editing session
         visualHistoryPast: [],
@@ -555,12 +557,12 @@ function generateDefaultBaseThemeOption(): string {
 // Uses sorted JSON keys to ensure consistent hashing regardless of object key order
 function sortedStringify(obj: any): string {
   if (obj === null || obj === undefined) return String(obj);
-  if (typeof obj !== 'object') return JSON.stringify(obj);
-  if (Array.isArray(obj)) return `[${obj.map(sortedStringify).join(',')}]`;
-  
+  if (typeof obj !== "object") return JSON.stringify(obj);
+  if (Array.isArray(obj)) return `[${obj.map(sortedStringify).join(",")}]`;
+
   const keys = Object.keys(obj).sort();
-  const pairs = keys.map(k => `"${k}":${sortedStringify(obj[k])}`);
-  return `{${pairs.join(',')}}`;
+  const pairs = keys.map((k) => `"${k}":${sortedStringify(obj[k])}`);
+  return `{${pairs.join(",")}}`;
 }
 
 export function computeContentHash(state: Partial<CurrentDesignEditState>): string {
@@ -570,17 +572,17 @@ export function computeContentHash(state: Partial<CurrentDesignEditState>): stri
     schemes: state.schemeEdits,
     codeOverrides: state.codeOverridesEdits,
   };
-  
+
   // Use sorted stringify for deterministic hashing
   const serialized = sortedStringify(content);
-  
+
   // Simple but stable hash (FNV-1a variant)
   let hash = 2166136261;
   for (let i = 0; i < serialized.length; i++) {
     hash ^= serialized.charCodeAt(i);
     hash = Math.imul(hash, 16777619);
   }
-  
+
   return (hash >>> 0).toString(36);
 }
 
@@ -605,27 +607,27 @@ function generateInitialContentHash() {
  */
 function validateHydrateState(state: any, isSaved?: boolean): void {
   // Only in development - use console check as guard
-  const isDev = typeof import.meta !== 'undefined' && import.meta.env?.DEV;
+  const isDev = typeof import.meta !== "undefined" && import.meta.env?.DEV;
   if (!isDev) return;
 
   // Rule 1: saveStatus must always be 'idle' after hydrate
-  if (state.saveStatus !== 'idle') {
+  if (state.saveStatus !== "idle") {
     console.error(
       `[HYDRATE VIOLATION] saveStatus must be 'idle' after hydrate, got: "${state.saveStatus}". ` +
-      `This will cause SaveButton to show wrong label.`
+        `This will cause SaveButton to show wrong label.`
     );
   }
 
   // Rule 2: Edits must be empty (flattened architecture)
   const hasNeutralEdits = Object.keys(state.neutralEdits || {}).length > 0;
-  const hasSchemeEdits = 
+  const hasSchemeEdits =
     Object.keys(state.schemeEdits?.light?.designer || {}).length > 0 ||
     Object.keys(state.schemeEdits?.dark?.designer || {}).length > 0;
 
   if (hasNeutralEdits || hasSchemeEdits) {
     console.error(
       `[HYDRATE VIOLATION] Edits must be empty after hydrate (flattened architecture). ` +
-      `Found neutral: ${hasNeutralEdits}, scheme: ${hasSchemeEdits}`
+        `Found neutral: ${hasNeutralEdits}, scheme: ${hasSchemeEdits}`
     );
   }
 
@@ -633,7 +635,7 @@ function validateHydrateState(state: any, isSaved?: boolean): void {
   if (state.visualHistoryPast?.length > 0 || state.visualHistoryFuture?.length > 0) {
     console.error(
       `[HYDRATE VIOLATION] History must be cleared after hydrate. ` +
-      `Found past: ${state.visualHistoryPast?.length}, future: ${state.visualHistoryFuture?.length}`
+        `Found past: ${state.visualHistoryPast?.length}, future: ${state.visualHistoryFuture?.length}`
     );
   }
 
@@ -641,13 +643,13 @@ function validateHydrateState(state: any, isSaved?: boolean): void {
   if (isSaved && !state.checkpointHash) {
     console.warn(
       `[HYDRATE WARNING] Loading saved design but checkpointHash is null. ` +
-      `This will show as dirty immediately.`
+        `This will show as dirty immediately.`
     );
   }
   if (!isSaved && state.checkpointHash) {
     console.error(
       `[HYDRATE VIOLATION] Loading unsaved design but checkpointHash is set. ` +
-      `This will prevent "Save to Collection" from showing.`
+        `This will prevent "Save to Collection" from showing.`
     );
   }
 }
