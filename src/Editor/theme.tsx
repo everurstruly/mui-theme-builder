@@ -189,11 +189,11 @@ const editorTheme = createTheme({
     },
     MuiIconButton: {
       styleOverrides: {
-        root: () => ({
-          // color:
-          //   theme.palette.mode === "dark"
-          //     ? theme.palette.text?.secondary ?? "rgba(255,255,255,0.74)"
-          //     : theme.palette.text?.secondary ?? "rgba(0,0,0,0.6)",
+        root: ({ theme }) => ({
+          color:
+            theme.palette.mode === "dark"
+              ? theme.palette.text?.secondary ?? "rgba(255,255,255,0.74)"
+              : theme.palette.text?.secondary ?? "rgba(0,0,0,0.6)",
           opacity: 0.92,
         }),
         sizeSmall: () => ({
