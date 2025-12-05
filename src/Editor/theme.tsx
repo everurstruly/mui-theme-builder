@@ -189,18 +189,18 @@ const editorTheme = createTheme({
     },
     MuiIconButton: {
       styleOverrides: {
-        root: ({ theme }: any) => ({
-          color:
-            theme.palette.mode === "dark"
-              ? theme.palette.text?.secondary ?? "rgba(255,255,255,0.74)"
-              : theme.palette.text?.secondary ?? "rgba(0,0,0,0.6)",
+        root: () => ({
+          // color:
+          //   theme.palette.mode === "dark"
+          //     ? theme.palette.text?.secondary ?? "rgba(255,255,255,0.74)"
+          //     : theme.palette.text?.secondary ?? "rgba(0,0,0,0.6)",
           opacity: 0.92,
         }),
-        sizeSmall: ({ theme }: any) => ({
-          color:
-            theme.palette.mode === "dark"
-              ? theme.palette.text?.secondary ?? "rgba(255,255,255,0.74)"
-              : theme.palette.text?.secondary ?? "rgba(0,0,0,0.6)",
+        sizeSmall: () => ({
+          // color:
+          //   theme.palette.mode === "dark"
+          //     ? theme.palette.text?.secondary ?? "rgba(255,255,255,0.74)"
+          //     : theme.palette.text?.secondary ?? "rgba(0,0,0,0.6)",
           opacity: 0.92,
         }),
       },
@@ -229,16 +229,16 @@ const editorTheme = createTheme({
       },
     },
     MuiSvgIcon: {
-      styleOverrides: {
-        root: ({ theme }: any) => ({
-          color:
-            theme.palette.mode === "dark"
-              ? theme.palette.text?.secondary ?? "rgba(255,255,255,0.74)"
-              : theme.palette.text?.secondary ?? "rgba(0,0,0,0.6)",
-          opacity: 0.92,
-          transition: "color .12s ease, opacity .12s ease",
-        }),
-      },
+      // styleOverrides: {
+      //   root: ({ theme }: any) => ({
+      //     color:
+      //       theme.palette.mode === "dark"
+      //         ? theme.palette.text?.secondary ?? "rgba(255,255,255,0.74)"
+      //         : theme.palette.text?.secondary ?? "rgba(0,0,0,0.6)",
+      //     opacity: 0.92,
+      //     transition: "color .12s ease, opacity .12s ease",
+      //   }),
+      // },
     },
     MuiButton: {
       styleOverrides: {
