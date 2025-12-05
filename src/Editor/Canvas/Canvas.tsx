@@ -6,6 +6,7 @@ import QuickPreviewBar from "../Explorer/QuickPreviewBar";
 import { alpha, Stack } from "@mui/material";
 import { useRef } from "react";
 import { BreakpointSimulationToggles } from "./PlainSurface/BreakpointSimulation";
+import RandomTemplateLoader from "./PlainSurface/Controls/RandomTemplateLoader";
 
 export default function EditorCanvas() {
   const previewDivWrapperRef = useRef<HTMLDivElement>(null);
@@ -27,6 +28,7 @@ export default function EditorCanvas() {
           >
             <ExplorerPanelVisibilityToggle />
             <BreakpointSimulationToggles />
+            <RandomTemplateLoader />
             <FullpagePreviewButton />
           </Stack>
         ),
