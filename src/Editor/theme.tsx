@@ -48,7 +48,7 @@ const editorTheme = createTheme({
     button: {
       textTransform: "none",
       fontWeight: 500,
-      fontSize: "0.85rem",
+      fontSize: "0.75rem",
     },
     allVariants: {
       WebkitFontSmoothing: "antialiased",
