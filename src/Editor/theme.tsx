@@ -189,18 +189,11 @@ const editorTheme = createTheme({
     },
     MuiIconButton: {
       styleOverrides: {
-        root: ({ theme }) => ({
-          color:
-            theme.palette.mode === "dark"
-              ? theme.palette.text?.secondary ?? "rgba(255,255,255,0.74)"
-              : theme.palette.text?.secondary ?? "rgba(0,0,0,0.6)",
+        root: () => ({
+          // don't set a global color here; we'll style the SvgIcon specifically
           opacity: 0.92,
         }),
         sizeSmall: () => ({
-          // color:
-          //   theme.palette.mode === "dark"
-          //     ? theme.palette.text?.secondary ?? "rgba(255,255,255,0.74)"
-          //     : theme.palette.text?.secondary ?? "rgba(0,0,0,0.6)",
           opacity: 0.92,
         }),
       },
@@ -229,16 +222,29 @@ const editorTheme = createTheme({
       },
     },
     MuiSvgIcon: {
-      // styleOverrides: {
-      //   root: ({ theme }: any) => ({
-      //     color:
-      //       theme.palette.mode === "dark"
-      //         ? theme.palette.text?.secondary ?? "rgba(255,255,255,0.74)"
-      //         : theme.palette.text?.secondary ?? "rgba(0,0,0,0.6)",
-      //     opacity: 0.92,
-      //     transition: "color .12s ease, opacity .12s ease",
-      //   }),
-      // },
+      styleOverrides: {
+        root: ({ theme }: any) => ({
+          // default: inherit color so standalone icons keep their own color
+          color: 'inherit',
+          opacity: 0.92,
+          transition: 'color .12s ease, opacity .12s ease',
+          // Apply readable color only when ALL of the following are true:
+          // 1) The SvgIcon is inside an IconButton that does NOT have any
+          //    explicit built-in color class (primary/secondary/error/...)
+          // 2) The SvgIcon itself does NOT have any built-in color class
+          //    (so icons rendered with `color="error"` or similar keep their color)
+          // 3) The SvgIcon does not have the opt-out class `.no-default-icon-color`
+          // This makes the rule act strictly as a safe default and avoid
+          // stomping on custom variants or explicit semantic colors.
+          '.MuiIconButton-root:not(.MuiIconButton-colorPrimary):not(.MuiIconButton-colorSecondary):not(.MuiIconButton-colorError):not(.MuiIconButton-colorWarning):not(.MuiIconButton-colorInfo):not(.MuiIconButton-colorSuccess) &.MuiSvgIcon-root:not(.MuiSvgIcon-colorPrimary):not(.MuiSvgIcon-colorSecondary):not(.MuiSvgIcon-colorError):not(.MuiSvgIcon-colorWarning):not(.MuiSvgIcon-colorInfo):not(.MuiSvgIcon-colorSuccess):not(.no-default-icon-color)': {
+            color:
+              theme.palette.mode === 'dark'
+                ? theme.palette.text?.secondary ?? 'rgba(255,255,255,0.74)'
+                : theme.palette.text?.secondary ?? 'rgba(0,0,0,0.6)',
+            opacity: 0.92,
+          },
+        }),
+      },
     },
     MuiButton: {
       styleOverrides: {
