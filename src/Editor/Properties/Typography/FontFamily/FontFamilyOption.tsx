@@ -1,4 +1,4 @@
-import { Typography, Stack, Box } from "@mui/material";
+import { Typography, Stack, Box, Button } from "@mui/material";
 import { useCallback, useState } from "react";
 import useDesignCreatedTheme from "../../../Design/Current/useCreatedTheme";
 import useEditProperty from "../../../Design/Current/Modify/useEditProperty";
@@ -91,20 +91,18 @@ export default function FontFamilyOption({
         alignItems: "center",
       }}
     >
-      <Stack
-        component={"button"}
+      <Button
         onClick={handleClick}
         sx={{
           width: "100%",
-          p: 1,
-          // rowGap: 1,
-          border: 0,
-          // border: 1,
-          // borderColor: "divider",
-          borderRadius: 3,
+          p: 2,
+          rowGap: 1,
+          display: "flex",
+          flexDirection: "column",
           color: (theme) => theme.palette.text.primary,
+          background: (theme) => theme.palette.background.default,
           cursor: disabled ? "not-allowed" : "pointer",
-          // background: "transparent",
+          borderRadius: 3,
           transition: "background-color 150ms ease-in-out",
 
           "&:hover": {
@@ -114,15 +112,15 @@ export default function FontFamilyOption({
       >
         <Box
           sx={{
+            alignSelf: "stretch",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
             flexGrow: 1,
-            p: 0.5,
           }}
         >
           <Typography
-            variant="caption"
+            variant="body2"
             title={title}
             color="text.secondary"
             sx={{
@@ -130,8 +128,10 @@ export default function FontFamilyOption({
               overflow: "hidden",
               textOverflow: "ellipsis",
               fontWeight: 400,
+              fontSize: "caption.fontSize",
               lineHeight: 1,
               maxWidth: "80%",
+              marginInlineEnd: "auto",
             }}
           >
             {title}
@@ -183,7 +183,7 @@ export default function FontFamilyOption({
             {extractPrimaryFont(resolvedValue) || "Default"}
           </Typography>
         </Box>
-      </Stack>
+      </Button>
 
       <FontFamilyPopover
         anchorEl={anchorEl}
