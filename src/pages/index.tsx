@@ -5,7 +5,7 @@ import Hero from "../Frontpage/Hero";
 import { Helmet } from "react-helmet";
 
 const defaultOgImageUrl =
-  "https://mui-theme-editor.netlify.app/editor-screenshot.png";
+  `${import.meta.env.VITE_SITE_URL || "https://mui-theme-builder.netlify.app"}/editor-screenshot.png`;
 
 export default function MarketingPage(props: { disableCustomTheme?: boolean }) {
   return (
