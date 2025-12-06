@@ -95,7 +95,7 @@ export default function FontFamilyOption({
         onClick={handleClick}
         sx={{
           width: "100%",
-          p: 2,
+          p: { xs: 1, lg: 2 },
           rowGap: 1,
           display: "flex",
           flexDirection: "column",
@@ -117,6 +117,7 @@ export default function FontFamilyOption({
             alignItems: "center",
             justifyContent: "space-between",
             flexGrow: 1,
+            columnGap: 1,
           }}
         >
           <Typography
@@ -124,8 +125,11 @@ export default function FontFamilyOption({
             title={title}
             color="text.secondary"
             sx={{
-              whiteSpace: "nowrap",
               overflow: "hidden",
+              lineClamp: 1,
+              display: "-webkit-box",
+              WebkitLineClamp: 1,
+              WebkitBoxOrient: "vertical",
               textOverflow: "ellipsis",
               fontWeight: 400,
               fontSize: "caption.fontSize",
