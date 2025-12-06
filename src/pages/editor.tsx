@@ -23,8 +23,8 @@ import { useHelpDialog } from "../Editor/Help/useHelpDialog";
 const StyledToolbar = styled(Toolbar)(() => ({
   flexWrap: "wrap",
   alignItems: "center",
-  height: "var(--header-height) !important",
-  minHeight: "var(--header-height) !important",
+  height: "calc(var(--header-height) - 1px) !important", // 1px is size of border bottom (by parent)
+  minHeight: "calc(var(--header-height) - 1px) !important", // FIXME: ensure height and border on one element
 }));
 
 export default function EditorPage() {
@@ -40,21 +40,32 @@ export default function EditorPage() {
     <>
       <Helmet>
         <title>Editor · MUI Theme Builder</title>
-        <meta
-          name="description"
-          content="Design and preview Material UI themes in real time with MUI Theme Builder's editor."
+        <meta name="description" content="Design, customize and export Material UI themes with a visual editor, live preview and code export options." />
+        <link
+          rel="canonical"
+          href={`${import.meta.env.VITE_SITE_URL || "https://mui-theme-builder.netlify.app"}/editor`}
         />
+        <meta name="keywords" content="generator, mui theme creator, mui theme editor, mui v6, material ui, theme builder, theme generator, theme editor, MUI v6, MUI themes" />
         <meta name="robots" content="index,follow" />
-        <link rel="canonical" href="/editor" />
+        <meta name="theme-color" content="#ffffff" />
 
         {/* Open Graph */}
-        <meta property="og:title" content="MUI Theme Builder — Editor" />
-        <meta
-          property="og:description"
-          content="Design and preview Material UI themes in real time with the editor."
-        />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="/editor" />
+        <meta property="og:title" content="Editor · MUI Theme Builder" />
+        <meta property="og:description" content="Design, customize and export Material UI themes with a visual editor, live preview and code export options." />
+        <meta
+          property="og:image"
+          content={`${import.meta.env.VITE_SITE_URL || "https://mui-theme-builder.netlify.app"}/editor-screenshot.png`}
+        />
+
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Editor · MUI Theme Builder" />
+        <meta name="twitter:description" content="Design, customize and export Material UI themes with a visual editor, live preview and code export options." />
+        <meta
+          name="twitter:image"
+          content={`${import.meta.env.VITE_SITE_URL || "https://mui-theme-builder.netlify.app"}/editor-screenshot.png`}
+        />
       </Helmet>
 
       <AppBar
