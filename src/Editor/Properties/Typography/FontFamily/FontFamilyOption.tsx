@@ -1,10 +1,10 @@
-import { ListItem, Typography, Stack, type SelectChangeEvent } from "@mui/material";
-import { useCallback } from "react";
-import FontFamilyOptionInput from "./FontFamilyOptionInput";
-import OptionListItemResetButton from "../../OptionListItemResetButton";
+import { Typography, Stack, Box } from "@mui/material";
+import { useCallback, useState } from "react";
 import useDesignCreatedTheme from "../../../Design/Current/useCreatedTheme";
 import useEditProperty from "../../../Design/Current/Modify/useEditProperty";
 import useCurrent from "../../../Design/Current/useCurrent";
+import { UnfoldMoreOutlined } from "@mui/icons-material";
+import FontFamilyPopover from "./FontFamilyPopover";
 
 export type FontFamilyOptionProps = {
   title: string;
@@ -30,7 +30,13 @@ export default function FontFamilyOption({
     typography: { fontFamily },
   } = useDesignCreatedTheme();
 
-  const { value, userEdit, isCodeControlled, setValue: setValueLocal, reset: resetLocal } = useEditProperty(path);
+  const {
+    value,
+    // userEdit,
+    // isCodeControlled,
+    setValue: setValueLocal,
+    reset: resetLocal,
+  } = useEditProperty(path);
 
   // For batch operations (apply/reset across all headings) use the store-level
   // edit functions to avoid creating multiple subscriptions via hooks.
@@ -39,23 +45,34 @@ export default function FontFamilyOption({
 
   const autoResolvedValue = fontFamily;
   const resolvedValue = (value as string) ?? autoResolvedValue;
-  const canResetValue = !!userEdit || !!isCodeControlled;
+  // const canResetValue = !!userEdit || !!isCodeControlled;
 
-  const handleChange = useCallback(
-    (event: SelectChangeEvent) => {
-      const selectedFont = event.target.value;
-      const fontFamilyValue = formatFontFamilyWithFallback(selectedFont);
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const popoverOpen = Boolean(anchorEl);
 
+  const handleClick = useCallback(
+    (event: React.MouseEvent<HTMLElement>) => {
+      if (disabled) return;
+      setAnchorEl(event.currentTarget);
+    },
+    [disabled]
+  );
+
+  const handleClose = useCallback(() => setAnchorEl(null), []);
+
+  const handleSelectFromPopover = useCallback(
+    (fontFamilyValue: string) => {
       if (path === "typography.h1.fontFamily") {
-        // Apply to all heading variants using store function (no extra hooks)
         headingPaths.forEach((p) => addGlobalDesignerEdit(p, fontFamilyValue));
       } else {
         setValueLocal(fontFamilyValue);
       }
+
+      // setAnchorEl(null);
     },
     [path, setValueLocal, addGlobalDesignerEdit]
   );
-  
+
   const handleReset = useCallback(() => {
     if (path === "typography.h1.fontFamily") {
       headingPaths.forEach((p) => removeGlobalDesignerEdit(p));
@@ -64,53 +81,121 @@ export default function FontFamilyOption({
     }
   }, [path, removeGlobalDesignerEdit, resetLocal]);
 
-  function getColor() {
-    if (disabled) {
-      return "text.disabled";
-    }
-
-    if (canResetValue) {
-      return "warning.main";
-    }
-
-    return "text.primary";
-  }
-
   return (
-    <ListItem
+    <Stack
+      component={"li"}
       sx={{
-        width: "auto",
-        justifyContent: "space-between",
-        paddingInline: 0,
-        paddingBlock: 0.75,
+        rowGap: 0.5,
+        flex: "1 1 0",
+        minWidth: 0,
+        alignItems: "center",
       }}
     >
-      <Stack direction="row" alignItems="center" spacing={0.75}>
-        <OptionListItemResetButton
-          canResetValue={canResetValue}
-          resetValue={handleReset}
-          label={"Default"}
-        />
+      <Stack
+        component={"button"}
+        onClick={handleClick}
+        sx={{
+          width: "100%",
+          p: 1,
+          // rowGap: 1,
+          border: 0,
+          // border: 1,
+          // borderColor: "divider",
+          borderRadius: 3,
+          color: (theme) => theme.palette.text.primary,
+          cursor: disabled ? "not-allowed" : "pointer",
+          // background: "transparent",
+          transition: "background-color 150ms ease-in-out",
 
-        <Typography
-          variant="caption"
+          "&:hover": {
+            backgroundColor: disabled ? "inherit" : "action.hover",
+          },
+        }}
+      >
+        <Box
           sx={{
-            fontWeight: 400,
-            fontSize: 12,
-            color: getColor(),
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexGrow: 1,
+            p: 0.5,
           }}
         >
-          {title}
-        </Typography>
+          <Typography
+            variant="caption"
+            title={title}
+            color="text.secondary"
+            sx={{
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              fontWeight: 400,
+              lineHeight: 1,
+              maxWidth: "80%",
+            }}
+          >
+            {title}
+          </Typography>
+
+          <UnfoldMoreOutlined sx={{ fontSize: "12px", lineHeight: 1 }} />
+        </Box>
+
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            /* Reserve exactly two lines of content: first line for the big preview, second for the font name. */
+            height: 68,
+            minHeight: 68,
+            maxHeight: 68,
+            overflow: "hidden",
+          }}
+        >
+          <Typography
+            sx={{
+              fontSize: 42,
+              lineHeight: 1,
+              fontFamily: formatFontFamilyWithFallback(resolvedValue),
+              /* prevent the large preview from affecting line-wrapping */
+              display: "block",
+              textAlign: "center",
+            }}
+          >
+            Aa
+          </Typography>
+
+          <Typography
+            color="text.secondary"
+            variant="body2"
+            sx={{
+              lineHeight: 1,
+              mt: 0.25,
+              width: "100%",
+              textAlign: "center",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+            title={extractPrimaryFont(resolvedValue) || "Default"}
+          >
+            {extractPrimaryFont(resolvedValue) || "Default"}
+          </Typography>
+        </Box>
       </Stack>
 
-      <FontFamilyOptionInput
-        id={`font-family-select-${title}`}
-        disabled={disabled || isCodeControlled}
-        value={extractPrimaryFont(resolvedValue)}
-        onChange={handleChange}
+      <FontFamilyPopover
+        anchorEl={anchorEl}
+        open={popoverOpen}
+        title={title}
+        onClose={handleClose}
+        onSelect={handleSelectFromPopover}
+        onReset={handleReset}
+        currentValue={resolvedValue}
+        disabled={disabled}
       />
-    </ListItem>
+    </Stack>
   );
 }
 
