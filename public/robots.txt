@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 
 # Replace with your site URL
-Sitemap: https://yourdomain.com/sitemap.xml
+Sitemap: https://mui-theme-builder.netlify.app./sitemap.xml

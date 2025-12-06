@@ -4,6 +4,9 @@ import PageHeader from "../Frontpage/PageHeader";
 import Hero from "../Frontpage/Hero";
 import { Helmet } from "react-helmet";
 
+const defaultOgImageUrl =
+  "https://mui-theme-editor.netlify.app/editor-screenshot.png";
+
 export default function MarketingPage(props: { disableCustomTheme?: boolean }) {
   return (
     <AppTheme {...props}>
@@ -15,10 +18,16 @@ export default function MarketingPage(props: { disableCustomTheme?: boolean }) {
           name="description"
           content="Generate ready-to-use Material UI themes (colors, components and more) with an intuitive visual and code editor."
         />
+        <meta name="robots" content="index,follow" />
+        <meta name="theme-color" content="#ffffff" />
+        <meta name="author" content="MUI Theme Builder" />
+        <meta name="keywords" content="generator, mui theme creator, mui theme editor, mui v6, material ui, theme builder, theme generator, theme editor, MUI v6, MUI themes" />
         {/* Use absolute URLs for canonical and images. Configure `VITE_SITE_URL` in your env. */}
         <link
           rel="canonical"
-          href={`${import.meta.env.VITE_SITE_URL || 'https://yourdomain.com'}/`}
+          href={`${
+            import.meta.env.VITE_SITE_URL || "https://mui-theme-builder.netlify.app"
+          }`}
         />
 
         {/* Open Graph */}
@@ -31,10 +40,7 @@ export default function MarketingPage(props: { disableCustomTheme?: boolean }) {
           property="og:description"
           content="Generate ready-to-use Material UI themes (colors, components and more) with an intuitive visual and code editor."
         />
-        <meta
-          property="og:image"
-          content={`${import.meta.env.VITE_SITE_URL || 'https://yourdomain.com'}/temp-editor-screenshot.jpg`}
-        />
+        <meta property="og:image" content={`${defaultOgImageUrl}`} />
 
         {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
@@ -43,10 +49,7 @@ export default function MarketingPage(props: { disableCustomTheme?: boolean }) {
           name="twitter:description"
           content="Design and prototype Material UI themes with a visual and code editor."
         />
-        <meta
-          name="twitter:image"
-          content={`${import.meta.env.VITE_SITE_URL || 'https://yourdomain.com'}/temp-editor-screenshot.jpg`}
-        />
+        <meta name="twitter:image" content={`${defaultOgImageUrl}`} />
       </Helmet>
 
       <PageHeader />

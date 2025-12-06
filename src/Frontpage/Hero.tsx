@@ -19,7 +19,7 @@ const StyledBox = styled("div")(({ theme }) => ({
   borderColor: (theme.vars || theme).palette.grey[200],
   boxShadow: "0 0 12px 8px hsla(220, 25%, 80%, 0.2)",
   backgroundImage: `url(${
-    import.meta.env.VITE_TEMPLATE_IMAGE_URL || "/temp-editor-screenshot.png"
+    import.meta.env.VITE_TEMPLATE_IMAGE_URL || "/editor-screenshot.png"
   })`,
   backgroundRepeat: "no-repeat",
   backgroundSize: "contain",
