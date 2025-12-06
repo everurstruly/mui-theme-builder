@@ -6,13 +6,13 @@ import PropertiesPanelHeader from "../Properties/PropertiesPanelHeader";
 import StrategiesDialogOpenButton from "../Design/Draft/StrategiesDialogOpenButton";
 import CollectionDialogButton from "../Design/Collection/CollectionDialogButton";
 import SaveButton from "../Design/Current/Save/SaveButton";
+import useEditor from "../useEditor";
 import StatusBar from "../Design/Versions/StatusBar";
 import { isFeatureEnabled } from "../../config/featureFlags";
 import { useCurrent } from "../Design/Current/useCurrent";
 import { AppBar, Stack, Divider, Toolbar, type SxProps, Box } from "@mui/material";
-import useEditor from "../useEditor";
 
-const inlineGapRem = 2;
+export const inlineGapRem = 2;
 
 export default function EditorToolsbar() {
   return (
@@ -35,7 +35,7 @@ function DesktopToolbarContent() {
       justifyContent="space-between"
       display={{ xs: "none", md: "flex" }}
       sx={{
-        px: { md: inlineGapRem, lg: "0px" },
+        // px: { md: inlineGapRem, lg: "0px" },
         height: "var(--toolbar-height)",
         backgroundColor: (theme) => theme.palette.background.paper,
       }}
@@ -46,7 +46,9 @@ function DesktopToolbarContent() {
         justifyContent={"space-between"}
         maxWidth={"var(--explorer-panel-width)"}
         width={"100%"}
-        px={{ md: inlineGapRem }}
+        sx={{
+          px: { xs: 1.5, sm: 2 },
+        }}
       >
         <CurrentDesignContext />
       </Stack>
@@ -58,6 +60,9 @@ function DesktopToolbarContent() {
         direction={"row"}
         marginInline={"auto"}
         columnGap={inlineGapRem}
+        sx={{
+          px: { xs: 1.5, sm: 2, lg: inlineGapRem },
+        }}
       >
         {isFeatureEnabled("SHOW_VERSION_HISTORY") && isViewingVersion ? (
           <StatusBar
@@ -66,21 +71,12 @@ function DesktopToolbarContent() {
           />
         ) : (
           <>
-            <Stack
-              direction={"row"}
-              sx={{ columnGap: inlineGapRem }}
-              paddingInlineStart={inlineGapRem}
-            >
+            <Stack direction={"row"} alignItems={"inherit"} columnGap={"inherit"}>
               <CollectionDialogButton />
               <StrategiesDialogOpenButton />
             </Stack>
 
-            <Stack
-              direction={"row"}
-              alignItems={"inherit"}
-              columnGap={inlineGapRem}
-              paddingInlineEnd={inlineGapRem}
-            >
+            <Stack direction={"row"} alignItems={"inherit"} columnGap={"inherit"}>
               <SaveButton />
               <HistoryButtons />
               <ExportButton />
@@ -92,7 +88,7 @@ function DesktopToolbarContent() {
       <Divider
         flexItem
         orientation="vertical"
-        sx={{ display: { xs: "none", lg: "block" }, opacity: isFullpage ? 0 : 1 }}
+        sx={{ display: { xs: "none", md: "block" }, opacity: isFullpage ? 0 : 1 }}
       />
 
       <Stack
@@ -119,8 +115,11 @@ function MobileToolbarContent() {
       display={{ md: "none" }}
       direction="row"
       alignItems={"center"}
+      justifyContent={"space-between"}
       columnGap={1.5}
-      paddingInline={{ xs: 0.6, sm: "12px" }}
+      sx={{
+        px: { xs: 1.5, sm: 2 },
+      }}
     >
       <CurrentDesignContext
         sx={{ minWidth: 0, maxWidth: "var(--explorer-panel-width)" }}
@@ -130,9 +129,9 @@ function MobileToolbarContent() {
         display={"inherit"}
         alignItems={"inherit"}
         justifyContent={"inherit"}
-        columnGap={{ xs: 1.2, sm: 3 }}
-        marginInlineStart={"auto"}
+        columnGap={{ xs: 1.5, sm: 2 }}
       >
+        <CollectionDialogButton />
         <StrategiesDialogOpenButton />
         <DesignMobileActionMenu />
       </Box>
@@ -154,16 +153,6 @@ function SectionLayout({ sx, children }: SectionLayoutProps) {
       sx={{
         color: "text.primary",
         border: "none",
-
-        // borderBottom: 1,
-        // borderColor: "divider",
-
-        // backgroundColor: "var(--editor-tools-unit-bgColor, revert)",
-        // backgroundColor: "rgba(255, 255, 255, 0.5)",
-        // backgroundImage:
-        //   "linear-gradient(to bottom, rgba(255,255,255,0.25) 10%, rgba(255,255,255,0.12) 70%, rgba(0,0,0,0.04) 100%)",
-        // backgroundRepeat: "no-repeat",
-        // backdropFilter: "blur(20px)",
         ...sx,
       }}
     >
@@ -173,7 +162,7 @@ function SectionLayout({ sx, children }: SectionLayoutProps) {
           flexGrow: 1,
           minHeight: "var(--toolbar-height)",
           height: "var(--toolbar-height)",
-          paddingInline: "0 !important",
+          px: "0px !important",
         }}
       >
         {children}

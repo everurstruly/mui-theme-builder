@@ -29,6 +29,8 @@ function DesktopActivitiesDrawer() {
         flexShrink: 0,
         WebkitOverflowScrolling: "touch",
         display: { xs: "none", lg: isVisible ? "block" : "none" },
+        borderInlineEnd: "1px solid",
+        borderColor: "divider",
 
         // hide scrollbar but keep scrolling
         msOverflowStyle: "none",

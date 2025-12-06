@@ -16,7 +16,7 @@ export default function StrategiesDialogOpenButton() {
         minWidth: 0,
       }}
     >
-      <Add sx={{ fontSize: "1rem !important" }} />
+      <Add sx={{ fontSize: { sm: "1rem !important" } }} />
       {isDesktop && "Create"}
     </Button>
   );

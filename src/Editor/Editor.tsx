@@ -39,9 +39,9 @@ export default function Editor() {
 
           [theme.breakpoints.up("lg")]: {
             ":root": {
-              "--activity-bar-height": "56px",
-              "--explorer-panel-width": "20vw",
-              "--properties-panel-width": "25vw",
+              "--toolbar-height": "48px",
+              "--explorer-panel-width": "20dvw",
+              "--properties-panel-width": "25dvw",
             },
           },
         })}
@@ -50,10 +50,14 @@ export default function Editor() {
       <Stack
         minWidth={0}
         direction={"row"}
-        height={`calc(100dvh - var(--header-height) - 1px)`} // NB: 1px is a magic number that prevents vertical scrollbar from appearing
+        height={`calc(100dvh - var(--header-height))`}
         overflow={"hidden"}
       >
-        <Paper component="main" elevation={0} sx={{ flexGrow: 1, minWidth: 0, border: "none" }}>
+        <Paper
+          component="main"
+          elevation={0}
+          sx={{ flexGrow: 1, minWidth: 0, border: "none", borderRadius: 0 }}
+        >
           <EditorToolsbar />
           <Stack
             minWidth={0}

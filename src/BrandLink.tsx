@@ -20,7 +20,6 @@ export default function BrandLink({ sx }: { sx?: SxProps }) {
         sx={{
           display: "flex",
           alignItems: "center",
-          px: (theme) => theme.spacing(1), // mimic padding of buttons
         }}
       >
         <ArchitectureRounded

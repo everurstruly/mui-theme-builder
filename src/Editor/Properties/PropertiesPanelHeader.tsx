@@ -8,15 +8,14 @@ export default function PropertiesPanelHeader({ sx }: { sx?: SxProps<Theme> }) {
       direction={"row"}
       alignItems={"center"}
       justifyContent={"space-between"}
-      sx={{ ...sx }}
+      sx={{...sx }}
       gap={2}
     >
       <Box display="inherit" columnGap={"inherit"}>
-        <ColorSchemeToggle />
-      </Box>
-
-      <Box display="inherit" columnGap={"inherit"}>
         <EditorExperienceTab />
+      </Box>
+      <Box display="inherit" columnGap={"inherit"}>
+        <ColorSchemeToggle />
       </Box>
     </Stack>
   );

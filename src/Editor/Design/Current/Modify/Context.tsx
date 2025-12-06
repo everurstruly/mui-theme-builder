@@ -3,7 +3,14 @@ import useCurrent from "../useCurrent";
 import useEditor from "../../../useEditor";
 import useDelete from "./useDelete";
 import { KeyboardArrowDownOutlined } from "@mui/icons-material";
-import { Typography, Menu, MenuItem, Button, type SxProps } from "@mui/material";
+import {
+  Typography,
+  Menu,
+  MenuItem,
+  Button,
+  type SxProps,
+  useMediaQuery,
+} from "@mui/material";
 import { useTitle } from "./useTitle";
 import { isFeatureEnabled } from "../../../../config/featureFlags";
 
@@ -11,6 +18,7 @@ function Context({ sx }: { sx?: SxProps }) {
   const { title } = useTitle();
   const { canDelete } = useDelete();
   const isViewingVersion = useCurrent((s) => s.isViewingVersion);
+  const shouldBeCompact = useMediaQuery((theme) => theme.breakpoints.down("sm"));
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const actionMenuOpen = Boolean(anchorEl);
@@ -52,12 +60,14 @@ function Context({ sx }: { sx?: SxProps }) {
           alignItems: "center",
           justifyContent: "flex-start",
           whiteSpace: "nowrap",
-          columnGap: .75,
+          columnGap: 0.75,
+          px: "1px",
           textOverflow: "ellipsis",
           ...sx,
         }}
       >
-        {isViewingVersion ? "You're previewing" : "You're diting"}
+        {!shouldBeCompact &&
+          (isViewingVersion ? "You're previewing" : "You're editing")}{" "}
         <Typography
           variant="caption"
           color="textPrimary"
@@ -67,9 +77,10 @@ function Context({ sx }: { sx?: SxProps }) {
             lineHeight: 1,
             overflow: "hidden",
             alignItems: "center",
-            display: "inline-flex",
             columnGap: 0.5,
-            maxWidth: "50%",
+            fontWeight: 500,
+            flexGrow: 1,
+            maxWidth: !shouldBeCompact ? "50%" : undefined,
           }}
         >
           {title}

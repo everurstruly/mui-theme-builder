@@ -75,7 +75,7 @@ export default function EditorPage() {
             }),
         ]}
       >
-        <StyledToolbar sx={{ px: { xs: 0, sm: 1.5 }, columnGap: { md: 4 } }}>
+        <StyledToolbar sx={{ px: { xs: 1.5, sm: 2 }, columnGap: { md: 4 } }}>
           <BrandLink />
 
           <Stack

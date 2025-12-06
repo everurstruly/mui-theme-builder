@@ -33,7 +33,7 @@ export default function CanvasFrame({ controls = {}, children }: CanvasFrameProp
         overflow: "hidden", // <-- contain expansion, create clip/scroll context
         height: "100%",
         maxWidth: "var(--canvas-max-width)",
-        border: "1px solid",
+        borderTop: "1px solid",
         borderColor: t.palette.divider,
         // borderRightColor: mouseOverPropertiesPanel ? "text.secondary" : "divider",
         // backgroundColor: "#f5f5f5",

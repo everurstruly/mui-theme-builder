@@ -31,6 +31,8 @@ function DesktopPanelDrawer() {
       sx={() => ({
         flexShrink: 0,
         display: { xs: "none", lg: isVisible ? "block" : "none" },
+        borderInlineStart: "1px solid",
+        borderColor: "divider",
 
         // hide scrollbar but keep scrolling
         msOverflowStyle: "none", // IE and Edge

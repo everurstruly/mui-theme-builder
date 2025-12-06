@@ -30,7 +30,7 @@ export default function EditorExperienceTab({
       minHeight: "auto",
       flexGrow: 1,
 
-      borderRadius: 2,
+      borderRadius: 1,
       border: "1px solid",
       borderColor: "divider",
       overflow: "hidden",
@@ -45,7 +45,7 @@ export default function EditorExperienceTab({
 
         textTransform: "none",
         paddingInline: { xs: 1.75 },
-        paddingBlock: { xs: 1.15 },
+        paddingBlock: { xs: 1 },
 
         "&.Mui-selected": {
           color: (theme: Theme) => theme.palette.primary.main,
@@ -54,11 +54,11 @@ export default function EditorExperienceTab({
       },
 
       "& .MuiTabs-indicator": {
-        borderRadius: 2,
+        borderRadius: 1,
         transform: "translateY(-50%)",
         top: "50%",
         height: "100%",
-        backgroundColor: (theme: Theme) => alpha(theme.palette.primary.main, 0.05),
+        backgroundColor: (theme: Theme) => alpha(theme.palette.primary.main, 0.1),
       },
     }),
   ];

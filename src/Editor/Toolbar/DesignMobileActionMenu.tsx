@@ -1,6 +1,4 @@
 import * as React from "react";
-import HistoryButtons from "../Design/Current/HistoryButtons";
-import ExportButton from "../Design/Current/Export/ExportButton";
 import MenuItem from "@mui/material/MenuItem";
 import {
   ContentCopy,
@@ -14,10 +12,7 @@ import {
   ListItemIcon,
   ListItemText,
   Typography,
-  useMediaQuery,
-  useTheme,
   Menu,
-  Stack,
   Button,
 } from "@mui/material";
 import useEditor from "../useEditor";
@@ -27,9 +22,6 @@ import useExportOptions from "../Design/Current/Export/useExportOptions";
 
 export default function DesignMobileActionMenu() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-
-  const theme = useTheme();
-  const isUpSmallScreen = useMediaQuery(theme.breakpoints.up("sm"));
   const isPopoverMenuOpened = Boolean(anchorEl);
 
   const handleClickMenuItem = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -39,22 +31,6 @@ export default function DesignMobileActionMenu() {
   const handleCloseMenu = () => {
     setAnchorEl(null);
   };
-
-  if (isUpSmallScreen) {
-    return (
-      <Stack
-        direction={"row"}
-        flexShrink={0}
-        columnGap={1.5}
-        sx={{
-          mx: 1,
-        }}
-      >
-        <HistoryButtons />
-        <ExportButton />
-      </Stack>
-    );
-  }
 
   // Popover menu
   return (
@@ -67,7 +43,7 @@ export default function DesignMobileActionMenu() {
         onClick={handleClickMenuItem}
         sx={{ minWidth: 0, columnGap: 0.5 }}
       >
-        <DriveFileRenameOutline sx={{ fontSize: "1rem !important" }} />
+        <DriveFileRenameOutline sx={{ fontSize: { sm: "1rem !important" } }} />
       </Button>
 
       <Menu
@@ -80,9 +56,7 @@ export default function DesignMobileActionMenu() {
           },
         }}
       >
-        <MobileMenuContent
-          onClose={handleCloseMenu}
-        />
+        <MobileMenuContent onClose={handleCloseMenu} />
       </Menu>
     </>
   );

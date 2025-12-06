@@ -36,11 +36,7 @@ export default function ColorSchemeToggle() {
       value={colorScheme}
       onChange={handleChange}
       aria-label="Theme color mode toggle"
-      // sx={(theme) => ({
-      //   ...theme.applyStyles("light", {
-      //     backgroundColor: "white",
-      //   }),
-      // })}
+      size="small"
     >
       {options.map((option) => {
         return (
@@ -49,15 +45,8 @@ export default function ColorSchemeToggle() {
             value={option.value}
             aria-label={option.label}
             sx={{
-              // backgroundColor: (theme) => alpha(theme.palette.common.black, 0.02),
-              borderRadius: 2,
-              p: 1, // TODO: match the size of other activity bar actions/buttons
-              px: 1.5,
-
-              // "&.Mui-selected": {
-              //   color: "primary.main",
-              //   backgroundColor: "background.default",
-              // },
+              px: 1.4,
+              // borderRadius: 2,
             }}
           >
             {option.icon}

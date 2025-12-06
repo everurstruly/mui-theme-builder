@@ -4,6 +4,7 @@ import ColorProperty from "./Color/Color";
 import TypographyProperty from "./Typography/Typography";
 import AppearanceProperty from "./Appearance/Appearance";
 import { Box, Typography, Paper, type SxProps } from "@mui/material";
+import { inlineGapRem } from "../Toolbar/Toolbar";
 
 const panelPaddingInlineRem = 2.8;
 const thinScrollbar = {
@@ -38,7 +39,7 @@ export default function DesignerPropertiesPanel({ sx }: { sx?: SxProps<any> }) {
           alignItems: "center",
           border: "none",
           borderRadius: 0,
-          paddingInline: panelPaddingInlineRem,
+          paddingInline: inlineGapRem,
           backgroundColor: (theme) => theme.palette.background.paper,
           borderBottom: (theme) => `1px solid ${theme.palette.divider}`,
         }}
@@ -48,7 +49,7 @@ export default function DesignerPropertiesPanel({ sx }: { sx?: SxProps<any> }) {
 
       <Box
         paddingInline={panelPaddingInlineRem}
-        paddingTop={2}
+        paddingTop={1}
         paddingBottom={12}
         minHeight={"100%"}
         display={"flex"}

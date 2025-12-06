@@ -34,12 +34,10 @@ function QuickPreviewBar() {
         backgroundColor: (theme) => theme.palette.background.paper,
         borderBottom: 1,
         borderBottomColor: "divider",
-        px: { md: 1, lg: 1 },
+        px: { xs: 1.5, sm: 2 },
         overflowX: "auto",
         scrollbarWidth: "none",
         overflowY: "hidden",
-        // pt: 1,
-        // display: { xs: "none", md: "flex"}
       }}
     >
       <Breadcrumbs
@@ -48,7 +46,7 @@ function QuickPreviewBar() {
           <DoubleArrowOutlined sx={{ fontSize: ".8625rem", lineHeight: 1 }} />
         }
         sx={{
-          px: 1.5,
+          paddingInlineEnd: 1,
           fontSize: "caption.fontSize",
           fontWeight: "medium",
           alignItems: "center !important",
