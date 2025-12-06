@@ -2,7 +2,7 @@ import Drawer from "@mui/material/Drawer";
 import useEditor from "../useEditor";
 import PropertiesPanelBody from "./PropertiesPanelBody";
 import { TuneOutlined } from "@mui/icons-material";
-import { Divider, Fab } from "@mui/material";
+import { Divider, Fab, useMediaQuery } from "@mui/material";
 import PropertiesPanelHeader from "./PropertiesPanelHeader";
 
 export default function EditorPropertiesPanel() {
@@ -66,6 +66,7 @@ function DesktopPanelDrawer() {
 }
 
 function MobilePanelDrawer() {
+  const isBeyondSingleHandHeld = useMediaQuery("(min-width:400px)");
   const display = { lg: "none" };
 
   const withHidePanel = useEditor((state) => state.hidePanel);
@@ -82,7 +83,7 @@ function MobilePanelDrawer() {
       <Drawer
         component="aside"
         variant="temporary"
-        anchor={"right"}
+        anchor={isBeyondSingleHandHeld ? "right" : "bottom"}
         open={isVisible}
         onClose={() => hidePanel()}
         ModalProps={{
@@ -99,8 +100,10 @@ function MobilePanelDrawer() {
           },
 
           "& .MuiDrawer-paper": {
-            width: "min(380px, 85vw)",
-            border: "none",
+            overflow: "hidden",
+            width: isBeyondSingleHandHeld ? "min(380px, 82vw)" : undefined,
+            height: isBeyondSingleHandHeld ? undefined : "75vh",
+            // border: "none",
           },
         })}
       >
