@@ -3,7 +3,7 @@ import EditorToolsbar from "./Toolbar/Toolbar";
 import EditorPropertiesPanel from "./Properties/PropertiesPanel";
 import EditorExplorerPanel from "./Explorer/ExplorerPanel";
 import StrategiesDialog from "./Design/Draft/StrategiesDialog";
-import ExportDialog from "./Design/Current/Export/ExportDialog";
+import ExportDialog from "./Design/Export/ExportDialog";
 import CollectionDialog from "./Design/Collection/CollectionDialog";
 import SaveBlockerDialog from "./Design/Current/Save/BlockerDialog";
 import editorTheme from "./theme";

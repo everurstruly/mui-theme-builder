@@ -1,5 +1,5 @@
 import useCurrent from "./Design/Current/useCurrent";
-import useExportOptions from "./Design/Current/Export/useExportOptions";
+import useExportOptions from "./Design/Export/useExportOptions";
 import useEditor from "./useEditor";
 import useDialogs from "./Design/Draft/useDialogs";
 import { useTemplateSelection } from "./Design/Draft/Template/useTemplateSelection";

@@ -8,7 +8,7 @@ import {
   Button,
   Typography,
 } from "@mui/material";
-import DialogHeading from "../../../_Components/DialogHeading";
+import DialogHeading from "../../../DialogHeading";
 
 interface TitleConflictDialogProps {
   open: boolean;

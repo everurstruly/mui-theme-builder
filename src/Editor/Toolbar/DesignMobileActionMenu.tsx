@@ -18,7 +18,7 @@ import {
 import useEditor from "../useEditor";
 import useCurrent from "../Design/Current/useCurrent";
 import { useSave } from "../Design/Current/Save/useSave";
-import useExportOptions from "../Design/Current/Export/useExportOptions";
+import useExportOptions from "../Design/Export/useExportOptions";
 
 export default function DesignMobileActionMenu() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);

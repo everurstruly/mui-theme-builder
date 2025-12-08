@@ -1,7 +1,7 @@
 import React from "react";
 import useEditor from "../useEditor";
-import DeveloperPropertiesPanel from "./DeveloperPropertiesPanel";
-import DesignerPropertiesPanel from "./DesignerPropertiesPanel";
+import DeveloperPropertiesPanel from "./Experiences/DeveloperPropertiesPanel";
+import DesignerPropertiesPanel from "./Experiences/DesignerPropertiesPanel";
 import { Stack } from "@mui/material";
 import ShadesDrawer from "./Color/ShadesDrawer/ShadesDrawer";
 

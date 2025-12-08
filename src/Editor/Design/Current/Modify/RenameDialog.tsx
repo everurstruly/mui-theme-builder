@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import { useTitle } from "./useTitle";
 import useEditor from "../../../useEditor";
-import DialogHeading from "../../../_Components/DialogHeading";
+import DialogHeading from "../../../DialogHeading";
 import { BorderColorOutlined } from "@mui/icons-material";
 
 export default function RenameDialog() {

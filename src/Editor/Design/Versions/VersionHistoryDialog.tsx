@@ -16,7 +16,7 @@ import { useVersionHistory } from "./useVersionHistory";
 import { VersionItem } from "./VersionItem";
 import { RestoreConfirmDialog } from "./RestoreConfirmDialog";
 import { useEditor } from "../../useEditor";
-import DialogHeading from "../../_Components/DialogHeading";
+import DialogHeading from "../../DialogHeading";
 import { HistoryOutlined } from "@mui/icons-material";
 
 export function VersionHistoryDialog() {

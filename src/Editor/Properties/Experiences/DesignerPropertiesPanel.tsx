@@ -1,10 +1,10 @@
-import useEditor from "../useEditor";
-import PropertiesTabs from "./PropertiesTabs";
-import ColorProperty from "./Color/Color";
-import TypographyProperty from "./Typography/Typography";
-import AppearanceProperty from "./Appearance/Appearance";
+import useEditor from "../../useEditor";
+import PropertiesTabs from "../PropertiesTabs";
+import ColorProperty from "../Color/Color";
+import TypographyProperty from "../Typography/Typography";
+import AppearanceProperty from "../Appearance/Appearance";
 import { Box, Typography, Paper, type SxProps } from "@mui/material";
-import { inlineGapRem } from "../Toolbar/Toolbar";
+import { inlineGapRem } from "../../Toolbar/Toolbar";
 
 const panelPaddingInlineRem = 2.8;
 const thinScrollbar = {

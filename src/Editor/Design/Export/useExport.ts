@@ -1,9 +1,9 @@
 import { useCallback, useMemo } from "react";
 import { createTheme } from "@mui/material/styles";
-import useCreatedThemeOption from "../useCreatedThemeOption";
+import useCreatedThemeOption from "../Current/useCreatedThemeOption";
 import transformToDualScheme from "./transformToDualScheme";
 import useExportOptions from "./useExportOptions";
-import { useTitle } from "../Modify/useTitle";
+import { useTitle } from "../Current/Modify/useTitle";
 
 const THEME_PROPERTIES_ORDER = [
   "colorSchemes",

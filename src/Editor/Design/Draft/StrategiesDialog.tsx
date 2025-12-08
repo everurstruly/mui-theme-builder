@@ -1,6 +1,6 @@
 import * as React from "react";
 import BlockerDialog from "./BlockerDialog";
-import DialogHeading from "../../_Components/DialogHeading";
+import DialogHeading from "../../DialogHeading";
 import { Dialog, DialogContent, DialogTitle } from "@mui/material";
 import { Tabs, Tab } from "@mui/material";
 import useDialogs from "./useDialogs";

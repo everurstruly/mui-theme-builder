@@ -1,8 +1,8 @@
-import BeforeCodesourceDiffView from "./CodeEditor/BeforeCodesourceDiffView";
+import BeforeCodesourceDiffView from "../CodeEditor/BeforeCodesourceDiffView";
 import { useMemo } from "react";
 import { Box } from "@mui/material";
 import { PanelGroup, Panel, PanelResizeHandle } from "react-resizable-panels";
-import { CodeEditor } from "./CodeEditor";
+import { CodeEditor } from "../CodeEditor";
 
 export default function DeveloperPropertiesPanel() {
   return (

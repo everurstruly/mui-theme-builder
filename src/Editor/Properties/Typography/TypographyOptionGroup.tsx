@@ -1,5 +1,5 @@
 import { List } from "@mui/material";
-import OptionGroupCollapse from "../OptionGroupCollapse";
+import OptionGroupCollapse from "../../Toolbar/OptionGroupCollapse";
 
 type TypographyOptionGroupProps = {
   title: string;

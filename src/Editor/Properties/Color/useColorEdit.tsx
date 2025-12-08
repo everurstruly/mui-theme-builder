@@ -1,7 +1,7 @@
 import { useDebouncyEffect } from "use-debouncy";
 import useThemeEdit from "../../Design/Current/Modify/useEditProperty";
 import { useRef, useState, useMemo, useCallback, useEffect } from "react";
-import generateReadableColorShade from "../../../utils/generateReadableColorShade";
+import generateReadableColorShade from "../../../lib/generateReadableColorShade";
 import type { ColorResult } from "@uiw/react-color";
 
 type Options = {

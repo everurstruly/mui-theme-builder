@@ -1,6 +1,6 @@
 import ColorSchemeToggle from "../Design/Current/Modify/ColorSchemeToggle";
-import EditorExperienceTab from "../ExperienceTab";
 import { Box, Stack, type SxProps, type Theme } from "@mui/material";
+import EditorExperienceTab from "./Experiences/ExperienceTab";
 
 export default function PropertiesPanelHeader({ sx }: { sx?: SxProps<Theme> }) {
   return (

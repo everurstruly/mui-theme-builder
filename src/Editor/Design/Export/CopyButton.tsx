@@ -1,5 +1,5 @@
 import { ContentCopyOutlined } from "@mui/icons-material";
-import FlashStateContent from "../../../../lib/FlashStateButton";
+import FlashStateContent from "../../../lib/FlashStateButton";
 import useExport from "./useExport";
 
 function CopyButton() {

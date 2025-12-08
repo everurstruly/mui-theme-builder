@@ -1,4 +1,4 @@
-import useEditor from "../useEditor";
+import useEditor from "../../useEditor";
 import Switch from "@mui/material/Switch";
 import { styled } from "@mui/material/styles";
 import { FormControlLabel } from "@mui/material";

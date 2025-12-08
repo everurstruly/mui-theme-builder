@@ -9,7 +9,7 @@ import {
 import useEditor from "../../../useEditor";
 import useDelete from "./useDelete";
 import { DeleteOutline } from "@mui/icons-material";
-import DialogHeading from "../../../_Components/DialogHeading";
+import DialogHeading from "../../../DialogHeading";
 
 function DeleteDialog() {
   const { trash } = useDelete();

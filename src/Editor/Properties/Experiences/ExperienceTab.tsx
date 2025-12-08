@@ -2,7 +2,7 @@ import * as React from "react";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import { alpha, type SxProps, type Theme } from "@mui/material";
-import useEditor, { type EditorExperience } from "./useEditor";
+import useEditor, { type EditorExperience } from "../../useEditor";
 
 type EditorThemingExperienceTabProps = {
   centered?: boolean;

@@ -1,4 +1,4 @@
-import ExportButton from "../Design/Current/Export/ExportButton";
+import ExportButton from "../Design/Export/ExportButton";
 import HistoryButtons from "../Design/Current/HistoryButtons";
 import DesignMobileActionMenu from "./DesignMobileActionMenu";
 import CurrentDesignContext from "../Design/Current/Modify/Context";

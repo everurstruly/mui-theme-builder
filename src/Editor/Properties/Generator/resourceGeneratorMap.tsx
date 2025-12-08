@@ -1,7 +1,7 @@
 import React from "react";
 import { AutoAwesome } from "@mui/icons-material";
 import type { SxProps } from "@mui/material";
-import type { PropertiesTab } from "../useEditor";
+import type { PropertiesTab } from "../../useEditor";
 
 type ResourceGenerator = {
   color?: string;

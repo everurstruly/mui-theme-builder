@@ -1,6 +1,6 @@
 import { Grid } from "@mui/material";
 import type { PaletteGroup } from "./Color";
-import OptionGroupCollapse from "../OptionGroupCollapse";
+import OptionGroupCollapse from "../../Toolbar/OptionGroupCollapse";
 import ColorOptionGroupItem from "./ColorOptionGroupItem";
 
 type ColorOptionGroupProps = PaletteGroup;

@@ -6,7 +6,7 @@ import {
   DialogActions,
   Button,
 } from "@mui/material";
-import DialogHeading from "../../../_Components/DialogHeading";
+import DialogHeading from "../../../DialogHeading";
 import { WarningAmberOutlined } from "@mui/icons-material";
 
 interface OverwriteConfirmationDialogProps {

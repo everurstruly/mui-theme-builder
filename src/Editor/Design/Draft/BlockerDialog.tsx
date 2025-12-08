@@ -7,7 +7,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useDraft } from "./useDraft";
-import DialogHeading from "../../_Components/DialogHeading";
+import DialogHeading from "../../DialogHeading";
 import { ErrorOutline } from "@mui/icons-material";
 
 export default function BlockerDialog() {
