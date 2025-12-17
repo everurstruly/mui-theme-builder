@@ -101,7 +101,7 @@ export default function useExport() {
 
     // 2. Determine variable name and stringified value
     const variableName = mode === "merged" ? "mergedTheme" : "themeOptions";
-    const variableValue = JSON.stringify(sortedTheme, null, 2);
+    const variableValue = stringifyObject(sortedTheme);
 
     // 3. Format based on language
     const parts: string[] = [];
@@ -113,8 +113,6 @@ export default function useExport() {
     } else if (fileExtension === "ts") {
       importLine =
         "import { createTheme, type ThemeOptions } from '@mui/material/styles';";
-      // The variable to be exported is either ThemeOptions (for 'diff' mode) or Theme (for 'merged' mode - though createTheme returns ThemeOptions)
-      // Since the input to createTheme is always ThemeOptions, we use ThemeOptions for consistency.
       typeAnnotation = ": ThemeOptions";
     } else {
       // Handle unhandled language (like the 'json' type if it existed)
@@ -122,9 +120,20 @@ export default function useExport() {
     }
 
     parts.push(importLine, "");
-    parts.push(
-      `const ${variableName}${typeAnnotation} = createTheme(${variableValue});`
-    );
+    
+    // For 'diff' mode, export theme options wrapped in createTheme
+    // For 'merged' mode, the theme is already merged, so export it directly
+    if (mode === "diff") {
+      parts.push(
+        `const ${variableName}${typeAnnotation} = createTheme(${variableValue});`
+      );
+    } else {
+      // Merged mode - already the result of createTheme(), so just export the value
+      parts.push(
+        `const ${variableName}${typeAnnotation} = ${variableValue};`
+      );
+    }
+    
     parts.push("", `export default ${variableName};`, "");
 
     return joinLines(parts);
@@ -181,4 +190,37 @@ function sortByKeysSequence(
 
 function joinLines(lines: string[]) {
   return lines.join("\n");
+}
+
+function stringifyObject(obj: unknown, indent = 0): string {
+  const indentStr = "  ".repeat(indent);
+  const nextIndentStr = "  ".repeat(indent + 1);
+
+  if (obj === null) return "null";
+  if (obj === undefined) return "undefined";
+  if (typeof obj === "string") return JSON.stringify(obj);
+  if (typeof obj === "number" || typeof obj === "boolean") return String(obj);
+  if (typeof obj === "function") return obj.toString();
+
+  if (Array.isArray(obj)) {
+    if (obj.length === 0) return "[]";
+    const items = obj.map((item) => `${nextIndentStr}${stringifyObject(item, indent + 1)}`);
+    return `[\n${items.join(",\n")}\n${indentStr}]`;
+  }
+
+  if (typeof obj === "object") {
+    const entries = Object.entries(obj);
+    if (entries.length === 0) return "{}";
+
+    const props = entries.map(([key, value]) => {
+      // Use unquoted key if it's a valid identifier, otherwise quote it
+      const needsQuotes = !/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(key);
+      const keyStr = needsQuotes ? JSON.stringify(key) : key;
+      return `${nextIndentStr}${keyStr}: ${stringifyObject(value, indent + 1)}`;
+    });
+
+    return `{\n${props.join(",\n")}\n${indentStr}}`;
+  }
+
+  return String(obj);
 }
