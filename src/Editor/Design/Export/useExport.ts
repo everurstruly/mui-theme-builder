@@ -63,9 +63,9 @@ export default function useExport() {
     }
 
     // 2. Determine variable name and stringified value
-    // - When exporting 'merged' we want to call `createTheme(options)` so defaults are applied at runtime.
+    // - When exporting 'locked' we want to call `createTheme(options)` so defaults are applied at runtime.
     // - When exporting 'diff' we export the plain options object.
-    const variableName = mode === "merged" ? "mergedTheme" : "themeOptions";
+    const variableName = mode === "locked" ? "themeWithDefaults" : "themeOptions";
     const variableValue = stringifyObject(sortedTheme);
 
     // 3. Format based on language
@@ -78,8 +78,8 @@ export default function useExport() {
     } else if (fileExtension === "ts") {
       importLine =
         "import { createTheme, type ThemeOptions, type Theme } from '@mui/material/styles';";
-      // annotate exported variable with Theme when merged, ThemeOptions when exporting options
-      typeAnnotation = mode === "merged" ? ": Theme" : ": ThemeOptions";
+      // annotate exported variable with Theme when locked, ThemeOptions when exporting options
+      typeAnnotation = mode === "locked" ? ": Theme" : ": ThemeOptions";
     } else {
       // Handle unhandled language (like the 'json' type if it existed)
       return joinLines([`// Export language '${fileExtension}' is not supported.`]);
@@ -89,12 +89,12 @@ export default function useExport() {
 
     // When exporting merged code, call `createTheme(options)` so the consumer receives a theme
     // with defaults applied. When exporting diff, export the plain options object.
-    if (mode === "merged") {
+    if (mode === "locked") {
       parts.push(
         `const ${variableName}${typeAnnotation} = createTheme(${variableValue});`
       );
     } else {
-      parts.push(`const ${variableName}${typeAnnotation} = ${variableValue};`);
+      parts.push(`const ${variableName}${typeAnnotation} = createTheme(${variableValue});`);
     }
 
     parts.push("", `export default ${variableName};`, "");

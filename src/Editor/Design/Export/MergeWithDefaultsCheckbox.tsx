@@ -11,23 +11,23 @@ export default function MergeWithDefaultsCheckbox({
   onModeChange,
 }: MergeWithDefaultsCheckboxProps) {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    onModeChange(event.target.checked ? "merged" : "diff");
+    onModeChange(event.target.checked ? "locked" : "diff");
   };
 
   return (
     <Tooltip
-      title="Merge your overrides with MUI's default values for a complete theme object"
+      title="Lock your theme to MUI v7 default values for a complete, version-locked theme object"
       arrow
     >
       <FormControlLabel
         control={
           <Checkbox
-            checked={mode === "merged"}
+            checked={mode === "locked"}
             onChange={handleChange}
             size="small"
           />
         }
-        label="Merge with MUI defaults"
+        label="Lock to MUI v7 Defaults"
         sx={{ ml: "auto" }}
       />
     </Tooltip>

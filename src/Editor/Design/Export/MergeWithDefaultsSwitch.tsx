@@ -70,7 +70,7 @@ export default function MergeWithDefaultsSwitch({ scale, height }: Props) {
   const { mode, setMode } = useExport();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setMode(event.target.checked ? "merged" : "diff");
+    setMode(event.target.checked ? "locked" : "diff");
   };
 
   return (
@@ -79,12 +79,12 @@ export default function MergeWithDefaultsSwitch({ scale, height }: Props) {
         <IOSSwitch
           trackHeight={height}
           scale={scale}
-          checked={mode === "merged"}
+          checked={mode === "locked"}
           onChange={handleChange}
           size="small"
         />
       }
-      label="Merge with MUI defaults"
+      label="Lock to MUI v7 Defaults"
       sx={{
         m: 0,
         columnGap: 0.75,

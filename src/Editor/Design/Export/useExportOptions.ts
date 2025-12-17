@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 // Types matching the existing codebase's export hook
-export type ExportMode = "diff" | "merged";
+export type ExportMode = "diff" | "locked";
 export type ExportColorScheme = "light" | "dark" | "dual";
 export type ExportFileExtension = "ts" | "js" | "json";
 
