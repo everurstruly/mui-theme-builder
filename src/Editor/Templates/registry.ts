@@ -30,7 +30,7 @@ export type TreeNode = {
 const templatesRegistry: Record<string, TemplateMetadata> = {
   material: {
     id: "material",
-    label: "Material Design",
+    label: "Material",
     description: "Default Material Design theme with standard colors and spacing",
     path: "root",
     themeOptions: materialTheme,
