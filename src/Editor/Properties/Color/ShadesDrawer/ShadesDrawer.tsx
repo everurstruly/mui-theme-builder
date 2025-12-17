@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Box, Paper, Typography, List, ListItem, Button } from "@mui/material";
 import { useShadesDrawerStore } from "./useShadesDrawerStore";
 import ShadeListItem from "./ShadeMenuItem";
+import { useSwipeToClose } from "./useSwipeToClose";
 
 export default function ShadesDrawer() {
   const open = useShadesDrawerStore((s) => s.open);
@@ -9,6 +10,11 @@ export default function ShadesDrawer() {
   const title = useShadesDrawerStore((s) => s.title);
   const selectedPath = useShadesDrawerStore((s) => s.selectedPath);
   const close = useShadesDrawerStore((s) => s.close);
+
+  const { ref, swipeOffset, isSwipingDown, touchHandlers } = useSwipeToClose({
+    onClose: close,
+    threshold: 100,
+  });
 
   // register behavior (Escape key)
   useEffect(() => {
@@ -43,9 +49,11 @@ export default function ShadesDrawer() {
       />
 
       <Paper
+        ref={ref}
         role="dialog"
         aria-hidden={!open}
         data-dev-name="shades-drawer-panel"
+        {...touchHandlers}
         sx={{
           position: "fixed !important",
           left: 0,
@@ -55,9 +63,12 @@ export default function ShadesDrawer() {
           borderRadius: "8px 8px 0 0",
           opacity: open ? 1 : 0,
           pointerEvents: open ? "auto" : "none",
-          transform: open ? "translateY(0%)" : "translateY(100%)",
-          transition:
-            "transform 320ms cubic-bezier(.2,.8,.2,1), opacity 320ms cubic-bezier(.2,.8,.2,1)",
+          transform: open
+            ? `translateY(${swipeOffset}px)`
+            : "translateY(100%)",
+          transition: isSwipingDown
+            ? "none"
+            : "transform 320ms cubic-bezier(.2,.8,.2,1), opacity 320ms cubic-bezier(.2,.8,.2,1)",
           height: "max(70vh, 60%)",
           boxShadow: "0px -2px 10px rgba(0,0,0,0.1)",
           overflow: "hidden",
