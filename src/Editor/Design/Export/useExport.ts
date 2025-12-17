@@ -1,9 +1,8 @@
 import { useCallback, useMemo } from "react";
-import { createTheme } from "@mui/material/styles";
+import { useTitle } from "../Current/Modify/useTitle";
 import useCreatedThemeOption from "../Current/useCreatedThemeOption";
 import transformToDualScheme from "./transformToDualScheme";
 import useExportOptions from "./useExportOptions";
-import { useTitle } from "../Current/Modify/useTitle";
 
 const THEME_PROPERTIES_ORDER = [
   "colorSchemes",
@@ -30,56 +29,20 @@ export default function useExport() {
 
   const lightThemeOptions = useCreatedThemeOption("light");
   const darkThemeOptions = useCreatedThemeOption("dark");
-
-  // 1. Dual Theme Options (Only created once light/dark options change)
   const dualThemeOptions = useMemo(
     () =>
       transformToDualScheme({ light: lightThemeOptions, dark: darkThemeOptions }),
     [lightThemeOptions, darkThemeOptions]
   );
 
-  // 2. Merged Themes (Created from theme options)
-  // Optimization: Create a function to conditionally create the theme only when needed.
-  // Although the useMemo approach is fine, combining them into one useMemo
-  // that depends on the structuredTheme logic (below) is more explicit.
-  // However, keeping them separate for clarity and to align with the original structure:
-  const lightThemeMerged = useMemo(
-    () => createTheme(lightThemeOptions),
-    [lightThemeOptions]
-  );
-  const darkThemeMerged = useMemo(
-    () => createTheme(darkThemeOptions),
-    [darkThemeOptions]
-  );
-  const dualThemeMerged = useMemo(
-    () => createTheme(dualThemeOptions),
-    [dualThemeOptions]
-  );
-
-  // 3. Select the Structured Theme based on current state
-  // Use a stable, single source for the Theme Options regardless of mode/scheme
   const themeOptionsToExport = useMemo(() => {
-    // If mode is 'merged', we want to export the merged theme object.
-    if (mode === "merged") {
-      if (colorScheme === "dual") return dualThemeMerged;
-      if (colorScheme === "light") return lightThemeMerged;
-      return darkThemeMerged;
-    }
-
-    // If mode is 'diff', we want to export the theme *options*.
+    // Always keep the *options* as the single source of truth.
+    // For 'merged' exports we wrap these options in `createTheme(...)` at export-time
+    // so the consumer merges defaults correctly.
     if (colorScheme === "dual") return dualThemeOptions;
     if (colorScheme === "light") return lightThemeOptions;
     return darkThemeOptions;
-  }, [
-    mode,
-    colorScheme,
-    dualThemeOptions,
-    lightThemeOptions,
-    darkThemeOptions,
-    dualThemeMerged,
-    lightThemeMerged,
-    darkThemeMerged,
-  ]);
+  }, [colorScheme, dualThemeOptions, lightThemeOptions, darkThemeOptions]);
 
   const getExportCode = useCallback(() => {
     // Type assertion is moved here to ensure we pass a clean object to sortByKeysSequence
@@ -100,6 +63,8 @@ export default function useExport() {
     }
 
     // 2. Determine variable name and stringified value
+    // - When exporting 'merged' we want to call `createTheme(options)` so defaults are applied at runtime.
+    // - When exporting 'diff' we export the plain options object.
     const variableName = mode === "merged" ? "mergedTheme" : "themeOptions";
     const variableValue = stringifyObject(sortedTheme);
 
@@ -112,28 +77,26 @@ export default function useExport() {
       importLine = "import { createTheme } from '@mui/material/styles';";
     } else if (fileExtension === "ts") {
       importLine =
-        "import { createTheme, type ThemeOptions } from '@mui/material/styles';";
-      typeAnnotation = ": ThemeOptions";
+        "import { createTheme, type ThemeOptions, type Theme } from '@mui/material/styles';";
+      // annotate exported variable with Theme when merged, ThemeOptions when exporting options
+      typeAnnotation = mode === "merged" ? ": Theme" : ": ThemeOptions";
     } else {
       // Handle unhandled language (like the 'json' type if it existed)
       return joinLines([`// Export language '${fileExtension}' is not supported.`]);
     }
 
     parts.push(importLine, "");
-    
-    // For 'diff' mode, export theme options wrapped in createTheme
-    // For 'merged' mode, the theme is already merged, so export it directly
-    if (mode === "diff") {
+
+    // When exporting merged code, call `createTheme(options)` so the consumer receives a theme
+    // with defaults applied. When exporting diff, export the plain options object.
+    if (mode === "merged") {
       parts.push(
         `const ${variableName}${typeAnnotation} = createTheme(${variableValue});`
       );
     } else {
-      // Merged mode - already the result of createTheme(), so just export the value
-      parts.push(
-        `const ${variableName}${typeAnnotation} = ${variableValue};`
-      );
+      parts.push(`const ${variableName}${typeAnnotation} = ${variableValue};`);
     }
-    
+
     parts.push("", `export default ${variableName};`, "");
 
     return joinLines(parts);
@@ -204,7 +167,9 @@ function stringifyObject(obj: unknown, indent = 0): string {
 
   if (Array.isArray(obj)) {
     if (obj.length === 0) return "[]";
-    const items = obj.map((item) => `${nextIndentStr}${stringifyObject(item, indent + 1)}`);
+    const items = obj.map(
+      (item) => `${nextIndentStr}${stringifyObject(item, indent + 1)}`
+    );
     return `[\n${items.join(",\n")}\n${indentStr}]`;
   }
 
