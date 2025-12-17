@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Box, Paper, Typography, List, ListItem } from "@mui/material";
+import { Box, Paper, Typography, List, ListItem, Button } from "@mui/material";
 import { useShadesDrawerStore } from "./useShadesDrawerStore";
 import ShadeListItem from "./ShadeMenuItem";
 
@@ -28,15 +28,18 @@ export default function ShadesDrawer() {
         data-shades-count={shades.length}
         data-selected-path={selectedPath ?? ""}
         onClick={close}
-        sx={{
+        sx={(theme) => ({
           position: "fixed !important",
           inset: 0,
-          background: "rgba(0,0,0,.5)",
+          background:
+            theme.palette.mode === "dark"
+              ? "rgba(255,255,255,0.1)"
+              : "rgba(0,0,0,0.5)",
           opacity: open ? 1 : 0,
           pointerEvents: open ? "auto" : "none",
           transition: "opacity 380ms cubic-bezier(.2,.8,.2,1)",
           zIndex: 1400,
-        }}
+        })}
       />
 
       <Paper
@@ -98,6 +101,10 @@ export default function ShadesDrawer() {
             )}
           </List>
         </Box>
+
+        <Button color="error" onClick={close} sx={{ mb: 2, mx: 2 }}>
+          Close
+        </Button>
       </Paper>
     </>
   );
