@@ -47,7 +47,7 @@ function QuickPreviewBar() {
         }
         sx={{
           paddingInlineEnd: 1,
-          fontSize: "caption.fontSize",
+          fontSize: "body2.fontSize",
           fontWeight: "medium",
           alignItems: "center !important",
           backgroundColor: (theme) => theme.palette.background.paper,
@@ -144,7 +144,7 @@ function QuickPreviewBar() {
             return (
               <Link
                 key={key}
-                variant="caption"
+                variant="button"
                 component="button"
                 underline="none"
                 color="inherit"
@@ -161,7 +161,7 @@ function QuickPreviewBar() {
           return (
             <Link
               key={key}
-              variant="caption"
+              variant="button"
               component="button"
               underline="none"
               color={node.id === activePreviewId ? "primary" : "inherit"}

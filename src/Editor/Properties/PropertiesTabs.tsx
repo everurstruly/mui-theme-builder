@@ -46,7 +46,7 @@ export default function PropertiesTabs({ sx, tabSx }: PropertiesTabsProps) {
           sx={{
             minWidth: 0,
             height: "var(--activity-bar-height)",
-            fontSize: "12px",
+            fontSize: "body2.fontSize",
             fontWeight: "semibold",
             textTransform: "none",
             ...tabSx,

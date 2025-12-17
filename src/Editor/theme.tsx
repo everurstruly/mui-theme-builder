@@ -43,12 +43,12 @@ const editorTheme = createTheme({
   transitions: { duration: { standard: 200 } },
   typography: {
     body2: {
-      fontSize: 14,
+      fontSize: 13,
     },
     button: {
       textTransform: "none",
       fontWeight: 500,
-      fontSize: "0.75rem",
+      fontSize: "0.8125rem",
     },
     allVariants: {
       WebkitFontSmoothing: "antialiased",

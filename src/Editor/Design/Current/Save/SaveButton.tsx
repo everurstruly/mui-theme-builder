@@ -36,7 +36,7 @@ export default function SaveButton() {
     }
     // Unsaved designs (templates, blank, new)
     if (!isSaved) {
-      return "Save to Collection";
+      return "Save to Designs";
     }
     return "Save";
   };
