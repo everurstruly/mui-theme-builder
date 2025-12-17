@@ -3,7 +3,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import IconButton from "@mui/material/IconButton";
 import FileSelectTab from "./FileSelectTab";
-import MergeWithDefaultsSwitch from "./MergeWithDefaultsSwitch";
+// import MergeWithDefaultsSwitch from "./MergeWithDefaultsSwitch";
 import DownloadButton from "./DownloadButton";
 import CopyButton from "./CopyButton";
 import FileExtensionToggle from "./FileExtensionToggle";
@@ -51,7 +51,7 @@ export default function ExportDialog() {
             mb: 1,
           }}
         >
-          {requiresCompactView && <MergeWithDefaultsSwitch />}
+          {/* {requiresCompactView && <MergeWithDefaultsSwitch />} */}
 
           <Box
             sx={{
