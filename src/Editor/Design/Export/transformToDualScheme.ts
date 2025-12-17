@@ -1,10 +1,7 @@
 import type { ThemeOptions } from "@mui/material";
 
-type DualSchemeThemeOption = Exclude<ThemeOptions, "palette"> & {
-  colorSchemes: {
-    light: { palette: ThemeOptions["palette"] };
-    dark: { palette: ThemeOptions["palette"] };
-  };
+type DualSchemeThemeOption = Omit<ThemeOptions, "palette"> & {
+  colorSchemes: ThemeOptions["colorSchemes"];
 };
 
 export default function transformToDualScheme({
@@ -14,12 +11,19 @@ export default function transformToDualScheme({
   light: ThemeOptions;
   dark: ThemeOptions;
 }): DualSchemeThemeOption {
-  const { palette: lightPalette, ...lightRest } = light;
-  const { palette: darkPalette, ...darkRest } = dark;
+  const { palette: lightPaletteInput, ...lightRest } = light;
+  const { mode: lightMode, ...lightPalette } = lightPaletteInput ?? {};
+
+  const { palette: darkPaletteInput, ...darkRest } = dark;
+  const { mode: darkMode, ...darkPalette } = darkPaletteInput ?? {};
+
+  void lightMode;
+  void darkMode;
+
+  const mergedBase = lightRest ?? darkRest ?? {};
 
   return {
-    ...lightRest,
-    ...darkRest,
+    ...mergedBase,
     colorSchemes: {
       light: { palette: lightPalette },
       dark: { palette: darkPalette },
