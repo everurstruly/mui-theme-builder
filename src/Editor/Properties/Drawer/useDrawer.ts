@@ -35,7 +35,7 @@ export function useDrawer(initialOpen = false) {
     setOpen,
     toggle,
     close,
-    open: openDrawer,
+    openDrawer,
   };
 }
 
