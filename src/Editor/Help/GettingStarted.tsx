@@ -1,57 +1,45 @@
-import { Box, Typography } from "@mui/material";
-import {
-  AutoAwesome,
-  Create,
-  Search,
-  Edit,
-  FileDownload,
-} from "@mui/icons-material";
+import { Box, Stack, Typography } from "@mui/material";
+import { AutoAwesome, Edit, FileDownload, Search } from "@mui/icons-material";
 
 export default function GettingStarted() {
   const steps = [
     {
-      icon: <Create />,
-      title: "Create Your Design",
-      description:
-        "Start by clicking the 'New Design' button or use the keyboard shortcut Ctrl+N. Choose from our collection of professionally crafted templates or start with a blank canvas to build your theme from scratch.",
-    },
-    {
       icon: <Search />,
-      title: "Find & Navigate",
+      title: "Find or Create",
       description:
-        "Use the Explorer panel to browse through your design components. Press Ctrl+P to quickly search and jump to any part of your theme. The folder structure keeps everything organized and easy to find.",
+        "Start by clicking the 'Create' button or press the 'n' shortcut. You can cycle through curated starter themes to get a head start, or choose a blank canvas to build your theme from scratch.",
     },
     {
       icon: <Edit />,
-      title: "Edit with Precision",
+      title: "Edit & Generate",
       description:
-        "Customize every aspect of your Material-UI theme using the Properties panel. Adjust colors, typography, spacing, and more. See your changes reflected instantly in the preview canvas with hot reload.",
+        "Use the Properties panel to customize every aspect of your theme. Adjust colors, typography, spacing, and more with our intuitive controls. See your changes in real-time on the Canvas as you tweak your design.",
     },
     {
       icon: <FileDownload />,
-      title: "Export Your Theme",
+      title: "Preview & Export",
       description:
-        "When you're satisfied with your design, press Ctrl+E or click the Export button. Choose your preferred format (TypeScript or JavaScript), toggle default merging, and download or copy your theme configuration.",
+        'When you\'re satisfied with your design, press Ctrl+P or click the "Export" button. Choose your preferred format (TypeScript or JavaScript), and download or copy your theme.',
     },
   ];
 
   return (
     <Box
       sx={{
-        maxWidth: 600,
         mx: "auto",
-        py: 2,
+        pt: 1,
+        pb: 4,
       }}
     >
       <Box sx={{ textAlign: "center", mb: 4 }}>
         <AutoAwesome
           sx={{
-            fontSize: 48,
+            fontSize: 36,
             color: "primary.main",
             mb: 2,
           }}
         />
-        <Typography variant="h5" sx={{ fontWeight: 600, mb: 1 }}>
+        <Typography variant="h5" sx={{ fontWeight: 500 }}>
           Welcome to MUI Theme Builder
         </Typography>
         <Typography variant="body2" color="text.secondary">
@@ -59,9 +47,9 @@ export default function GettingStarted() {
         </Typography>
       </Box>
 
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
+      <Box sx={{ display: "flex", gap: 5 }}>
         {steps.map((step, index) => (
-          <Box key={index} sx={{ display: "flex", gap: 2 }}>
+          <Stack key={index} sx={{ gap: 2 }}>
             <Box
               sx={{
                 flexShrink: 0,
@@ -80,6 +68,7 @@ export default function GettingStarted() {
             >
               {step.icon}
             </Box>
+
             <Box sx={{ flex: 1 }}>
               <Typography
                 variant="subtitle1"
@@ -114,35 +103,8 @@ export default function GettingStarted() {
                 {step.description}
               </Typography>
             </Box>
-          </Box>
+          </Stack>
         ))}
-      </Box>
-
-      <Box
-        sx={{
-          mt: 5,
-          p: 3,
-          borderRadius: 3,
-          bgcolor: (theme) =>
-            theme.palette.mode === "dark"
-              ? "rgba(255, 255, 255, 0.05)"
-              : "rgba(0, 0, 0, 0.02)",
-          border: (theme) =>
-            `1px solid ${
-              theme.palette.mode === "dark"
-                ? "rgba(255, 255, 255, 0.08)"
-                : "rgba(0, 0, 0, 0.08)"
-            }`,
-        }}
-      >
-        <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1 }}>
-          Pro Tip
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          Press <code style={{ padding: "2px 6px", borderRadius: 4 }}>?</code>{" "}
-          anytime to open this help dialog. Check the Keyboard Shortcuts tab to
-          discover more time-saving shortcuts!
-        </Typography>
       </Box>
     </Box>
   );
