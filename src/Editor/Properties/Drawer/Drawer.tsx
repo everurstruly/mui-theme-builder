@@ -18,7 +18,7 @@ export default function Drawer({
   onClose,
   title,
   children,
-  height = "max(70vh, 60%)",
+  height = "max(60vh, 75%)",
   enableSwipe = true,
   swipeThreshold = 100,
   showGrabber = true,
@@ -121,6 +121,7 @@ function DrawerGrabber() {
   return (
     <Box
       sx={{
+        flexShrink: 0,
         height: 28,
         display: "flex",
         alignItems: "center",
@@ -133,7 +134,7 @@ function DrawerGrabber() {
           width: 40,
           height: 4,
           borderRadius: 999,
-          background: "rgba(0,0,0,0.5)",
+          background: "rgba(155,155,155,0.5)",
         }}
       />
     </Box>
