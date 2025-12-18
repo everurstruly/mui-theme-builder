@@ -1,8 +1,7 @@
-import { useEffect } from "react";
-import { Box, Paper, Typography, List, ListItem, Button } from "@mui/material";
+import { Box, List, ListItem, Typography, Button } from "@mui/material";
 import { useShadesDrawerStore } from "./useShadesDrawerStore";
 import ShadeListItem from "./ShadeMenuItem";
-import { useSwipeToClose } from "./useSwipeToClose";
+import { Drawer } from "../../Drawer";
 
 export default function ShadesDrawer() {
   const open = useShadesDrawerStore((s) => s.open);
@@ -11,135 +10,31 @@ export default function ShadesDrawer() {
   const selectedPath = useShadesDrawerStore((s) => s.selectedPath);
   const close = useShadesDrawerStore((s) => s.close);
 
-  const { ref, swipeOffset, isSwipingDown, touchHandlers } = useSwipeToClose({
-    onClose: close,
-    threshold: 100,
-  });
-
-  // register behavior (Escape key)
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") close();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [open, close]);
-
   return (
-    <>
-      <Box
-        aria-hidden
-        data-dev-name="shades-drawer-backdrop"
-        data-shades-count={shades.length}
-        data-selected-path={selectedPath ?? ""}
-        onClick={close}
-        sx={(theme) => ({
-          position: "fixed !important",
-          inset: 0,
-          background:
-            theme.palette.mode === "dark"
-              ? "rgba(255,255,255,0.1)"
-              : "rgba(0,0,0,0.5)",
-          opacity: open ? 1 : 0,
-          pointerEvents: open ? "auto" : "none",
-          transition: "opacity 380ms cubic-bezier(.2,.8,.2,1)",
-          zIndex: 1400,
-        })}
-      />
-
-      <Paper
-        ref={ref}
-        role="dialog"
-        aria-hidden={!open}
-        data-dev-name="shades-drawer-panel"
-        {...touchHandlers}
-        sx={{
-          position: "fixed !important",
-          left: 0,
-          right: 0,
-          bottom: 0,
-          zIndex: 1500,
-          borderRadius: "8px 8px 0 0",
-          opacity: open ? 1 : 0,
-          pointerEvents: open ? "auto" : "none",
-          transform: open
-            ? `translateY(${swipeOffset}px)`
-            : "translateY(100%)",
-          transition: isSwipingDown
-            ? "none"
-            : "transform 320ms cubic-bezier(.2,.8,.2,1), opacity 320ms cubic-bezier(.2,.8,.2,1)",
-          height: "max(70vh, 60%)",
-          boxShadow: "0px -2px 10px rgba(0,0,0,0.1)",
-          overflow: "hidden",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        <DrawerGrabber />
-
-        <Box
-          sx={{
-            px: 2.5,
-            display: "flex",
-            alignItems: "center",
-            gap: 2,
-          }}
-        >
-          <Typography
-            variant="h6"
-            sx={{
-              flexGrow: 1,
-              textAlign: "center",
-              mx: "auto",
-              py: 2,
-            }}
-          >
-            {title ? `${title} Color Map` : "Shades"}
-          </Typography>
-        </Box>
-
-        <Box sx={{ overflow: "auto", flex: 1, pt: 3, pb: 8 }}>
-          <List disablePadding>
-            {shades && shades.length > 0 ? (
-              shades.map((s) => (
-                <ShadeListItem key={s.path} title={s.name} path={s.path} />
-              ))
-            ) : (
-              <ListItem>
-                <Typography variant="caption">No states</Typography>
-              </ListItem>
-            )}
-          </List>
-        </Box>
-
-        <Button color="error" onClick={close} sx={{ mb: 2, mx: 2 }}>
-          Close
-        </Button>
-      </Paper>
-    </>
-  );
-}
-
-function DrawerGrabber() {
-  return (
-    <Box
-      sx={{
-        height: 28,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        background: "transparent",
-      }}
+    <Drawer
+      open={open}
+      onClose={close}
+      title={title ? `${title} Color Map` : "Shades"}
+      data-shades-count={shades.length}
+      data-selected-path={selectedPath ?? ""}
     >
-      <Box
-        sx={{
-          width: 40,
-          height: 4,
-          borderRadius: 999,
-          background: "rgba(0,0,0,0.5)",
-        }}
-      />
-    </Box>
+      <Box sx={{ overflow: "auto", flex: 1, pt: 3, pb: 8 }}>
+        <List disablePadding>
+          {shades && shades.length > 0 ? (
+            shades.map((s) => (
+              <ShadeListItem key={s.path} title={s.name} path={s.path} />
+            ))
+          ) : (
+            <ListItem>
+              <Typography variant="caption">No states</Typography>
+            </ListItem>
+          )}
+        </List>
+      </Box>
+
+      <Button color="error" onClick={close} sx={{ mb: 2, mx: 2 }}>
+        Close
+      </Button>
+    </Drawer>
   );
 }
