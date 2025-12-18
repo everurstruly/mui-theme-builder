@@ -1,10 +1,10 @@
 import { Typography, Stack, Box, Button } from "@mui/material";
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import useDesignCreatedTheme from "../../../Design/Current/useCreatedTheme";
 import useEditProperty from "../../../Design/Current/Modify/useEditProperty";
 import useCurrent from "../../../Design/Current/useCurrent";
 import { UnfoldMoreOutlined } from "@mui/icons-material";
-import FontFamilyPopover from "./FontFamilyPopover";
+import { useFontFamilyDrawerStore } from "./useFontFamilyDrawerStore";
 
 export type FontFamilyOptionProps = {
   title: string;
@@ -47,39 +47,31 @@ export default function FontFamilyOption({
   const resolvedValue = (value as string) ?? autoResolvedValue;
   // const canResetValue = !!userEdit || !!isCodeControlled;
 
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-  const popoverOpen = Boolean(anchorEl);
+  const openDrawer = useFontFamilyDrawerStore((s) => s.openDrawer);
 
-  const handleClick = useCallback(
-    (event: React.MouseEvent<HTMLElement>) => {
-      if (disabled) return;
-      setAnchorEl(event.currentTarget);
-    },
-    [disabled]
-  );
-
-  const handleClose = useCallback(() => setAnchorEl(null), []);
-
-  const handleSelectFromPopover = useCallback(
-    (fontFamilyValue: string) => {
-      if (path === "typography.h1.fontFamily") {
-        headingPaths.forEach((p) => addGlobalDesignerEdit(p, fontFamilyValue));
-      } else {
-        setValueLocal(fontFamilyValue);
-      }
-
-      // setAnchorEl(null);
-    },
-    [path, setValueLocal, addGlobalDesignerEdit]
-  );
-
-  const handleReset = useCallback(() => {
-    if (path === "typography.h1.fontFamily") {
-      headingPaths.forEach((p) => removeGlobalDesignerEdit(p));
-    } else {
-      resetLocal();
-    }
-  }, [path, removeGlobalDesignerEdit, resetLocal]);
+  const handleClick = useCallback(() => {
+    if (disabled) return;
+    
+    openDrawer({
+      title,
+      currentValue: resolvedValue,
+      path,
+      onSelect: (fontFamilyValue: string) => {
+        if (path === "typography.h1.fontFamily") {
+          headingPaths.forEach((p) => addGlobalDesignerEdit(p, fontFamilyValue));
+        } else {
+          setValueLocal(fontFamilyValue);
+        }
+      },
+      onReset: () => {
+        if (path === "typography.h1.fontFamily") {
+          headingPaths.forEach((p) => removeGlobalDesignerEdit(p));
+        } else {
+          resetLocal();
+        }
+      },
+    });
+  }, [disabled, title, resolvedValue, path, openDrawer, addGlobalDesignerEdit, setValueLocal, removeGlobalDesignerEdit, resetLocal]);
 
   return (
     <Stack
@@ -188,17 +180,6 @@ export default function FontFamilyOption({
           </Typography>
         </Box>
       </Button>
-
-      <FontFamilyPopover
-        anchorEl={anchorEl}
-        open={popoverOpen}
-        title={title}
-        onClose={handleClose}
-        onSelect={handleSelectFromPopover}
-        onReset={handleReset}
-        currentValue={resolvedValue}
-        disabled={disabled}
-      />
     </Stack>
   );
 }

@@ -4,6 +4,7 @@ import DeveloperPropertiesPanel from "./Experiences/DeveloperPropertiesPanel";
 import DesignerPropertiesPanel from "./Experiences/DesignerPropertiesPanel";
 import { Stack } from "@mui/material";
 import ShadesDrawer from "./Color/ShadesDrawer/ShadesDrawer";
+import FontFamilySelectionDrawer from "./Typography/FontFamily/FontFamilySelectionDrawer";
 
 export default function PanelBody() {
   const selectedExperienceId = useEditor((state) => state.selectedExperience);
@@ -85,6 +86,7 @@ export default function PanelBody() {
       {selectedExperienceId === "developer" && <DeveloperPropertiesPanel />}
 
       <ShadesDrawer />
+      <FontFamilySelectionDrawer />
     </Stack>
   );
 }
