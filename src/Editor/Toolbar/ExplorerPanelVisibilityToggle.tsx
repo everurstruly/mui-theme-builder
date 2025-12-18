@@ -1,13 +1,17 @@
 import useEditor from "../useEditor";
-import { IconButton } from "@mui/material";
+import { IconButton, Tooltip } from "@mui/material";
 import { ExpandOutlined, ViewSidebarOutlined } from "@mui/icons-material";
+import { useCallback } from "react";
 
 function ExplorerPanelVisibilityToggle() {
   const hiddenPanels = useEditor((state) => state.hiddenPanels);
   const hidePanel = useEditor((state) => state.hidePanel);
   const showPanel = useEditor((state) => state.showPanel);
 
-  const isExplorerPanelHidden = () => hiddenPanels.includes("explorer");
+  const isExplorerPanelHidden = useCallback(
+    () => hiddenPanels.includes("explorer"),
+    [hiddenPanels]
+  );
 
   function floatExplorerPanel() {
     hidePanel("explorer");
@@ -26,16 +30,22 @@ function ExplorerPanelVisibilityToggle() {
   }
 
   return (
-    <IconButton
-      onClick={handleToggleClick}
-      sx={{ backgroundColor: "transparent", fontSize: 20 }}
+    <Tooltip
+      title={
+        isExplorerPanelHidden() ? "Expand Explorer Panel" : "Minimize Explorer Panel"
+      }
     >
-      {isExplorerPanelHidden() ? (
-        <ViewSidebarOutlined />
-      ) : (
-        <ExpandOutlined sx={{ rotate: "90deg" }} />
-      )}
-    </IconButton>
+      <IconButton
+        onClick={handleToggleClick}
+        sx={{ backgroundColor: "transparent", fontSize: 20 }}
+      >
+        {isExplorerPanelHidden() ? (
+          <ViewSidebarOutlined />
+        ) : (
+          <ExpandOutlined sx={{ rotate: "90deg" }} />
+        )}
+      </IconButton>
+    </Tooltip>
   );
 }
 
