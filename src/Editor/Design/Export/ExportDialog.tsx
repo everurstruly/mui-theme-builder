@@ -52,6 +52,9 @@ export default function ExportDialog() {
           }}
         >
           {/* {requiresCompactView && <MergeWithDefaultsSwitch />} */}
+          <FileExtensionToggle
+            sx={{ m: "0 !important", marginInlineEnd: "auto !important" }}
+          />
 
           <Box
             sx={{
@@ -63,11 +66,6 @@ export default function ExportDialog() {
               columnGap: 2,
             }}
           >
-            {!requiresCompactView && (
-              <FileExtensionToggle
-                sx={{ m: "0 !important", marginInlineEnd: "auto !important" }}
-              />
-            )}
 
             <DownloadButton compactView={!requiresCompactView} />
             <CopyButton />
@@ -81,7 +79,7 @@ export default function ExportDialog() {
           }}
         >
           {requiresCompactView ? <FileSelectTab /> : <FileSelectBox />}
-          {requiresCompactView && <FileExtensionToggle />}
+          {/* {requiresCompactView && <FileExtensionToggle />} */}
         </Box>
 
         <FileContent
